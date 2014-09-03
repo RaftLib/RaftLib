@@ -19,12 +19,46 @@
  */
 #ifndef _PORT_HPP_
 #define _PORT_HPP_  1
+
+#include <map>
+#include <string>
+
+#include "fifo.hpp"
+#include "portexception.hpp"
+
 class Port
 {
 public:
    Port();
    virtual ~Port();
 
-   
+   /**
+    * addPort - adds and initializes a port for the name
+    * given.  Function returns true if added, false if not.
+    * Main reason for returning false would be that the 
+    * port already exists.
+    * @param   port_name - const std::string
+    * @return  bool
+    */
+   bool  addPort( const std::string port_name );
+   /**
+    * getPortType - input the port name, and get the hash
+    * for the type of the port.  This function is useful
+    * for checking the streaming graph to make sure all the
+    * ports that are "dynamically" created do in fact have
+    * compatible types.
+    * @param port_name - const std::string
+    * @return  std::size_t - hash code for port type
+    */
+   std::size_t getPortType( const std::string port_name );
+
+   /**
+    * operator[] - input the port name and get a port
+    * if it exists. 
+    */
+   FIFO& operator[]( const std::string port_name );
+
+protected:
+   std::map< std::string, FIFO* > portmap;   
 };
 #endif /* END _PORT_HPP_ */

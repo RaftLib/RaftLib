@@ -1,7 +1,7 @@
 /**
- * port.cpp - 
+ * portexception.cpp - 
  * @author: Jonathan Beard
- * @version: Thu Aug 28 09:55:47 2014
+ * @version: Wed Sep  3 14:52:27 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,23 +17,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "port.hpp"
+#include "portexception.hpp"
 
-bool
-Port::addPort( const std::string port_name )
+PortException::PortException( const std::string message )
 {
-
+   (this)->message = message;
 }
 
-std::size_t
-Port::getPortType( const std::string port_name )
+const char*
+PortException::what()
 {
-
-}
-
-FIFO&
-Port:operator[]( const std::string port_name )
-{
-   
-   return( *portmap[ port_name ] );
+   return( message.c_str() );
 }
