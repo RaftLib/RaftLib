@@ -29,3 +29,18 @@ PortException::what()
 {
    return( message.c_str() );
 }
+
+PortTypeException::PortTypeException( const std::string message ) :
+   PortException( message )
+{
+}
+
+PortNotFoundException::PortNotFoundException( const std::string message ) :
+   PortException( message )
+{
+}
+
+PortDoubleInitializeException::PortDoubleInitializeException( 
+   const std::string message ) : PortException( message )
+{
+}

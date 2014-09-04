@@ -18,27 +18,56 @@
  * limitations under the License.
  */
 #include <algorithm>
+#include <cassert>
 
 #include "port.hpp"
 #include "portexception.hpp"
 
-bool
-Port::addPort( const std::string port_name )
+Port::Port()
 {
-   const auto ret_val( portmap.insert( std::make_pair( port_name, std::nullptr ) ) );
-   /** return true if inserted or false if already exists **/
-   return( ret_val.second );
 }
 
-std::size_t
+Port::~Port()
+{
+}
+
+const type_info&
 Port::getPortType( const std::string port_name )
 {
-
+   const auto ret_val( portmap.find( port_name ) );
+   if( ret_val == portmap.cend() )
+   {
+      throw PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
+   }
+   return( ret_val.second.type );
 }
 
 FIFO&
-Port:operator[]( const std::string port_name )
+Port::operator[]( const std::string port_name )
 {
-   
-   return( *portmap[ port_name ] );
+   const auto ret_val( portmap.find( port_name ) );
+   if( ret_val == portmap.cend() )
+   {
+      throw PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
+   }
+   return( *((*ret_val).fifo)  );
+}
+
+void
+Port::initializePort( const std::string port_name,
+                      FIFO             *fifo )
+{
+   assert( fifo != std::nullptr );
+   const auto ret_val( portmap.find( port_name ) );
+   if( ret_val == portmap.cend() )
+   {
+      throw  PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
+   }
+   if( (*ret_val).fifo != std::nullptr )
+   {
+      throw PortDoubleInitializeException( 
+         "Port \"" + port_name "\" already initialized!" );
+   }
+   /** else initialize **/
+   (*ret_val).fifo = fifo;
 }

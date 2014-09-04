@@ -23,10 +23,20 @@
 
 struct PortInfo
 {
-   PortInfo( );            
-   virtual ~PortInfo()   
+   PortInfo( const type_info &the_type )  : type( the_type )
+   {
 
-   FIFO *fifo = std::nullptr;
-   const type_info
+   }
+
+   virtual ~PortInfo()
+   {
+      if( fifo != nullptr )
+      {
+         delete( fifo );
+      }
+   }
+
+   FIFO            *fifo = std::nullptr;
+   const type_info &type;
 };
 #endif /* END _PORT_INFO_HPP_ */

@@ -29,4 +29,22 @@ public:
 private:
    std::string message;
 };
+
+class PortTypeException : public PortException
+{
+public:
+   PortTypeException( const std::string message );
+};
+
+class PortNotFoundException : public PortException
+{
+public:
+   PortNotFoundException( const std::string message );
+};
+
+class PortDoubleInitializeException : public PortException
+{
+public:
+   PortDoubleInitializeException( const std::string message );
+};
 #endif /* END _PORTEXCEPTION_HPP_ */
