@@ -39,7 +39,14 @@ public:
     * @param   port_name - const std::string
     * @return  bool
     */
-   bool  addPort( const std::string port_name );
+   template < class T >
+   bool addPort( const std::string port_name )
+   {
+      const auto ret_val( portmap.insert( std::make_pair( port_name, 
+                                                          PortInfo( typeid( T ) ) ) ) );
+      return( ret_val.second );
+   }
+
    /**
     * getPortType - input the port name, and get the hash
     * for the type of the port.  This function is useful
@@ -47,9 +54,10 @@ public:
     * ports that are "dynamically" created do in fact have
     * compatible types.
     * @param port_name - const std::string
-    * @return  std::size_t - hash code for port type
+    * @return  const type_info&
+    * @throws PortNotFoundException
     */
-   std::size_t getPortType( const std::string port_name );
+   const type_info& getPortType( const std::string port_name );
 
    /**
     * operator[] - input the port name and get a port
@@ -58,6 +66,10 @@ public:
    FIFO& operator[]( const std::string port_name );
 
 protected:
-   std::map< std::string, FIFO* > portmap;   
+
+   void  initializePort( const std::string port_name,
+                         FIFO             *fifo );
+
+   std::map< std::string, PortInfo > portmap;   
 };
 #endif /* END _PORT_HPP_ */
