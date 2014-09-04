@@ -24,7 +24,6 @@
 #include <string>
 
 #include "fifo.hpp"
-#include "portexception.hpp"
 
 class Port
 {

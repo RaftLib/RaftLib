@@ -1,7 +1,7 @@
 /**
- * port.cpp - 
+ * port_info.hpp - 
  * @author: Jonathan Beard
- * @version: Thu Aug 28 09:55:47 2014
+ * @version: Wed Sep  3 20:22:56 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,28 +17,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
+#ifndef _PORT_INFO_HPP_
+#define _PORT_INFO_HPP_  1
+#include "fifo.hpp"
 
-#include "port.hpp"
-#include "portexception.hpp"
-
-bool
-Port::addPort( const std::string port_name )
+struct PortInfo
 {
-   const auto ret_val( portmap.insert( std::make_pair( port_name, std::nullptr ) ) );
-   /** return true if inserted or false if already exists **/
-   return( ret_val.second );
-}
+   PortInfo( );            
+   virtual ~PortInfo()   
 
-std::size_t
-Port::getPortType( const std::string port_name )
-{
-
-}
-
-FIFO&
-Port:operator[]( const std::string port_name )
-{
-   
-   return( *portmap[ port_name ] );
-}
+   FIFO *fifo = std::nullptr;
+   const type_info
+};
+#endif /* END _PORT_INFO_HPP_ */
