@@ -1,7 +1,7 @@
 /**
- * port_info.hpp - 
+ * simplesschedule.hpp - 
  * @author: Jonathan Beard
- * @version: Wed Sep  3 20:22:56 2014
+ * @version: Thu Sep 11 15:49:57 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,26 +17,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PORT_INFO_HPP_
-#define _PORT_INFO_HPP_  1
-#include "fifo.hpp"
+#ifndef _SIMPLESSCHEDULE_HPP_
+#define _SIMPLESSCHEDULE_HPP_  1
+#include <vector>
+#include "kernel.hpp"
 
-struct PortInfo
+class SimpleSchedule : public Kernel
 {
-   PortInfo( const type_info &the_type )  : typez( the_type )
-   {
+public:
+   SimpleSchedule();
 
-   }
+   virtual ~SimpleSchedule();
 
-   virtual ~PortInfo()
-   {
-      if( fifo != nullptr )
-      {
-         delete( fifo );
-      }
-   }
-
-   FIFO            *fifo = std::nullptr;
-   const type_info &type;
+   virtual void addKernel( Kernel *kernel );
+   
+   virtual void start(); 
+protected:
+   std::vector< Kernel* > kernel_map;
 };
-#endif /* END _PORT_INFO_HPP_ */
+#endif /* END _SIMPLESSCHEDULE_HPP_ */

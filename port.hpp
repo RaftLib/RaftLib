@@ -29,6 +29,10 @@ class Port
 {
 public:
    Port();
+   /**
+    * ~Port - destructor, deletes the FIFO that was given
+    * when the object was initalized.
+    */
    virtual ~Port();
 
    /**

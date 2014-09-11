@@ -1,7 +1,7 @@
 /**
- * port_info.hpp - 
+ * kernel.hpp - 
  * @author: Jonathan Beard
- * @version: Wed Sep  3 20:22:56 2014
+ * @version: Thu Sep 11 15:34:24 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,26 +17,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PORT_INFO_HPP_
-#define _PORT_INFO_HPP_  1
-#include "fifo.hpp"
+#ifndef _KERNEL_HPP_
+#define _KERNEL_HPP_  1
+#include "port.hpp"
 
-struct PortInfo
+class Kernel
 {
-   PortInfo( const type_info &the_type )  : typez( the_type )
-   {
+public:
+   Kernel()         = default;
+   virtual Kernel() = default;
 
-   }
 
-   virtual ~PortInfo()
-   {
-      if( fifo != nullptr )
-      {
-         delete( fifo );
-      }
-   }
+   virtual void run() = 0;
 
-   FIFO            *fifo = std::nullptr;
-   const type_info &type;
+protected:
+   Port               input;
+   Port               output;
 };
-#endif /* END _PORT_INFO_HPP_ */
+#endif /* END _KERNEL_HPP_ */

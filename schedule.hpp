@@ -1,7 +1,7 @@
 /**
- * port_info.hpp - 
+ * schedule.hpp - 
  * @author: Jonathan Beard
- * @version: Wed Sep  3 20:22:56 2014
+ * @version: Thu Sep 11 15:42:28 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,26 +17,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PORT_INFO_HPP_
-#define _PORT_INFO_HPP_  1
-#include "fifo.hpp"
-
-struct PortInfo
+#ifndef _SCHEDULE_HPP_
+#define _SCHEDULE_HPP_  1
+#include "kernel.hpp"
+class Schedule
 {
-   PortInfo( const type_info &the_type )  : typez( the_type )
+public:
+   Schedule()           = default;
+   virtual ~Schedule()  = default;
+
+   virtual void addKernel( Kernel *kernel ) = 0;
+   virtual void start() = 0;
+protected:
+   const auto run_func = []( Kernel *kernel ) -> void
    {
-
-   }
-
-   virtual ~PortInfo()
-   {
-      if( fifo != nullptr )
-      {
-         delete( fifo );
-      }
-   }
-
-   FIFO            *fifo = std::nullptr;
-   const type_info &type;
+      kernel->run();
+      return;
+   };
 };
-#endif /* END _PORT_INFO_HPP_ */
+#endif /* END _SCHEDULE_HPP_ */
