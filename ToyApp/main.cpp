@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iostream>
 #include <cstdlib>
 #include "kernel.hpp"
@@ -12,13 +13,16 @@ public:
       output.addPort< T >( "number_stream" );
    }
 
-   virtual void run()
+   virtual bool run()
    {
-      while( count-- > 1 )
+      if( count-- > 1 )
       {
          output[ "number_stream" ].push( count );
+         return( true );
       }
+      /** else **/
       output[ "number_stream" ].push( count, RBSignal::RBEOF );
+      return( false );
    }
 
 private:
@@ -36,7 +40,7 @@ public:
       output.addPort< C  >( "sum" );
    };
    
-   virtual void run()
+   virtual bool run()
    {
       A a;
       B b;
@@ -44,6 +48,12 @@ public:
       input[ "input_a" ].pop( a, &sig_a );
       input[ "input_b" ].pop( b, &sig_b );
       output[ "sum" ].push< decltype( A + B ) >( ( a + b ), sig_a );
+      assert( sig_a == sig_b );
+      if( sig_b == RBSignal::RBEOF )
+      {
+         return( false );
+      }
+      return( true );
    }
 
 };
@@ -56,9 +66,28 @@ public:
       input.addPort< T >( "in" );
    }
 
-   virtual void run()
+   virtual bool run()
    {
       T data;
-      input[ "in" ].pop( 
+      RBSignal signal( RBSignal::NONE );
+      input[ "in" ].pop( data, &signal );
+      std::cout << data << "\n";
+      if( signal == RBSignal::RBEOF )
+      {
+         return( false );
+      }
+      return( true );
    }
 };
+
+int
+main( int argc, char **argv )
+{
+   Map map;
+   Sum< std::int64_t,std::int64_t, std::int64_t > s;
+   map.addLink( Generate< std::int64_t >(), s, "input_a" );
+   map.addLink( Generate< std::int64_t >(), s, "input_b" );
+   map.addLInk( s, Print< std::int64_t >() );
+   AP::Schedule( s );
+   return( EXIT_SUCCESS );
+}

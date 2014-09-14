@@ -23,6 +23,7 @@
 #include <map>
 #include <string>
 
+#include "ringbuffertypes.hpp"
 #include "fifo.hpp"
 
 class Port
@@ -46,6 +47,20 @@ public:
    template < class T >
    bool addPort( const std::string port_name )
    {
+      /**
+       * we'll have to make a port info object first and pass it by copy
+       * to the portmap.  Perhaps re-work later with pointers, but for
+       * right now this will work and it doesn't necessarily have to
+       * be performant since its only executed once.
+       */
+       PortInfo pi( typeid( T ) );
+       (this)->initializeConstMap<T>( pi );
+      
+      /** 
+       * TODO, idea -> add initializer function map for each type
+       * of possible FIFO, no other way to get a fifo initialized
+       * with the appropriate type.
+       */
       const auto ret_val( portmap.insert( std::make_pair( port_name, 
                                                           PortInfo( typeid( T ) ) ) ) );
       return( ret_val.second );
@@ -70,10 +85,36 @@ public:
    FIFO& operator[]( const std::string port_name );
 
 protected:
+   template < class T > void initializeConstMap( PortInfo &pi )
+   {
+      typedef std::map< bool, std::function< FIFO* ( std::size_t /** n_items **/,
+                                                     std::size_t /** alignof **/,
+                                                     void*   /** data struct **/ ) >
+                                                         instr_map_t;
+      pi.const_map.push_back(  Type::Heap , new instr_map_t() );
+      
+      pi.const_map[ Type::Heap ]->insert(
+         std::make_pair( false /** no instrumentation **/,
+                         RingBuffer< T, Type::Heap, false >::make_new_fifo ) );
+      pi.const_map[ Type::Heap ]->insert(
+         std::make_pair( true /** yes instrumentation **/,
+                         RingBuffer< T, Type::Heap, false >::make_new_fifo ) );
+
+      pi.const_map.push_back( Type::SHM, new instr_map_t() );
+      pi.const_map[ Type::SHM ]->insert(
+         std::make_pair( false /** no instrumentation **/,
+                         RingBuffer< T, Type::SHM >::make_new_fifo ) );
+      /** no instrumentation version defined yet **/
+      return;
+   }
 
    void  initializePort( const std::string port_name,
                          FIFO             *fifo );
 
    std::map< std::string, PortInfo > portmap;   
+   
+
+   std::map< RingBufferType , 
+             std::map< bool, std::function< FIFO* (size_t) > > > const_map;
 };
 #endif /* END _PORT_HPP_ */

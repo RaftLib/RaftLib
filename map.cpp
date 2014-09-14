@@ -1,7 +1,7 @@
 /**
- * simplesschedule.hpp - 
+ * map.cpp - 
  * @author: Jonathan Beard
- * @version: Thu Sep 11 15:49:57 2014
+ * @version: Fri Sep 12 10:28:33 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,25 +17,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _SIMPLESSCHEDULE_HPP_
-#define _SIMPLESSCHEDULE_HPP_  1
-#include <vector>
-#include "kernel.hpp"
-
-class SimpleSchedule : public Kernel
-{
-public:
-   SimpleSchedule();
-
-   virtual ~SimpleSchedule();
-
-   virtual void addKernel( Kernel *kernel );
-   
-   virtual void start(); 
-protected:
-   
-   virtual void start_func( Kernel *kernel, void *data );
-   
-   std::vector< Kernel* > kernel_map;
-};
-#endif /* END _SIMPLESSCHEDULE_HPP_ */
+#include "map.hpp"

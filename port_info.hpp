@@ -37,6 +37,21 @@ struct PortInfo
    }
 
    FIFO            *fifo = std::nullptr;
+   /** 
+    * the type of the port.  regardless of if the buffer itself
+    * is impplemented or not. 
+    */
    const type_info &type;
+
+   /**
+    * const_map - stores "builder" objects for each of the 
+    * currenty implemented ring buffer types so that when 
+    * the mapper is allocating ring buffers it may allocate
+    * one with the proper type.  The first key is self explanatory
+    * for the most part, storing the ring buffer type.  The 
+    * second internal map key is "instrumented" vs. not.
+    */
+   std::map< RingBufferType , 
+             std::map< bool, std::function< FIFO* (size_t) > >* > const_map;
 };
 #endif /* END _PORT_INFO_HPP_ */

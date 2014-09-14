@@ -46,15 +46,29 @@ SimpleSchedule::addKernel( Kernel *kernel )
 
 SimpleSchedule::start()
 {
-   std::vector< Kernel* > thread_map( kernel_map.size() );
-   for( Kernel *kern : kernel_map )
+   struct thread_info_t
    {
-      auto bound_func = std::bind( run_func, kern );
-      thread_map.push_back( new std::thread( bound_func ) );
-   }
-   for( std::thread *thread : thread_map )
+      std::thread *th = nullptr;
+   };
+   std::vector< thread_info_t > thread_map( kernel_map.size() );
+
+   for( auto index( 0 ); index < kernel_map.size(); index++ )
    {
-      thread->join();
-      delete( thread );
+      auto bound_func = std::bind( start_func, 
+                                   kernel_map [ index ],
+                                   nullptr );
+      thread_map[ index ].th = new std::thread( bound_func );
    }
+
+   for( auto  &t_info : thread_map )
+   {
+      t_info.th->join();
+      delete( t_info.th );
+      t_info.th = nullptr;
+   }
+}
+
+SimpleSchedule::start_func( Kernel *kernel, void *data )
+{
+   while( kernel->run() );
 }

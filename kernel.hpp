@@ -28,7 +28,7 @@ public:
    virtual Kernel() = default;
 
 
-   virtual void run() = 0;
+   virtual bool run() = 0;
 
 protected:
    Port               input;

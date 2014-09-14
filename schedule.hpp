@@ -26,13 +26,31 @@ public:
    Schedule()           = default;
    virtual ~Schedule()  = default;
 
+   /**
+    * addKernel - adds the kernel "kernel" to the
+    * schedule, ensures that it is run.  Other than
+    * that there are no guarantees for its execution.
+    * It is purely virtual in its implementation.
+    * @param kernel - Kernel*
+    */
    virtual void addKernel( Kernel *kernel ) = 0;
+   /**
+    * start - called to start execution of all
+    * kernels.  Implementation specific so it
+    * is purely virtual.
+    */
    virtual void start() = 0;
 protected:
-   const auto run_func = []( Kernel *kernel ) -> void
-   {
-      kernel->run();
-      return;
-   };
+   /**
+    * start_func - calls kernel run functions,
+    * should be implemented by individual scheduler
+    * since each one will have slightly differing
+    * implementations.  The data struct is to be
+    * cast to some internal representation if desired
+    * or left as a nullptr.
+    * @param   kernel - Kernel*
+    * @param   data   - void*
+    */
+   virtual void start_func( Kernel *kernel, void *data ) = 0;
 };
 #endif /* END _SCHEDULE_HPP_ */
