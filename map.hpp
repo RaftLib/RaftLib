@@ -23,25 +23,31 @@
 #include <cassert>
 
 #include "kernel.hpp"
+
+namespace order
+{
+   enum spec = { in, out };
+}
+
 class Map
 {
 public:
    Map()          = default;
    virtual ~Map() = default;
 
-   template < std::string t >
+   template < order::spec t >
       link( Kernel &a, Kernel &b )
    {
       /** assume each only has a single input / output **/
-      const auto order( order_map[ t ] );
-      switch( order )
+      switch( t )
       {
-         case( INORDER ):
+         case( order::in ):
          {
-            a[ "" ]
+            /** for the moment lets assume everything is threaded **/
+            auto func = a[ "" ]
          }
          break;
-         case( OUTORDER ):
+         case( order::out ):
          {
             assert( false );
          }
@@ -49,26 +55,22 @@ public:
       }
    }
    
-   template < std::string t >
-      link( Kernel &a, const std::string a_port, Kernel &b )
+   template < order::spec t >
+      link( Kernel &a, const order::spec a_port, Kernel &b )
    {
 
    }
    
-   template < std::string t >
-      link( Kernel &a, Kernel &b, const std::string b_port )
+   template < order::spec t >
+      link( Kernel &a, Kernel &b, const order::spec b_port )
    {
 
    }
    
-   template < std::string t >
-      link( Kernel &a,const std::string a_port, Kernel &b, const std::string b_port )
+   template < order::spec t >
+      link( Kernel &a,const order::spec a_port, Kernel &b, const std::string b_port )
    {
 
    }
-private:
-   enum    order = { INORDER, OUTORDER };
-   const   std::map< std::string, order > order_map = { { "inorder", INORDER },
-                                                        { "outorder", OUTORDER } };
 };
 #endif /* END _MAP_HPP_ */
