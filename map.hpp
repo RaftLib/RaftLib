@@ -35,7 +35,7 @@ public:
    Map()          = default;
    virtual ~Map() = default;
 
-   template < order::spec t >
+   template < order::spec t = order::in >
       link( Kernel &a, Kernel &b )
    {
       /** assume each only has a single input / output **/
@@ -55,19 +55,19 @@ public:
       }
    }
    
-   template < order::spec t >
+   template < order::spec t = order::in > 
       link( Kernel &a, const order::spec a_port, Kernel &b )
    {
 
    }
    
-   template < order::spec t >
+   template < order::spec t = order::in >
       link( Kernel &a, Kernel &b, const order::spec b_port )
    {
 
    }
    
-   template < order::spec t >
+   template < order::spec t = order::in >
       link( Kernel &a,const order::spec a_port, Kernel &b, const std::string b_port )
    {
 
