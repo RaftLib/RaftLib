@@ -27,23 +27,18 @@ SimpleSchedule::SimpleSchedule() : Schedule()
 
 SimpleSchedule::~SimpleSchedule()
 {
-   for( Kernel *kern : kernel_map )
-   {
-      if( kern != nullptr )
-      {
-         delete( kern );
-      }
-   }
+   /** note: kernels are deleted by the map! **/
 }
 
-
-SimpleSchedule::addKernel( Kernel *kernel )
+bool
+SimpleSchedule::scheduleKernel( Kernel *kernel )
 {
    assert( kernel != nullptr );
-   kernel_map.push_back( kernel ); 
+   auto ret = kernel_map.insert( kernel ); 
+   return( ret.second );
 }
 
-
+void
 SimpleSchedule::start()
 {
    struct thread_info_t
@@ -68,7 +63,9 @@ SimpleSchedule::start()
    }
 }
 
+void
 SimpleSchedule::start_func( Kernel *kernel, void *data )
 {
+   /** ignore data **/
    while( kernel->run() );
 }

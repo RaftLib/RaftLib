@@ -23,24 +23,42 @@
 class Schedule
 {
 public:
+   
+   static 
+   template <class T >
+   exe( Map &map )
+   {
+      T sched;
+      auto kernels( map.get_all_kernels() );
+      for( auto *kern : kernels )
+      {
+         sched.scheduleKernel( kern );
+      }
+      sched.start();
+   }
+
+protected:
+   
    Schedule()           = default;
    virtual ~Schedule()  = default;
-
-   /**
-    * addKernel - adds the kernel "kernel" to the
-    * schedule, ensures that it is run.  Other than
-    * that there are no guarantees for its execution.
-    * It is purely virtual in its implementation.
-    * @param kernel - Kernel*
-    */
-   virtual void addKernel( Kernel *kernel ) = 0;
+   
    /**
     * start - called to start execution of all
     * kernels.  Implementation specific so it
     * is purely virtual.
     */
    virtual void start() = 0;
-protected:
+   /**
+    * scheduleKernel - adds the kernel "kernel" to the
+    * schedule, ensures that it is run.  Other than
+    * that there are no guarantees for its execution.
+    * It is purely virtual in its implementation.
+    * @param kernel - Kernel*
+    * @return  bool  - returns false if the kernel is
+    * already scheduled.
+    */
+   virtual bool scheduleKernel( Kernel *kernel ) = 0;
+   
    /**
     * start_func - calls kernel run functions,
     * should be implemented by individual scheduler

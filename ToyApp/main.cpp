@@ -88,7 +88,7 @@ main( int argc, char **argv )
                               new Sum< std::int64_t,std::int64_t, std::int64_t >(),
                               , "input_a" ) );
    map.addLink( new Generate< std::int64_t >(), &( kernels.dst ), "input_b" );
-   map.addLInk( &( kernels.dst ), new Print< std::int64_t >() );
-   AP::Schedule( map );
+   map.addLink( &( kernels.dst ), new Print< std::int64_t >() );
+   Schedule::exe< SimpleSchedule >( map );
    return( EXIT_SUCCESS );
 }

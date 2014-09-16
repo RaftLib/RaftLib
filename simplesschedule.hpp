@@ -19,7 +19,7 @@
  */
 #ifndef _SIMPLESSCHEDULE_HPP_
 #define _SIMPLESSCHEDULE_HPP_  1
-#include <vector>
+#include <set>
 #include "kernel.hpp"
 
 class SimpleSchedule : public Kernel
@@ -29,13 +29,14 @@ public:
 
    virtual ~SimpleSchedule();
 
-   virtual void addKernel( Kernel *kernel );
    
-   virtual void start(); 
 protected:
+   virtual void start(); 
+   
+   virtual bool scheduleKernel( Kernel *kernel );
    
    virtual void start_func( Kernel *kernel, void *data );
    
-   std::vector< Kernel* > kernel_map;
+   std::set< Kernel* > kernel_map;
 };
 #endif /* END _SIMPLESSCHEDULE_HPP_ */

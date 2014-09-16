@@ -23,6 +23,7 @@
 #include <cassert>
 #include <cxxabi.h>
 
+#include "schedule.hpp"
 #include "kernel.hpp"
 #include "port_info.hpp"
 
@@ -54,8 +55,8 @@ namespace order
 class Map
 {
 public:
-   Map()          = default;
-   virtual ~Map() = default;
+   Map();
+   virtual ~Map();
    
 
    template < order::spec t = order::in >
@@ -202,12 +203,15 @@ public:
       }
       return( kernel_pair_t( *a, *b ) );
    }
+
 protected:
    std::set< Kernel* >& get_source_kernels();
 
    std::set< Kernel* >& get_all_kernels();
 
    std::set< Edge    >& get_all_edges();
+   
+   friend class Schedule;
 
 private:
    

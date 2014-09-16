@@ -19,6 +19,11 @@
  */
 #include "map.hpp"
 
+Map::Map()
+{
+  
+}
+
 std::set< Kernel* >&
 Map::get_source_kernels()
 {

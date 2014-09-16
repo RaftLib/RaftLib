@@ -39,6 +39,8 @@ struct PortInfo
    {
       fifo         = other.fifo;
       const_map    = other.const_map;
+      my_kernel    = other.my_kernel;
+      my_name      = other.my_name;
       other_kernel = other.other_kernel;
       other_name   = other.other_name;
    }
@@ -69,7 +71,8 @@ struct PortInfo
    std::map< RingBufferType , 
              std::map< bool, std::function< FIFO* (std::size_t) > >* > const_map;
 
-   
+   Kernel     *my_kernel    = nullptr;
+   std::string my_name      = nullptr;
    Kernel     *other_kernel = nullptr;
    std::string other_name   = "";
 };
