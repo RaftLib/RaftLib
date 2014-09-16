@@ -30,7 +30,7 @@
 class Port
 {
 public:
-   Port();
+   Port( Kernel *k );
    /**
     * ~Port - destructor, deletes the FIFO that was given
     * when the object was initalized.
@@ -55,6 +55,8 @@ public:
        * be performant since its only executed once.
        */
        PortInfo pi( typeid( T ) );
+       pi.my_kernel = kernel;
+       pi.my_name   = port_name;
        (this)->initializeConstMap<T>( pi );
       
       /** 
@@ -126,7 +128,8 @@ protected:
    PortInfo& getPortInfoFor( const std::string port_name );
    
    std::map< std::string, PortInfo > portmap;   
-
+   
+   Kernel *kernel;
    friend class Map;
 };
 #endif /* END _PORT_HPP_ */

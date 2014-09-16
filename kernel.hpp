@@ -33,8 +33,9 @@ public:
    virtual bool run() = 0;
 
 protected:
-   Port               input;
-   Port               output;
+   /** FIXME, check syntax **/
+   Port               input( this );
+   Port               output = { Port( this ) };
    
    friend class Map;
 };

@@ -42,10 +42,6 @@ struct kernel_pair_t
    Kernel &dst;
 };
 
-struct edge_t
-{
-
-};
 
 namespace order
 {

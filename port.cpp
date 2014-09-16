@@ -23,7 +23,7 @@
 #include "port.hpp"
 #include "portexception.hpp"
 
-Port::Port()
+Port::Port( Kernel *k ) : kernel( k )
 {
 }
 
