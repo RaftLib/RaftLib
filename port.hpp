@@ -22,6 +22,7 @@
 
 #include <map>
 #include <string>
+#include <utility>
 
 #include "ringbuffertypes.hpp"
 #include "fifo.hpp"
@@ -78,11 +79,22 @@ public:
     */
    const type_info& getPortType( const std::string port_name );
 
+   std::pair< std::string, PortInfo& >
+   Port::getPortInfo();
+
    /**
     * operator[] - input the port name and get a port
     * if it exists. 
     */
    FIFO& operator[]( const std::string port_name );
+
+
+   /**
+    * hasPorts - returns true if any ports exists, false
+    * otherwise. 
+    * @return   bool
+    */
+    bool hasPorts();
 
 protected:
    template < class T > void initializeConstMap( PortInfo &pi )
@@ -111,10 +123,10 @@ protected:
    void  initializePort( const std::string port_name,
                          FIFO             *fifo );
 
-   std::map< std::string, PortInfo > portmap;   
+   PortInfo& getPortInfoFor( const std::string port_name );
    
+   std::map< std::string, PortInfo > portmap;   
 
-   std::map< RingBufferType , 
-             std::map< bool, std::function< FIFO* (size_t) > > > const_map;
+   friend class Map;
 };
 #endif /* END _PORT_HPP_ */

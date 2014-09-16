@@ -21,6 +21,8 @@
 #define _KERNEL_HPP_  1
 #include "port.hpp"
 
+enum dir = { input, output };
+
 class Kernel
 {
 public:
@@ -33,5 +35,7 @@ public:
 protected:
    Port               input;
    Port               output;
+   
+   friend class Map;
 };
 #endif /* END _KERNEL_HPP_ */

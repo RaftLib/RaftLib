@@ -68,6 +68,12 @@ Port::operator[]( const std::string port_name )
    return( *((*ret_val).fifo)  );
 }
 
+bool
+Port::hasPorts()
+{
+   return( portmap.size() > 0 ? true : false );
+}
+
 void
 Port::initializePort( const std::string port_name,
                       FIFO             *fifo )
@@ -85,4 +91,26 @@ Port::initializePort( const std::string port_name,
    }
    /** else initialize **/
    (*ret_val).fifo = fifo;
+}
+
+PortInfo&
+Port::getPortInfoFor( const std::string port_name )
+{
+   const auto ret_val( portmap.find( port_name ) );
+   if( ret_val == portmap.cend() )
+   {
+      throw PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
+   }
+   return( (*ret_val) );
+}
+
+std::pair< std::string, PortInfo& >
+Port::getPortInfo()
+{
+   if( portmap.size() > 1 )
+   {
+      return( std::make_pair< "Fail", nullptr > );
+   }
+   auto pair( portmap.begin() );
+   return( std::make_pair( pair.first, pair.second ) );
 }

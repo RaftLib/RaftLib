@@ -21,8 +21,30 @@
 #define _MAP_HPP_  1
 #include <typeinfo>
 #include <cassert>
+#include <cxxabi.h>
 
 #include "kernel.hpp"
+#include "port_info.hpp"
+
+/**
+ * kernel_pair_t - struct to be returned by map link functions,
+ * in order to allow inline "new" construction of kernels that
+ * might be re-used in multiple instances.
+ */
+struct kernel_pair_t
+{
+   kernel_pair_t( Kernel &a, Kenrel &b ) : src( a ),
+                                           dst( b )
+   {
+   }
+   Kernel &src;
+   Kernel &dst;
+};
+
+struct edge_t
+{
+
+};
 
 namespace order
 {
@@ -34,17 +56,41 @@ class Map
 public:
    Map()          = default;
    virtual ~Map() = default;
+   
 
    template < order::spec t = order::in >
-      link( Kernel &a, Kernel &b )
+      kernel_pair_t link( Kernel *a, Kernel *b )
    {
       /** assume each only has a single input / output **/
       switch( t )
       {
          case( order::in ):
          {
-            /** for the moment lets assume everything is threaded **/
-            auto func = a[ "" ]
+            if( ! a->input.hasPorts() )
+            {
+               source_kernels.insert( a );   
+            }
+            all_kernels.insert( a );
+            all_kernels.insert( b );
+            auto port_info_a( a->getPortInfo() );
+            if( port_info_a.first.compare( "Fail" ) == 0 )
+            {
+               throw AmbiguousPortAssignmentException(
+                  "Source port from kernel " + 
+                  abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) +
+                  "has more than a single port." );
+            }
+            auto port_info_b( b->getPortInfo() );
+            if( port_info_b.first.compare( "Fail" ) == 0 )
+            {
+               int status;
+               throw AmbiguousPortAssignmentException(
+                  "Destination port from kernel " + 
+                  abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) +
+                  "has more than a single port." );
+            }
+            
+            join( port_info_a, port_info_b );
          }
          break;
          case( order::out ):
@@ -53,24 +99,141 @@ public:
          }
          break;
       }
+      return( kernel_pair_t( *a, *b ) );
    }
    
    template < order::spec t = order::in > 
-      link( Kernel &a, const order::spec a_port, Kernel &b )
+      kernel_pair_t link( Kernel *a, const std::string  a_port, Kernel *b )
    {
-
+      switch( t )
+      {
+         case( order::in ):
+         {
+            if( ! a->input.hasPorts() )
+            {
+               source_kernels.insert( a );   
+            }
+            all_kernels.insert( a );
+            all_kernels.insert( b );
+            auto port_info_a( a->getPortInfoFor( a_port ) );
+            
+            auto port_info_b( b->getPortInfo() );
+            if( port_info_b.first.compare( "Fail" ) == 0 )
+            {
+               throw AmbiguousPortAssignmentException(
+                  "Destination port from kernel " + 
+                  abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) +
+                  "has more than a single port." );
+            }
+            
+            join( port_info_a, port_info_b );
+         }
+         break;
+         case( order::out ):
+         {
+            assert( false );
+         }
+         break;
+      }
+      return( kernel_pair_t( *a, *b ) );
    }
    
    template < order::spec t = order::in >
-      link( Kernel &a, Kernel &b, const order::spec b_port )
+      kernel_pair_t link( Kernel *a, Kernel *b, const std::string b_port )
    {
-
+      switch( t )
+      {
+         case( order::in ):
+         {
+            if( ! a->input.hasPorts() )
+            {
+               source_kernels.insert( a );   
+            }
+            all_kernels.insert( a );
+            all_kernels.insert( b );
+            auto port_info_a( a->getPortInfo() );
+            if( port_info_a.first.compare( "Fail" ) == 0 )
+            {
+               throw AmbiguousPortAssignmentException(
+                  "Source port from kernel " + 
+                  abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) +
+                  "has more than a single port." );
+            }
+            
+            auto port_info_b( b->getPortInfoFor( b_port) );
+            
+            join( port_info_a, port_info_b );
+         }
+         break;
+         case( order::out ):
+         {
+            assert( false );
+         }
+         break;
+      }
+      return( kernel_pair_t( *a, *b ) );
    }
    
    template < order::spec t = order::in >
-      link( Kernel &a,const order::spec a_port, Kernel &b, const std::string b_port )
+      kernel_pair_t link( Kernel *a, const std::string a_port, 
+                          Kernel *b, const std::string b_port )
    {
-
+      switch( t )
+      {
+         case( order::in ):
+         {
+            if( ! a->input.hasPorts() )
+            {
+               source_kernels.insert( a );   
+            }
+            all_kernels.insert( a );
+            all_kernels.insert( b );
+            auto port_info_a( a->getPortInfoFor( a_port ) );
+            auto port_info_b( b->getPortInfoFor( b_port) );
+            
+            join( port_info_a, port_info_b );
+         }
+         break;
+         case( order::out ):
+         {
+            assert( false );
+         }
+         break;
+      }
+      return( kernel_pair_t( *a, *b ) );
    }
+protected:
+   std::set< Kernel* >& get_source_kernels();
+
+   std::set< Kernel* >& get_all_kernels();
+
+   std::set< Edge    >& get_all_edges();
+
+private:
+   
+   /**
+    * join - helper method joins the two ports given the correct 
+    * information.  Essentially the correct information for the 
+    * PortInfo object is set.  Type is also checked using the 
+    * typeid information.  If the types aren't the same then an
+    * exception is thrown.
+    * @param a - Kernel&
+    * @param name_a - name for the port on kernel a
+    * @param a_info - PortInfo struct for kernel a
+    * @param b - Kernel&
+    * @param name_b - name for port on kernel b
+    * @param b_info - PortInfo struct for kernel b
+    * @throws PortTypeMismatchException
+    */
+   void join( Kernel &a, const std::string name_a, PortInfo &a_info, 
+              Kernel &b, const std::string name_b, PortInfo &b_info );
+   
+   
+   /** need to keep source kernels **/
+   std::set< Kernel* > source_kernels;
+   /** and keep a list of all kernels **/
+   std::set< Kernel* > all_kernels; 
+   /** keep edges consisting of the kernels and their ports **/
+   std::set< edge_t*   > all_edges;
 };
 #endif /* END _MAP_HPP_ */

@@ -18,3 +18,42 @@
  * limitations under the License.
  */
 #include "map.hpp"
+
+std::set< Kernel* >&
+Map::get_source_kernels()
+{
+   return( source_kernels );
+}
+
+std::set< Kernel* >&
+Map::get_all_kernels()
+{
+   return( all_kernels );
+}
+
+std::set< edge_t >&
+{
+   return( all_edges );
+}
+
+
+void
+Map::join( Kernel &a, const std::string name_a, PortInfo &a_info, 
+           Kernel &b, const std::string name_b, PortInfo &b_info )
+{
+   if( a_info.type != b_info.type )
+   {
+      int status;
+      throw PortTypeMismatchException( "When attempting to join ports (" + 
+         abi::__cxa_demangle( typeid( a ).name(), 0, 0, &status ) + "[" + 
+         name_a + "] -> " + 
+         abi::__cxa_demangle( typeid( b ).name(), 0, 0, &status ) + "[" + 
+         name_b + "] have conflicting types.  " + 
+         abi::__cxa_demangle( a_info.type.name(), 0, 0, &status ) + 
+         " and " + abi::__cxa_demangle( b_info.type.name(), 0, 0, &status ) + "\n" );
+   }
+   a_info.other_kernel = &b;
+   a_info.other_name   = name_b;
+   b_info.other_kernel = &a;
+   b_info.other_name   = name_a;
+}

@@ -44,3 +44,14 @@ PortDoubleInitializeException::PortDoubleInitializeException(
    const std::string message ) : PortException( message )
 {
 }
+
+PortTypeMismatchException::PortTypeMismatchException(
+   const std::string message ) : PortException( message )
+{
+}
+
+AmbiguousPortAssignmentException::AmbiguousPortAssignmentException(
+   const std::string message ) : PortException( message )
+{
+}
+

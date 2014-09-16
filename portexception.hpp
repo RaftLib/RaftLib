@@ -47,4 +47,16 @@ class PortDoubleInitializeException : public PortException
 public:
    PortDoubleInitializeException( const std::string message );
 };
+
+class PortTypeMismatchException : public PortException
+{
+public:
+   PortTypeMismatchException( const std::string message );
+};
+
+class AmbiguousPortAssignmentException : public PortException
+{
+public:
+   AmbiguousPortAssignmentException( const std::string message );
+};
 #endif /* END _PORTEXCEPTION_HPP_ */

@@ -84,10 +84,11 @@ int
 main( int argc, char **argv )
 {
    Map map;
-   Sum< std::int64_t,std::int64_t, std::int64_t > s;
-   map.addLink( Generate< std::int64_t >(), s, "input_a" );
-   map.addLink( Generate< std::int64_t >(), s, "input_b" );
-   map.addLInk( s, Print< std::int64_t >() );
-   AP::Schedule( s );
+   auto kernels( map.addLink( new Generate< std::int64_t >(),
+                              new Sum< std::int64_t,std::int64_t, std::int64_t >(),
+                              , "input_a" ) );
+   map.addLink( new Generate< std::int64_t >(), &( kernels.dst ), "input_b" );
+   map.addLInk( &( kernels.dst ), new Print< std::int64_t >() );
+   AP::Schedule( map );
    return( EXIT_SUCCESS );
 }

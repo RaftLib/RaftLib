@@ -19,13 +19,28 @@
  */
 #ifndef _PORT_INFO_HPP_
 #define _PORT_INFO_HPP_  1
+#include <typeinfo>
+#include <string>
+#include <map>
+#include <functional>
+#include <cstdef>
+
 #include "fifo.hpp"
 
 struct PortInfo
 {
-   PortInfo( const type_info &the_type )  : typez( the_type )
+   PortInfo( const type_info &the_type )  : type( the_type )
    {
 
+   }
+
+
+   PortInfo( const PortInfo &other ) : type_info( other.type_info )
+   {
+      fifo         = other.fifo;
+      const_map    = other.const_map;
+      other_kernel = other.other_kernel;
+      other_name   = other.other_name;
    }
 
    virtual ~PortInfo()
@@ -36,7 +51,7 @@ struct PortInfo
       }
    }
 
-   FIFO            *fifo = std::nullptr;
+   FIFO            *fifo = nullptr;
    /** 
     * the type of the port.  regardless of if the buffer itself
     * is impplemented or not. 
@@ -52,6 +67,10 @@ struct PortInfo
     * second internal map key is "instrumented" vs. not.
     */
    std::map< RingBufferType , 
-             std::map< bool, std::function< FIFO* (size_t) > >* > const_map;
+             std::map< bool, std::function< FIFO* (std::size_t) > >* > const_map;
+
+   
+   Kernel     *other_kernel = nullptr;
+   std::string other_name   = "";
 };
 #endif /* END _PORT_INFO_HPP_ */
