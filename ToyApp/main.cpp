@@ -38,7 +38,7 @@ public:
       input.addPort< A >( "input_a" );
       input.addPort< B >( "input_b" );
       output.addPort< C  >( "sum" );
-   };
+   }
    
    virtual bool run()
    {
