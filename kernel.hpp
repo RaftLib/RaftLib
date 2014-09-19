@@ -34,8 +34,8 @@ public:
 
 protected:
    /** FIXME, check syntax **/
-   Port               input( this );
-   Port               output = { Port( this ) };
+   Port               input  = { this };
+   Port               output = { this };
    
    friend class Map;
 };
