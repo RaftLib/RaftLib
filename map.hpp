@@ -204,8 +204,6 @@ protected:
    std::set< Kernel* >& get_source_kernels();
 
    std::set< Kernel* >& get_all_kernels();
-
-   std::set< Edge    >& get_all_edges();
    
    friend class Schedule;
 

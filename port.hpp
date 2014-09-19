@@ -81,8 +81,6 @@ public:
     */
    const type_info& getPortType( const std::string port_name );
 
-   std::pair< std::string, PortInfo& >
-   Port::getPortInfo();
 
    /**
     * operator[] - input the port name and get a port
@@ -124,6 +122,8 @@ protected:
 
    void  initializePort( const std::string port_name,
                          FIFO             *fifo );
+   
+   std::pair< std::string, PortInfo& > getPortInfo();
 
    PortInfo& getPortInfoFor( const std::string port_name );
    
