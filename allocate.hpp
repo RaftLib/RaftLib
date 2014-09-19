@@ -19,5 +19,14 @@
  */
 #ifndef _ALLOCATE_HPP_
 #define _ALLOCATE_HPP_  1
+class Allocate
+{
+public:
+   Allocate( Map *map );
+   virtual ~Allocate();
 
+protected:
+   std::set< Kernel* > &source_kernels;
+   std::set< Kernel* > &all_kernels;
+};
 #endif /* END _ALLOCATE_HPP_ */

@@ -22,6 +22,7 @@
 #include <typeinfo>
 #include <cassert>
 #include <cxxabi.h>
+#include <thread>
 
 #include "schedule.hpp"
 #include "kernel.hpp"
@@ -205,9 +206,19 @@ protected:
 
    std::set< Kernel* >& get_all_kernels();
 
-   std::set< Edge    >& get_all_edges();
-   
+   template< class allocator = stdalloc > 
+      void finalize()
+   {
+      allocator alloc( this );
+      /** launch in a thread **/
+      std::thread mem_thread( [&](){
+         alloc.run();
+      });
+      mem_thread.join();
+   }
+
    friend class Schedule;
+   friend class Allocate;
 
 private:
    
@@ -233,7 +244,5 @@ private:
    std::set< Kernel* > source_kernels;
    /** and keep a list of all kernels **/
    std::set< Kernel* > all_kernels; 
-   /** keep edges consisting of the kernels and their ports **/
-   std::set< edge_t*   > all_edges;
 };
 #endif /* END _MAP_HPP_ */
