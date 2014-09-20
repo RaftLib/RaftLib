@@ -130,6 +130,7 @@ protected:
    std::map< std::string, PortInfo > portmap;   
    
    Kernel *kernel;
+   
    friend class Map;
 };
 #endif /* END _PORT_HPP_ */

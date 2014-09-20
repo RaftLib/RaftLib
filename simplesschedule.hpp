@@ -22,7 +22,7 @@
 #include <set>
 #include "kernel.hpp"
 
-class SimpleSchedule : public Kernel
+class SimpleSchedule
 {
 public:
    SimpleSchedule();

@@ -206,11 +206,10 @@ public:
       return( kernel_pair_t( *a, *b ) );
    }
 
-protected:
-   
-   template< class allocator = stdalloc > 
-      void finalize()
+   template< class scheduler = SimpleSchedule, class allocator = stdalloc > 
+      void exe()
    {
+      checkEdges( source_kernels );
       allocator alloc( this );
       /** launch in a thread **/
       std::thread mem_thread( [&](){
@@ -219,8 +218,6 @@ protected:
       mem_thread.join();
    }
 
-   friend class Schedule;
-   friend class Allocate;
 
 private:
    
@@ -247,6 +244,7 @@ private:
    /** and keep a list of all kernels **/
    std::set< Kernel* > all_kernels; 
    
-   std::set< edge_t  > all_edges; 
+   friend class Schedule;
+   friend class Allocate;
 };
 #endif /* END _MAP_HPP_ */

@@ -89,6 +89,6 @@ main( int argc, char **argv )
                               , "input_a" ) );
    map.addLink( new Generate< std::int64_t >(), &( kernels.dst ), "input_b" );
    map.addLink( &( kernels.dst ), new Print< std::int64_t >() );
-   Schedule::exe< SimpleSchedule >( map );
+   map.exe();
    return( EXIT_SUCCESS );
 }
