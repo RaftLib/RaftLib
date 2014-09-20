@@ -18,3 +18,18 @@
  * limitations under the License.
  */
 #include "allocate.hpp"
+
+Allocate::Allocate( Map *map ) : source_kernels( map->source_kernels ),
+                                 all_kernels(    map->all_kernels )
+{
+}
+
+Allocate::~Allocate()
+{
+}
+
+void
+Allocate::run()
+{
+   
+}

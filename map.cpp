@@ -24,22 +24,6 @@ Map::Map()
   
 }
 
-std::set< Kernel* >&
-Map::get_source_kernels()
-{
-   return( source_kernels );
-}
-
-std::set< Kernel* >&
-Map::get_all_kernels()
-{
-   return( all_kernels );
-}
-
-std::set< edge_t >&
-{
-   return( all_edges );
-}
 
 
 void
@@ -61,4 +45,5 @@ Map::join( Kernel &a, const std::string name_a, PortInfo &a_info,
    a_info.other_name   = name_b;
    b_info.other_kernel = &a;
    b_info.other_name   = name_a;
+   all_edges.insert( { a_info, b_info } );
 }

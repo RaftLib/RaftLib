@@ -25,6 +25,7 @@ public:
    Allocate( Map *map );
    virtual ~Allocate();
 
+   void run();
 protected:
    std::set< Kernel* > &source_kernels;
    std::set< Kernel* > &all_kernels;
