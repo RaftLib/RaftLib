@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 #include "map.hpp"
+#include "graphtools.hpp"
 
 Map::Map()
 {
@@ -27,7 +28,15 @@ Map::Map()
 void
 Map::checkEdges( std::set< Kernel* > &source_k )
 {
-
+   /**
+    * NOTE: will throw an error that we're not catching here
+    * if there are unconnected edges...this is something that
+    * a user will have to fix.  Otherwise will return with no
+    * errors.
+    */
+   GraphTools::BFS( source_k, 
+                    []( PortInfo &a, PortInfo &b ){ return; },
+                    true );
    return;
 }
 

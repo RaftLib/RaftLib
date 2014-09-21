@@ -19,24 +19,30 @@
  */
 #ifndef _SIMPLESSCHEDULE_HPP_
 #define _SIMPLESSCHEDULE_HPP_  1
-#include <set>
+#include <vector>
+#include "map.hpp"
 #include "kernel.hpp"
 
-class SimpleSchedule
+class simple_schedule : public Schedule
 {
 public:
-   SimpleSchedule();
+   simple_schedule( Map &map );
 
-   virtual ~SimpleSchedule();
+   virtual ~simple_schedule();
 
+   virtual void start(); 
    
 protected:
-   virtual void start(); 
    
    virtual bool scheduleKernel( Kernel *kernel );
    
    virtual void start_func( Kernel *kernel, void *data );
-   
-   std::set< Kernel* > kernel_map;
+
+   /**
+    * NOTE: for more complex schedules it'd behoove us
+    * to keep more information here for each scheduled
+    * kernel.
+    */
+   std::vector< Kernel* > kernel_list;
 };
 #endif /* END _SIMPLESSCHEDULE_HPP_ */

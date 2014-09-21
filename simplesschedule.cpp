@@ -20,26 +20,27 @@
 #include <cassert>
 #include "simplesschedule.hpp"
 
-SimpleSchedule::SimpleSchedule() : Schedule()
+simple_schedule::simple_schedule( Map &map ) : Schedule( map )
 {
+   /** nothing to do here **/
 }
 
 
-SimpleSchedule::~SimpleSchedule()
+simple_schedule::~simple_schedule()
 {
    /** note: kernels are deleted by the map! **/
 }
 
 bool
-SimpleSchedule::scheduleKernel( Kernel *kernel )
+simple_schedule::scheduleKernel( Kernel *kernel )
 {
    assert( kernel != nullptr );
-   auto ret = kernel_map.insert( kernel ); 
-   return( ret.second );
+   kernel_map.push_back( kernel ); 
+   return( true );
 }
 
 void
-SimpleSchedule::start()
+simple_schedule::start()
 {
    struct thread_info_t
    {
@@ -64,8 +65,9 @@ SimpleSchedule::start()
 }
 
 void
-SimpleSchedule::start_func( Kernel *kernel, void *data )
+simple_schedule::start_func( Kernel *kernel, void *data )
 {
+   assert( data == (void*)NULL );
    /** ignore data **/
    while( kernel->run() );
 }

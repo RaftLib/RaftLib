@@ -201,21 +201,32 @@ public:
       return( kernel_pair_t( *a, *b ) );
    }
 
-   template< class scheduler = SimpleSchedule, class allocator = stdalloc > 
+   template< class scheduler = simple_schedule, class allocator = stdalloc > 
       void exe()
    {
       checkEdges( source_kernels );
       allocator alloc( this );
-      /** launch in a thread **/
+      /** launch allocator in a thread **/
       std::thread mem_thread( [&](){
          alloc.run();
       });
+      
+      scheduler sched( this );
+      /** launch scheduler in thread **/
+      std::thread sched_thread( [&](){
+         sched.start();
+      });
+      
+      /** join scheduler first **/
+      sched_thread.join();
       mem_thread.join();
    }
 
 
 private:
    
+   void checkEdges( std::set< Kernel* > &source_k );
+
    /**
     * join - helper method joins the two ports given the correct 
     * information.  Essentially the correct information for the 
@@ -239,6 +250,7 @@ private:
    /** and keep a list of all kernels **/
    std::set< Kernel* > all_kernels; 
    
+
    friend class Schedule;
    friend class Allocate;
 };

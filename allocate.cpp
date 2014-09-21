@@ -28,8 +28,3 @@ Allocate::~Allocate()
 {
 }
 
-void
-Allocate::run()
-{
-   
-}

@@ -19,28 +19,15 @@
  */
 #ifndef _SCHEDULE_HPP_
 #define _SCHEDULE_HPP_  1
+#include "map.hpp"
 #include "kernel.hpp"
+
 class Schedule
 {
 public:
    
-   static 
-   template <class T >
-   exe( Map &map )
-   {
-      T sched;
-      auto kernels( map.get_all_kernels() );
-      for( auto *kern : kernels )
-      {
-         sched.scheduleKernel( kern );
-      }
-      sched.start();
-   }
-
-protected:
-   
-   Schedule()           = default;
-   virtual ~Schedule()  = default;
+   Schedule( Map &map );
+   virtual ~Schedule();
    
    /**
     * start - called to start execution of all
@@ -48,6 +35,10 @@ protected:
     * is purely virtual.
     */
    virtual void start() = 0;
+
+protected:
+   
+   
    /**
     * scheduleKernel - adds the kernel "kernel" to the
     * schedule, ensures that it is run.  Other than

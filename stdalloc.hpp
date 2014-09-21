@@ -1,7 +1,7 @@
 /**
- * allocate.hpp - 
+ * stdalloc.hpp - 
  * @author: Jonathan Beard
- * @version: Tue Sep 16 20:20:06 2014
+ * @version: Sat Sep 20 19:56:49 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,17 +17,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _ALLOCATE_HPP_
-#define _ALLOCATE_HPP_  1
-class Allocate
+#ifndef _STDALLOC_HPP_
+#define _STDALLOC_HPP_  1
+#include "map.hpp"
+#include "allocate.hpp"
+
+class stdalloc : public Allocate
 {
 public:
-   Allocate( Map *map );
-   virtual ~Allocate();
+   stdalloc( Map &map );
+   virtual ~stdalloc();
 
-   virtual void run() = 0;
-protected:
-   std::set< Kernel* > &source_kernels;
-   std::set< Kernel* > &all_kernels;
+   virtual void run();
 };
-#endif /* END _ALLOCATE_HPP_ */
+#endif /* END _STDALLOC_HPP_ */
