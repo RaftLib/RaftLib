@@ -18,6 +18,9 @@
  * limitations under the License.
  */
 #include "stdalloc.hpp"
+#include "graphtools.hpp"
+#include "port_info.hpp"
+#include "ringbuffertype.hpp"
 
 stdalloc::stdalloc( Map &map ) : Allocate( map )
 {
@@ -30,5 +33,17 @@ stdalloc::~stdalloc()
 void
 stdalloc::run()
 {
-
+   auto alloc_func = []( PortInfo &a, PortInfo &b )
+   {
+      assert( a.type == b.type );
+      /** assume everyone needs a heap for the moment to get working **/
+      auto *fifo( a.const_map[ RingBufferType::Heap ]->[ false ]( 512 /** hard code buffer size at first **/ ) );
+      assert( fifo != nullptr );
+      a.fifo = fifo;
+      b.fifo = fifo;
+   };
+   GraphTools::BFS( (this)->source_kernels,
+                    alloc_func );
+   /** NOTE: we'll keep this thread running in future versions to dynamically update buffer size **/
+   return;
 }
