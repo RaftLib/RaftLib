@@ -97,6 +97,14 @@ public:
     bool hasPorts();
 
 protected:
+   /**
+    * initializeConstMap - hack to get around the inability to otherwise
+    * initialize a template function where later we don't have the 
+    * template parameter.  NOTE:  this is a biggy, if we have more 
+    * FIFO types in the future (i.e., sub-classes of FIFO) then we
+    * must create an entry here otherwise bad things will happen.
+    * @param   pi - PortInfo&
+    */
    template < class T > void initializeConstMap( PortInfo &pi )
    {
       typedef std::map< bool, std::function< FIFO* ( std::size_t /** n_items **/,
@@ -119,18 +127,35 @@ protected:
       /** no instrumentation version defined yet **/
       return;
    }
-
-   void  initializePort( const std::string port_name,
-                         FIFO             *fifo );
    
+   /**
+    * getPortInfo - returns the PortInfo struct for a kernel if we
+    * expect it to have a single port.  If there's more than one port
+    * this function throws an exception.
+    * @return  std::pair< std::string, PortInfo& >
+    */
    std::pair< std::string, PortInfo& > getPortInfo();
 
+   /** 
+    * getPortInfoFor - gets port information for the param port
+    * throws an exception if the port doesn't exist. 
+    * @param   port_name - const std::string
+    * @return  PortInfo&
+    */
    PortInfo& getPortInfoFor( const std::string port_name );
-   
+  
+   /** 
+    * portmap - data structure that maps the ports by name
+    * to the info data structures that actually contain them
+    */
    std::map< std::string, PortInfo > portmap;   
    
-   Kernel *kernel;
-   
+   /** 
+    * parent kernel that owns this port 
+    */
+   Kernel const *kernel;
+  
+   /** we need some friends **/
    friend class Map;
    friend void GraphTools::BFS( std::set< Kernel* > &source_kernels,
                                 edge_func fun );

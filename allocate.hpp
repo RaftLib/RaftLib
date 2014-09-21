@@ -19,6 +19,15 @@
  */
 #ifndef _ALLOCATE_HPP_
 #define _ALLOCATE_HPP_  1
+
+
+#include "kernel.hpp"
+#include "port_info.hpp"
+#include "fifo.hpp"
+#include <set>
+
+class Map;
+
 class Allocate
 {
 public:
@@ -27,6 +36,8 @@ public:
 
    virtual void run() = 0;
 protected:
+   void initialize( PortInfo &src, PortInfo &dst, FIFO *fifo );
+   
    std::set< Kernel* > &source_kernels;
    std::set< Kernel* > &all_kernels;
 };

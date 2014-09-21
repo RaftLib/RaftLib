@@ -74,25 +74,6 @@ Port::hasPorts()
    return( portmap.size() > 0 ? true : false );
 }
 
-void
-Port::initializePort( const std::string port_name,
-                      FIFO             *fifo )
-{
-   assert( fifo != std::nullptr );
-   const auto ret_val( portmap.find( port_name ) );
-   if( ret_val == portmap.cend() )
-   {
-      throw  PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
-   }
-   if( (*ret_val).fifo != std::nullptr )
-   {
-      throw PortDoubleInitializeException( 
-         "Port \"" + port_name "\" already initialized!" );
-   }
-   /** else initialize **/
-   (*ret_val).fifo = fifo;
-}
-
 PortInfo&
 Port::getPortInfoFor( const std::string port_name )
 {

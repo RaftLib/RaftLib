@@ -17,7 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <cassert>
+
 #include "allocate.hpp"
+#include "port_info.hpp"
+#include "map.hpp"
+#include "portexception.hpp"
 
 Allocate::Allocate( Map *map ) : source_kernels( map->source_kernels ),
                                  all_kernels(    map->all_kernels )
@@ -28,3 +33,20 @@ Allocate::~Allocate()
 {
 }
 
+void
+Allocate::initialize( PortInfo &src, PortInfo &dst, FIFO *fifo )
+{
+   assert( fifo != nullptr );
+   if( src.fifo )
+   {
+      throw PortDoubleInitializeException( 
+         "Port \"" + src.my_name + "\" already initialized!" );
+   }
+   if( dst.fifo )
+   {
+      throw PortDoubleInitializeException( 
+         "Port \"" + dst.my_name +  "\" already initialized!" );
+   }
+   src.fifo = fifo;
+   dst.fifo = fifo;
+}
