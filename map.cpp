@@ -24,7 +24,12 @@ Map::Map()
   
 }
 
+void
+Map::checkEdges( std::set< Kernel* > &source_k )
+{
 
+   return;
+}
 
 void
 Map::join( Kernel &a, const std::string name_a, PortInfo &a_info, 

@@ -43,11 +43,6 @@ struct kernel_pair_t
    Kernel &dst;
 };
 
-struct edge_t
-{
-   PortInfo &src;
-   PortInfo &dst;
-};
 
 namespace order
 {

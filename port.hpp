@@ -132,5 +132,8 @@ protected:
    Kernel *kernel;
    
    friend class Map;
+   friend void GraphTools::BFS( std::set< Kernel* > &source_kernels,
+                                edge_func fun );
+   
 };
 #endif /* END _PORT_HPP_ */

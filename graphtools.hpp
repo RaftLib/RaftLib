@@ -1,7 +1,7 @@
 /**
- * kernel.hpp - 
+ * graphtools.hpp - 
  * @author: Jonathan Beard
- * @version: Thu Sep 11 15:34:24 2014
+ * @version: Sat Sep 20 13:15:09 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,27 +17,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _KERNEL_HPP_
-#define _KERNEL_HPP_  1
-#include "port.hpp"
+#ifndef _GRAPHTOOLS_HPP_
+#define _GRAPHTOOLS_HPP_  1
+#include <functional>
+#include "kernel.hpp"
 
-enum dir = { input, output };
-
-class Kernel
+typedef std::function< void( PortInfo&,PortInfo& ) > edge_func;
+class GraphTools
 {
-public:
-   Kernel()         = default;
-   virtual Kernel() = default;
-
-
-   virtual bool run() = 0;
-
-protected:
-   Port               input  = { this };
-   Port               output = { this };
+   GraphTools() = delete;
    
-   friend class Map;
-   friend void GraphTools::BFS( std::set< Kernel* > &source_kernels,
-                                edge_func fun );
+   static void BFS( std::set< Kernel* > &source_kernels,  
+                    edge_func func,
+                    bool connected_error = false );
 };
-#endif /* END _KERNEL_HPP_ */
+#endif /* END _GRAPHTOOLS_HPP_ */
