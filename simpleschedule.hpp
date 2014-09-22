@@ -1,5 +1,5 @@
 /**
- * simplesschedule.hpp - 
+ * simpleschedule.hpp - 
  * @author: Jonathan Beard
  * @version: Thu Sep 11 15:49:57 2014
  * 

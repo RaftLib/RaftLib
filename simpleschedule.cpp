@@ -1,5 +1,5 @@
 /**
- * simplesschedule.cpp - 
+ * simpleschedule.cpp - 
  * @author: Jonathan Beard
  * @version: Thu Sep 11 15:49:57 2014
  * 
@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 #include <cassert>
-#include "simplesschedule.hpp"
+#include "simpleschedule.hpp"
 
 simple_schedule::simple_schedule( Map &map ) : Schedule( map )
 {

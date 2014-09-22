@@ -1,29 +1,37 @@
 CC    ?= gcc
 CXX   ?= g++
 
+include fifo/buffer.makefile
 
-CFLAGS   =  -O2 -g  -Wall -std=c99
-CXXFLAGS =  -O2 -g  -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
-
-COBJS   = getrandom
-CXXOBJS = 
-
-CFILES = $(addsuffix .c, $(COBJS) )
-CXXFILES = $(addsuffix .cpp, $(CXXOBJS) )
-
-OBJS = $(addsuffix .o, $(COBJS) ) $(addsuffix .o, $(CXXOBJS) )
+DIRINCS = $(RINGBUFFERDIR)
 
 ifneq ($(shell uname -s), Darwin)
 RT = -lrt
 STATIC = -static -static-libgcc -static-libstdc++
 endif
 
-INCS = 
-LIBS = -lpthread -lgsl -lgslcblas -lm -lc $(RT) $(STATIC) 
+CFLAGS   =  -O2 -g  -Wall -std=c99
+CXXFLAGS =  -O2 -g  -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
+
+
+RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
+                   simpleschedule stdalloc
+
+COBJS   = $(RBCOBJS)
+CXXOBJS = $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)
+
+CFILES = $(addsuffix .c, $(COBJS) )
+CXXFILES = $(addsuffix .cpp, $(CXXOBJS) )
+
+OBJS = $(addsuffix .o, $(COBJS) ) $(addsuffix .o, $(CXXOBJS) )
+
+
+INCS = $(addprefix -I, $(DIRINCS))
+LIBS = -lpthread  $(RT)
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(OBJS)
-	$(CXX) $(CXXFLAGS) $(INCS) $(OBJS) $(LIBS) -o ringb
+	$(AR) rcs -o raftlight $(OBJS)
 
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCS) -o $@ $<
