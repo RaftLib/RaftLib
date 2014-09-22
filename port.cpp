@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <cassert>
 
+#include "kernel.hpp"
 #include "port.hpp"
 #include "portexception.hpp"
 

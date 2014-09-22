@@ -20,11 +20,16 @@
 #ifndef _GRAPHTOOLS_HPP_
 #define _GRAPHTOOLS_HPP_  1
 #include <functional>
-#include "kernel.hpp"
+#include <set>
+
+class  Kernel;
+struct PortInfo;
 
 typedef std::function< void( PortInfo&,PortInfo& ) > edge_func;
+
 class GraphTools
 {
+public:
    GraphTools() = delete;
    
    static void BFS( std::set< Kernel* > &source_kernels,  

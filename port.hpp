@@ -24,8 +24,18 @@
 #include <string>
 #include <utility>
 
+#include "graphtools.hpp"
 #include "ringbuffertypes.hpp"
 #include "fifo.hpp"
+#include "port_info.hpp"
+#include "ringbuffer.tcc"
+
+class Kernel;
+
+typedef std::map< bool, std::function< FIFO* ( std::size_t /** n_items **/,
+                                               std::size_t /** alignof **/,
+                                               void*   /** data struct **/ ) > >
+                                                   instr_map_t;
 
 class Port
 {
@@ -79,7 +89,7 @@ public:
     * @return  const type_info&
     * @throws PortNotFoundException
     */
-   const type_info& getPortType( const std::string port_name );
+   const std::type_info& getPortType( const std::string port_name );
 
 
    /**
@@ -107,11 +117,8 @@ protected:
     */
    template < class T > void initializeConstMap( PortInfo &pi )
    {
-      typedef std::map< bool, std::function< FIFO* ( std::size_t /** n_items **/,
-                                                     std::size_t /** alignof **/,
-                                                     void*   /** data struct **/ ) >
-                                                         instr_map_t;
-      pi.const_map.push_back(  Type::Heap , new instr_map_t() );
+      pi.const_map.insert(  
+         std::make_pair( Type::Heap , new instr_map_t() ) );
       
       pi.const_map[ Type::Heap ]->insert(
          std::make_pair( false /** no instrumentation **/,
@@ -153,12 +160,13 @@ protected:
    /** 
     * parent kernel that owns this port 
     */
-   Kernel const *kernel;
+   Kernel *kernel;
   
    /** we need some friends **/
    friend class Map;
    friend void GraphTools::BFS( std::set< Kernel* > &source_kernels,
-                                edge_func fun );
+                                edge_func fun,
+                                bool connection_error );
    
 };
 #endif /* END _PORT_HPP_ */

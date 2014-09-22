@@ -23,19 +23,21 @@
 #include <string>
 #include <map>
 #include <functional>
-#include <cstdef>
+#include <cstddef>
 
 #include "fifo.hpp"
 
+class Kernel;
+
 struct PortInfo
 {
-   PortInfo( const type_info &the_type )  : type( the_type )
+   PortInfo( const std::type_info &the_type )  : type( the_type )
    {
 
    }
 
 
-   PortInfo( const PortInfo &other ) : type_info( other.type_info )
+   PortInfo( const PortInfo &other ) : type( other.type )
    {
       fifo         = other.fifo;
       const_map    = other.const_map;
@@ -58,7 +60,7 @@ struct PortInfo
     * the type of the port.  regardless of if the buffer itself
     * is impplemented or not. 
     */
-   const type_info &type;
+   const std::type_info &type;
 
    /**
     * const_map - stores "builder" objects for each of the 
@@ -68,8 +70,7 @@ struct PortInfo
     * for the most part, storing the ring buffer type.  The 
     * second internal map key is "instrumented" vs. not.
     */
-   std::map< RingBufferType , 
-             std::map< bool, std::function< FIFO* (std::size_t) > >* > const_map;
+   std::map< Type::RingBufferType , instr_map_t* > const_map;
 
    Kernel     *my_kernel    = nullptr;
    std::string my_name      = nullptr;

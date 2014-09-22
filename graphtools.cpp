@@ -23,6 +23,8 @@
 #include <utility>
 
 #include "graphtools.hpp"
+#include "port_info.hpp"
+#include "kernel.hpp"
 
 void
 GraphTools::BFS( std::set< Kernel* > &source_kernels,
