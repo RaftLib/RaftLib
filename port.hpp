@@ -29,13 +29,10 @@
 #include "fifo.hpp"
 #include "port_info.hpp"
 #include "ringbuffer.tcc"
+#include "port_info_types.hpp"
 
 class Kernel;
 
-typedef std::map< bool, std::function< FIFO* ( std::size_t /** n_items **/,
-                                               std::size_t /** alignof **/,
-                                               void*   /** data struct **/ ) > >
-                                                   instr_map_t;
 
 class Port
 {
@@ -127,10 +124,10 @@ protected:
          std::make_pair( true /** yes instrumentation **/,
                          RingBuffer< T, Type::Heap, false >::make_new_fifo ) );
 
-      pi.const_map.push_back( Type::SHM, new instr_map_t() );
-      pi.const_map[ Type::SHM ]->insert(
+      pi.const_map.insert( std::make_pair( Type::SharedMemory, new instr_map_t() ) );
+      pi.const_map[ Type::SharedMemory ]->insert(
          std::make_pair( false /** no instrumentation **/,
-                         RingBuffer< T, Type::SHM >::make_new_fifo ) );
+                         RingBuffer< T, Type::SharedMemory >::make_new_fifo ) );
       /** no instrumentation version defined yet **/
       return;
    }

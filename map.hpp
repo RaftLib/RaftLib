@@ -23,10 +23,15 @@
 #include <cassert>
 #include <cxxabi.h>
 #include <thread>
+#include <sstream>
 
+#include "portexception.hpp"
 #include "schedule.hpp"
+#include "simpleschedule.hpp"
 #include "kernel.hpp"
 #include "port_info.hpp"
+#include "allocate.hpp"
+#include "stdalloc.hpp"
 
 /**
  * kernel_pair_t - struct to be returned by map link functions,
@@ -35,7 +40,7 @@
  */
 struct kernel_pair_t
 {
-   kernel_pair_t( Kernel &a, Kenrel &b ) : src( a ),
+   kernel_pair_t( Kernel &a, Kernel &b ) : src( a ),
                                            dst( b )
    {
    }
@@ -46,7 +51,7 @@ struct kernel_pair_t
 
 namespace order
 {
-   enum spec = { in, out };
+   enum spec  { in, out };
 }
 
 class Map
@@ -70,22 +75,27 @@ public:
             }
             all_kernels.insert( a );
             all_kernels.insert( b );
-            auto port_info_a( a->getPortInfo() );
+            auto port_info_a( a->output.getPortInfo() );
             if( port_info_a.first.compare( "Fail" ) == 0 )
             {
-               throw AmbiguousPortAssignmentException(
-                  "Source port from kernel " + 
-                  abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) +
-                  "has more than a single port." );
+               int status( 0 );
+               std::stringstream ss;
+               ss << 
+                  "Source port from kernel " << 
+                  abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) <<
+                  "has more than a single port.";
+               
+               throw AmbiguousPortAssignmentException( ss.str() );
             }
-            auto port_info_b( b->getPortInfo() );
+            auto port_info_b( b->input.getPortInfo() );
             if( port_info_b.first.compare( "Fail" ) == 0 )
             {
-               int status;
-               throw AmbiguousPortAssignmentException(
-                  "Destination port from kernel " + 
-                  abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) +
-                  "has more than a single port." );
+               int status( 0 );
+               std::stringstream ss;
+               ss << "Destination port from kernel " << 
+                  abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) <<
+                  "has more than a single port.";
+               throw AmbiguousPortAssignmentException( ss.str() );
             }
             
             join( port_info_a, port_info_b );

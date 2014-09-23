@@ -25,6 +25,7 @@
 #include <functional>
 #include <cstddef>
 
+#include "port_info_types.hpp"
 #include "fifo.hpp"
 
 class Kernel;

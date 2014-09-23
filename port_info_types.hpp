@@ -1,7 +1,7 @@
 /**
- * kernel.hpp - 
+ * port_info_types.hpp - 
  * @author: Jonathan Beard
- * @version: Thu Sep 11 15:34:24 2014
+ * @version: Mon Sep 22 20:01:43 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,28 +17,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _KERNEL_HPP_
-#define _KERNEL_HPP_  1
-#include "port.hpp"
+#ifndef _PORT_INFO_TYPES_HPP_
+#define _PORT_INFO_TYPES_HPP_  1
 
-enum dir { input, output };
-
-class Kernel
-{
-public:
-   Kernel()         = default;
-   virtual ~Kernel() = default;
-
-
-   virtual bool run() = 0;
-
-protected:
-   Port               input  = { this };
-   Port               output = { this };
-   
-   friend class Map;
-   friend void GraphTools::BFS( std::set< Kernel* > &source_kernels,
-                                edge_func fun,
-                                bool connection_error );
-};
-#endif /* END _KERNEL_HPP_ */
+typedef std::map< bool, std::function< FIFO* ( std::size_t /** n_items **/,
+                                               std::size_t /** alignof **/,
+                                               void*   /** data struct **/ ) > >
+                                                   instr_map_t;
+#endif /* END _PORT_INFO_TYPES_HPP_ */
