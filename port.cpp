@@ -19,7 +19,10 @@
  */
 #include <algorithm>
 #include <cassert>
+#include <typeindex>
+#include <sstream>
 
+#include "fifo.hpp"
 #include "kernel.hpp"
 #include "port.hpp"
 #include "portexception.hpp"
@@ -32,7 +35,7 @@ Port::~Port()
 {
 }
 
-const type_info&
+const std::type_index&
 Port::getPortType( const std::string port_name )
 {
    const auto ret_val( portmap.find( port_name ) );
@@ -40,33 +43,35 @@ Port::getPortType( const std::string port_name )
    {
       throw PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
    }
-   return( ret_val.second.type );
+   return( (*ret_val).second.type );
 }
 
 FIFO&
 Port::operator[]( const std::string port_name )
 {
-   if( port_name.compare( "" ) == 0 )
-   {
-      int size( 0 );
-      if( ( size = portmap.size() ) > 1 )
-      {
-         throw PortNotFoundException( 
-            "Special port name \"\" implies that only 1 port exists, " +
-               "however, there are (" + std::to_string( size ) + ") ports." );
-         exit( EXIT_FAILURE );
-      }
-      else
-      {
-         return( *( *( portmap.begin() ) ) );
-      }
-   }
+   //if( port_name.compare( "" ) == 0 )
+   //{
+   //   int size( 0 );
+   //   if( ( size = portmap.size() ) > 1 )
+   //   {
+   //      std::stringstream ss;
+   //      ss << 
+   //         "Special port name \"\" implies that only 1 port exists, " <<
+   //            "however, there are (" << std::to_string( size ) << ") ports.";
+   //      throw PortNotFoundException( ss.str() );
+   //      exit( EXIT_FAILURE );
+   //   }
+   //   else
+   //   {
+   //      return( *( *( portmap.begin() ) ) );
+   //   }
+   //}
    const auto ret_val( portmap.find( port_name ) );
    if( ret_val == portmap.cend() )
    {
       throw PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
    }
-   return( *((*ret_val).fifo)  );
+   return( *((*ret_val).second.fifo)  );
 }
 
 bool
@@ -81,9 +86,11 @@ Port::getPortInfoFor( const std::string port_name )
    const auto ret_val( portmap.find( port_name ) );
    if( ret_val == portmap.cend() )
    {
-      throw PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
+      std::stringstream ss;
+      ss << "Port not found for name \"" << port_name << "\"";
+      throw PortNotFoundException( ss.str() );
    }
-   return( (*ret_val) );
+   return( (*ret_val).second );
 }
 
 PortInfo&
@@ -95,5 +102,5 @@ Port::getPortInfo()
       throw PortNotFoundException( "One port expected, more than one found!" );
    }
    auto pair( portmap.begin() );
-   return( std::make_pair( pair.first, pair.second ) );
+   return( (*pair).second );
 }

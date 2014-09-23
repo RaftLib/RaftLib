@@ -23,6 +23,8 @@
 #include <map>
 #include <string>
 #include <utility>
+#include <typeinfo>
+#include <typeindex>
 
 #include "graphtools.hpp"
 #include "ringbuffertypes.hpp"
@@ -83,10 +85,10 @@ public:
     * ports that are "dynamically" created do in fact have
     * compatible types.
     * @param port_name - const std::string
-    * @return  const type_info&
+    * @return  const type_index&
     * @throws PortNotFoundException
     */
-   const std::type_info& getPortType( const std::string port_name );
+   const std::type_index& getPortType( const std::string port_name );
 
 
    /**

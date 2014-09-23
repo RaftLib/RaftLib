@@ -19,6 +19,10 @@
  */
 #ifndef _PORT_INFO_TYPES_HPP_
 #define _PORT_INFO_TYPES_HPP_  1
+#include <cstddef>
+#include <map>
+#include <functional>
+#include "fifo.hpp"
 
 typedef std::map< bool, std::function< FIFO* ( std::size_t /** n_items **/,
                                                std::size_t /** alignof **/,

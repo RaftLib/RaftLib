@@ -20,8 +20,9 @@
 #ifndef _SIMPLESSCHEDULE_HPP_
 #define _SIMPLESSCHEDULE_HPP_  1
 #include <vector>
-#include "map.hpp"
-#include "kernel.hpp"
+
+class Map;
+class Kernel;
 
 class simple_schedule : public Schedule
 {
@@ -43,6 +44,6 @@ protected:
     * to keep more information here for each scheduled
     * kernel.
     */
-   std::vector< Kernel* > kernel_list;
+   std::vector< Kernel* > kernel_map;
 };
 #endif /* END _SIMPLESSCHEDULE_HPP_ */

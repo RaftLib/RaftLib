@@ -25,7 +25,7 @@ PortException::PortException( const std::string message )
 }
 
 const char*
-PortException::what()
+PortException::what() const noexcept
 {
    return( message.c_str() );
 }

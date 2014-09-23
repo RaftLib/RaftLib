@@ -17,6 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <sstream>
 #include "map.hpp"
 #include "graphtools.hpp"
 
@@ -35,7 +36,7 @@ Map::checkEdges( std::set< Kernel* > &source_k )
     * errors.
     */
    GraphTools::BFS( source_k, 
-                    []( PortInfo &a, PortInfo &b ){ return; },
+                    []( const PortInfo &a, const PortInfo &b ){ return; },
                     true );
    return;
 }
@@ -46,18 +47,19 @@ Map::join( Kernel &a, const std::string name_a, PortInfo &a_info,
 {
    if( a_info.type != b_info.type )
    {
+      std::stringstream ss;
       int status;
-      throw PortTypeMismatchException( "When attempting to join ports (" + 
-         abi::__cxa_demangle( typeid( a ).name(), 0, 0, &status ) + "[" + 
-         name_a + "] -> " + 
-         abi::__cxa_demangle( typeid( b ).name(), 0, 0, &status ) + "[" + 
-         name_b + "] have conflicting types.  " + 
-         abi::__cxa_demangle( a_info.type.name(), 0, 0, &status ) + 
-         " and " + abi::__cxa_demangle( b_info.type.name(), 0, 0, &status ) + "\n" );
+      ss << "When attempting to join ports (" << 
+         abi::__cxa_demangle( typeid( a ).name(), 0, 0, &status ) << "[" << 
+         name_a << "] -> " << 
+         abi::__cxa_demangle( typeid( b ).name(), 0, 0, &status ) << "[" << 
+         name_b << "] have conflicting types.  " << 
+         abi::__cxa_demangle( a_info.type.name(), 0, 0, &status ) << 
+         " and " << abi::__cxa_demangle( b_info.type.name(), 0, 0, &status ) << "\n";
+      throw PortTypeMismatchException( ss.str() );
    }
    a_info.other_kernel = &b;
    a_info.other_name   = name_b;
    b_info.other_kernel = &a;
    b_info.other_name   = name_a;
-   all_edges.insert( { a_info, b_info } );
 }

@@ -25,7 +25,7 @@
 class  Kernel;
 struct PortInfo;
 
-typedef std::function< void( PortInfo&,PortInfo& ) > edge_func;
+typedef std::function< void( const PortInfo&, const PortInfo& ) > edge_func;
 
 class GraphTools
 {

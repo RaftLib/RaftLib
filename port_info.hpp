@@ -20,11 +20,13 @@
 #ifndef _PORT_INFO_HPP_
 #define _PORT_INFO_HPP_  1
 #include <typeinfo>
+#include <typeindex>
 #include <string>
 #include <map>
 #include <functional>
 #include <cstddef>
 
+#include "ringbuffertypes.hpp"
 #include "port_info_types.hpp"
 #include "fifo.hpp"
 
@@ -65,11 +67,12 @@ struct PortInfo
    }
 
    FIFO            *fifo = nullptr;
+
    /** 
     * the type of the port.  regardless of if the buffer itself
     * is impplemented or not. 
     */
-   const std::type_info &type;
+   std::type_index type;
 
    /**
     * const_map - stores "builder" objects for each of the 

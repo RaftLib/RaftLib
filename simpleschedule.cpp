@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 #include <cassert>
+#include "kernel.hpp"
+#include "map.hpp"
 #include "simpleschedule.hpp"
 
 simple_schedule::simple_schedule( Map &map ) : Schedule( map )

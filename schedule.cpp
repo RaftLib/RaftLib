@@ -1,3 +1,5 @@
+#include "kernel.hpp"
+#include "map.hpp"
 #include "schedule.hpp"
 
 Schedule::Schedule( Map &map )

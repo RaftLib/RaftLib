@@ -19,8 +19,9 @@
  */
 #ifndef _SCHEDULE_HPP_
 #define _SCHEDULE_HPP_  1
-#include "map.hpp"
-#include "kernel.hpp"
+
+class Kernel;
+class Map;
 
 class Schedule
 {

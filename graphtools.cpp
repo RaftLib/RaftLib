@@ -21,6 +21,7 @@
 #include <set>
 #include <queue>
 #include <utility>
+#include <string>
 
 #include "graphtools.hpp"
 #include "port_info.hpp"
@@ -43,14 +44,14 @@ GraphTools::BFS( std::set< Kernel* > &source_kernels,
       /** mark current kernel as visited **/
       visited_set.insert( k ); 
       /** iterate over all out-edges **/
-      auto &map_of_ports( k->portmap );
-      for( const auto &pair : map_of_ports )
+      auto &map_of_ports( k->output.portmap );
+      for( const std::pair< std::string, PortInfo > &pair : map_of_ports )
       {
-         PortInfo &source( pair.second );
+         const PortInfo &source( pair.second );
          /** get dst edge to call function on **/
          if( source.other_kernel != nullptr  )
          {
-            PortInfo &dst( source.other_kernel->input.getInfoFor( source.other_name ) );
+            const PortInfo &dst( source.other_kernel->input.getPortInfoFor( source.other_name ) );
             func( source, dst );
          }
          /** if the dst kernel hasn't been visited, visit it **/
