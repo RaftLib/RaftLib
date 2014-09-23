@@ -75,8 +75,11 @@ public:
             }
             all_kernels.insert( a );
             all_kernels.insert( b );
-            auto port_info_a( a->output.getPortInfo() );
-            if( port_info_a.first.compare( "Fail" ) == 0 )
+            PortInfo port_info_a;
+            try{ 
+               port_info_a =  a->output.getPortInfo();
+            }
+            catch( PortNotFoundException &ex )
             {
                int status( 0 );
                std::stringstream ss;
@@ -87,8 +90,11 @@ public:
                
                throw AmbiguousPortAssignmentException( ss.str() );
             }
-            auto port_info_b( b->input.getPortInfo() );
-            if( port_info_b.first.compare( "Fail" ) == 0 )
+            PortInfo port_info_b;
+            try{
+               port_info_b = b->input.getPortInfo();
+            }
+            catch( PortNotFoundException &ex )
             {
                int status( 0 );
                std::stringstream ss;
@@ -98,7 +104,9 @@ public:
                throw AmbiguousPortAssignmentException( ss.str() );
             }
             
-            join( port_info_a, port_info_b );
+            join( *a, port_info_a.my_name, port_info_a, 
+                  *b, port_info_b.my_name, port_info_b );
+            
          }
          break;
          case( order::out ):
@@ -123,18 +131,24 @@ public:
             }
             all_kernels.insert( a );
             all_kernels.insert( b );
-            auto port_info_a( a->getPortInfoFor( a_port ) );
+            auto port_info_a( a->output.getPortInfoFor( a_port ) );
             
-            auto port_info_b( b->getPortInfo() );
-            if( port_info_b.first.compare( "Fail" ) == 0 )
-            {
-               throw AmbiguousPortAssignmentException(
-                  "Destination port from kernel " + 
-                  abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) +
-                  "has more than a single port." );
+            PortInfo port_info_b;
+            try{
+               port_info_b = b->input.getPortInfo();
             }
-            
-            join( port_info_a, port_info_b );
+            catch( PortNotFoundException &ex ) 
+            {
+               int status( 0 );
+               std::stringstream ss;
+               ss << "Destination port from kernel " << 
+                  abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) <<
+                  "has more than a single port.";
+               throw AmbiguousPortAssignmentException( ss.str() );
+            }
+            join( *a, a_port , port_info_a, 
+                  *b, port_info_b.my_name, port_info_b );
+
          }
          break;
          case( order::out ):
@@ -159,18 +173,24 @@ public:
             }
             all_kernels.insert( a );
             all_kernels.insert( b );
-            auto port_info_a( a->getPortInfo() );
-            if( port_info_a.first.compare( "Fail" ) == 0 )
+            PortInfo port_info_a;
+            try{
+               port_info_a = a->output.getPortInfo();
+            }
+            catch( PortNotFoundException &ex ) 
             {
-               throw AmbiguousPortAssignmentException(
-                  "Source port from kernel " + 
-                  abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) +
-                  "has more than a single port." );
+               std::stringstream ss;
+               int status( 0 );
+               ss << "Source port from kernel " << 
+                  abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) <<
+                  "has more than a single port.";
+               throw AmbiguousPortAssignmentException( ss.str() );
             }
             
-            auto port_info_b( b->getPortInfoFor( b_port) );
+            auto port_info_b( b->input.getPortInfoFor( b_port) );
             
-            join( port_info_a, port_info_b );
+            join( *a, port_info_a.my_name, port_info_a, 
+                  *b, b_port, port_info_b );
          }
          break;
          case( order::out ):
@@ -196,10 +216,11 @@ public:
             }
             all_kernels.insert( a );
             all_kernels.insert( b );
-            auto port_info_a( a->getPortInfoFor( a_port ) );
-            auto port_info_b( b->getPortInfoFor( b_port) );
+            auto port_info_a( a->output.getPortInfoFor( a_port ) );
+            auto port_info_b( b->input.getPortInfoFor( b_port) );
             
-            join( port_info_a, port_info_b );
+            join( *a, a_port, port_info_a, 
+                  *b, b_port, port_info_b );
          }
          break;
          case( order::out ):

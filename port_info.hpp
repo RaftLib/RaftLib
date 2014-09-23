@@ -32,6 +32,14 @@ class Kernel;
 
 struct PortInfo
 {
+   PortInfo() : type( typeid(*this) )
+   {
+      /** 
+       * TODO should throw an error if copy constructor isn't used
+       * after this.  
+       */
+   }
+
    PortInfo( const std::type_info &the_type )  : type( the_type )
    {
 

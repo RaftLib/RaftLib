@@ -86,12 +86,13 @@ Port::getPortInfoFor( const std::string port_name )
    return( (*ret_val) );
 }
 
-std::pair< std::string, PortInfo& >
+PortInfo&
 Port::getPortInfo()
 {
    if( portmap.size() > 1 )
    {
-      return( std::make_pair< "Fail", nullptr > );
+      /** TODO: extract kernel name to go here too **/
+      throw PortNotFoundException( "One port expected, more than one found!" );
    }
    auto pair( portmap.begin() );
    return( std::make_pair( pair.first, pair.second ) );

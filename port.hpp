@@ -138,7 +138,7 @@ protected:
     * this function throws an exception.
     * @return  std::pair< std::string, PortInfo& >
     */
-   std::pair< std::string, PortInfo& > getPortInfo();
+   PortInfo& getPortInfo();
 
    /** 
     * getPortInfoFor - gets port information for the param port
