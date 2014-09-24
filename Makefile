@@ -31,8 +31,8 @@ LIBS = -lpthread  $(RT)
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(OBJS)
-	$(AR) rcs -o raftlight $(OBJS)
-
+	$(AR) rcs raftlight.a $(OBJS)
+	#$(CXX) -dynamiclib -o raftlight.dylib $(OBJS)
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCS) -o $@ $<
 
@@ -41,4 +41,4 @@ compile: $(CXXFILES) $(CFILES)
 
 .PHONY: clean
 clean:
-	rm -rf ringb $(OBJS)
+	rm -rf raftlight.a $(OBJS)

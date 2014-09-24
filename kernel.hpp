@@ -20,6 +20,7 @@
 #ifndef _KERNEL_HPP_
 #define _KERNEL_HPP_  1
 #include "port.hpp"
+#include "signalvars.hpp"
 
 enum dir { input, output };
 

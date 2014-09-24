@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 #include <cassert>
+#include <functional>
 #include "kernel.hpp"
 #include "map.hpp"
 #include "simpleschedule.hpp"
@@ -52,9 +53,12 @@ simple_schedule::start()
 
    for( auto index( 0 ); index < kernel_map.size(); index++ )
    {
-      auto bound_func = std::bind( start_func, 
-                                   kernel_map [ index ],
-                                   nullptr );
+      auto bound_func = [&](){
+         while( kernel_map [ index ]->run() );
+      };
+      //auto bound_func = std::bind( start_func, 
+      //                             kernel_map [ index ],
+      //                             nullptr );
       thread_map[ index ].th = new std::thread( bound_func );
    }
 

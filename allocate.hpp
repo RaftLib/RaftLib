@@ -31,7 +31,7 @@ class Map;
 class Allocate
 {
 public:
-   Allocate( Map *map );
+   Allocate( Map &map );
    virtual ~Allocate();
 
    virtual void run() = 0;

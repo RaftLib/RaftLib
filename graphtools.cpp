@@ -44,14 +44,15 @@ GraphTools::BFS( std::set< Kernel* > &source_kernels,
       /** mark current kernel as visited **/
       visited_set.insert( k ); 
       /** iterate over all out-edges **/
-      auto &map_of_ports( k->output.portmap );
-      for( const std::pair< std::string, PortInfo > &pair : map_of_ports )
+     std::map< std::string, PortInfo > &map_of_ports( k->output.portmap );
+      for( auto &port : map_of_ports )
       {
-         const PortInfo &source( pair.second );
+         PortInfo &source( port.second );
          /** get dst edge to call function on **/
          if( source.other_kernel != nullptr  )
          {
-            const PortInfo &dst( source.other_kernel->input.getPortInfoFor( source.other_name ) );
+            PortInfo &dst( 
+               source.other_kernel->input.getPortInfoFor( source.other_name ) );
             func( source, dst );
          }
          /** if the dst kernel hasn't been visited, visit it **/

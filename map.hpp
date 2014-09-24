@@ -236,13 +236,13 @@ public:
       void exe()
    {
       checkEdges( source_kernels );
-      allocator alloc( this );
+      allocator alloc( (*this) );
       /** launch allocator in a thread **/
       std::thread mem_thread( [&](){
          alloc.run();
       });
       
-      scheduler sched( this );
+      scheduler sched( (*this) );
       /** launch scheduler in thread **/
       std::thread sched_thread( [&](){
          sched.start();

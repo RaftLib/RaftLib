@@ -1,6 +1,9 @@
 #include <cassert>
 #include <iostream>
+#include <cstdint>
 #include <cstdlib>
+
+#include "map.hpp"
 #include "kernel.hpp"
 
 
@@ -47,7 +50,8 @@ public:
       RBSignal sig_a( RBSignal::NONE ), sig_b( RBSignal::NONE );
       input[ "input_a" ].pop( a, &sig_a );
       input[ "input_b" ].pop( b, &sig_b );
-      output[ "sum" ].push< decltype( A + B ) >( ( a + b ), sig_a );
+      C c( a + b );
+      output[ "sum" ].push( c , sig_a );
       assert( sig_a == sig_b );
       if( sig_b == RBSignal::RBEOF )
       {
@@ -84,11 +88,11 @@ int
 main( int argc, char **argv )
 {
    Map map;
-   auto kernels( map.addLink( new Generate< std::int64_t >(),
-                              new Sum< std::int64_t,std::int64_t, std::int64_t >(),
-                              , "input_a" ) );
-   map.addLink( new Generate< std::int64_t >(), &( kernels.dst ), "input_b" );
-   map.addLink( &( kernels.dst ), new Print< std::int64_t >() );
+   auto kernels( map.link( new Generate< std::int64_t >(),
+                           new Sum< std::int64_t,std::int64_t, std::int64_t >(),
+                            "input_a" ) );
+   map.link( new Generate< std::int64_t >(), &( kernels.dst ), "input_b" );
+   map.link( &( kernels.dst ), new Print< std::int64_t >() );
    map.exe();
    return( EXIT_SUCCESS );
 }

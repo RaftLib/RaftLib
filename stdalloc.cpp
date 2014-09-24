@@ -20,7 +20,7 @@
 #include "stdalloc.hpp"
 #include "graphtools.hpp"
 #include "port_info.hpp"
-#include "ringbuffertype.hpp"
+#include "ringbuffertypes.hpp"
 
 stdalloc::stdalloc( Map &map ) : Allocate( map )
 {
@@ -37,7 +37,12 @@ stdalloc::run()
    {
       assert( a.type == b.type );
       /** assume everyone needs a heap for the moment to get working **/
-      auto *fifo( a.const_map[ RingBufferType::Heap ]->[ false ]( 512 /** hard code buffer size at first **/ ) );
+      instr_map_t *func_map( a.const_map[ Type::Heap ] );
+      auto test_func( (*func_map)[ false ] );
+      FIFO *fifo( test_func( 512, 16, (void*)NULL ) );
+      //auto *fifo( a.const_map[ Type::Heap ]->[ false ]( 
+      //   512 /** hard code buffer size at first **/,
+      //   16  /** alignment **/) );
       assert( fifo != nullptr );
       a.fifo = fifo;
       b.fifo = fifo;

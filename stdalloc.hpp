@@ -19,8 +19,9 @@
  */
 #ifndef _STDALLOC_HPP_
 #define _STDALLOC_HPP_  1
-#include "map.hpp"
 #include "allocate.hpp"
+
+class Map;
 
 class stdalloc : public Allocate
 {
