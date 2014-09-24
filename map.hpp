@@ -75,9 +75,9 @@ public:
             }
             all_kernels.insert( a );
             all_kernels.insert( b );
-            PortInfo port_info_a;
+            PortInfo *port_info_a;
             try{ 
-               port_info_a =  a->output.getPortInfo();
+               port_info_a =  &(a->output.getPortInfo());
             }
             catch( PortNotFoundException &ex )
             {
@@ -90,9 +90,9 @@ public:
                
                throw AmbiguousPortAssignmentException( ss.str() );
             }
-            PortInfo port_info_b;
+            PortInfo *port_info_b;
             try{
-               port_info_b = b->input.getPortInfo();
+               port_info_b = &(b->input.getPortInfo());
             }
             catch( PortNotFoundException &ex )
             {
@@ -104,8 +104,8 @@ public:
                throw AmbiguousPortAssignmentException( ss.str() );
             }
             
-            join( *a, port_info_a.my_name, port_info_a, 
-                  *b, port_info_b.my_name, port_info_b );
+            join( *a, port_info_a->my_name, *port_info_a, 
+                  *b, port_info_b->my_name, *port_info_b );
             
          }
          break;
@@ -131,11 +131,11 @@ public:
             }
             all_kernels.insert( a );
             all_kernels.insert( b );
-            auto port_info_a( a->output.getPortInfoFor( a_port ) );
+            PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
             
-            PortInfo port_info_b;
+            PortInfo *port_info_b;
             try{
-               port_info_b = b->input.getPortInfo();
+               port_info_b = &(b->input.getPortInfo());
             }
             catch( PortNotFoundException &ex ) 
             {
@@ -147,7 +147,7 @@ public:
                throw AmbiguousPortAssignmentException( ss.str() );
             }
             join( *a, a_port , port_info_a, 
-                  *b, port_info_b.my_name, port_info_b );
+                  *b, port_info_b->my_name, *port_info_b );
 
          }
          break;
@@ -173,9 +173,9 @@ public:
             }
             all_kernels.insert( a );
             all_kernels.insert( b );
-            PortInfo port_info_a;
+            PortInfo *port_info_a;
             try{
-               port_info_a = a->output.getPortInfo();
+               port_info_a = &(a->output.getPortInfo() );
             }
             catch( PortNotFoundException &ex ) 
             {
@@ -187,9 +187,9 @@ public:
                throw AmbiguousPortAssignmentException( ss.str() );
             }
             
-            auto port_info_b( b->input.getPortInfoFor( b_port) );
+            PortInfo &port_info_b( b->input.getPortInfoFor( b_port) );
             
-            join( *a, port_info_a.my_name, port_info_a, 
+            join( *a, port_info_a->my_name, *port_info_a, 
                   *b, b_port, port_info_b );
          }
          break;

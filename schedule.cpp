@@ -9,3 +9,15 @@ Schedule::Schedule( Map &map )
       (this)->scheduleKernel( kern );
    }
 }
+
+Schedule::~Schedule()
+{
+   /** nothing to do at the moment **/
+}
+
+bool
+Schedule::scheduleKernel( Kernel *kernel )
+{
+   /** does nothing **/
+   return( false );
+}

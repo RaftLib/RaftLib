@@ -60,10 +60,11 @@ struct PortInfo
 
    virtual ~PortInfo()
    {
-      if( fifo != nullptr )
-      {
-         delete( fifo );
-      }
+      //if( fifo != nullptr )
+      //{
+      //   delete( fifo );
+      //}
+      //fifo = nullptr;
    }
 
    FIFO            *fifo = nullptr;
@@ -85,7 +86,7 @@ struct PortInfo
    std::map< Type::RingBufferType , instr_map_t* > const_map;
 
    Kernel     *my_kernel    = nullptr;
-   std::string my_name      = nullptr;
+   std::string my_name      = "";
    Kernel     *other_kernel = nullptr;
    std::string other_name   = "";
 };

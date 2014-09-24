@@ -22,7 +22,10 @@
 #include <queue>
 #include <utility>
 #include <string>
+#include <sstream>
+#include <cxxabi.h>
 
+#include "portexception.hpp"
 #include "graphtools.hpp"
 #include "port_info.hpp"
 #include "kernel.hpp"
@@ -44,7 +47,7 @@ GraphTools::BFS( std::set< Kernel* > &source_kernels,
       /** mark current kernel as visited **/
       visited_set.insert( k ); 
       /** iterate over all out-edges **/
-     std::map< std::string, PortInfo > &map_of_ports( k->output.portmap );
+      std::map< std::string, PortInfo > &map_of_ports( k->output.portmap );
       for( auto &port : map_of_ports )
       {
          PortInfo &source( port.second );
@@ -54,6 +57,17 @@ GraphTools::BFS( std::set< Kernel* > &source_kernels,
             PortInfo &dst( 
                source.other_kernel->input.getPortInfoFor( source.other_name ) );
             func( source, dst );
+         }
+         else
+         if( connected_error )
+         {
+            int status( 0 );
+            std::stringstream ss;
+            ss << "Unconnected port detected at " << 
+               abi::__cxa_demangle( typeid( *k ).name(), 0, 0, &status ) << 
+                  "[ \"" <<
+                  source.my_name << " \"], please fix and recompile.";
+            throw PortException( ss.str() );
          }
          /** if the dst kernel hasn't been visited, visit it **/
          if( visited_set.find( source.other_kernel ) == visited_set.end() )

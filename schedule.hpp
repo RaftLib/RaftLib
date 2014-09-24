@@ -49,7 +49,7 @@ protected:
     * @return  bool  - returns false if the kernel is
     * already scheduled.
     */
-   virtual bool scheduleKernel( Kernel *kernel ) = 0;
+   virtual bool scheduleKernel( Kernel *kernel );
    
    /**
     * start_func - calls kernel run functions,

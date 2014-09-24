@@ -67,14 +67,8 @@ public:
        pi.my_kernel = kernel;
        pi.my_name   = port_name;
        (this)->initializeConstMap<T>( pi );
-      
-      /** 
-       * TODO, idea -> add initializer function map for each type
-       * of possible FIFO, no other way to get a fifo initialized
-       * with the appropriate type.
-       */
       const auto ret_val( portmap.insert( std::make_pair( port_name, 
-                                                          PortInfo( typeid( T ) ) ) ) );
+                                                          pi ) ) );
       return( ret_val.second );
    }
 

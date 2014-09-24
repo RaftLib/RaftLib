@@ -1,5 +1,5 @@
 CC    ?= gcc
-CXX   ?= g++
+CXX   ?= clang++
 
 include fifo/buffer.makefile
 
@@ -10,8 +10,8 @@ RT = -lrt
 STATIC = -static -static-libgcc -static-libstdc++
 endif
 
-CFLAGS   =  -O2 -g  -Wall -std=c99
-CXXFLAGS =  -O2 -g  -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
+CFLAGS   =  -O0 -g  -Wall -std=c99
+CXXFLAGS =  -O0 -g  -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
@@ -31,7 +31,7 @@ LIBS = -lpthread  $(RT)
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(OBJS)
-	$(AR) rcs raftlight.a $(OBJS)
+	$(AR) rvs raftlight.a $(OBJS)
 	#$(CXX) -dynamiclib -o raftlight.dylib $(OBJS)
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCS) -o $@ $<

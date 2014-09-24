@@ -18,12 +18,21 @@
  * limitations under the License.
  */
 #include <sstream>
+#include <cxxabi.h>
 #include "map.hpp"
 #include "graphtools.hpp"
 
 Map::Map()
 {
   
+}
+
+Map::~Map()
+{
+   for( Kernel *kern : all_kernels )
+   {
+      delete( kern );
+   }
 }
 
 void
@@ -58,6 +67,7 @@ Map::join( Kernel &a, const std::string name_a, PortInfo &a_info,
          " and " << abi::__cxa_demangle( b_info.type.name(), 0, 0, &status ) << "\n";
       throw PortTypeMismatchException( ss.str() );
    }
+
    a_info.other_kernel = &b;
    a_info.other_name   = name_b;
    b_info.other_kernel = &a;

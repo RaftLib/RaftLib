@@ -51,6 +51,7 @@ public:
       input[ "input_a" ].pop( a, &sig_a );
       input[ "input_b" ].pop( b, &sig_b );
       C c( a + b );
+      std::cerr << c << "\n";
       output[ "sum" ].push( c , sig_a );
       assert( sig_a == sig_b );
       if( sig_b == RBSignal::RBEOF )
@@ -88,11 +89,12 @@ int
 main( int argc, char **argv )
 {
    Map map;
-   auto kernels( map.link( new Generate< std::int64_t >(),
-                           new Sum< std::int64_t,std::int64_t, std::int64_t >(),
-                            "input_a" ) );
-   map.link( new Generate< std::int64_t >(), &( kernels.dst ), "input_b" );
-   map.link( &( kernels.dst ), new Print< std::int64_t >() );
+   auto *sum( new Sum< std::int64_t,std::int64_t, std::int64_t >() );
+   map.link( new Generate< std::int64_t >(),
+             sum,
+             "input_a" );
+   map.link( new Generate< std::int64_t >(), sum, "input_b" );
+   map.link( sum, new Print< std::int64_t >() );
    map.exe();
    return( EXIT_SUCCESS );
 }
