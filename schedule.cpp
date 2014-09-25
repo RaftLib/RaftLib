@@ -1,13 +1,11 @@
+#include <iostream>
+
 #include "kernel.hpp"
 #include "map.hpp"
 #include "schedule.hpp"
 
-Schedule::Schedule( Map &map )
+Schedule::Schedule( Map &map ) : map_ref( map )
 {
-   for( Kernel *kern : map.all_kernels )
-   {
-      (this)->scheduleKernel( kern );
-   }
 }
 
 Schedule::~Schedule()
@@ -15,9 +13,19 @@ Schedule::~Schedule()
    /** nothing to do at the moment **/
 }
 
+void
+Schedule::init()
+{
+   for( Kernel *kern : map_ref.all_kernels )
+   {
+      (this)->scheduleKernel( kern );
+   }
+}
+
 bool
 Schedule::scheduleKernel( Kernel *kernel )
 {
+   std::cerr << "HERE" << "\n";
    /** does nothing **/
    return( false );
 }

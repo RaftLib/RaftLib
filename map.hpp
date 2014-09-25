@@ -243,6 +243,7 @@ public:
       });
       
       scheduler sched( (*this) );
+      sched.init();
       /** launch scheduler in thread **/
       std::thread sched_thread( [&](){
          sched.start();

@@ -37,6 +37,7 @@ public:
     */
    virtual void start() = 0;
 
+   virtual void init();
 protected:
    
    
@@ -62,5 +63,7 @@ protected:
     * @param   data   - void*
     */
    virtual void start_func( Kernel *kernel, void *data ) = 0;
+private:
+   Map &map_ref;
 };
 #endif /* END _SCHEDULE_HPP_ */

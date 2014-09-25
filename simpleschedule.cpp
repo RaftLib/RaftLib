@@ -19,6 +19,8 @@
  */
 #include <cassert>
 #include <functional>
+#include <iostream>
+
 #include "kernel.hpp"
 #include "map.hpp"
 #include "simpleschedule.hpp"
@@ -53,13 +55,13 @@ simple_schedule::start()
 
    for( auto index( 0 ); index < kernel_map.size(); index++ )
    {
-      auto bound_func = [&](){
-         while( kernel_map [ index ]->run() );
+      auto bound_func = [&]( Kernel *kernel ){
+         while( kernel->run() );
       };
       //auto bound_func = std::bind( start_func, 
       //                             kernel_map [ index ],
       //                             nullptr );
-      thread_map[ index ].th = new std::thread( bound_func );
+      thread_map[ index ].th = new std::thread( bound_func, kernel_map[ index ]  );
    }
 
    for( auto  &t_info : thread_map )

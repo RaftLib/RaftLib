@@ -76,7 +76,7 @@ public:
       T data;
       RBSignal signal( RBSignal::NONE );
       input[ "in" ].pop( data, &signal );
-      std::cout << data << "\n";
+      fprintf( stderr, "%" PRIu64 "\n", data );
       if( signal == RBSignal::RBEOF )
       {
          return( false );
