@@ -10,8 +10,8 @@ RT = -lrt
 STATIC = -static -static-libgcc -static-libstdc++
 endif
 
-CFLAGS   =  -O0 -g  -Wall -std=c99
-CXXFLAGS =  -O0 -g  -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
+CFLAGS   =  -O3  -Wall -std=c99
+CXXFLAGS =  -O3  -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
