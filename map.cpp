@@ -31,7 +31,7 @@ Map::~Map()
 {
    for( Kernel *kern : all_kernels )
    {
-      //delete( kern );
+      delete( kern );
    }
 }
 

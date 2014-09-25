@@ -60,11 +60,11 @@ struct PortInfo
 
    virtual ~PortInfo()
    {
-      //if( fifo != nullptr )
-      //{
-      //   delete( fifo );
-      //}
-      //fifo = nullptr;
+      if( fifo != nullptr )
+      {
+         //delete( fifo );
+         //fifo = nullptr;
+      }
    }
 
    FIFO            *fifo = nullptr;
