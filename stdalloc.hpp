@@ -1,5 +1,7 @@
 /**
- * stdalloc.hpp - 
+ * stdalloc.hpp - simple allocation, just initializes the FIFO with a 
+ * fixed size buffer (512 items) with an alignment of 16-bytes.  This
+ * can easily be changed by changing the constants below.  
  * @author: Jonathan Beard
  * @version: Sat Sep 20 19:56:49 2014
  * 
@@ -26,9 +28,24 @@ class Map;
 class stdalloc : public Allocate
 {
 public:
+   
+   /**
+    * stdalloc - default constructor, calls base allocate
+    * constructor of Allcoate which sets the map object.  
+    * After setting this object loose in a thread, the notReady()
+    * function must be called so that the queue sees fully
+    * allocated buffers as opposed ot null objects.
+    * @param map - Map&, map with full application
+    */
    stdalloc( Map &map );
+   /**
+    * destructor, doesn't really do much at he moment.
+    */
    virtual ~stdalloc();
-
+   /**
+    * run - call within a thread, internally we could have a loop before exiting 
+    * but this version simply allocates and exits.  
+    */
    virtual void run();
 };
 #endif /* END _STDALLOC_HPP_ */

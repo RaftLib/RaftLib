@@ -25,7 +25,6 @@ Schedule::init()
 bool
 Schedule::scheduleKernel( Kernel *kernel )
 {
-   std::cerr << "HERE" << "\n";
    /** does nothing **/
    return( false );
 }

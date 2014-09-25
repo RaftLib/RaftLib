@@ -49,6 +49,11 @@ struct kernel_pair_t
 };
 
 
+/**
+ * spec is used when specifying the order of items within the queue,
+ * by default in order is specified, in the future out wil be fully
+ * implemented and will allow quite a few nice optimizations.
+ */
 namespace order
 {
    enum spec  { in, out };
@@ -57,10 +62,32 @@ namespace order
 class Map
 {
 public:
+   /** 
+    * Map - constructor, really doesn't do too much at the monent
+    * and doesn't really need to.
+    */
    Map();
+   /** 
+    * default destructor 
+    */
    virtual ~Map();
    
 
+   /** 
+    * link - this comment goes for the next 4 types of link functions,
+    * which basically do the exact same thing.  The template function
+    * takes a single param order::spec which is exactly as the name
+    * implies, the order of the queue linking the two kernels.  The
+    * verious functions are needed to specify different ordering types
+    * each of these will be commented seperately below.  This function
+    * assumes that Kenrel a has only a single output and Kernel b has
+    * only a single input otherwise an exception will be thrown.
+    * @param   a - Kernel*, src kernel
+    * @param   b - Kernel*, dst kernel
+    * @throws  AmbiguousPortAssignmentException - thrown if either src or dst have more than 
+    *          a single port to link.
+    * @return  kernel_pair_t - references to src, dst kernels.
+    */
    template < order::spec t = order::in >
       kernel_pair_t link( Kernel *a, Kernel *b )
    {
@@ -118,6 +145,20 @@ public:
       return( kernel_pair_t( *a, *b ) );
    }
    
+   /** 
+    * link - same as function above save for the following differences:
+    * kernel a is assumed to have multiple ports and the one we wish
+    * to link with Kernel b is a_port.  Kernel b is assumed to have a
+    * single input port to connect otherwise an exception is thrown.
+    * @param   a - Kernel *a, can have multiple ports
+    * @param   a_port - port within Kernel a to link
+    * @param   b - Kernel *b, assumed to have only single input.
+    * @throws  AmbiguousPortAssignmentException - thrown if Kernel b has more than
+    *          a single input port.
+    * @throws  PortNotFoundException - thrown if Kernel a has no port named
+    *          a_port.
+    * @return  kernel_pair_t - references to src, dst kernels.
+    */
    template < order::spec t = order::in > 
       kernel_pair_t link( Kernel *a, const std::string  a_port, Kernel *b )
    {
@@ -159,7 +200,21 @@ public:
       }
       return( kernel_pair_t( *a, *b ) );
    }
-   
+  
+   /**
+    * link - same as above save for the following differences:
+    * Kernel a is assumed to have a single output port.  Kernel
+    * b is assumed to have more than one input port, within one
+    * matching the port b_port.
+    * @param   a - Kernel*, with more a single output port
+    * @param   b - Kernel*, with input port named b_port
+    * @param   b_port - const std::string, input port name.
+    * @throws  AmbiguousPortAssignmentException - exception thrown 
+    *          if Kernel a has more than a single output port
+    * @throws  PortNotFoundException - exception thrown if Kernel b
+    *          has no input port named b_port
+    * @return  kernel_pair_t - references to src, dst kernels.
+    */
    template < order::spec t = order::in >
       kernel_pair_t link( Kernel *a, Kernel *b, const std::string b_port )
    {
@@ -202,6 +257,18 @@ public:
       return( kernel_pair_t( *a, *b ) );
    }
    
+   /**
+    * link - same as above save for the following differences:
+    * Kernel a is assumed to have an output port a_port and 
+    * Kernel b is assumed to have an input port b_port.
+    * @param   a - Kernel*, with more a single output port
+    * @param   a_port - const std::string, output port name
+    * @param   b - Kernel*, with input port named b_port
+    * @param   b_port - const std::string, input port name.
+    * @throws  PortNotFoundException - exception thrown if either kernel
+    *          is missing port a_port or b_port.
+    * @return  kernel_pair_t - references to src, dst kernels.
+    */
    template < order::spec t = order::in >
       kernel_pair_t link( Kernel *a, const std::string a_port, 
                           Kernel *b, const std::string b_port )
@@ -232,6 +299,19 @@ public:
       return( kernel_pair_t( *a, *b ) );
    }
 
+   /**
+    * exe - template function that which takes two template parameters,
+    * scheduler and allocator.  Currently the default is simple_schedule
+    * and allocator is stdalloc.  The first thing this function does is 
+    * check each edge within the streaming graph to ensure that all 
+    * edges are connected.  If any unconnected edges have been found
+    * then an exception is thrown.  If all edges are connected then the 
+    * allocator and scheduler are called in turn based on the template 
+    * parameters.
+    * @throws PortDoubleInitializeException - thrown if an edge is double
+    *         allocated for some reason.
+    * @throws PortException - thrown if an unconnected edge is found.
+    */ 
    template< class scheduler = simple_schedule, class allocator = stdalloc > 
       void exe()
    {
@@ -241,7 +321,11 @@ public:
       std::thread mem_thread( [&](){
          alloc.run();
       });
-      
+     
+      while( alloc.notReady() )
+      {
+         /** spin till all queues have their initial allocation **/
+      }
       scheduler sched( (*this) );
       sched.init();
       /** launch scheduler in thread **/
@@ -252,11 +336,18 @@ public:
       /** join scheduler first **/
       sched_thread.join();
       mem_thread.join();
+      return; 
    }
 
 
 private:
-   
+  
+   /**
+    * checkEdges - runs a breadth first search through the graph
+    * to look for disconnected edges.
+    * @param   source_k - std::set< Kernel* >
+    * @throws PortException - thrown if an unconnected edge is found.
+    */
    void checkEdges( std::set< Kernel* > &source_k );
 
    /**

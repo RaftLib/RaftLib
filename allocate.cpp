@@ -33,6 +33,18 @@ Allocate::~Allocate()
 {
 }
 
+bool
+Allocate::notReady()
+{
+   return( ! ready );
+}
+
+void
+Allocate::setReady()
+{
+   ready = true;
+}
+
 void
 Allocate::initialize( PortInfo &src, PortInfo &dst, FIFO *fifo )
 {
@@ -49,4 +61,9 @@ Allocate::initialize( PortInfo &src, PortInfo &dst, FIFO *fifo )
    }
    src.fifo = fifo;
    dst.fifo = fifo;
+   /** 
+    * TODO, at this point we don't care if this one is already in the set,
+    * however might behoove us to throw an error.
+    */
+   allocated_fifo.insert( fifo ); 
 }

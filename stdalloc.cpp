@@ -1,5 +1,8 @@
 /**
- * stdalloc.cpp - 
+ * stdalloc.cpp - simple allocation, just initializes the FIFO with a 
+ * fixed size buffer (512 items) with an alignment of 16-bytes.  This
+ * can easily be changed by changing the constants below.  
+ *
  * @author: Jonathan Beard
  * @version: Sat Sep 20 19:56:49 2014
  * 
@@ -40,15 +43,17 @@ stdalloc::run()
       instr_map_t *func_map( a.const_map[ Type::Heap ] );
       auto test_func( (*func_map)[ false ] );
       FIFO *fifo( test_func( 512, 16, (void*)NULL ) );
-      //auto *fifo( a.const_map[ Type::Heap ]->[ false ]( 
-      //   512 /** hard code buffer size at first **/,
-      //   16  /** alignment **/) );
       assert( fifo != nullptr );
       a.fifo = fifo;
       b.fifo = fifo;
    };
    GraphTools::BFS( (this)->source_kernels,
                     alloc_func );
-   /** NOTE: we'll keep this thread running in future versions to dynamically update buffer size **/
+   
+   (this)->setReady();
+   /** 
+    * NOTE: we'll keep this thread running in future versions 
+    * to dynamically update buffer size 
+    */
    return;
 }

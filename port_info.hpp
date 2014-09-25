@@ -60,11 +60,14 @@ struct PortInfo
 
    virtual ~PortInfo()
    {
+      /** should be serialized so okay **/
+#if 0
       if( fifo != nullptr )
       {
-         //delete( fifo );
-         //fifo = nullptr;
+         delete( fifo );
+         fifo = nullptr;
       }
+#endif
    }
 
    FIFO            *fifo = nullptr;

@@ -30,7 +30,6 @@ public:
 
 private:
    std::int64_t count;
-
 };
 
 template< typename A, typename B, typename C > class Sum : public Kernel
@@ -50,9 +49,9 @@ public:
       RBSignal sig_a( RBSignal::NONE ), sig_b( RBSignal::NONE );
       input[ "input_a" ].pop( a, &sig_a );
       input[ "input_b" ].pop( b, &sig_b );
+      assert( sig_a == sig_b );
       C c( a + b );
       output[ "sum" ].push( c , sig_a );
-      assert( sig_a == sig_b );
       if( sig_b == RBSignal::RBEOF )
       {
          return( false );
@@ -88,12 +87,11 @@ int
 main( int argc, char **argv )
 {
    Map map;
-   auto *sum( new Sum< std::int64_t,std::int64_t, std::int64_t >() );
-   map.link( new Generate< std::int64_t >(),
-             sum,
-             "input_a" );
-   map.link( new Generate< std::int64_t >(), sum, "input_b" );
-   map.link( sum, new Print< std::int64_t >() );
+   auto linked_kernels( map.link( new Generate< std::int64_t >(),
+                                  new Sum< std::int64_t,std::int64_t, std::int64_t >(),
+                                  "input_a" ) );
+   map.link( new Generate< std::int64_t >(), &( linked_kernels.dst ), "input_b" );
+   map.link( &( linked_kernels.dst ), new Print< std::int64_t >() );
    map.exe();
    return( EXIT_SUCCESS );
 }
