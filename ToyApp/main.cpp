@@ -51,7 +51,6 @@ public:
       input[ "input_a" ].pop( a, &sig_a );
       input[ "input_b" ].pop( b, &sig_b );
       C c( a + b );
-      std::cerr << c << "\n";
       output[ "sum" ].push( c , sig_a );
       assert( sig_a == sig_b );
       if( sig_b == RBSignal::RBEOF )
