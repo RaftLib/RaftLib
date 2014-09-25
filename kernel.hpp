@@ -22,7 +22,6 @@
 #include "port.hpp"
 #include "signalvars.hpp"
 
-enum dir { input, output };
 
 class Kernel
 {
