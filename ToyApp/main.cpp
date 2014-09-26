@@ -24,7 +24,7 @@ public:
          return( true );
       }
       /** else **/
-      output[ "number_stream" ].push( count, RBSignal::RBEOF );
+      output[ "number_stream" ].push( count, raft::eof );
       return( false );
    }
 
@@ -46,13 +46,13 @@ public:
    {
       A a;
       B b;
-      RBSignal sig_a( RBSignal::NONE ), sig_b( RBSignal::NONE );
+      raft::signal  sig_a( raft::none  ), sig_b( raft::none );
       input[ "input_a" ].pop( a, &sig_a );
       input[ "input_b" ].pop( b, &sig_b );
       assert( sig_a == sig_b );
       C c( a + b );
       output[ "sum" ].push( c , sig_a );
-      if( sig_b == RBSignal::RBEOF )
+      if( sig_b == raft::eof )
       {
          return( false );
       }
@@ -72,10 +72,10 @@ public:
    virtual bool run()
    {
       T data;
-      RBSignal signal( RBSignal::NONE );
+      raft::signal  signal( raft::none );
       input[ "in" ].pop( data, &signal );
       fprintf( stderr, "%" PRIu64 "\n", data );
-      if( signal == RBSignal::RBEOF )
+      if( signal == raft::eof )
       {
          return( false );
       }

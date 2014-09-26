@@ -90,41 +90,17 @@ public:
     * get_signal - returns a reference to the signal mask for this
     * queue. TODO this function won't necessarily work as advertised
     * as it needs its own FIFO to deliver signals properly.
-    * @return volatile RBSignal&
+    * @return raft::signal&
     */
-   virtual RBSignal get_signal()
+   virtual raft::signal get_signal()
    {
 #if 0      
-      /** 
-       * there are two signalling paths, the one 
-       * we'll give the highest priority to is the 
-       * asynchronous one.
-       */
-      const auto head( Pointer::val( data->read_pt ) );
-      const auto signal_queue( data->store[ head ].signal );
-      const auto curr_size( (this)->size() );
-      if( curr_size > 0 ) 
-      {
-         return( signal_queue );
-      }
-      /** there must be something in the local signal **/
-      struct{
-         RBSignal a;
-         RBSignal b;
-      }copy;
-      do
-      {
-         copy.a = (this)->signal_a;
-         copy.b = (this)->signal_b;
-      }while( copy.a != copy.b );
-
-      //(this)->signal_a = RBSignal::NONE;
-      //(this)->signal_b = RBSignal::NONE;
+      /** FIXME, reimplement this function **/
 #endif
-      return( RBSignal::NONE );
+      return( raft::none );
    }
   
-   virtual bool  send_signal( const RBSignal &signal )
+   virtual bool  send_signal( const raft::signal &signal )
    {
       //TODO, fixme
       return( true );
@@ -155,16 +131,16 @@ public:
     * push - releases the last item allocated by allocate() to
     * the queue.  Function will imply return if allocate wasn't
     * called prior to calling this function.
-    * @param signal - const RBSignal signal, default: NONE
+    * @param signal - const raft::signal signal, default: NONE
     */
-   virtual void push( const RBSignal signal = RBSignal::NONE )
+   virtual void push( const raft::signal signal = raft::none )
    {
       if( ! (this)->allocate_called ) return;
       const size_t write_index( Pointer::val( data->write_pt ) );
       data->signal[ write_index ].sig = signal;
       Pointer::inc( data->write_pt );
       write_stats.count++;
-      if( signal == RBSignal::RBEOF )
+      if( signal == raft::eof )
       {
          /**
           * TODO, this is a quick hack, rework when proper signalling
@@ -259,11 +235,11 @@ protected:
    /**
     * local_push - implements the pure virtual function from the 
     * FIFO interface.  Takes a void ptr as the object which is
-    * cast into the correct form and an RBSignal signal.
+    * cast into the correct form and an raft::signal signal.
     * @param   item, void ptr
-    * @param   signal, const RBSignal&
+    * @param   signal, const raft::signal&
     */
-   virtual void  local_push( void *ptr, const RBSignal &signal )
+   virtual void  local_push( void *ptr, const raft::signal &signal )
    {
       assert( ptr != nullptr );
       while( space_avail() == 0 )
@@ -290,7 +266,7 @@ protected:
 	   data->signal[ write_index ].sig     = signal;
 	   Pointer::inc( data->write_pt );
 	   write_stats.count++;
-      if( signal == RBSignal::RBEOF )
+      if( signal == raft::eof )
       {
          (this)->write_finished = true;
       }
@@ -298,7 +274,7 @@ protected:
   
    template < class iterator_type > void local_insert_helper( iterator_type begin, 
                                                               iterator_type end,
-                                                              const RBSignal &signal )
+                                                              const raft::signal &signal )
    {
       auto dist( std::distance( begin, end ) );
       while( --dist )
@@ -323,13 +299,13 @@ protected:
          }
          else
          {
-            data->signal[ write_index ].sig = RBSignal::NONE;
+            data->signal[ write_index ].sig = raft::none;
          }
          Pointer::inc( data->write_pt );
          write_stats.count++;
          ++begin;
       }
-      if( signal == RBSignal::RBEOF )
+      if( signal == raft::eof )
       {
          (this)->write_finished = true;
       }
@@ -349,7 +325,7 @@ protected:
     */
    virtual void local_insert(  void *begin_ptr,
                                void *end_ptr,
-                               const RBSignal &signal, 
+                               const raft::signal &signal, 
                                const std::size_t iterator_type )
    {
    typedef typename std::list< T >::iterator   it_list;
@@ -358,16 +334,16 @@ protected:
 
       
    const std::map< std::size_t, 
-             std::function< void (void*,void*,const RBSignal&) > > func_map
+             std::function< void (void*,void*,const raft::signal&) > > func_map
                = {{ typeid( it_list ).hash_code(), 
-                    [ & ]( void *b_ptr, void *e_ptr, const RBSignal &sig )
+                    [ & ]( void *b_ptr, void *e_ptr, const raft::signal  &sig )
                     {
                         it_list *begin( reinterpret_cast< it_list* >( b_ptr ) );
                         it_list *end  ( reinterpret_cast< it_list* >( e_ptr   ) );
                         local_insert_helper( *begin, *end, signal );
                     } },
                   { typeid( it_vec ).hash_code(),
-                    [ & ]( void *b_ptr, void *e_ptr, const RBSignal &sig )
+                    [ & ]( void *b_ptr, void *e_ptr, const raft::signal  &sig )
                     {
                         it_vec *begin( reinterpret_cast< it_vec* >( b_ptr ) );
                         it_vec *end  ( reinterpret_cast< it_vec* >( e_ptr   ) );
@@ -394,7 +370,7 @@ protected:
     *          q as soon as it is read
     */
    virtual void 
-   local_pop( void *ptr, RBSignal *signal )
+   local_pop( void *ptr, raft::signal *signal )
    {
       assert( ptr != nullptr );
       while( size() == 0 )
@@ -434,7 +410,7 @@ protected:
     * or some other structure.
     */
    virtual void  local_pop_range( void     *ptr_data,
-                                  RBSignal *signal,
+                                  raft::signal  *signal,
                                   std::size_t n_items )
    {
       assert( ptr_data != nullptr );
@@ -493,7 +469,7 @@ protected:
     * removing.
     * @return T&
     */
-   virtual void local_peek(  void **ptr, RBSignal *signal )
+   virtual void local_peek(  void **ptr, raft::signal *signal )
    {
       while( size() < 1 )
       {

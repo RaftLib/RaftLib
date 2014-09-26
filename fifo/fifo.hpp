@@ -142,7 +142,7 @@ public:
    template< class iterator_type >
    void insert(   iterator_type begin,
                   iterator_type end,
-                  const raft::signal = raft::none )
+                  const raft::signal signal = raft::none )
    {
       void *begin_ptr( (void*)&begin );
       void *end_ptr  ( (void*)&end   );

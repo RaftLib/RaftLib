@@ -32,7 +32,7 @@ LIBS = $(RT) $(PTHREAD)
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(OBJS)
-	$(AR) rvs raftlight.a $(OBJS) $(LIBS)
+	$(AR) rvs libraftlight.a $(OBJS) $(LIBS)
 
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCS) -o $@ $<
@@ -42,4 +42,4 @@ compile: $(CXXFILES) $(CFILES)
 
 .PHONY: clean
 clean:
-	rm -rf raftlight.a $(OBJS)
+	rm -rf libraftlight.a $(OBJS)

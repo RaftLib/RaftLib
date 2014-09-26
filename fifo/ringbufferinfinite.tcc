@@ -50,30 +50,15 @@ public:
       return( 1 );
    }
 
-   virtual RBSignal get_signal() 
+   virtual raft::signal get_signal() 
    {
 #if 0   
-      /** 
-       * there are two signalling paths, the one 
-       * we'll give the highest priority to is the 
-       * asynchronous one.
-       */
-      const auto signal_queue( data->store[ 0 ].signal );
-      /**
-       * TODO, fix this
-       */
-      const auto signal_local( (this)->signal_a );
-      if( signal_local == RBSignal::NONE )
-      {
-         return( signal_queue );
-      }
-      /** there must be something in the local signal **/
-      //(this)->signal = RBSignal::NONE;
+      /** FIXME, reimplement this function **/
 #endif      
-      return( RBSignal::NONE );
+      return( raft::none );
    }
 
-   virtual bool send_signal( const RBSignal &signal )
+   virtual bool send_signal( const raft::signal  &signal )
    {
       //(this)->signal = signal;
       return( true );
@@ -107,9 +92,9 @@ public:
     * push - releases the last item allocated by allocate() to
     * the queue.  Function will imply return if allocate wasn't
     * called prior to calling this function.
-    * @param signal - const RBSignal signal, default: NONE
+    * @param signal - const raft::signal signal, default: raft::signal::none
     */
-   virtual void push( const RBSignal signal = RBSignal::NONE )
+   virtual void push( const raft::signal signal = raft::none )
    {
       if( ! (this)->allocate_called ) return;
       data->signal[ 0 ].sig = signal;
@@ -149,7 +134,7 @@ protected:
       *ptr = (void*)&(data->store[ 0 ].item);
    }
    
-   virtual void  local_push( void *ptr, const RBSignal signal )
+   virtual void  local_push( void *ptr, const raft::signal signal )
    {
       T *item (reinterpret_cast< T* >( ptr ) );
       data->store [ 0 ].item  = *item;
@@ -161,7 +146,7 @@ protected:
    template< class iterator_type >
    void local_insert_helper( iterator_type begin, 
                              iterator_type end, 
-                             const RBSignal signal )
+                             const raft::signal signal )
    {
       while( begin != end )
       {
@@ -176,23 +161,23 @@ protected:
 
    virtual void local_insert( void *begin_ptr,
                               void *end_ptr,
-                              const RBSignal &signal,
+                              const raft::signal  &signal,
                               const std::size_t iterator_type )
    {
       typedef typename std::list< T >::iterator   it_list;
       typedef typename std::vector< T >::iterator it_vec;
          
       const std::map< std::size_t, 
-                std::function< void (void*,void*,const RBSignal&) > > func_map
+                std::function< void (void*,void*,const raft::signal&) > > func_map
                   = {{ typeid( it_list ).hash_code(), 
-                       [ & ]( void *b_ptr, void *e_ptr, const RBSignal &sig )
+                       [ & ]( void *b_ptr, void *e_ptr, const raft::signal &sig )
                        {
                            it_list *begin( reinterpret_cast< it_list* >( b_ptr ) );
                            it_list *end  ( reinterpret_cast< it_list* >( e_ptr   ) );
                            local_insert_helper( *begin, *end, signal );
                        } },
                      { typeid( it_vec ).hash_code(),
-                       [ & ]( void *b_ptr, void *e_ptr, const RBSignal &sig )
+                       [ & ]( void *b_ptr, void *e_ptr, const raft::signal &sig )
                        {
                            it_vec *begin( reinterpret_cast< it_vec* >( b_ptr ) );
                            it_vec *end  ( reinterpret_cast< it_vec* >( e_ptr   ) );
@@ -211,7 +196,7 @@ protected:
       return;
    }
 
-   virtual void local_pop( void *ptr, RBSignal *signal )
+   virtual void local_pop( void *ptr, raft::signal *signal )
    {
       T *item( reinterpret_cast< T* >( ptr ) );
       *item  = data->store[ 0 ].item;
@@ -223,7 +208,7 @@ protected:
    }
   
    virtual void local_pop_range( void *ptr_data,
-                                 RBSignal *signal,
+                                 raft::signal *signal,
                                  std::size_t n_items )
    {
       assert( ptr_data != nullptr );
@@ -247,7 +232,7 @@ protected:
    }
 
 
-   virtual void local_peek( void **ptr, RBSignal *signal )
+   virtual void local_peek( void **ptr, raft::signal  *signal )
    {
       *ptr = (void*)&( data->store[ 0 ].item );
       if( signal != nullptr )
