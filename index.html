@@ -214,6 +214,56 @@ really special about the Kernel class.  In future tutorials I'll add an example 
 the RaftLight library system an be used with OpenCL with the queue talking directly to
 a kernel running on a GPU.  GPU kernels will have a slightly differing structure, but 
 from the programmers perspective will have similar port semantics as the C++ kernels.</p>
+
+<p>To "hook" compute kernels together we need a "Map" object, as in the following example (shamelessly taken
+from the above "sum" example):</p>
+
+<div class="highlight highlight-c++"><pre><span class="kt">int</span>
+<span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+   <span class="n">Map</span> <span class="n">map</span><span class="p">;</span>
+   <span class="k">auto</span> <span class="n">linked_kernels</span><span class="p">(</span> <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="k">new</span> <span class="n">Generate</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span>
+                                  <span class="k">new</span> <span class="n">Sum</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span>
+                                  <span class="s">"input_a"</span> <span class="p">)</span> <span class="p">);</span>
+   <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="k">new</span> <span class="n">Generate</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span> <span class="o">&amp;</span><span class="p">(</span> <span class="n">linked_kernels</span><span class="p">.</span><span class="n">dst</span> <span class="p">),</span> <span class="s">"input_b"</span> <span class="p">);</span>
+   <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="o">&amp;</span><span class="p">(</span> <span class="n">linked_kernels</span><span class="p">.</span><span class="n">dst</span> <span class="p">),</span> <span class="k">new</span> <span class="n">Print</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">()</span> <span class="p">);</span>
+   <span class="n">map</span><span class="p">.</span><span class="n">exe</span><span class="p">();</span>
+   <span class="k">return</span><span class="p">(</span> <span class="n">EXIT_SUCCESS</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Using the <em>link()</em> function we can link together compatible combinations of two compute kernels.  Compatible
+ports will have the same type or will be able to be cast to the same type. The <em>link()</em> function returns a
+reference to the functions that are passed as parameters.  This is a convenience so that the programmer can
+instantiate them via the function param with <em>new</em> and use the return values for follow-on <em>link()</em> calls.  This
+function has various forms as follows:</p>
+
+<div class="highlight highlight-c++"><pre><span class="cm">/**</span>
+<span class="cm"> * version 1: Kernel's a &amp; b are assumed to have a single output</span>
+<span class="cm"> * and input port respectively, otherwise an exception is thrown.   </span>
+<span class="cm"> */</span>
+<span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
+      <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span> <span class="p">);</span>
+<span class="cm">/**</span>
+<span class="cm"> * version 2: Kernel a has multiple output ports, but one named _a\_port_, Kernel</span>
+<span class="cm"> * b has a single input port otherwise an exception is thrown.</span>
+<span class="cm"> */</span>
+<span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span> 
+      <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span>  <span class="n">a_port</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span> <span class="p">);</span>
+<span class="cm">/** </span>
+<span class="cm"> * version 3: Kernel a has a single output port (otherwise an exception is thrown,</span>
+<span class="cm"> * Kernel b has multiple input ports with at least one named _b\_port_</span>
+<span class="cm"> */</span>
+<span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
+      <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">b_port</span> <span class="p">);</span>
+<span class="cm">/**</span>
+<span class="cm"> * version 4: both kernels have multiple output ports with at least one named _a\_port_ </span>
+<span class="cm"> * and _b\_port_, otherwise an exception is thrown.</span>
+<span class="cm"> */</span>
+<span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
+      <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">a_port</span><span class="p">,</span> 
+                          <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">b_port</span> <span class="p">);</span>
+</pre></div>
       </section>
     </div>
 
