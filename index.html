@@ -75,8 +75,101 @@ the result.</p>
 
 <p>As a concrete example we have a "sum" application which generates a random stream of numbers from two separate threads, sums them in another and finally prints them in yet another thread.  Admittedly this is a bit wasteful in practice, however its a nice dirt simple example. </p>
 
-<pre><code>
-</code></pre>
+<div class="highlight highlight-c++"><pre><span class="cp">#include &lt;cassert&gt;</span>
+<span class="cp">#include &lt;iostream&gt;</span>
+<span class="cp">#include &lt;cstdint&gt;</span>
+<span class="cp">#include &lt;cstdlib&gt;</span>
+<span class="cp">#include &lt;raft&gt;</span>
+
+
+<span class="k">template</span> <span class="o">&lt;</span> <span class="k">typename</span> <span class="n">T</span> <span class="o">&gt;</span> <span class="k">class</span> <span class="nc">Generate</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Kernel</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+   <span class="n">Generate</span><span class="p">(</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">1000</span> <span class="p">)</span> <span class="o">:</span> <span class="n">Kernel</span><span class="p">(),</span>
+                                          <span class="n">count</span><span class="p">(</span> <span class="n">count</span> <span class="p">)</span>
+   <span class="p">{</span>
+      <span class="n">output</span><span class="p">.</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="n">T</span> <span class="o">&gt;</span><span class="p">(</span> <span class="s">"number_stream"</span> <span class="p">);</span>
+   <span class="p">}</span>
+
+   <span class="k">virtual</span> <span class="n">raft</span><span class="o">::</span><span class="n">kstatus</span> <span class="n">run</span><span class="p">()</span>
+   <span class="p">{</span>
+      <span class="k">if</span><span class="p">(</span> <span class="n">count</span><span class="o">--</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">)</span>
+      <span class="p">{</span>
+         <span class="n">output</span><span class="p">[</span> <span class="s">"number_stream"</span> <span class="p">].</span><span class="n">push</span><span class="p">(</span> <span class="n">count</span> <span class="p">);</span>
+         <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">proceed</span> <span class="p">);</span>
+      <span class="p">}</span>
+      <span class="n">output</span><span class="p">[</span> <span class="s">"number_stream"</span> <span class="p">].</span><span class="n">push</span><span class="p">(</span> <span class="n">count</span><span class="p">,</span> <span class="n">raft</span><span class="o">::</span><span class="n">eof</span> <span class="p">);</span>
+      <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">stop</span> <span class="p">);</span>
+   <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+   <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="n">count</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">typename</span> <span class="n">A</span><span class="p">,</span> <span class="k">typename</span> <span class="n">B</span><span class="p">,</span> <span class="k">typename</span> <span class="n">C</span> <span class="o">&gt;</span> <span class="k">class</span> <span class="nc">Sum</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Kernel</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+   <span class="n">Sum</span><span class="p">()</span> <span class="o">:</span> <span class="n">Kernel</span><span class="p">()</span>
+   <span class="p">{</span>
+      <span class="n">input</span><span class="p">.</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="n">A</span> <span class="o">&gt;</span><span class="p">(</span> <span class="s">"input_a"</span> <span class="p">);</span>
+      <span class="n">input</span><span class="p">.</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="n">B</span> <span class="o">&gt;</span><span class="p">(</span> <span class="s">"input_b"</span> <span class="p">);</span>
+      <span class="n">output</span><span class="p">.</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="n">C</span>  <span class="o">&gt;</span><span class="p">(</span> <span class="s">"sum"</span> <span class="p">);</span>
+   <span class="p">}</span>
+
+   <span class="k">virtual</span> <span class="n">raft</span><span class="o">::</span><span class="n">kstatus</span> <span class="n">run</span><span class="p">()</span>
+   <span class="p">{</span>
+      <span class="n">A</span> <span class="n">a</span><span class="p">;</span>
+      <span class="n">B</span> <span class="n">b</span><span class="p">;</span>
+      <span class="n">raft</span><span class="o">::</span><span class="n">signal</span>  <span class="n">sig_a</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span>  <span class="p">),</span> <span class="n">sig_b</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span> <span class="p">);</span>
+      <span class="n">input</span><span class="p">[</span> <span class="s">"input_a"</span> <span class="p">].</span><span class="n">pop</span><span class="p">(</span> <span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sig_a</span> <span class="p">);</span>
+      <span class="n">input</span><span class="p">[</span> <span class="s">"input_b"</span> <span class="p">].</span><span class="n">pop</span><span class="p">(</span> <span class="n">b</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sig_b</span> <span class="p">);</span>
+      <span class="n">assert</span><span class="p">(</span> <span class="n">sig_a</span> <span class="o">==</span> <span class="n">sig_b</span> <span class="p">);</span>
+      <span class="n">C</span> <span class="nf">c</span><span class="p">(</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="p">);</span>
+      <span class="n">output</span><span class="p">[</span> <span class="s">"sum"</span> <span class="p">].</span><span class="n">push</span><span class="p">(</span> <span class="n">c</span> <span class="p">,</span> <span class="n">sig_a</span> <span class="p">);</span>
+      <span class="k">if</span><span class="p">(</span> <span class="n">sig_b</span> <span class="o">==</span> <span class="n">raft</span><span class="o">::</span><span class="n">eof</span> <span class="p">)</span>
+      <span class="p">{</span>
+         <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">stop</span> <span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">proceed</span> <span class="p">);</span>
+   <span class="p">}</span>
+
+<span class="p">};</span>
+
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">typename</span> <span class="n">T</span> <span class="o">&gt;</span> <span class="k">class</span> <span class="nc">Print</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Kernel</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+   <span class="n">Print</span><span class="p">()</span> <span class="o">:</span> <span class="n">Kernel</span><span class="p">()</span>
+   <span class="p">{</span>
+      <span class="n">input</span><span class="p">.</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="n">T</span> <span class="o">&gt;</span><span class="p">(</span> <span class="s">"in"</span> <span class="p">);</span>
+   <span class="p">}</span>
+
+   <span class="k">virtual</span> <span class="n">raft</span><span class="o">::</span><span class="n">kstatus</span> <span class="n">run</span><span class="p">()</span>
+   <span class="p">{</span>
+      <span class="n">T</span> <span class="n">data</span><span class="p">;</span>
+      <span class="n">raft</span><span class="o">::</span><span class="n">signal</span>  <span class="n">signal</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span> <span class="p">);</span>
+      <span class="n">input</span><span class="p">[</span> <span class="s">"in"</span> <span class="p">].</span><span class="n">pop</span><span class="p">(</span> <span class="n">data</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">signal</span> <span class="p">);</span>
+      <span class="n">fprintf</span><span class="p">(</span> <span class="n">stderr</span><span class="p">,</span> <span class="s">"%"</span> <span class="n">PRIu64</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">data</span> <span class="p">);</span>
+      <span class="k">if</span><span class="p">(</span> <span class="n">signal</span> <span class="o">==</span> <span class="n">raft</span><span class="o">::</span><span class="n">eof</span> <span class="p">)</span>
+      <span class="p">{</span>
+         <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">stop</span> <span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">proceed</span> <span class="p">);</span>
+   <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">int</span>
+<span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+   <span class="n">Map</span> <span class="n">map</span><span class="p">;</span>
+   <span class="k">auto</span> <span class="n">linked_kernels</span><span class="p">(</span> <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="k">new</span> <span class="n">Generate</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span>
+                                  <span class="k">new</span> <span class="n">Sum</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span>
+                                  <span class="s">"input_a"</span> <span class="p">)</span> <span class="p">);</span>
+   <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="k">new</span> <span class="n">Generate</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span> <span class="o">&amp;</span><span class="p">(</span> <span class="n">linked_kernels</span><span class="p">.</span><span class="n">dst</span> <span class="p">),</span> <span class="s">"input_b"</span> <span class="p">);</span>
+   <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="o">&amp;</span><span class="p">(</span> <span class="n">linked_kernels</span><span class="p">.</span><span class="n">dst</span> <span class="p">),</span> <span class="k">new</span> <span class="n">Print</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">()</span> <span class="p">);</span>
+   <span class="n">map</span><span class="p">.</span><span class="n">exe</span><span class="p">();</span>
+   <span class="k">return</span><span class="p">(</span> <span class="n">EXIT_SUCCESS</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
       </section>
     </div>
 
