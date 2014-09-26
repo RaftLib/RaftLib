@@ -1,0 +1,37 @@
+/**
+ * fifoabstract.tcc - 
+ * @author: Jonathan Beard
+ * @version: Sun Sep  7 20:36:12 2014
+ * 
+ * Copyright 2014 Jonathan Beard
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+#ifndef _FIFOABSTRACT_TCC_
+#define _FIFOABSTRACT_TCC_  1
+#include "ringbuffertypes.hpp"
+#include "fifo.hpp"
+
+template < class T, Type::RingBufferType type > 
+   class FIFOAbstract : public FIFO
+{
+public:
+   FIFOAbstract() : FIFO()
+   {
+   }
+
+   virtual ~FIFOAbstract() = default;
+
+protected:
+};
+#endif /* END _FIFOABSTRACT_TCC_ */
