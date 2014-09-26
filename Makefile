@@ -34,7 +34,7 @@ LIBS = $(RT) $(PTHREAD)
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(OBJS)
-	$(AR) rvs libraftlight.a $(OBJS) $(LIBS)
+	$(AR) rvs libraftlight.a $(OBJS)
 
 install:
 	cp libraftlight.a $(PREFIX)/lib/

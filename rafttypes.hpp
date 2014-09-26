@@ -1,7 +1,7 @@
 /**
- * kernel.hpp - 
+ * rafttypes.hpp - 
  * @author: Jonathan Beard
- * @version: Thu Sep 11 15:34:24 2014
+ * @version: Fri Sep 26 12:26:53 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,28 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _KERNEL_HPP_
-#define _KERNEL_HPP_  1
-#include "port.hpp"
-#include "signalvars.hpp"
-#include "rafttypes.hpp"
-
-class Kernel
-{
-public:
-   Kernel()          = default;
-   virtual ~Kernel() = default;
-
-
-   virtual raft::kstatus run() = 0;
-
-protected:
-   Port               input  = { this };
-   Port               output = { this };
-   
-   friend class Map;
-   friend void GraphTools::BFS( std::set< Kernel* > &source_kernels,
-                                edge_func fun,
-                                bool connection_error );
+#ifndef _RAFTTYPES_HPP_
+#define _RAFTTYPES_HPP_  1
+namespace raft{
+enum kstatus {
+   stop,
+   proceed
 };
-#endif /* END _KERNEL_HPP_ */
+}
+#endif /* END _RAFTTYPES_HPP_ */

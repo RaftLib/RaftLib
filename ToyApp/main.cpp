@@ -14,16 +14,16 @@ public:
       output.addPort< T >( "number_stream" );
    }
 
-   virtual bool run()
+   virtual raft::kstatus run()
    {
       if( count-- > 1 )
       {
          output[ "number_stream" ].push( count );
-         return( true );
+         return( raft::proceed );
       }
       /** else **/
       output[ "number_stream" ].push( count, raft::eof );
-      return( false );
+      return( raft::stop );
    }
 
 private:
@@ -40,7 +40,7 @@ public:
       output.addPort< C  >( "sum" );
    }
    
-   virtual bool run()
+   virtual raft::kstatus run()
    {
       A a;
       B b;
@@ -52,9 +52,9 @@ public:
       output[ "sum" ].push( c , sig_a );
       if( sig_b == raft::eof )
       {
-         return( false );
+         return( raft::stop );
       }
-      return( true );
+      return( raft::proceed );
    }
 
 };
@@ -67,7 +67,7 @@ public:
       input.addPort< T >( "in" );
    }
 
-   virtual bool run()
+   virtual raft::kstatus run()
    {
       T data;
       raft::signal  signal( raft::none );
@@ -75,9 +75,9 @@ public:
       fprintf( stderr, "%" PRIu64 "\n", data );
       if( signal == raft::eof )
       {
-         return( false );
+         return( raft::stop );
       }
-      return( true );
+      return( raft::proceed );
    }
 };
 

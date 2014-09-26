@@ -32,6 +32,7 @@
 #include "./raft_dir/schedule.hpp"
 #include "./raft_dir/simpleschedule.hpp"
 #include "./raft_dir/stdalloc.hpp"
+#include "./raft_dir/rafttypes.hpp"
 
 /** fifo includes **/
 #include "./raft_dir/Clock.hpp"

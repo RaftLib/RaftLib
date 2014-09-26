@@ -24,6 +24,7 @@
 #include "kernel.hpp"
 #include "map.hpp"
 #include "simpleschedule.hpp"
+#include "rafttypes.hpp"
 
 simple_schedule::simple_schedule( Map &map ) : Schedule( map )
 {
@@ -56,7 +57,7 @@ simple_schedule::start()
    for( auto index( 0 ); index < kernel_map.size(); index++ )
    {
       auto bound_func = [&]( Kernel *kernel ){
-         while( kernel->run() );
+         while( kernel->run() == raft::proceed );
       };
       //auto bound_func = std::bind( start_func, 
       //                             kernel_map [ index ],
