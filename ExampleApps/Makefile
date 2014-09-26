@@ -11,10 +11,9 @@ CXXFLAGS = -O2 -Wall -std=c++11 -DRDTSCP=1
 CFILES   =
 COBJS    =
 
-CXXFILES = main.cpp
-CXXOBJS  = main.o
+CXXFILES = sumapp.cpp
+CXXOBJS  = sumapp.o
 
-EXE = sumapp
 
 INCS = 
 
@@ -23,8 +22,8 @@ LIBS = -lraftlight $(RT)
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(CXXOBJS) $(COBJS)
-	$(CXX)  $(LDFLAGS) $(CXXFLAGS) -o $(EXE) $(CXXOBJS) $(COBJS)   $(LIBS)
+	$(CXX)  $(LDFLAGS) $(CXXFLAGS) -o sumapp sumapp.o $(LIBS)
 
 .PHONY: clean
 clean:
-	rm -rf $(EXE) $(CXXOBJS) $(COBJS)
+	rm -rf sumapp $(CXXOBJS) $(COBJS)
