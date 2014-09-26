@@ -104,9 +104,9 @@ public:
     * releases the last item allocated by allocate() to the 
     * queue.  Function will simply return if allocate wasn't
     * called prior to calling this function.
-    * @param   signal - const RBSignal signal, default: NONE
+    * @param   signal - const raft::signal, default: NONE
     */
-   virtual void push( const RBSignal signal = RBSignal::NONE ) = 0;
+   virtual void push( const raft::signal = raft::none ) = 0;
 
 
    /**
@@ -117,10 +117,10 @@ public:
     * same time as the object (if of course the receiving 
     * object is responding to signals).
     * @param   item -  T&
-    * @param   signal -  RBSignal, default RBSignal::NONE
+    * @param   signal -  raft::signal, default raft::none
     */
    template < class T > 
-   void push( T &item, const RBSignal signal = RBSignal::NONE )
+   void push( T &item, const raft::signal signal = raft::none )
    {
       void *ptr( (void*) &item );
       /** call blocks till element is written and released to queue **/
@@ -137,12 +137,12 @@ public:
     * will be room.
     * @param   begin - iterator_type, iterator to begin of range
     * @param   end   - iterator_type, iterator to end of range
-    * @param   signal - RBSignal, default RBSignal::NONE
+    * @param   signal - raft::signal, default raft::none
     */
    template< class iterator_type >
    void insert(   iterator_type begin,
                   iterator_type end,
-                  const RBSignal signal = RBSignal::NONE )
+                  const raft::signal = raft::none )
    {
       void *begin_ptr( (void*)&begin );
       void *end_ptr  ( (void*)&end   );
@@ -155,10 +155,10 @@ public:
     * object wants to watch use the signal, then the signal
     * parameter should not be null.
     * @param   item - T&
-    * @param   signal - RBSignal
+    * @param   signal - raft::signal
     */
    template< class T >
-   void pop( T &item, RBSignal *signal = nullptr )
+   void pop( T &item, raft::signal *signal = nullptr )
    {
       void *ptr( (void*)&item );
       local_pop( ptr, signal );
@@ -172,12 +172,12 @@ public:
     * where the size matches n_items.
     * @param   items - T* 
     * @param   n_items - std::size_t
-    * @param   signal  - RBSignal*, default = nullptr
+    * @param   signal  - raft::signal, default = nullptr
     */
    template< class T >
    void pop_range( T *items,
                    std::size_t n_items,
-                   RBSignal   *signal = nullptr )
+                   raft::signal *signal = nullptr )
    {
       void *ptr_items( (void*)items );
       local_pop_range( ptr_items, signal, n_items );
@@ -185,7 +185,7 @@ public:
    }
 
    template< class T >
-   T& peek( RBSignal *signal = nullptr )
+   T& peek( raft::signal *signal = nullptr )
    {
       void *ptr( nullptr );
       local_peek( &ptr, signal );
@@ -225,7 +225,7 @@ public:
    /**
     * get_write_finished - the function param is set to true
     * if the server process has completed.  Currently this
-    * is hacked to return true when an RBSignal::EOF signal
+    * is hacked to return true when an raft::eof signal
     * is passed through, future versions will be a bit more
     * precise and not signal dependant.
     * @param   write_finished - bool&
@@ -253,48 +253,48 @@ protected:
     * copied according to the objects copy constructor, 
     * which should be set up to "deep" copy the object
     * @param   ptr - void* 
-    * @param   signal - RBSignal reference
+    * @param   signal - raft::signal reference
     */
-   virtual void local_push( void *ptr, const RBSignal &signal ) = 0;
+   virtual void local_push( void *ptr, const raft::signal &signal ) = 0;
 
    /**
     * local_insert - inserts a range from ptr_begin to ptr_end
     * and inserts the signal at the last element inserted, the 
-    * rest of the signals are set to RBSignal::NONE.
+    * rest of the signals are set to raft::none.
     * @param   ptr_begin - void*
     * @param   ptr_end   - void*
-    * @param   signal    - const RBSignal&
+    * @param   signal    - const raft::signal& 
     */
    virtual void local_insert( void *ptr_begin, 
                               void *ptr_end, 
-                              const RBSignal &signal,
+                              const raft::signal &signal,
                               const std::size_t iterator_type ) = 0;
   
    /**
     * local_pop - makes a copy, pops an item from the queue and 
     * stores the copy at memory located at *ptr.
     * @param   ptr    - void*
-    * @param   signal - RBSignal*
+    * @param   signal - raft::signal* 
     */
-   virtual void local_pop( void *ptr, RBSignal *signal ) = 0;
+   virtual void local_pop( void *ptr, raft::signal *signal ) = 0;
 
    /**
     * local_pop_range - pops a range, of n_items and stores
     * them to the array of T* items pointed to by ptr_data.
     * @param   ptr_data - void*
-    * @param   signal   - RBSignal*
+    * @param   signal   - raft::signal * 
     * @param   n_items  - std::size_t
     */
    virtual void local_pop_range( void *ptr_data,
-                                 RBSignal *signal,
+                                 raft::signal *signal,
                                  std::size_t n_items ) = 0;
    /**
     * local_peek - peeks at the head of the queue, the element
     * may be modified but not erased.
     * @param   ptr - void**
-    * @param   signal - RBSignal*
+    * @param   signal - raft::signal*
     */
    virtual void local_peek( void **ptr,
-                            RBSignal *signal ) = 0;
+                            raft::signal *signal ) = 0;
 };
 #endif /* END _FIFO_HPP_ */
