@@ -36,20 +36,20 @@
 <pre><code>$ cd location_for_the_repo
 $ git clone git@github.com:jonathan-beard/RaftLight.git
 $ cd RaftLight
-$ git clone git@github.com:jonathan-beard/templatedLockFreeFIFOQueue.git -b dev fifo
+$ make
+$ sudo make install
 </code></pre>
 
-<p>Now you have all the files needed.  At the moment the system is in the beta phase, really designed
-for research and hobby usage.  Eventually it'll have a proper build system.  At the moment 
-however you'll have to do the following:</p>
+<p>This will generate the static library file <em>raftlight.a</em>.  When building an application
+using the library the only header file needed is the <em>raft</em> header.  Once the library
+is build you're basically set save for a few details, which will be laid out within the tutorial
+ as we go through the example we're about to build.</p>
 
-<pre><code>$ cd location_for_the_repo
+<p>To build the example application simply:</p>
+
+<pre><code>$ cd RaftLight/ExampleApplications
 $ make
 </code></pre>
-
-<p>This will generate the static library file <em>raftlight.a</em>.  Once this is built you're basically
-set save for a few details, which will be laid out within the tutorial as we build a simple
-example.</p>
 
 <h3>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
@@ -69,7 +69,7 @@ the result.</p>
 
 <p>The tutorial could be written two ways.  The first would be to enumerate all the possible functions and configurations.  The second would be to give an example and explain the example as it is presented.  We'll start with the example approach then move to a short directory of useful functions followed by some permutations on the previously mentioned example.</p>
 
-<p>First and foremost what is stream processing.  Essentially it is a compute paradigm that envisions perfectly safe, threaded programs (although we'll relax this a bit with locked shared objects, shown much later in the tutorial).  Stream programs themselves are decomposed into compute "kernels" which are connected by communications links called "streams."  As an extremely simple example, take a look at the figure below which has three compute "kernels" (A,B,C) connected by two "streams."</p>
+<p>First and foremost what is stream processing?  Essentially it is a compute paradigm that envisions perfectly safe, threaded programs (although we'll relax this a bit with locked shared objects, shown much later in the tutorial).  Stream programs themselves are decomposed into compute "kernels" which are connected by communications links called "streams."  As an extremely simple example, take a look at the figure below which has three compute "kernels" (A,B,C) connected by two "streams."</p>
 
 <p><img src="http://www.cse.wustl.edu/%7Ebeardj/queues.jpg" alt="tandem queue"></p>
 
