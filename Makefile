@@ -1,6 +1,8 @@
 CC    ?= gcc
 CXX   ?= clang++
 
+PREFIX = /usr/local
+
 include fifo/buffer.makefile
 
 DIRINCS = $(RINGBUFFERDIR)
@@ -34,6 +36,20 @@ compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(OBJS)
 	$(AR) rvs libraftlight.a $(OBJS) $(LIBS)
 
+install:
+	cp libraftlight.a $(PREFIX)/lib/
+	mkdir $(PREFIX)/include/raft_dir
+	cp *.hpp $(PREFIX)/include/raft_dir/
+	cp ./fifo/*.hpp $(PREFIX)/include/raft_dir/
+	cp ./fifo/*.tcc $(PREFIX)/include/raft_dir/
+	cp raft $(PREFIX)/include/
+	echo "Install complete!"
+
+uninstall:
+	rm -rf $(PREFIX)/lib/libraftlight.a
+	rm -rf $(PREFIX)/include/raft_dir
+	rm -rf $(PREFIX)/include/raft
+	echo "Uninstalled!"
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCS) -o $@ $<
 

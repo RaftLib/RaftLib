@@ -53,7 +53,7 @@
 #include "systeminfo.hpp"
 
 std::string
-SystemInfo::getSystemProperty( const Trait trait )
+SystemInfo::getSystemProperty( const si::Trait trait )
 {
 #if __linux
    if( trait < 15 )
@@ -283,7 +283,7 @@ SystemInfo::getSystemProperty( const Trait trait )
    }
    else if( SystemName <= trait && trait <= MachineName )
    {
-      return( SystemInfo::getUTSNameInfo( trait ) );
+      return( si::getUTSNameInfo( trait ) );
    }
    else if( UpTime <= trait && trait <= MemoryUnit )
    {
@@ -830,9 +830,9 @@ SystemInfo::getSystemProperty( const Trait trait )
 }
 
 std::string   
-SystemInfo::getName( const Trait trait )
+SystemInfo::getName( const si::Trait trait )
 {
-   static const std::string traitStrings[ Trait::N ] = {
+   static const std::string traitStrings[ si::N ] = {
       "LevelOneICacheSize",
       "LevelOneICacheAssociativity",
       "LevelOneICacheLineSize",
@@ -879,11 +879,11 @@ SystemInfo::getName( const Trait trait )
 size_t
 SystemInfo::getNumTraits()
 {
-   return( Trait::N );
+   return( si::N );
 }
 
 std::string 
-SystemInfo::getUTSNameInfo( const Trait t )
+SystemInfo::getUTSNameInfo( const si::Trait t )
 {
       struct utsname un;
       std::memset( &un, 

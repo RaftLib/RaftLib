@@ -2,9 +2,7 @@
 #include <iostream>
 #include <cstdint>
 #include <cstdlib>
-
-#include "map.hpp"
-#include "kernel.hpp"
+#include <raft>
 
 
 template < typename T > class Generate : public Kernel

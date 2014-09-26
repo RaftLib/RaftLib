@@ -27,6 +27,7 @@
  * corresponding methods are defined internally
  * to get the information.
  */
+namespace si{
 enum Trait {
    LevelOneICacheSize = 0,
    LevelOneICacheAssociativity,
@@ -69,6 +70,7 @@ enum Trait {
    Priority,
    N
 };
+}
 
 class SystemInfo
 {
@@ -84,14 +86,14 @@ public:
     * @param trait - const Trait
     * @return  - std::string representation of the system property
     */
-   static std::string   getSystemProperty( const Trait trait );
+   static std::string   getSystemProperty( const si::Trait trait );
    /**
     * getName - raturn the string name of the trait passed in
     * by the parameter.
     * @param   trait - const Trait
     * @return  std::string - name of system trait
     */
-   static std::string   getName( const Trait trait );
+   static std::string   getName( const si::Trait trait );
    /**
     * getNumTraits - returns the total number of defined traits, which
     * is the value Trait::N defined above.
@@ -105,7 +107,7 @@ protected:
     * @param t - const Trait
     * @return  - std::string - string representation of sytem property
     */
-   static std::string   getUTSNameInfo( const Trait t );
+   static std::string   getUTSNameInfo( const si::Trait t );
 
 };
 #endif /* END _SYSTEMINFO_HPP_ */

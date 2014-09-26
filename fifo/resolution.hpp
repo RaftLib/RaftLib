@@ -90,8 +90,8 @@ public:
    sclock_t getFrameWidth();
 
 
-private:
    sclock_t          curr_frame_width;
+private:
    /** might be faster with a bit vector **/
    std::int32_t      curr_frame_index;
    struct

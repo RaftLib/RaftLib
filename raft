@@ -1,0 +1,66 @@
+/**
+ * raft header file - includes all files within $(prefix)/include/raft dir 
+ * @author: Jonathan Beard
+ * @version: Fri Sep 26 10:00:21 2014
+ * 
+ * Copyright 2014 Jonathan Beard
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+#ifndef _RAFT_HPP_
+#define _RAFT_HPP_  1
+
+/** raft proper includes **/
+#include "./raft_dir/allocate.hpp"
+#include "./raft_dir/graphtools.hpp"
+#include "./raft_dir/kernel.hpp"
+#include "./raft_dir/map.hpp"
+#include "./raft_dir/port.hpp"
+#include "./raft_dir/port_info.hpp"
+#include "./raft_dir/port_info_types.hpp"
+#include "./raft_dir/portexception.hpp"
+#include "./raft_dir/schedule.hpp"
+#include "./raft_dir/simpleschedule.hpp"
+#include "./raft_dir/stdalloc.hpp"
+
+/** fifo includes **/
+#include "./raft_dir/Clock.hpp"
+#include "./raft_dir/blocked.hpp"
+#include "./raft_dir/fifo.hpp"
+#include "./raft_dir/monitor.hpp"
+#include "./raft_dir/pointer.hpp"
+#include "./raft_dir/procwait.hpp"
+#include "./raft_dir/resolution.hpp"
+#include "./raft_dir/ringbuffertypes.hpp"
+#include "./raft_dir/shm.hpp"
+#include "./raft_dir/signalvars.hpp"
+#include "./raft_dir/systeminfo.hpp"
+#include "./raft_dir/units.hpp"
+
+/** fifo templates **/
+#include "./raft_dir/SystemClock.tcc"
+#include "./raft_dir/arrivalratesampletype.tcc"
+#include "./raft_dir/bufferdata.tcc"
+#include "./raft_dir/departureratesampletype.tcc"
+#include "./raft_dir/fifoabstract.tcc"
+#include "./raft_dir/meansampletype.tcc"
+#include "./raft_dir/randomstring.tcc"
+#include "./raft_dir/ratesampletype.tcc"
+#include "./raft_dir/ringbuffer.tcc"
+#include "./raft_dir/ringbufferbase.tcc"
+#include "./raft_dir/ringbufferheap.tcc"
+#include "./raft_dir/ringbufferinfinite.tcc"
+#include "./raft_dir/sample.tcc"
+#include "./raft_dir/sampletype.tcc"
+
+#endif /* END _RAFT_HPP_ */
