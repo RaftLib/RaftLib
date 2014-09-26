@@ -38,7 +38,6 @@
 #include "./raft_dir/Clock.hpp"
 #include "./raft_dir/blocked.hpp"
 #include "./raft_dir/fifo.hpp"
-#include "./raft_dir/monitor.hpp"
 #include "./raft_dir/pointer.hpp"
 #include "./raft_dir/procwait.hpp"
 #include "./raft_dir/resolution.hpp"
