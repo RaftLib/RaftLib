@@ -3,9 +3,6 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Simple, easy to use stream computation library for C++">
-    <meta name="keywords" content="C++,Stream Processing,Raft,RaftLight,Stream,Processing,Threaded,Parallel,Parallel Processing">
-    <meta name="author" content="Jonathan Beard">
 
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
@@ -82,6 +79,7 @@ the result.</p>
 <span class="cp">#include &lt;iostream&gt;</span>
 <span class="cp">#include &lt;cstdint&gt;</span>
 <span class="cp">#include &lt;cstdlib&gt;</span>
+<span class="cm">/** include the raft header file **/</span>
 <span class="cp">#include &lt;raft&gt;</span>
 
 
@@ -173,6 +171,49 @@ the result.</p>
    <span class="k">return</span><span class="p">(</span> <span class="n">EXIT_SUCCESS</span> <span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
+
+<p>The first thing to notice is that all compute kernels extend the class Kernel.  This sets up the "ports"
+that exist for communication between compute kernels.  For each kernel there are multiple ports.  Input
+ports and output ports for each kernel are maintained in a data structure of that name.  When designing 
+a new kernel, the constructor must declare all ports as such:</p>
+
+<div class="highlight highlight-c++"><pre>   <span class="p">[</span><span class="n">input</span> <span class="o">|</span> <span class="n">output</span><span class="p">].</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="p">[</span><span class="n">type</span><span class="p">]</span> <span class="o">&gt;</span><span class="p">(</span> <span class="p">[</span><span class="n">port</span> <span class="n">name</span><span class="p">]</span> <span class="p">);</span>
+</pre></div>
+
+<p>This has two effects, the first registering a type with the port to ensure type safety, and the second
+registering a port with a name so that it can be quickly accessed later.  These ports are constructed
+as lock free first in, first out buffers or "ring-buffers" which enable communication.  The run-time
+system decides on how big the buffer should be and has the option of dynamically monitoring the buffer
+to adjust the size at run-time.  Once ports are declared within the constructor the second function that
+must be declared is <em>run()</em>.  It performs the main work of the kernel, although sub-functions can be 
+declared to compartmentalize code.  As an example:</p>
+
+<div class="highlight highlight-c++"><pre>   <span class="k">virtual</span> <span class="n">raft</span><span class="o">::</span><span class="n">kstatus</span> <span class="n">run</span><span class="p">()</span>
+   <span class="p">{</span>
+      <span class="k">if</span><span class="p">(</span> <span class="p">[</span> <span class="n">some</span> <span class="kt">bool</span> <span class="n">here</span> <span class="p">]</span> <span class="p">)</span>
+      <span class="p">{</span>
+         <span class="n">output</span><span class="p">[</span> <span class="s">"the_port"</span> <span class="p">].</span><span class="n">push</span><span class="p">(</span> <span class="n">count</span> <span class="p">);</span>
+         <span class="cm">/** return raft::proceed to get called again **/</span>
+         <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">proceed</span> <span class="p">);</span>
+      <span class="p">}</span>
+      <span class="cm">/** else **/</span>
+      <span class="cm">/** </span>
+<span class="cm">       * call push with the last item and send a signal that will terminate</span>
+<span class="cm">       * the application such as raft::eof</span>
+<span class="cm">       */</span>
+      <span class="n">output</span><span class="p">[</span> <span class="s">"the_port"</span> <span class="p">].</span><span class="n">push</span><span class="p">(</span> <span class="n">count</span><span class="p">,</span> <span class="n">raft</span><span class="o">::</span><span class="n">eof</span> <span class="p">);</span>
+      <span class="cm">/** return raft::stop to end the calling of this kernel **/</span>
+      <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">stop</span> <span class="p">);</span>
+   <span class="p">}</span>
+</pre></div>
+
+<p>The run function can be executed in a separate thread or in it's own process depending 
+on how the scheduler schedules it.  In either case, it will be called until it returns
+raft::stop, otherwise raft::proceed should be returned.  Otherwise there is nothing
+really special about the Kernel class.  In future tutorials I'll add an example of how
+the RaftLight library system an be used with OpenCL with the queue talking directly to
+a kernel running on a GPU.  GPU kernels will have a slightly differing structure, but 
+from the programmers perspective will have similar port semantics as the C++ kernels.</p>
       </section>
     </div>
 
