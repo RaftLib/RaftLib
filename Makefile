@@ -8,6 +8,7 @@ DIRINCS = $(RINGBUFFERDIR)
 ifneq ($(shell uname -s), Darwin)
 RT = -lrt
 STATIC = -static -static-libgcc -static-libstdc++
+PTHREAD = -lpthread  
 endif
 
 CFLAGS   =  -O3  -Wall -std=c99
@@ -27,12 +28,12 @@ OBJS = $(addsuffix .o, $(COBJS) ) $(addsuffix .o, $(CXXOBJS) )
 
 
 INCS = $(addprefix -I, $(DIRINCS))
-LIBS = -lpthread  $(RT)
+LIBS = $(RT) $(PTHREAD)
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(OBJS)
-	$(AR) rvs raftlight.a $(OBJS)
-	#$(CXX) -dynamiclib -o raftlight.dylib $(OBJS)
+	$(AR) rvs raftlight.a $(OBJS) $(LIBS)
+
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCS) -o $@ $<
 
