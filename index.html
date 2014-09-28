@@ -93,9 +93,11 @@ the result.</p>
 
 <p>First and foremost what is stream processing?  Essentially it is a compute paradigm that envisions perfectly safe, threaded programs (although we'll relax this a bit with locked shared objects, shown much later in the tutorial).  Stream programs themselves are decomposed into compute "kernels" which are connected by communications links called "streams."  As an extremely simple example, take a look at the figure below which has three compute "kernels" (A,B,C) connected by two "streams."</p>
 
-<p><img src="http://www.cse.wustl.edu/%7Ebeardj/queues.jpg" alt="tandem queue"></p>
+<p><img src="http://www.cse.wustl.edu/%7Ebeardj/queues.jpg" alt="tandem queue"/></p>
 
-<p>As a concrete example we have a "sum" application which generates a random stream of numbers from two separate threads, sums them in another and finally prints them in yet another thread.  Admittedly this is a bit wasteful in practice, however its a nice dirt simple example. </p>
+<p>As a concrete example we have a "sum" application (application topology shown below) which generates a random stream of numbers from two separate threads, sums them in another and finally prints them in yet another thread.  Admittedly this is a bit wasteful in practice, however it is a nice dirt simple example. </p>
+
+<p><img src="http://www.cse.wustl.edu/%7Ebeardj/sum.jpg" alt="sum app"/></p>
 
 <div class="highlight highlight-c++"><pre><span class="cp">#include &lt;cassert&gt;</span>
 <span class="cp">#include &lt;iostream&gt;</span>
