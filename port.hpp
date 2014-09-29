@@ -69,6 +69,10 @@ public:
        (this)->initializeConstMap<T>( pi );
       const auto ret_val( portmap.insert( std::make_pair( port_name, 
                                                           pi ) ) );
+      if( ret_val.second )
+      {
+         portlist.push_back( std::ref( pi ) );
+      }
       return( ret_val.second );
    }
 
@@ -151,7 +155,11 @@ protected:
     * to the info data structures that actually contain them
     */
    std::map< std::string, PortInfo > portmap;   
-   
+   /**
+    * used to return iterators to the list so that all ports
+    * can be easily accessed.
+    */
+   std::vector< std::reference_wrapper< PortInfo > > portlist;
    /** 
     * parent kernel that owns this port 
     */
