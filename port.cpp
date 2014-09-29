@@ -80,6 +80,8 @@ Port::hasPorts()
    return( portmap.size() > 0 ? true : false );
 }
 
+
+
 PortInfo&
 Port::getPortInfoFor( const std::string port_name )
 {
