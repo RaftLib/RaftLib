@@ -97,8 +97,10 @@ public:
     * otherwise. 
     * @return   bool
     */
-    bool hasPorts();
+   bool hasPorts();
 
+
+   auto begin()   -> portmap.begin();
 protected:
    /**
     * initializeConstMap - hack to get around the inability to otherwise
