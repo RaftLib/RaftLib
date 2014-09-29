@@ -38,7 +38,7 @@ compile: $(CXXFILES) $(CFILES)
 
 install:
 	cp libraftlight.a $(PREFIX)/lib/
-	mkdir $(PREFIX)/include/raft_dir
+	mkdir -p $(PREFIX)/include/raft_dir
 	cp *.hpp $(PREFIX)/include/raft_dir/
 	cp ./fifo/*.hpp $(PREFIX)/include/raft_dir/
 	cp ./fifo/*.tcc $(PREFIX)/include/raft_dir/
