@@ -96,8 +96,9 @@ public:
    virtual raft::kstatus run()
    {
       /** TODO, implement copy version **/
-      for( FIFO &port : output )
-      {
+//      for( FIFO &port : output )
+//      {
+         FIFO &port( output[ "output_0" ] );
          if( iterations-- == 0 )
          {
             return( raft::stop );
@@ -112,7 +113,7 @@ public:
             ( iterations - output.count() /* num ports */ ) > 0 ? 
                raft::none : 
                raft::eof );
-      }
+//      }
       return( raft::proceed );
    }
 

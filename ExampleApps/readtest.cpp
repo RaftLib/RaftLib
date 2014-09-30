@@ -9,8 +9,8 @@ int
 main( int argc, char **argv )
 {
    Map map;
-   map.link( new filereader<filechunk< 65536 >,false>( "ecoli.txt" ), 
-             new Print< filechunk< 65536 > >() );
+   map.link( new filereader<filechunk< 16 >,false>( "ecoli.txt" ), 
+             new Print< filechunk< 16 > >() );
 
    map.exe();
    return( EXIT_SUCCESS );
