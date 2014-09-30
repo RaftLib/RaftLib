@@ -21,10 +21,13 @@
 #define _PORT_HPP_  1
 
 #include <map>
+#include <vector>
 #include <string>
 #include <utility>
 #include <typeinfo>
 #include <typeindex>
+#include <functional>
+#include <utility>
 
 #include "graphtools.hpp"
 #include "ringbuffertypes.hpp"
@@ -71,7 +74,7 @@ public:
                                                           pi ) ) );
       if( ret_val.second )
       {
-         portlist.push_back( std::ref( pi ) );
+         portlist.push_back( std::ref( *pi.fifo ) );
       }
       return( ret_val.second );
    }
@@ -102,9 +105,11 @@ public:
     * @return   bool
     */
    bool hasPorts();
+   
+   std::vector< std::reference_wrapper< FIFO > >::iterator  begin();
+   std::vector< std::reference_wrapper< FIFO > >::iterator  end();
 
-
-   auto begin()   -> portmap.begin();
+   std::size_t count();
 protected:
    /**
     * initializeConstMap - hack to get around the inability to otherwise
@@ -155,11 +160,13 @@ protected:
     * to the info data structures that actually contain them
     */
    std::map< std::string, PortInfo > portmap;   
+   
    /**
     * used to return iterators to the list so that all ports
     * can be easily accessed.
     */
-   std::vector< std::reference_wrapper< PortInfo > > portlist;
+   std::vector< std::reference_wrapper< FIFO > > portlist;
+   
    /** 
     * parent kernel that owns this port 
     */

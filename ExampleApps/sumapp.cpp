@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <raft>
 
+#include "print.tcc"
 
 template < typename T > class Generate : public Kernel
 {
@@ -59,27 +60,6 @@ public:
 
 };
 
-template< typename T > class Print : public Kernel
-{
-public:
-   Print() : Kernel()
-   {
-      input.addPort< T >( "in" );
-   }
-
-   virtual raft::kstatus run()
-   {
-      T data;
-      raft::signal  signal( raft::none );
-      input[ "in" ].pop( data, &signal );
-      fprintf( stderr, "%" PRIu64 "\n", data );
-      if( signal == raft::eof )
-      {
-         return( raft::stop );
-      }
-      return( raft::proceed );
-   }
-};
 
 int
 main( int argc, char **argv )

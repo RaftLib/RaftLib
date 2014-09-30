@@ -19,9 +19,12 @@
  */
 #include <algorithm>
 #include <cassert>
+#include <typeinfo>
 #include <typeindex>
 #include <sstream>
+#include <iostream>
 
+#include <cxxabi.h>
 #include "fifo.hpp"
 #include "kernel.hpp"
 #include "port.hpp"
@@ -81,6 +84,23 @@ Port::hasPorts()
 }
 
 
+std::vector< std::reference_wrapper< FIFO > >::iterator
+Port::begin()
+{
+   return( portlist.begin() );
+}
+
+std::vector< std::reference_wrapper< FIFO > >::iterator
+Port::end()
+{
+   return( portlist.end() );
+}
+
+std::size_t
+Port::count()
+{
+   return( (std::size_t) portlist.size() );
+}
 
 PortInfo&
 Port::getPortInfoFor( const std::string port_name )

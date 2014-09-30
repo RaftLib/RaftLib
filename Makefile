@@ -13,8 +13,8 @@ STATIC = -static -static-libgcc -static-libstdc++
 PTHREAD = -lpthread  
 endif
 
-CFLAGS   =  -O3  -Wall -std=c99
-CXXFLAGS =  -O3  -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
+CFLAGS   =  -O0 -g  -Wall -std=c99
+CXXFLAGS =  -O0 -g  -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
@@ -38,7 +38,7 @@ compile: $(CXXFILES) $(CFILES)
 
 install:
 	cp libraftlight.a $(PREFIX)/lib/
-	mkdir $(PREFIX)/include/raft_dir
+	mkdir -p $(PREFIX)/include/raft_dir
 	cp *.hpp $(PREFIX)/include/raft_dir/
 	cp ./fifo/*.hpp $(PREFIX)/include/raft_dir/
 	cp ./fifo/*.tcc $(PREFIX)/include/raft_dir/
