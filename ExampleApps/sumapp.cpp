@@ -17,8 +17,10 @@ public:
 
    virtual raft::kstatus run()
    {
+      T data;
       if( count-- > 1 )
       {
+         output[ "number_stream" ].allocate() 
          output[ "number_stream" ].push( count );
          return( raft::proceed );
       }
