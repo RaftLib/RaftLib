@@ -322,10 +322,8 @@ public:
          alloc.run();
       });
      
-      while( alloc.notReady() )
-      {
-         /** spin till all queues have their initial allocation **/
-      }
+      alloc.waitTillReady();
+
       scheduler sched( (*this) );
       sched.init();
       /** launch scheduler in thread **/
@@ -336,6 +334,7 @@ public:
       /** join scheduler first **/
       sched_thread.join();
       mem_thread.join();
+      /** all fifo's deallocated when alloc goes out of scope **/
       return; 
    }
 
@@ -368,6 +367,8 @@ private:
               Kernel &b, const std::string name_b, PortInfo &b_info );
    
    
+   void printEdges( std::set< Kernel* > &source_k );
+
    /** need to keep source kernels **/
    std::set< Kernel* > source_kernels;
    /** and keep a list of all kernels **/

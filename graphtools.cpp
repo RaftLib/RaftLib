@@ -24,7 +24,9 @@
 #include <string>
 #include <sstream>
 #include <cxxabi.h>
+#include <mutex>
 
+#include "portmap_t.hpp"
 #include "portexception.hpp"
 #include "graphtools.hpp"
 #include "port_info.hpp"
@@ -39,15 +41,20 @@ GraphTools::BFS( std::set< Kernel* > &source_kernels,
    std::queue< Kernel* >     queue;
    std::for_each( source_kernels.begin(),
                   source_kernels.end(),
-                  [&]( Kernel *k ){ queue.push( k ); } );
+                  [&]( Kernel *k )
+                  { 
+                     queue.push( k );
+                     visited_set.insert( k );
+                  } );
    while( queue.size() > 0 )
    {
-      auto * const k( queue.front() );
+      auto *k( queue.front() );
       queue.pop();
-      /** mark current kernel as visited **/
-      visited_set.insert( k ); 
       /** iterate over all out-edges **/
-      std::map< std::string, PortInfo > &map_of_ports( k->output.portmap );
+      /** 1) get lock **/
+      std::lock_guard< std::mutex > lock( k->output.portmap.map_mutex );
+      /** 2) get map **/
+      std::map< std::string, PortInfo > &map_of_ports( k->output.portmap.map );
       for( auto &port : map_of_ports )
       {
          PortInfo &source( port.second );
@@ -73,6 +80,7 @@ GraphTools::BFS( std::set< Kernel* > &source_kernels,
          if( visited_set.find( source.other_kernel ) == visited_set.end() )
          {
             queue.push( source.other_kernel );
+            visited_set.insert( source.other_kernel ); 
          }
       }
    }

@@ -36,13 +36,14 @@ Port::Port( Kernel *k ) : kernel( k )
 
 Port::~Port()
 {
+   /** the port map is allocated on the heap so the port_info destructor is called **/
 }
 
 const std::type_index&
 Port::getPortType( const std::string port_name )
 {
-   const auto ret_val( portmap.find( port_name ) );
-   if( ret_val == portmap.cend() )
+   const auto ret_val( portmap.map.find( port_name ) );
+   if( ret_val == portmap.map.cend() )
    {
       throw PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
    }
@@ -52,44 +53,32 @@ Port::getPortType( const std::string port_name )
 FIFO&
 Port::operator[]( const std::string port_name )
 {
-   const auto ret_val( portmap.find( port_name ) );
-   if( ret_val == portmap.cend() )
+   const auto ret_val( portmap.map.find( port_name ) );
+   if( ret_val == portmap.map.cend() )
    {
       throw PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
    }
-   return( *((*ret_val).second.fifo)  );
+   return( *((*ret_val).second.getFIFO())  );
 }
 
 bool
 Port::hasPorts()
 {
-   return( portmap.size() > 0 ? true : false );
+   return( portmap.map.size() > 0 ? true : false );
 }
 
-
-std::vector< std::weak_ptr< FIFO > >::iterator
-Port::begin()
-{
-   return( portlist.begin() );
-}
-
-std::vector< std::weak_ptr< FIFO > >::iterator
-Port::end()
-{
-   return( portlist.end() );
-}
 
 std::size_t
 Port::count()
 {
-   return( (std::size_t) portlist.size() );
+   return( (std::size_t) portmap.map.size() );
 }
 
 PortInfo&
 Port::getPortInfoFor( const std::string port_name )
 {
-   const auto ret_val( portmap.find( port_name ) );
-   if( ret_val == portmap.cend() )
+   const auto ret_val( portmap.map.find( port_name ) );
+   if( ret_val == portmap.map.cend() )
    {
       std::stringstream ss;
       ss << "Port not found for name \"" << port_name << "\"";
@@ -101,11 +90,11 @@ Port::getPortInfoFor( const std::string port_name )
 PortInfo&
 Port::getPortInfo()
 {
-   if( portmap.size() > 1 )
+   if( portmap.map.size() > 1 )
    {
       /** TODO: extract kernel name to go here too **/
       throw PortNotFoundException( "One port expected, more than one found!" );
    }
-   auto pair( portmap.begin() );
+   auto pair( portmap.map.begin() );
    return( (*pair).second );
 }

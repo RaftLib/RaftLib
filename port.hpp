@@ -28,7 +28,8 @@
 #include <typeindex>
 #include <functional>
 #include <utility>
-#include <memory>
+#include <mutex>
+
 
 #include "graphtools.hpp"
 #include "ringbuffertypes.hpp"
@@ -36,6 +37,7 @@
 #include "port_info.hpp"
 #include "ringbuffer.tcc"
 #include "port_info_types.hpp"
+#include "portmap_t.hpp"
 
 class Kernel;
 
@@ -71,7 +73,7 @@ public:
        pi.my_kernel = kernel;
        pi.my_name   = port_name;
        (this)->initializeConstMap<T>( pi );
-      const auto ret_val( portmap.insert( std::make_pair( port_name, 
+      const auto ret_val( portmap.map.insert( std::make_pair( port_name, 
                                                           pi ) ) );
       return( ret_val.second );
    }
@@ -153,12 +155,8 @@ protected:
     */
    PortInfo& getPortInfoFor( const std::string port_name );
   
-   /** 
-    * portmap - data structure that maps the ports by name
-    * to the info data structures that actually contain them
-    */
-   std::map< std::string, PortInfo > portmap;   
-   
+   portmap_t   portmap;
+
    /** 
     * parent kernel that owns this port 
     */

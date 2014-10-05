@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 #include <cassert>
+#include <thread>
 
 #include "allocate.hpp"
 #include "port_info.hpp"
@@ -31,12 +32,16 @@ Allocate::Allocate( Map &map ) : source_kernels( map.source_kernels ),
 
 Allocate::~Allocate()
 {
+   for( FIFO *f : allocated_fifo )
+   {
+      delete( f );
+   }
 }
 
-bool
-Allocate::notReady()
+void
+Allocate::waitTillReady()
 {
-   return( ! ready );
+   while( ! ready );
 }
 
 void
@@ -46,24 +51,64 @@ Allocate::setReady()
 }
 
 void
-Allocate::initialize( PortInfo &src, PortInfo &dst, FIFO *fifo )
+Allocate::initialize( PortInfo *src, PortInfo *dst, FIFO *fifo )
 {
+   fprintf( stderr, "%zu - %zu\n", src, dst );
    assert( fifo != nullptr );
-   if( src.fifo )
+   if( src != nullptr )
+   {
+      if( src->getFIFO() != nullptr )
+      {
+      throw PortDoubleInitializeException( 
+         "Source port \"" + src->my_name + "\" already initialized!" );
+      }
+   }
+   if( dst != nullptr && dst->getFIFO() != nullptr )
    {
       throw PortDoubleInitializeException( 
-         "Port \"" + src.my_name + "\" already initialized!" );
+         "Destination port \"" + dst->my_name +  "\" already initialized!" );
    }
-   if( dst.fifo )
+   if( src != nullptr )
    {
-      throw PortDoubleInitializeException( 
-         "Port \"" + dst.my_name +  "\" already initialized!" );
+      src->setFIFO( fifo );
    }
-   src.fifo = fifo;
-   dst.fifo = fifo;
-   /** 
-    * TODO, at this point we don't care if this one is already in the set,
-    * however might behoove us to throw an error.
-    */
+   if( dst != nullptr )
+   {
+      dst->setFIFO( fifo );
+   }
+   /** NOTE: this list simply speeds up the monitoring if we want it **/
    allocated_fifo.insert( fifo ); 
+}
+
+void
+Allocate::reinitialize( PortInfo *src, PortInfo *dst, FIFO *new_fifo )
+{
+   assert( new_fifo != nullptr );
+   allocated_fifo.insert( new_fifo );
+   
+   FIFO *old_fifo( nullptr );
+   if( dst != nullptr )
+   {
+      old_fifo = dst->getFIFO();
+   }
+   else /** src must not be nullptr **/
+   {
+      assert( src != nullptr );
+      old_fifo = src->getFIFO();
+      src->setFIFO( new_fifo );
+   }
+   while( old_fifo->size() > 0 )
+   {
+      std::this_thread::yield();
+   }
+   /** old fifo is empty, if dst ! null then set to new fifo **/
+   if( dst != nullptr )
+   {
+      dst->setFIFO( new_fifo );
+   }
+
+   /* now the FIFO *ref is empty, erase from set */
+   allocated_fifo.erase( old_fifo );
+   /** swap complete, delete the old fifo to complete **/
+   delete( old_fifo );
 }

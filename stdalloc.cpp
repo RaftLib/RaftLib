@@ -36,7 +36,7 @@ stdalloc::~stdalloc()
 void
 stdalloc::run()
 {
-   auto alloc_func = []( PortInfo &a, PortInfo &b )
+   auto alloc_func = [&]( PortInfo &a, PortInfo &b )
    {
       assert( a.type == b.type );
       /** assume everyone needs a heap for the moment to get working **/
@@ -44,8 +44,7 @@ stdalloc::run()
       auto test_func( (*func_map)[ false ] );
       FIFO *fifo( test_func( 512, 16, (void*)NULL ) );
       assert( fifo != nullptr );
-      a.fifo = fifo;
-      b.fifo = fifo;
+      (this)->initialize( &a, &b, fifo );
    };
    GraphTools::BFS( (this)->source_kernels,
                     alloc_func );

@@ -19,6 +19,16 @@
  */
 #include <sstream>
 #include <cxxabi.h>
+#include <map>
+#include <sstream>
+#include <vector>
+#include <typeinfo>
+#include <cstdio>
+#include <cassert>
+#include <string>
+#include <cstdlib>
+#include <cstring>
+
 #include "map.hpp"
 #include "graphtools.hpp"
 
@@ -72,4 +82,57 @@ Map::join( Kernel &a, const std::string name_a, PortInfo &a_info,
    a_info.other_name   = name_b;
    b_info.other_kernel = &a;
    b_info.other_name   = name_a;
+}
+
+void
+Map::printEdges( std::set< Kernel* > &source_k )
+{
+   std::stringstream                 gviz_output;
+   std::map< std::string /* kernel name */, 
+             std::size_t /* num */ > gviz_node_map;
+   std::vector< std::string >        gviz_edge_map;
+   std::size_t                       gviz_node_index( 0 );
+   gviz_output << "digraph G{\n";
+   gviz_output << "size=\"10,10\";\n";
+   GraphTools::BFS( source_k,
+                    [&]( const PortInfo &a, const PortInfo &b )
+                    {
+                        int status( 0 );
+                        const std::string name_a( abi::__cxa_demangle( typeid( *(a.my_kernel) ).name(), 0, 0, &status ) );
+                        const auto ret_val( gviz_node_map.insert( std::make_pair( name_a, gviz_node_index ) ) );
+                        if( ret_val.second /* new kernel */ )
+                        {
+                           gviz_node_index++;
+                        }
+                        const std::string name_b( abi::__cxa_demangle( typeid( *(b.my_kernel) ).name(), 0, 0, &status ) );
+                        const auto ret_val_2( gviz_node_map.insert( std::make_pair( name_b, gviz_node_index ) ) );
+                        if( ret_val_2.second /* new kernel */ )
+                        {
+                           gviz_node_index++;
+                        }
+                        std::stringstream ss;
+                        ss << gviz_node_map[ name_a ] << "->" << gviz_node_map[ name_b ] << "[ label=\"" <<
+                           a.my_name << " to " << a.other_name << "\" ]";
+                        gviz_edge_map.push_back( ss.str() );
+                    },
+                    false );
+   for( auto it( gviz_node_map.begin() ); it != gviz_node_map.end(); ++it )
+   {
+      gviz_output << (*it).second << "[label=\"" << (*it).first << "\"];\n";
+   }
+   for( std::string &str : gviz_edge_map )
+   {
+      gviz_output << str << ";\n";
+   }
+   gviz_output << "}";
+   std::cout << gviz_output.str();
+   FILE *pipe( popen( "dot -Teps -oImage.eps", "w" ));
+   assert( pipe != nullptr );
+   const auto buff_size( gviz_output.gcount() + 1 );
+   char *buffer = (char*) malloc( sizeof( char ) * ( buff_size ) );
+   buffer[ buff_size - 1 ] = '\0';
+   std::memcpy( buffer, gviz_output.str().c_str(), buff_size - 1 );
+   fwrite( buffer, sizeof( char ), buff_size, pipe );
+   pclose( pipe );
+   free( buffer );
 }

@@ -26,6 +26,7 @@
 #include <functional>
 #include <cstddef>
 #include <memory>
+#include <cassert>
 
 #include "ringbuffertypes.hpp"
 #include "port_info_types.hpp"
@@ -51,7 +52,8 @@ struct PortInfo
 
    PortInfo( const PortInfo &other ) : type( other.type )
    {
-      fifo         = other.fifo;
+      fifo_a         = other.fifo_a;
+      fifo_b         = other.fifo_b;
       const_map    = other.const_map;
       my_kernel    = other.my_kernel;
       my_name      = other.my_name;
@@ -61,18 +63,44 @@ struct PortInfo
 
    virtual ~PortInfo()
    {
-      /** should be serialized so okay **/
-#if 0
-      if( fifo != nullptr )
+      /** alloc delete fifo object **/
+   }
+   /**
+    * getFIFO - call this function to get a FIFO, lock free but
+    * checks to make sure an update isn't occuring.  The ptr returned
+    * will be fine to use even if an update occurs while the ptr
+    * is in use since it won't be deleted from the receiving end
+    * until the FIFO is fully emptied.
+    * @return FIFO*
+    */
+   FIFO* getFIFO()
+   {
+      struct{
+         FIFO *a;
+         FIFO *b;
+      }copy = { fifo_a, fifo_b };
+      while( copy.a != copy.b )
       {
-         delete( fifo );
-         fifo = nullptr;
+         copy.a = fifo_a;
+         copy.b = fifo_b;
       }
-#endif
+      return( copy.a );
    }
 
-   std::shared_ptr< FIFO >           *fifo = nullptr;
+   /**
+    * setFIFO - call this funciton to set a FIFO, updates both
+    * pointers at the same time as opposed to doing it manually
+    * @param   in - valid FIFO*, must not be nullptr
+    */
+   void setFIFO( FIFO *in )
+   {
+      assert( in != nullptr );
+      fifo_a = in;
+      fifo_b = in;
+   }
 
+   FIFO            *fifo_a  = nullptr;
+   FIFO            *fifo_b  = nullptr;
    /** 
     * the type of the port.  regardless of if the buffer itself
     * is impplemented or not. 

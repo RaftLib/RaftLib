@@ -57,13 +57,12 @@ public:
    virtual void run() = 0;
 
    /** 
-    * notReady - returns true if not yet ready.  The run function
-    * should call the protected function setReady() when the initial
-    * allocation is complete so that the scheduling threads can 
-    * commence scheduling.
-    * @return bool - true when not ready
+    * waitTillReady - call after initializing the allocate thread, returns
+    * when the initial allocation is complete.
     */
-   bool notReady();
+   void waitTillReady();
+
+   
 protected:
    /**
     * initialize - internal method to be used within the run method
@@ -71,13 +70,22 @@ protected:
     * FIFO object passed as a param.  This function will throw 
     * an exception if either port (src or dst) have already been
     * allocated.
-    * @param   src - PortInfo&
-    * @param   dst - PortInfo&
+    * @param   src - PortInfo*, nullptr if not to be set
+    * @param   dst - PortInfo*, nullptr if not to be set
     * @param   fifo - FIFO*
     * @throws  PortDoubleInitializeException - if either port is already initialized.
     */
-   void initialize( PortInfo &src, PortInfo &dst, FIFO *fifo );
-  
+   void initialize( PortInfo *src, PortInfo *dst, FIFO *fifo );
+ 
+   /**
+    * reinitialize - internal method to be used within the run method
+    * takes care of dynamic reinitialization, updates all internal 
+    * functions so that they are shutdown properly at the end of execution. 
+    * @param   src - PortInfo*, nullptr if not to be set
+    * @param   dst - PortInfo*, nullptr if not to be set
+    */
+   void reinitialize( PortInfo *src, PortInfo *dst, FIFO *fifo );
+
    /**
     * setReady - call within the implemented run function to signal
     * that the initial allocations have been completed.
