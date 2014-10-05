@@ -46,7 +46,6 @@ virtual void accept( volatile bool &converged ) = 0;
 virtual void setFrameWidth( const sclock_t frame_width )
 {
    (this)->frame_width = frame_width;
-   fprintf( stdout, "Frame Resolution: %.20f\n", (this)->frame_width );
 }
 
 std::ostream&

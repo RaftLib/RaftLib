@@ -25,6 +25,7 @@
 #include <map>
 #include <functional>
 #include <cstddef>
+#include <memory>
 
 #include "ringbuffertypes.hpp"
 #include "port_info_types.hpp"
@@ -70,7 +71,7 @@ struct PortInfo
 #endif
    }
 
-   FIFO            *fifo = nullptr;
+   std::shared_ptr< FIFO >           *fifo = nullptr;
 
    /** 
     * the type of the port.  regardless of if the buffer itself

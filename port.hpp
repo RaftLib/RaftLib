@@ -28,6 +28,7 @@
 #include <typeindex>
 #include <functional>
 #include <utility>
+#include <memory>
 
 #include "graphtools.hpp"
 #include "ringbuffertypes.hpp"
@@ -72,10 +73,6 @@ public:
        (this)->initializeConstMap<T>( pi );
       const auto ret_val( portmap.insert( std::make_pair( port_name, 
                                                           pi ) ) );
-      if( ret_val.second )
-      {
-         portlist.push_back( std::ref( *pi.fifo ) );
-      }
       return( ret_val.second );
    }
 
@@ -105,10 +102,11 @@ public:
     * @return   bool
     */
    bool hasPorts();
+  
+   FIFO& next( const std::string group );
    
-   std::vector< std::reference_wrapper< FIFO > >::iterator  begin();
-   std::vector< std::reference_wrapper< FIFO > >::iterator  end();
-
+   FIFO& next( );
+   
    std::size_t count();
 protected:
    /**
@@ -160,12 +158,6 @@ protected:
     * to the info data structures that actually contain them
     */
    std::map< std::string, PortInfo > portmap;   
-   
-   /**
-    * used to return iterators to the list so that all ports
-    * can be easily accessed.
-    */
-   std::vector< std::reference_wrapper< FIFO > > portlist;
    
    /** 
     * parent kernel that owns this port 

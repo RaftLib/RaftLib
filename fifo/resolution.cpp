@@ -71,20 +71,23 @@ frame_resolution::updateResolution(  frame_resolution &frame,
       if( frame.frame_failure++ > 1 )
       {
          frame.curr_frame_width += system_clock->getResolution();
-//         frame.curr_frame_width *= 2;
          frame.frame_failure = 0;
          frame.frame_success = 0;
          frame.blocked_count = 0;
       }
       return( false );
    };
-   if( p_diff < ( -CONVERGENCE ) ||  frame.blocked_count < 2 )
+   if( p_diff < ( -CONVERGENCE ) /* ||  frame.blocked_count < 2 */ )
    {
       update();
    }
-   else if ( p_diff > CONVERGENCE || frame.blocked_count < 2 )
+   else if ( p_diff > CONVERGENCE /* || frame.blocked_count < 2 */ )
    {
       update(); 
+   }
+   if( frame.frame_success++ < 5 )
+   {
+      return( false );
    }
    //else calc range
    const double upperPercent( 1.01  );
@@ -92,11 +95,9 @@ frame_resolution::updateResolution(  frame_resolution &frame,
    /** note: frame.curr_frame_width always > 0 **/
    frame.range.upper = frame.curr_frame_width * upperPercent;
    frame.range.lower = frame.curr_frame_width * lowerPercent;
-   if( frame.frame_success++ > 5 )
-   {
-      return( true );
-   }
-   return( false );
+   
+   std::cout << "frame interval: " << frame.curr_frame_width << "s\n";
+   return( true );
 }
 
 bool 

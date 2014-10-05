@@ -52,23 +52,6 @@ Port::getPortType( const std::string port_name )
 FIFO&
 Port::operator[]( const std::string port_name )
 {
-   //if( port_name.compare( "" ) == 0 )
-   //{
-   //   int size( 0 );
-   //   if( ( size = portmap.size() ) > 1 )
-   //   {
-   //      std::stringstream ss;
-   //      ss << 
-   //         "Special port name \"\" implies that only 1 port exists, " <<
-   //            "however, there are (" << std::to_string( size ) << ") ports.";
-   //      throw PortNotFoundException( ss.str() );
-   //      exit( EXIT_FAILURE );
-   //   }
-   //   else
-   //   {
-   //      return( *( *( portmap.begin() ) ) );
-   //   }
-   //}
    const auto ret_val( portmap.find( port_name ) );
    if( ret_val == portmap.cend() )
    {
@@ -84,13 +67,13 @@ Port::hasPorts()
 }
 
 
-std::vector< std::reference_wrapper< FIFO > >::iterator
+std::vector< std::weak_ptr< FIFO > >::iterator
 Port::begin()
 {
    return( portlist.begin() );
 }
 
-std::vector< std::reference_wrapper< FIFO > >::iterator
+std::vector< std::weak_ptr< FIFO > >::iterator
 Port::end()
 {
    return( portlist.end() );

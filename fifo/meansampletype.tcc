@@ -50,7 +50,6 @@ accept( volatile bool &converged )
    if( converged )
    {
       (this)->real += (this)->temp;
-      //std::cerr << (this)->temp.occupancy << "\n";
    }
    /** TODO, change this if I change the struct to a union **/
    (this)->temp.occupancy        = 0;
@@ -66,9 +65,10 @@ printHeader()
 virtual std::string
 printData( Unit unit = Unit::Byte )
 {
-   //std::stringstream ss;
-   //ss << (this)->real.occupancy << ", " << (this)->real.frames_count;
-   //return( ss.str() );
+   if( (this)->real.occupancy == 0 )
+   {
+      return( "0" );
+   }
    return( std::to_string( 
       (double) (this)->real.occupancy / ( (double) (this)->real.frames_count ) ) );
 }
@@ -93,6 +93,5 @@ struct stats{
    volatile std::int64_t occupancy;
    volatile std::int64_t frames_count;
 } real, temp;
-
 };
 #endif /* END _MEANSAMPLETYPE_TCC_ */

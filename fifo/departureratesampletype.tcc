@@ -25,6 +25,7 @@
 #include "blocked.hpp"
 #include <cinttypes>
 #include "Clock.hpp"
+#include <array>
 
 extern Clock *system_clock;
 
@@ -34,8 +35,7 @@ template < class T, Type::RingBufferType type >
 public:
 DepartureRateSampleType() : RateSampleType< T, type >(),
                             blocked( false ),
-                            finished( false ),
-                            prev_time( (sclock_t) 0 )
+                            finished( false )
 {
 }
 
@@ -60,28 +60,42 @@ sample( RingBufferBase< T, type > &buffer, bool &global_blocked )
 virtual void
 accept( volatile bool &converged )
 {
-   const sclock_t curr_time( system_clock->getTime() );
    if( converged &&  ! (this)->blocked && ! (this)->finished )
    {
       (this)->real += (this)->temp;
-      fprintf( stderr, "%" PRIu64 ",%.10f\n", (this)->temp.items_copied,
-                                              ( curr_time - (this)->prev_time) );
+      if( item_index < 100000 )
+      {
+         item_log[ item_index++ ] = (this)->temp.items_copied;
+      }
    }
    (this)->temp.items_copied  = 0;
    (this)->blocked            = false;
-   (this)->prev_time = system_clock->getTime();
 }
 
 protected:
 virtual std::string
 printHeader()
 {
+   std::cerr << "{" << (this)->frame_width << ",{"; 
+   for( auto i( 0 ); i < item_index; i++ )
+   {
+      if( i != (item_index - 1) )
+      {
+         std::cerr << item_log[ i ] << ",";
+      }
+      else
+      {
+         std::cerr << item_log[ i ] << "}";
+      }
+   }
+   std::cerr << "}";
    return( "departure_rate" );
 }
 
 private:
 bool  blocked;
 bool  finished;
-sclock_t prev_time;
+std::array< std::int64_t, 100000 > item_log;
+std::int64_t item_index = 0;
 };
 #endif /* END _DEPARTURERATESAMPLETYPE_TCC_ */
