@@ -53,7 +53,6 @@ Allocate::setReady()
 void
 Allocate::initialize( PortInfo *src, PortInfo *dst, FIFO *fifo )
 {
-   fprintf( stderr, "%zu - %zu\n", src, dst );
    assert( fifo != nullptr );
    if( src != nullptr )
    {
