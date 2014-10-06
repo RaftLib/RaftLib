@@ -18,6 +18,7 @@ public:
 
    virtual raft::kstatus run()
    {
+      /** just wanna test out the insert function **/
       std::vector< T > list;
       while( count-- ) list.push_back( count );
       output[ "number_stream" ].insert( list.begin(),
