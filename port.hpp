@@ -38,6 +38,8 @@
 #include "ringbuffer.tcc"
 #include "port_info_types.hpp"
 #include "portmap_t.hpp"
+#include "portiterator.hpp"
+
 
 class Kernel;
 
@@ -105,9 +107,9 @@ public:
     */
    bool hasPorts();
   
-   FIFO& next( const std::string group );
-   
-   FIFO& next( );
+   PortIterator begin();
+
+   PortIterator end();
    
    std::size_t count();
 protected:

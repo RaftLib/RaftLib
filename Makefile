@@ -18,7 +18,7 @@ CXXFLAGS =  -O0 -g  -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
-                   simpleschedule stdalloc
+                   simpleschedule stdalloc portiterator
 
 COBJS   = $(RBCOBJS)
 CXXOBJS = $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)

@@ -92,7 +92,7 @@ public:
     * this object to the FIFO once it is written.
     * @return  T&
     */
-   template < class T > T& allocate()
+   template < class T > auto allocate() ->T&
    {
       void *ptr( nullptr );
       /** call blocks till an element is available **/

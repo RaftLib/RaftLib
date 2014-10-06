@@ -17,4 +17,72 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <utility>
+#include <map>
+
+#include "port_info.hpp"
+#include "portmap_t.hpp"
 #include "portiterator.hpp"
+
+PortIterator::PortIterator( portmap_t *port_map ) : port_map( port_map ),
+                                                    lock( port_map->map_mutex )
+{
+   PortIterator::initKeyMap( port_map, key_map );
+}
+
+PortIterator::PortIterator( portmap_t *port_map, const std::size_t index ) : 
+                                                    port_map( port_map ),
+                                                    lock( port_map->map_mutex ),
+                                                    map_index( index )
+{
+   PortIterator::initKeyMap( port_map, key_map );
+}
+
+PortIterator::PortIterator( const PortIterator &it ) : port_map( it.port_map ),
+                                                       lock( it.port_map->map_mutex )
+{
+   PortIterator::initKeyMap( port_map, key_map );
+}
+
+PortIterator&
+PortIterator::operator++()
+{
+   //TODO, perhaps throw error if out of bounds here
+   map_index++;
+   return( (*this) );
+}
+
+bool
+PortIterator::operator==( const PortIterator &rhs )
+{
+   /** 
+    * TODO, on a more philosophical note, should this
+    * be a ptr comparison for the FIFO's but then the 
+    * end function would be harder to implement
+    */
+   return( map_index == rhs.map_index );
+}
+
+bool 
+PortIterator::operator!=( const PortIterator &rhs )
+{
+   return( map_index != rhs.map_index );
+}
+
+FIFO&
+PortIterator::operator*()
+{
+   return(
+      (*port_map->map[ key_map[ map_index ] ].getFIFO() ) );
+}
+
+void
+PortIterator::initKeyMap( portmap_t *port_map, std::vector< std::string > &key_map )
+{
+   std::map< std::string, PortInfo > &map_ref( port_map->map );
+   for( const auto &pair : map_ref )
+   {
+      key_map.push_back( pair.first );
+   }
+}

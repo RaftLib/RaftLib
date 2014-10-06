@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <raft>
+#include <vector>
 
 #include "print.tcc"
 
@@ -17,15 +18,11 @@ public:
 
    virtual raft::kstatus run()
    {
-      T data;
-      if( count-- > 1 )
-      {
-         output[ "number_stream" ].allocate() 
-         output[ "number_stream" ].push( count );
-         return( raft::proceed );
-      }
-      /** else **/
-      output[ "number_stream" ].push( count, raft::eof );
+      std::vector< T > list;
+      while( count-- ) list.push_back( count );
+      output[ "number_stream" ].insert( list.begin(),
+                                        list.end(),
+                                        raft::eof );
       return( raft::stop );
    }
 
@@ -51,9 +48,10 @@ public:
       input[ "input_a" ].pop( a, &sig_a );
       input[ "input_b" ].pop( b, &sig_b );
       assert( sig_a == sig_b );
-      C c( a + b );
-      output[ "sum" ].push( c , sig_a );
-      if( sig_b == raft::eof )
+      C &c( output[ "sum" ]. template allocate< C >( ) );
+      c = ( a + b );
+      output[ "sum" ].push( sig_a );
+      if( sig_a == raft::eof || sig_b == raft::eof )
       {
          return( raft::stop );
       }

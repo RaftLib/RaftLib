@@ -21,16 +21,36 @@
 #define _PORTITERATOR_HPP_  1
 #include <iterator>
 #include <map>
+#include <thread>
+#include <mutex>
+#include <cstddef>
 
-class Port;
+#include "portmap_t.hpp"
+
 class FIFO;
 
 class PortIterator : public std::iterator< std::forward_iterator_tag, FIFO >
 {
 public:
-   PortIterator( std::map< std::string, PortInfo > *portmap, 
-private:
+   PortIterator( portmap_t *port_map );
    
+   PortIterator( portmap_t *port_map, const std::size_t index );
+
+   PortIterator( const PortIterator &it );
+
+   PortIterator& operator++();
+   
+   bool operator==(const PortIterator& rhs); 
+   bool operator!=(const PortIterator& rhs);
+   FIFO& operator*();
+
+private:
+   static void initKeyMap( portmap_t *port_map, std::vector< std::string > &key_map );
+   
+   portmap_t * const               port_map;
+   std::lock_guard< std::mutex >   lock;
+   std::vector< std::string >      key_map;
+   std::size_t                     map_index = 0; 
 };
 
 #endif /* END _PORTITERATOR_HPP_ */

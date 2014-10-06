@@ -67,6 +67,17 @@ Port::hasPorts()
    return( portmap.map.size() > 0 ? true : false );
 }
 
+PortIterator
+Port::begin()
+{
+   return( PortIterator( &portmap ) );
+}
+
+PortIterator
+Port::end()
+{
+   return( PortIterator( &portmap, portmap.map.size() + 1 ) );
+}
 
 std::size_t
 Port::count()

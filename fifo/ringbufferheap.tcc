@@ -277,7 +277,7 @@ protected:
                                                               const raft::signal &signal )
    {
       auto dist( std::distance( begin, end ) );
-      while( --dist )
+      while( dist-- )
       {
          while( space_avail() == 0 )
          {
