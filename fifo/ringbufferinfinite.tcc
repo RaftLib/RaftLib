@@ -97,8 +97,9 @@ public:
    {
       if( ! (this)->allocate_called ) return;
       data->signal[ 0 ].sig = signal;
-      write_stats.count++;
+      write_stats.count += (this)->n_allocated;
       (this)->allocate_called = false;
+      (this)->n_allocated = 1;
    }
 
    
@@ -131,6 +132,19 @@ protected:
    {
       (this)->allocate_called = true;
       *ptr = (void*)&(data->store[ 0 ].item);
+   }
+
+   virtual std::size_t local_allocate_n( void *ptr, const std::size_t n )
+   {
+      std::size_t output( n <= (this)->capacity() ? n : (this)->capacity() );
+      auto *container( reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
+      for( std::size_t index( 0 ); index < output; index++ )
+      {
+         container->push_back( data->store[ 0 ].item );
+      }
+      (this)->allocate_called = true;
+      (this)->n_allocated     = output;
+      return( output );
    }
    
    virtual void  local_push( void *ptr, const raft::signal &signal )
