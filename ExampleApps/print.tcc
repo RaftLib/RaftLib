@@ -26,7 +26,7 @@
 #include <cstdlib>
 
 
-template< typename T > class Print : public Kernel
+template< typename T, char delim = '\0' > class Print : public Kernel
 {
 public:
    Print( ) : Kernel()
@@ -49,7 +49,14 @@ public:
       T data;
       raft::signal  signal( raft::none );
       input[ "in" ].pop( data, &signal );
-      std::cout << data;;
+      if( delim != '\0' )
+      {
+         std::cout << data << delim;
+      }
+      else
+      {
+         std::cout << data;
+      }
       if( signal == raft::eof )
       {
          return( raft::stop );

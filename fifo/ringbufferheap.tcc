@@ -30,7 +30,6 @@ public:
     */
    RingBufferBase() : FIFOAbstract< T, type >(),
                       data( nullptr ),
-                      allocate_called( false ),
                       write_finished( false )
    {
    }
@@ -136,10 +135,11 @@ public:
    virtual void push( const raft::signal signal = raft::none )
    {
       if( ! (this)->allocate_called ) return;
+      /** should be the end of the write, regardless of which allocate called **/
       const size_t write_index( Pointer::val( data->write_pt ) );
-      data->signal[ write_index ].sig = signal;
+      data->signal[ write_index ] = signal;
       Pointer::inc( data->write_pt );
-      write_stats.count++;
+      write_stats.count += (this)->n_allocated;
       if( signal == raft::eof )
       {
          /**
@@ -149,6 +149,7 @@ public:
          (this)->write_finished = true;
       }
       (this)->allocate_called = false;
+      (this)->n_allocated     = 1; /** set to one for convenience **/
    }
    
    /**
@@ -231,6 +232,39 @@ protected:
       const size_t write_index( Pointer::val( data->write_pt ) );
       *ptr = (void*)&(data->store[ write_index ].item);
    }
+
+   virtual std::size_t local_allocate_n( void *ptr, const std::size_t n )
+   {
+      auto *container( reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
+      std::size_t output( n <= (this)->capacity() ? n : (this)->capacity() );
+      /** iterate over range, pause if not enough items **/
+      for( std::size_t index( 0 ); index < output; index++ )
+      {
+         while( space_avail() == 0 )
+         {
+#ifdef NICE
+            std::this_thread::yield();
+#endif
+            if( write_stats.blocked == 0 )
+            {
+               write_stats.blocked = 1;
+            }
+#if __x86_64
+         __asm__ volatile("\
+           pause"
+           :
+           :
+           : );
+#endif           
+         }
+         const std::size_t write_index( Pointer::val( data->write_pt ) );
+         container->push_back( data->store[ write_index ].item );
+         data->signal[ write_index ] = raft::none;
+      }
+      (this)->allocate_called = true;
+      (this)->n_allocated     = output;
+      return( output );
+   }
    
    /**
     * local_push - implements the pure virtual function from the 
@@ -263,7 +297,7 @@ protected:
 	   const size_t write_index( Pointer::val( data->write_pt ) );
       T *item( reinterpret_cast< T* >( ptr ) );
 	   data->store[ write_index ].item     = *item;
-	   data->signal[ write_index ].sig     = signal;
+	   data->signal[ write_index ]         = signal;
 	   Pointer::inc( data->write_pt );
 	   write_stats.count++;
       if( signal == raft::eof )
@@ -295,11 +329,11 @@ protected:
          /** add signal to last el only **/
          if( dist == 0 )
          {
-            data->signal[ write_index ].sig = signal;
+            data->signal[ write_index ] = signal;
          }
          else
          {
-            data->signal[ write_index ].sig = raft::none;
+            data->signal[ write_index ] = raft::none;
          }
          Pointer::inc( data->write_pt );
          write_stats.count++;
@@ -393,7 +427,7 @@ protected:
       const std::size_t read_index( Pointer::val( data->read_pt ) );
       if( signal != nullptr )
       {
-         *signal = data->signal[ read_index ].sig;
+         *signal = data->signal[ read_index ];
       }
       /** gotta dereference pointer and copy **/
       T *item( reinterpret_cast< T* >( ptr ) );
@@ -442,7 +476,7 @@ protected:
          {
             read_index = Pointer::val( data->read_pt );
             items[ i ] = data->store [ read_index ].item;
-            signal  [ i ] = data->signal[ read_index ].sig;
+            signal  [ i ] = data->signal[ read_index ];
             Pointer::inc( data->read_pt );
             read_stats.count++;
          }
@@ -487,7 +521,7 @@ protected:
       const size_t read_index( Pointer::val( data->read_pt ) );
       if( signal != nullptr )
       {
-         *signal = data->signal[ read_index ].sig;
+         *signal = data->signal[ read_index ];
       }
       *ptr = (void*) &( data->store[ read_index ].item );
       return;
@@ -510,7 +544,6 @@ protected:
     * the allocate function and false when the push with
     * only the signal argument is called.
     */
-   volatile bool                allocate_called;
    /** TODO, this needs to get moved into the buffer for SHM **/
    volatile bool                write_finished;
 };

@@ -30,7 +30,6 @@ public:
     */
    RingBufferBase() : FIFOAbstract< T, Type::Infinite >(),
                       data( nullptr ),
-                      allocate_called( false ),
                       write_finished( false )
    {
    }
@@ -247,7 +246,6 @@ protected:
    volatile Blocked                             read_stats;
    volatile Blocked                             write_stats;
    
-   volatile bool                                allocate_called;
    volatile bool                                write_finished;
 };
 #endif /* END _RINGBUFFERINFINITE_TCC_ */

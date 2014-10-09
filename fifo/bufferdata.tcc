@@ -73,8 +73,41 @@ struct Signal
       (this)->sig = other.sig;
    }
 
+   /**
+    * operator =, enable taking a signal rhs
+    * and assign it to a Signal struct type,
+    * makes programming a bit easier, especially
+    * if we change names of internal members
+    */
+   Signal& operator = ( raft::signal signal )
+   {
+      (this)->sig = signal;
+      return( (*this) );
+   }
+   
+   /**
+    * operator =, enable taking a signal rhs
+    * and assign it to a Signal struct type,
+    * makes programming a bit easier, especially
+    * if we change names of internal members
+    */
+   Signal& operator = ( raft::signal &signal )
+   {
+      (this)->sig = signal;
+      return( (*this) );
+   }
+   
+   /** 
+    * allow casting struct back to simple
+    * signal type
+    */
+   operator raft::signal()
+   {
+      return( (this)->sig );
+   }
    raft::signal sig;
 };
+
 
 /**
  * DataBase - not quite the best name since we 

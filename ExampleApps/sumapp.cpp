@@ -70,7 +70,7 @@ main( int argc, char **argv )
                                   new Sum< std::int64_t,std::int64_t, std::int64_t >(),
                                   "input_a" ) );
    map.link( new Generate< std::int64_t >(), &( linked_kernels.dst ), "input_b" );
-   map.link( &( linked_kernels.dst ), new Print< std::int64_t >() );
+   map.link( &( linked_kernels.dst ), new Print< std::int64_t ,'\n'>() );
    map.exe();
    return( EXIT_SUCCESS );
 }

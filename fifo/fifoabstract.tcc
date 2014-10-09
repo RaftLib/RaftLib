@@ -20,7 +20,11 @@
 #ifndef _FIFOABSTRACT_TCC_
 #define _FIFOABSTRACT_TCC_  1
 #include "ringbuffertypes.hpp"
+#include "bufferdata.tcc"
+
 #include "fifo.hpp"
+
+extern Clock *system_clock;
 
 template < class T, Type::RingBufferType type > 
    class FIFOAbstract : public FIFO
@@ -33,5 +37,8 @@ public:
    virtual ~FIFOAbstract() = default;
 
 protected:
+   /** TODO, package this as as struct **/
+   volatile bool            allocate_called = false;
+   std::size_t              n_allocated     = 1;
 };
 #endif /* END _FIFOABSTRACT_TCC_ */

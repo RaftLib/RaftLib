@@ -356,7 +356,7 @@ private:
 #endif
             };
 #else
-#warning    Cycle counter currently supported for Linux only, defaulting to dummy counter!
+            fprintf( stderr, "Cycle counter not supported on this platform, defaulting to dummy counter!\n" );
             function = [&](){ clock->increment(); };
 #endif
          }

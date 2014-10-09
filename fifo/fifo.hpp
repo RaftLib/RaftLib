@@ -100,6 +100,14 @@ public:
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
 
+   template < class T > auto allocate( const std::size_t n, std::size_t &n_ret ) -> std::vector< std::reference_wrapper< T > >
+   {
+      std::vector< std::reference_wrapper< T > > output;
+      void *ptr( (void*) &output );
+      n_ret = local_allocate_n( ptr, n );
+      /** compiler should optimize this copy, if not then it'll be a copy of referneces not full objects **/
+      return( output );
+   }
    /**
     * releases the last item allocated by allocate() to the 
     * queue.  Function will simply return if allocate wasn't
@@ -246,6 +254,14 @@ protected:
     */
    virtual void local_allocate( void **ptr ) = 0;
    
+   /**
+    * local_allocate_n - copies std::ref's to the data structure
+    * passed in by ptr.  
+    * @param   - ptr, void* dereferenced std::vector
+    * @param   - n, const std::size_t
+    * @return  # of items allocated, different only if capacity is less than asked
+    */
+   virtual std::size_t local_allocate_n( void *ptr, const std::size_t n ) = 0;
    /**
     * local_push - pushes the object reference by the void
     * ptr and pushes it to the FIFO with the associated 

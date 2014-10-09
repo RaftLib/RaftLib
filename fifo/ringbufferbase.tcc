@@ -31,10 +31,8 @@
 #include "Clock.hpp"
 #include "pointer.hpp"
 #include "ringbuffertypes.hpp"
-#include "bufferdata.tcc"
 #include "signalvars.hpp"
 #include "blocked.hpp"
-#include "fifo.hpp"
 #include "fifoabstract.tcc"
 /**
  * Note: there is a NICE define that can be uncommented
@@ -43,8 +41,6 @@
  * actively spin while waiting.
  */
 #define NICE 1
-
-extern Clock *system_clock;
 
 /** heap implementation, uses thread shared memory or SHM **/
 #include "ringbufferheap.tcc"
