@@ -44,11 +44,12 @@ template < std::size_t chunksize = 16384,
            SearchAlgorithm algorithm = RabinKarp > search : public Kernel
 {
 public:
-   search()
+   search( const std::string search_term )
    {
       /** setup ports, only one in and one out **/
-      input.addPort< filechunk< chunksize > >( "in" );
-      output.addPOrt< hit_t >( "out" );
+      input.addPort< filechunk< chunksize > >( "in_data" );
+      input.addPort< char[256] >( "in_term" );
+      output.addPort< hit_t >( "out" );
       
       uint64_t q;
       uint64_t d;
@@ -57,16 +58,6 @@ public:
       {
          case( RabinKarp ):
          {
-
-            /** 
-             * calculate number of iterations needed to cover
-             * entire file, last 1 is 2 b/c we need to subtract
-             * one for the single byte overlap at the end of 
-             * the chunk
-             */
-            iterations =  
-               std::round( (double) file_length / 
-                           (double)( CHUNKSIZE - search_term_length - 1 ) );
             
             q = 33554393 ;
             d = 0xff ;
