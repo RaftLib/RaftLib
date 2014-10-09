@@ -76,7 +76,7 @@ Port::begin()
 PortIterator
 Port::end()
 {
-   return( PortIterator( &portmap, portmap.map.size() + 1 ) );
+   return( PortIterator( &portmap, portmap.map.size() ) );
 }
 
 std::size_t

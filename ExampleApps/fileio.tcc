@@ -28,7 +28,7 @@
 
 #include <raft>
 
-template < std::size_t size > struct filechunk
+template < std::size_t size = 65536 > struct filechunk
 {
    filechunk() = default;
 
@@ -37,14 +37,17 @@ template < std::size_t size > struct filechunk
       std::memcpy( buffer, other.buffer, other.length + 1 );
       start_position = other.start_position;
       length = other.length;
-      CHUNKSIZE = other.size;
    }
 
    char              buffer[ size ]; 
    std::size_t       BUFFERSIZE;
    std::size_t       start_position;
    std::size_t       length;
-   std::size_t       CHUNKSIZE = size;
+
+   constexpr static std::size_t getChunkSize()
+   {
+      return( size );
+   }
 
    friend std::ostream& operator <<( std::ostream &output, filechunk< size > &c )
    {
@@ -90,27 +93,27 @@ public:
       chunktype temp;
       length = st.st_size;
       iterations = std::round( (double) length / 
-                     ( (double) (temp.CHUNKSIZE) - chunk_offset - 1 ) );
+                     ( (double) (chunktype::getChunkSize()) - chunk_offset - 1 ) );
    }
 
    virtual raft::kstatus run()
-   {
-      for( FIFO &port : output )
+   {  
+      for( auto &port : output )
       {
-         if( iterations-- == 0 )
-         {
-            return( raft::stop );
-         }
          auto &chunk( port.allocate< chunktype  >() );
          chunk.start_position = ftell( fp );
          const auto num_read(  
-            fread( chunk.buffer, sizeof( char ), chunk.CHUNKSIZE, fp ) );
+            fread( chunk.buffer, sizeof( char ), chunktype::getChunkSize() , fp ) );
          chunk.buffer[ num_read ] = '\0';
          chunk.length = num_read;
          port.push( 
             ( iterations - output.count() /* num ports */ ) > 0 ? 
                raft::none : 
                raft::eof );
+         if( iterations-- == 0 )
+         {
+            return( raft::stop );
+         }
       }
       return( raft::proceed );
    }

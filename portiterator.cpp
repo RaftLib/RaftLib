@@ -20,29 +20,35 @@
 #include <algorithm>
 #include <utility>
 #include <map>
+#include <iostream>
 
 #include "port_info.hpp"
 #include "portmap_t.hpp"
 #include "portiterator.hpp"
 
-PortIterator::PortIterator( portmap_t *port_map ) : port_map( port_map ),
-                                                    lock( port_map->map_mutex )
+PortIterator::PortIterator( portmap_t *port_map ) : port_map( port_map )
 {
    PortIterator::initKeyMap( port_map, key_map );
+   port_map->map_mutex.lock();
+   /** TODO, might should be trylock with error if already lock, same for below **/
 }
 
 PortIterator::PortIterator( portmap_t *port_map, const std::size_t index ) : 
                                                     port_map( port_map ),
-                                                    lock( port_map->map_mutex ),
                                                     map_index( index )
 {
    PortIterator::initKeyMap( port_map, key_map );
 }
 
 PortIterator::PortIterator( const PortIterator &it ) : port_map( it.port_map ),
-                                                       lock( it.port_map->map_mutex )
+                                                       map_index( it.map_index )
 {
    PortIterator::initKeyMap( port_map, key_map );
+}
+
+PortIterator::~PortIterator()
+{
+   port_map->map_mutex.unlock();
 }
 
 PortIterator&
@@ -72,7 +78,7 @@ PortIterator::operator!=( const PortIterator &rhs )
 
 FIFO&
 PortIterator::operator*()
-{
+{ 
    return(
       (*port_map->map[ key_map[ map_index ] ].getFIFO() ) );
 }

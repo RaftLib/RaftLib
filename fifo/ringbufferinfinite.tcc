@@ -134,7 +134,7 @@ protected:
       *ptr = (void*)&(data->store[ 0 ].item);
    }
    
-   virtual void  local_push( void *ptr, const raft::signal signal )
+   virtual void  local_push( void *ptr, const raft::signal &signal )
    {
       T *item (reinterpret_cast< T* >( ptr ) );
       data->store [ 0 ].item  = *item;
@@ -184,8 +184,8 @@ protected:
                            local_insert_helper( *begin, *end, signal );
 
                        } } };
-      auto f( (this)->func_map.find( iterator_type ) );
-      if( f != (this)->func_map.end() )
+      auto f( func_map.find( iterator_type ) );
+      if( f != func_map.end() )
       {
          (*f).second( begin_ptr, end_ptr, signal );
       }

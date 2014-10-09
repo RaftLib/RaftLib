@@ -103,6 +103,6 @@ protected:
    std::set< FIFO*   > allocated_fifo;
 
 private:
-   bool ready = false;
+   volatile bool ready = false;
 };
 #endif /* END _ALLOCATE_HPP_ */

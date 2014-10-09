@@ -76,6 +76,7 @@ protected:
 virtual std::string
 printHeader()
 {
+   std::cerr.precision( 20 );
    std::cerr << "{" << (this)->frame_width << ",{"; 
    for( auto i( 0 ); i < item_index; i++ )
    {

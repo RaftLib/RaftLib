@@ -38,6 +38,8 @@ public:
 
    PortIterator( const PortIterator &it );
 
+   virtual ~PortIterator();
+
    PortIterator& operator++();
    
    bool operator==(const PortIterator& rhs); 
@@ -48,7 +50,6 @@ private:
    static void initKeyMap( portmap_t *port_map, std::vector< std::string > &key_map );
    
    portmap_t * const               port_map;
-   std::lock_guard< std::mutex >   lock;
    std::vector< std::string >      key_map;
    std::size_t                     map_index = 0; 
 };

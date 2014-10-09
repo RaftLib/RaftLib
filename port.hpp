@@ -28,7 +28,6 @@
 #include <typeindex>
 #include <functional>
 #include <utility>
-#include <mutex>
 
 
 #include "graphtools.hpp"

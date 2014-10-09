@@ -49,7 +49,7 @@ public:
       T data;
       raft::signal  signal( raft::none );
       input[ "in" ].pop( data, &signal );
-      std::cout << data << "\n";
+      std::cout << data;;
       if( signal == raft::eof )
       {
          return( raft::stop );
