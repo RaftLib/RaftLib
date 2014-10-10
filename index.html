@@ -282,20 +282,20 @@ function has various forms as follows:</p>
 <span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
       <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span> <span class="p">);</span>
 <span class="cm">/**</span>
-<span class="cm"> * version 2: Kernel a has multiple output ports, but one named _a\_port_, Kernel</span>
+<span class="cm"> * version 2: Kernel a has multiple output ports, but one named a_port, Kernel</span>
 <span class="cm"> * b has a single input port otherwise an exception is thrown.</span>
 <span class="cm"> */</span>
 <span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span> 
       <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span>  <span class="n">a_port</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span> <span class="p">);</span>
 <span class="cm">/** </span>
 <span class="cm"> * version 3: Kernel a has a single output port (otherwise an exception is thrown,</span>
-<span class="cm"> * Kernel b has multiple input ports with at least one named _b\_port_</span>
+<span class="cm"> * Kernel b has multiple input ports with at least one named b_port</span>
 <span class="cm"> */</span>
 <span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
       <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">b_port</span> <span class="p">);</span>
 <span class="cm">/**</span>
-<span class="cm"> * version 4: both kernels have multiple output ports with at least one named _a\_port_ </span>
-<span class="cm"> * and _b\_port_, otherwise an exception is thrown.</span>
+<span class="cm"> * version 4: both kernels have multiple output ports with at least one named a_port </span>
+<span class="cm"> * and b_port, otherwise an exception is thrown.</span>
 <span class="cm"> */</span>
 <span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
       <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">a_port</span><span class="p">,</span> 
@@ -308,16 +308,18 @@ function has various forms as follows:</p>
   flow graph of kernels and “streams” through which data passes.  Type checking 
   is also done at this time between ports.  Types are considered compatible if they
   are the same or cast-able.  If types are cast-able then the smallest (narrowest) 
-  type of the two is chosen for the port allocation.  The types are cast transparently 
-  to the user.  At this point nothing has yet been allocated.  When the <em>exe()</em> 
-  function of Map is called, everything is put into motion.  The data flow graph stored
-  within Map is analyzed for “unconnected” edges, which could indicate compute kernels 
-  which have connected incorrectly, this is in addition to the type checking already 
-  performed.  Each compute kernel is “mapped” to a thread or process for execution, 
-  the appropriate type of link is automatically allocated by the run-time, finally 
-  the scheduler begins executing the data flow graph.  In the final version two threads
-  monitor the execution schedule and stream status ensuring streams are properly allocated.  
-  Future versions will automatically increase or decrease the parallelism within the data-flow 
+  type of the two is chosen for the port allocation.  The types are cast 
+  transparently to the user.  At this point nothing has yet been allocated.  
+  When the <em>exe()</em> function of Map is called, everything is put into 
+  motion.  The data flow graph stored within Map is analyzed for 
+  “unconnected” edges, which could indicate compute kernels  which have connected 
+  incorrectly, this is in addition to the type checking already 
+  performed.  Each compute kernel is “mapped” to a thread or process for 
+  execution, the appropriate type of link is automatically allocated by the 
+  run-time, finally the scheduler begins executing the data flow graph.  
+  In the final version two threads monitor the execution schedule and stream 
+  status ensuring streams are properly allocated.  Future versions will 
+  automatically increase or decrease the parallelism within the data-flow 
   graph (dev version will get this first).  
 </p>
 
