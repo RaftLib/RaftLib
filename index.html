@@ -3,8 +3,7 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="keywords" content="data flow programming, data flow library, data flow, c++ stream processing, RaftLight,Raft,C++,stream,stream processing, streaming computation, StreaMIT,Auto-Pipe,ScalaPipe,AutoPipe,Parallel,Safe"/>
-    <meta name="description" content="Simple, easy to use stream computation library for C++">
+
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
@@ -18,19 +17,12 @@
       <div class="container">
         <h1>Raft Light</h1>
         <h2>Simple, easy to use stream computation library for C++.</h2>
-        <center>
+
         <section id="downloads">
           <a href="https://github.com/jonathan-beard/RaftLight/zipball/master" class="btn">Download as .zip</a>
           <a href="https://github.com/jonathan-beard/RaftLight/tarball/master" class="btn">Download as .tar.gz</a>
           <a href="https://github.com/jonathan-beard/RaftLight" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
         </section>
-      
-        <section id="downloads">
-          <a href="#what" class="btn">Intro</a>
-          <a href="#setup" class="btn">Setup</a>
-          <a href="#tutorial" class="btn">Tutorial</a>
-        </section>
-        </center>
       </div>
     </header>
 
@@ -38,24 +30,12 @@
       <section id="main_content">
         <h3>
 <a name="welcome-to-the-raft-light-c-template-library" class="anchor" href="#welcome-to-the-raft-light-c-template-library"><span class="octicon octicon-link"></span></a>Welcome to the Raft Light C++ template library</h3>
-<h3>
-  <a name="what" class="anchor" href="#what"><span class="octicon octicon-link"></span></a>What is it?
-</h3>
-
-<p>
-  RaftLight is a C++ template library version of the full Raft language.  It enables easy use of the stream
-  processing compute paradigm (see: <a href="http://en.wikipedia.org/wiki/Stream_processing">link</a>).  The
-  programmer can create safe, parallel programs without knowledge of threads or locks by composing compute 
-  kernels into a larger application connected by lock free queues.  It is completely self contained, the 
-  bulk of the code is compiled into a single static library, the rest is included within a single header file
-  to be included within an application.
-</p>
 
 <h3>
 <a name="current-status" class="anchor" href="#current-status"><span class="octicon octicon-link"></span></a>Current Status</h3>
 
 <p>The RaftLight library is currently an alpha release.  The API itself is stable, however the back end
-is subject to updates.  The release is subject to the Apache Version 2.0 license.  The current "master" branch has been built on Linux and OS X machines using gcc 4.8+, icc14.04 and clang 3.5+.  The OS X version of clang++ has issues with handling of dependent template names (i.e., the allocate call), on OS X either use icc or build the latest version of either clang or gcc from source.</p>
+is subject to updates.  The release is subject to the Apache Version 2.0 license.</p>
 
 <h3>
 <a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h3>
@@ -100,11 +80,9 @@ the result.</p>
 
 <p>First and foremost what is stream processing?  Essentially it is a compute paradigm that envisions perfectly safe, threaded programs (although we'll relax this a bit with locked shared objects, shown much later in the tutorial).  Stream programs themselves are decomposed into compute "kernels" which are connected by communications links called "streams."  As an extremely simple example, take a look at the figure below which has three compute "kernels" (A,B,C) connected by two "streams."</p>
 
-<p><img src="http://www.cse.wustl.edu/%7Ebeardj/queues.jpg" alt="tandem queue"/></p>
+<p><img src="http://www.cse.wustl.edu/%7Ebeardj/queues.jpg" alt="tandem queue"></p>
 
-<p>As a concrete example we have a "sum" application (application topology shown below) which generates a random stream of numbers from two separate threads, sums them in another and finally prints them in yet another thread.  Admittedly this is a bit wasteful in practice, however it is a nice dirt simple example. </p>
-
-<p><img src="http://www.cse.wustl.edu/%7Ebeardj/sum.jpg" alt="sum app"/></p>
+<p>As a concrete example we have a "sum" application which generates a random stream of numbers from two separate threads, sums them in another and finally prints them in yet another thread.  Admittedly this is a bit wasteful in practice, however its a nice dirt simple example. </p>
 
 <div class="highlight highlight-c++"><pre><span class="cp">#include &lt;cassert&gt;</span>
 <span class="cp">#include &lt;iostream&gt;</span>
@@ -245,12 +223,85 @@ really special about the Kernel class.  In future tutorials I'll add an example 
 the RaftLight library system an be used with OpenCL with the queue talking directly to
 a kernel running on a GPU.  GPU kernels will have a slightly differing structure, but 
 from the programmers perspective will have similar port semantics as the C++ kernels.</p>
-<p>
-  Within the kernel there are multiple ways to access the input / output 
-  ports including the following functions: <em>push()</em>,<em>pop()</em>,
-  <em>allocate()</em>,<em>peek()</em>,<em>insert()</em> and many others.
-</p>
 
+<p>Within the kernel (not just the run function), there are multiple ways to access the input / output
+ports including the following functions:</p>
+
+<div class="highlight highlight-c++"><pre><span class="cm">/**</span>
+<span class="cm"> * allocate - returns a reference to the current tail </span>
+<span class="cm"> * of the queue.  Enables the programmer to perform a</span>
+<span class="cm"> * single copy (i.e., allocating memory directly on the</span>
+<span class="cm"> * stream to use and then release to the downstream </span>
+<span class="cm"> * kernel with the push(signal) function below.</span>
+<span class="cm"> */</span>
+<span class="k">template</span> <span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span> <span class="k">auto</span> <span class="n">allocate</span><span class="p">()</span> <span class="o">-&gt;</span><span class="n">T</span><span class="o">&amp;</span><span class="p">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * allocate_range - similar to the single allocate above, allows the programmer</span>
+<span class="cm"> * to allocate multiple items on the queue.  Returns a std::vector of </span>
+<span class="cm"> * references.  Currently the "auto" keyword should be avoided when putting</span>
+<span class="cm"> * this in a for loop, the type contained T should be used as a reference to </span>
+<span class="cm"> * write to these values.  The first param is the number that the user wishes</span>
+<span class="cm"> * to allocate, the second n_ret is set to the value actually allocated.  n_ret</span>
+<span class="cm"> * will only differ if the capacity of the queue is less than n. </span>
+<span class="cm"> */</span>
+<span class="k">template</span> <span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span> <span class="k">auto</span> <span class="n">allocate_range</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">n</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="o">&amp;</span><span class="n">n_ret</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">reference_wrapper</span><span class="o">&lt;</span> <span class="n">T</span> <span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * push - used after a call to allocate to release these values</span>
+<span class="cm"> * to the stream.  The signal passed is assigned to the last value</span>
+<span class="cm"> * from the allocate call so that it is received inline.</span>
+<span class="cm"> */</span>
+<span class="k">virtual</span> <span class="kt">void</span> <span class="nf">push</span><span class="p">(</span> <span class="k">const</span> <span class="n">raft</span><span class="o">::</span><span class="n">signal</span> <span class="o">=</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span> <span class="p">);</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * push - this version takes a reference (item) which is then copied to </span>
+<span class="cm"> * the current position within the queue.  The signal, if given is </span>
+<span class="cm"> * assigned to that index.</span>
+<span class="cm"> */</span>
+<span class="k">template</span> <span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span> 
+   <span class="kt">void</span> <span class="n">push</span><span class="p">(</span> <span class="n">T</span> <span class="o">&amp;</span><span class="n">item</span><span class="p">,</span> <span class="k">const</span> <span class="n">raft</span><span class="o">::</span><span class="n">signal</span> <span class="n">signal</span> <span class="o">=</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span> <span class="p">);</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * insert - pass an iterator range to the queue, the signal</span>
+<span class="cm"> * if used will assign the signal to the last position (i.e.,</span>
+<span class="cm"> * end() - 1. </span>
+<span class="cm"> */</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">iterator_type</span> <span class="o">&gt;</span>
+   <span class="kt">void</span> <span class="n">insert</span><span class="p">(</span>   <span class="n">iterator_type</span> <span class="n">begin</span><span class="p">,</span>
+                  <span class="n">iterator_type</span> <span class="n">end</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="n">raft</span><span class="o">::</span><span class="n">signal</span> <span class="n">signal</span> <span class="o">=</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span> <span class="p">);</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * pop - pass a reference to an item of type T and the value at</span>
+<span class="cm"> * the head of the queue will be copied to item and the signal</span>
+<span class="cm"> * associated with that position copied.  The item is removed </span>
+<span class="cm"> * from the queue after this call.</span>
+<span class="cm"> */</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+   <span class="kt">void</span> <span class="n">pop</span><span class="p">(</span> <span class="n">T</span> <span class="o">&amp;</span><span class="n">item</span><span class="p">,</span> <span class="n">raft</span><span class="o">::</span><span class="n">signal</span> <span class="o">*</span><span class="n">signal</span> <span class="o">=</span> <span class="k">nullptr</span> <span class="p">);</span>
+
+<span class="cm">/** </span>
+<span class="cm"> * peek - returns the item at the head of the queue with</span>
+<span class="cm"> * type T&amp; but DOES NOT pop the item.  The signal associated</span>
+<span class="cm"> * with this item is returned if it is desired.  A call to </span>
+<span class="cm"> * recycle() after this function will remove the item previously</span>
+<span class="cm"> * returned by peek().</span>
+<span class="cm"> */</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+   <span class="n">T</span><span class="o">&amp;</span> <span class="n">peek</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">signal</span> <span class="o">*</span><span class="n">signal</span> <span class="o">=</span> <span class="k">nullptr</span> <span class="p">);</span>
+
+<span class="cm">/** </span>
+<span class="cm"> * recycle - removes the item at the head of the queue, or </span>
+<span class="cm"> * number of items specified as range.</span>
+<span class="cm"> */</span>
+<span class="k">virtual</span> <span class="kt">void</span> <span class="nf">recycle</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">range</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">);</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * NOTE: there will be a pop_range function, however its exact form might</span>
+<span class="cm"> * soon change, so it is not listed in this summary.</span>
+<span class="cm"> */</span>
+</pre></div>
 
 <p>To "hook" compute kernels together we need a "Map" object, as in the following example (shamelessly taken
 from the above "sum" example):</p>
@@ -282,47 +333,44 @@ function has various forms as follows:</p>
 <span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
       <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span> <span class="p">);</span>
 <span class="cm">/**</span>
-<span class="cm"> * version 2: Kernel a has multiple output ports, but one named a_port, Kernel</span>
+<span class="cm"> * version 2: Kernel a has multiple output ports, but one named _a\_port_, Kernel</span>
 <span class="cm"> * b has a single input port otherwise an exception is thrown.</span>
 <span class="cm"> */</span>
 <span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span> 
       <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span>  <span class="n">a_port</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span> <span class="p">);</span>
 <span class="cm">/** </span>
 <span class="cm"> * version 3: Kernel a has a single output port (otherwise an exception is thrown,</span>
-<span class="cm"> * Kernel b has multiple input ports with at least one named b_port</span>
+<span class="cm"> * Kernel b has multiple input ports with at least one named _b\_port_</span>
 <span class="cm"> */</span>
 <span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
       <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">b_port</span> <span class="p">);</span>
 <span class="cm">/**</span>
-<span class="cm"> * version 4: both kernels have multiple output ports with at least one named a_port </span>
-<span class="cm"> * and b_port, otherwise an exception is thrown.</span>
+<span class="cm"> * version 4: both kernels have multiple output ports with at least one named _a\_port_ </span>
+<span class="cm"> * and _b\_port_, otherwise an exception is thrown.</span>
 <span class="cm"> */</span>
 <span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
       <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">a_port</span><span class="p">,</span> 
                           <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">b_port</span> <span class="p">);</span>
 </pre></div>
 
-<p>
-  Calling link has the effect of connecting Kernel *a to Kernel *b through the 
-  specified port (or the only port if none is specified).  This creates a data 
-  flow graph of kernels and “streams” through which data passes.  Type checking 
-  is also done at this time between ports.  Types are considered compatible if they
-  are the same or cast-able.  If types are cast-able then the smallest (narrowest) 
-  type of the two is chosen for the port allocation.  The types are cast 
-  transparently to the user.  At this point nothing has yet been allocated.  
-  When the <em>exe()</em> function of Map is called, everything is put into 
-  motion.  The data flow graph stored within Map is analyzed for 
-  “unconnected” edges, which could indicate compute kernels  which have connected 
-  incorrectly, this is in addition to the type checking already 
-  performed.  Each compute kernel is “mapped” to a thread or process for 
-  execution, the appropriate type of link is automatically allocated by the 
-  run-time, finally the scheduler begins executing the data flow graph.  
-  In the final version two threads monitor the execution schedule and stream 
-  status ensuring streams are properly allocated.  Future versions will 
-  automatically increase or decrease the parallelism within the data-flow 
-  graph (dev version will get this first).  
-</p>
-
+<p>Calling link has the effect of connecting Kernel *a to Kernel *b through the 
+specified port (or the only port if none is specified).  This creates a data 
+flow graph of kernels and “streams” through which data passes.  Type checking 
+is also done at this time between ports.  Types are considered compatible if they
+are the same or cast-able.  If types are cast-able then the smallest (narrowest) 
+type of the two is chosen for the port allocation.  The types are cast 
+transparently to the user.  At this point nothing has yet been allocated.<br>
+When the <em>exe()</em> function of Map is called, everything is put into 
+motion.  The data flow graph stored within Map is analyzed for 
+“unconnected” edges, which could indicate compute kernels  which have connected 
+incorrectly, this is in addition to the type checking already 
+performed.  Each compute kernel is “mapped” to a thread or process for 
+execution, the appropriate type of link is automatically allocated by the 
+run-time, finally the scheduler begins executing the data flow graph.<br>
+In the final version two threads monitor the execution schedule and stream 
+status ensuring streams are properly allocated.  Future versions will 
+automatically increase or decrease the parallelism within the data-flow 
+graph (dev version will get this first).  </p>
       </section>
     </div>
 
