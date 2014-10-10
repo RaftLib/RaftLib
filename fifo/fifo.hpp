@@ -100,7 +100,9 @@ public:
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
 
-   template < class T > auto allocate( const std::size_t n, std::size_t &n_ret ) -> std::vector< std::reference_wrapper< T > >
+   template < class T > auto allocate_range( const std::size_t n, 
+                                             std::size_t &n_ret ) -> std::vector< 
+                                                std::reference_wrapper< T > >
    {
       std::vector< std::reference_wrapper< T > > output;
       void *ptr( (void*) &output );
