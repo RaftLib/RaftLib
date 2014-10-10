@@ -245,7 +245,11 @@ really special about the Kernel class.  In future tutorials I'll add an example 
 the RaftLight library system an be used with OpenCL with the queue talking directly to
 a kernel running on a GPU.  GPU kernels will have a slightly differing structure, but 
 from the programmers perspective will have similar port semantics as the C++ kernels.</p>
-
+<p>
+  Within the kernel there are multiple ways to access the input / output 
+  ports including the following functions: <em>push()</em>,<em>pop()</em>,
+  <em>allocate()</em>,<em>peek()</em>,<em>insert()</em> and many others.
+</p>
 <p>To "hook" compute kernels together we need a "Map" object, as in the following example (shamelessly taken
 from the above "sum" example):</p>
 
@@ -314,6 +318,7 @@ function has various forms as follows:</p>
   Future versions will automatically increase or decrease the parallelism within the data-flow 
   graph (dev version will get this first).  
 </p>
+
       </section>
     </div>
 
