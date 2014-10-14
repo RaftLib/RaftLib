@@ -63,10 +63,10 @@ accept( volatile bool &converged )
    if( converged &&  ! (this)->blocked && ! (this)->finished )
    {
       (this)->real += (this)->temp;
-      if( item_index < 100000 )
-      {
-         item_log[ item_index++ ] = (this)->temp.items_copied;
-      }
+      //if( item_index < 100000 )
+      //{
+      //   item_log[ item_index++ ] = (this)->temp.items_copied;
+      //}
    }
    (this)->temp.items_copied  = 0;
    (this)->blocked            = false;
@@ -76,27 +76,27 @@ protected:
 virtual std::string
 printHeader()
 {
-   std::cerr.precision( 20 );
-   std::cerr << "{" << (this)->frame_width << ",{"; 
-   for( auto i( 0 ); i < item_index; i++ )
-   {
-      if( i != (item_index - 1) )
-      {
-         std::cerr << item_log[ i ] << ",";
-      }
-      else
-      {
-         std::cerr << item_log[ i ] << "}";
-      }
-   }
-   std::cerr << "}";
+   //std::cerr.precision( 20 );
+   //std::cerr << "{" << (this)->frame_width << ",{"; 
+   //for( auto i( 0 ); i < item_index; i++ )
+   //{
+   //   if( i != (item_index - 1) )
+   //   {
+   //      std::cerr << item_log[ i ] << ",";
+   //   }
+   //   else
+   //   {
+   //      std::cerr << item_log[ i ] << "}";
+   //   }
+   //}
+   //std::cerr << "}";
    return( "departure_rate" );
 }
 
 private:
 bool  blocked;
 bool  finished;
-std::array< std::int64_t, 100000 > item_log;
-std::int64_t item_index = 0;
+//std::array< std::int64_t, 100000 > item_log;
+//std::int64_t item_index = 0;
 };
 #endif /* END _DEPARTURERATESAMPLETYPE_TCC_ */

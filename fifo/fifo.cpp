@@ -37,3 +37,9 @@ FIFO::get_zero_write_stats( Blocked &copy )
    /** default version does nothing at all **/
    return;
 }
+
+void
+FIFO::invalidate()
+{
+   valid = false;
+}

@@ -6,7 +6,7 @@ RT = -lrt
 endif
 
 CFLAGS = -O0 -g -Wall -std=c99
-CXXFLAGS = -O1   -Wall -std=c++11 -DRDTSCP=1
+CXXFLAGS = -O0 -g   -Wall -std=c++11 -DRDTSCP=1
 
 CFILES   =
 COBJS    =

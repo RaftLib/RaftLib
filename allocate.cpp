@@ -20,12 +20,14 @@
 #include <cassert>
 #include <thread>
 
+#include "fifo.hpp"
+
 #include "allocate.hpp"
 #include "port_info.hpp"
 #include "map.hpp"
 #include "portexception.hpp"
 
-Allocate::Allocate( Map &map volatile bool &exit_alloc ) : 
+Allocate::Allocate( Map &map, volatile bool &exit_alloc ) : 
    source_kernels( map.source_kernels ),
    all_kernels(    map.all_kernels ),
    exit_alloc( exit_alloc )
@@ -85,31 +87,44 @@ void
 Allocate::reinitialize( PortInfo *src, PortInfo *dst, FIFO *new_fifo )
 {
    assert( new_fifo != nullptr );
+   assert( src      != nullptr );
+   assert( dst      != nullptr );
+
    allocated_fifo.insert( new_fifo );
-   
-   FIFO *old_fifo( nullptr );
+  
    if( dst != nullptr )
    {
-      old_fifo = dst->getFIFO();
-   }
-   else /** src must not be nullptr **/
-   {
-      assert( src != nullptr );
-      old_fifo = src->getFIFO();
+      FIFO *old_fifo( dst->getFIFO() );
       src->setFIFO( new_fifo );
-   }
-   while( old_fifo->size() > 0 )
-   {
-      std::this_thread::yield();
-   }
-   /** old fifo is empty, if dst ! null then set to new fifo **/
-   if( dst != nullptr )
-   {
+      /** dst kernel keeps draining **/
+      while( old_fifo->size() > 0 )
+      {
+         std::this_thread::yield();
+      }
+      /** 
+       * old fifo is empty, if dst ! null 
+       * then set to new fifo otherwise probably 
+       * TCP link.
+       */
       dst->setFIFO( new_fifo );
+      /* now the FIFO *old_fifo is empty, erase from set */
+      allocated_fifo.erase( old_fifo );
+      /** swap complete, delete the old fifo to complete **/
+      //delete( old_fifo );
+   }
+   else
+   {
+      FIFO *old_fifo( src->getFIFO() );
+      src->setFIFO( new_fifo );
+      /** dst kernel keeps draining **/
+      while( old_fifo->size() > 0 )
+      {
+         std::this_thread::yield();
+      }
+      /* now the FIFO *old_fifo is empty, erase from set */
+      allocated_fifo.erase( old_fifo );
+      /** swap complete, delete the old fifo to complete **/
+      delete( old_fifo );
    }
 
-   /* now the FIFO *ref is empty, erase from set */
-   allocated_fifo.erase( old_fifo );
-   /** swap complete, delete the old fifo to complete **/
-   delete( old_fifo );
 }

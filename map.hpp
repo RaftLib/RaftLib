@@ -332,9 +332,10 @@ public:
       std::thread sched_thread( [&](){
          sched.start();
       });
-      exit_alloc = true;
       /** join scheduler first **/
       sched_thread.join();
+      /** scheduler done, cleanup alloc **/
+      exit_alloc = true;
       mem_thread.join();
       /** all fifo's deallocated when alloc goes out of scope **/
       return; 

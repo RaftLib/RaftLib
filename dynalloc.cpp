@@ -19,7 +19,12 @@
  */
 #include <chrono>
 #include <thread>
+#include <iostream>
+#include <iomanip>
+#include <map>
+#include <cassert>
 
+#include "graphtools.hpp"
 #include "dynalloc.hpp"
 
 dynalloc::dynalloc( Map &map, volatile bool &exit_alloc ) : 
@@ -42,8 +47,10 @@ dynalloc::hash( PortInfo &a, PortInfo &b )
          std::uint32_t b;
       };
    } u;
-   u.a = &a & 0xffff;
-   u.b = &b & 0xffff;
+   const auto ta( (std::uint64_t)(& a ) );
+   const auto tb( (std::uint64_t)(& b ) );
+   u.a = ta & 0xffff;
+   u.b = tb & 0xffff;
    return( u.all );
 }
 
@@ -56,7 +63,7 @@ dynalloc::run()
       /** assume everyone needs a heap for the moment to get working **/
       instr_map_t *func_map( a.const_map[ Type::Heap ] );
       auto test_func( (*func_map)[ false ] );
-      FIFO *fifo( test_func( 16 /* items */, 
+      FIFO *fifo( test_func( 1 /* items */, 
                              16 /* align */, 
                              (void*)NULL ) );
       assert( fifo != nullptr );
@@ -70,21 +77,49 @@ dynalloc::run()
    
    /** 
     * make this a fixed quantity right now, if size > .75% at
-    * montor interval then increase size.
+    * montor interval three times or more then increase size.
     */
-
-   auto mon_func = [&]( PortInfo &a, PortInfo &b )
+   std::cerr.setf( std::ios::fixed );
+   std::cerr << std::setprecision( 30 );
+   auto mon_func = [&]( PortInfo &a, PortInfo &b ) -> void
    {
-      
-   }
-   
+      const float ratio( .5 );
+      const auto hash_val( dynalloc::hash( a, b ) );
+      const auto cap( a.getFIFO()->capacity() );
+      const auto size( a.getFIFO()->size() );
+      const float realized_ratio( (float) size / (float) cap );
+      std::cerr << "realized ratio: " << realized_ratio << "\n";
+      if( realized_ratio >= ratio )
+      {
+         //size_map[ hash_val ]++;
+         //if( size_map[ hash_val ] == 3 )
+         //{
+            std::cerr << "reallocating " << a.my_name << " -> " << a.other_name << 
+               ", " << cap << " to " << ( cap * 2 ) << "\n";
+            /** get initializer function **/
+            instr_map_t *func_map( a.const_map[ Type::Heap ] );
+            auto test_func( (*func_map)[ false ] );
+            FIFO *newfifo( test_func( cap * 2 /* items */,
+                                      16      /* align */,
+                                      (void*)NULL ) );
+            assert( newfifo != nullptr );
+            ///** realloc **/
+            (this)->reinitialize( &a, &b, newfifo ); 
+            size_map[ hash_val ] = 0;
+         //}
+      }
+      return;
+   };
+   /** start monitor loop **/
    while( ! exit_alloc )
    {
       /** monitor fifo's **/
-      std::chrono::milliseconds dura( 2 );
-      std::this_thread::sleep_for( dura );
-      
-
+      //std::chrono::microseconds dura( 1 );
+      //std::this_thread::sleep_for( dura );
+      GraphTools::BFS( (this)->source_kernels ,
+                       mon_func );
+      std::cerr << "end of mon loop\n";
+      std::this_thread::yield();
    }
    return;
 }

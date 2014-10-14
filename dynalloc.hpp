@@ -25,7 +25,7 @@ class Map;
 class dynalloc : public Allocate
 {
 public:
-   dynalloc( Map &map );
+   dynalloc( Map &map, volatile bool &exit_alloc );
 
    virtual ~dynalloc();
 

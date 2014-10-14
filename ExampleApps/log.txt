@@ -1,0 +1,4 @@
+realized ratio: 0.000000000000000000000000000000
+realized ratio: 1.000000000000000000000000000000
+reallocating number_stream -> input_b, 1 to 2
+realized 

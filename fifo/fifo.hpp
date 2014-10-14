@@ -242,6 +242,8 @@ public:
     */
    virtual void get_write_finished( bool &write_finished ) = 0;
 
+   void invalidate();
+
 protected:
    /** 
     * local_allocate - in order to get this whole thing
@@ -314,5 +316,7 @@ protected:
     */
    virtual void local_peek( void **ptr,
                             raft::signal *signal ) = 0;
+
+   bool  valid = true;
 };
 #endif /* END _FIFO_HPP_ */

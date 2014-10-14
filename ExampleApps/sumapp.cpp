@@ -18,12 +18,12 @@ public:
 
    virtual raft::kstatus run()
    {
-      /** just wanna test out the insert function **/
-      std::vector< T > list;
-      while( count-- ) list.push_back( count );
-      output[ "number_stream" ].insert( list.begin(),
-                                        list.end(),
-                                        raft::eof );
+      if( count-- > 1 )
+      {
+         output[ "number_stream" ].push( count );
+         return( raft::proceed );
+      }
+      output[ "number_stream" ].push( count, raft::eof );
       return( raft::stop );
    }
 
@@ -66,10 +66,11 @@ int
 main( int argc, char **argv )
 {
    Map map;
-   auto linked_kernels( map.link( new Generate< std::int64_t >(),
+   const std::size_t count( 1e5 );
+   auto linked_kernels( map.link( new Generate< std::int64_t >( count ),
                                   new Sum< std::int64_t,std::int64_t, std::int64_t >(),
                                   "input_a" ) );
-   map.link( new Generate< std::int64_t >(), &( linked_kernels.dst ), "input_b" );
+   map.link( new Generate< std::int64_t >( count ), &( linked_kernels.dst ), "input_b" );
    map.link( &( linked_kernels.dst ), new Print< std::int64_t ,'\n'>() );
    map.exe();
    return( EXIT_SUCCESS );
