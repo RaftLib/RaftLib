@@ -29,7 +29,6 @@ public:
     * data structures.
     */
    RingBufferBase() : FIFOAbstract< T, type >(),
-                      data( nullptr ),
                       write_finished( false )
    {
    }
@@ -527,11 +526,12 @@ protected:
       return;
    }
 
-   /**
-    * Buffer structure that is the core of the ring
-    * buffer.
+   /** 
+    * upgraded the *data structure to be a DataManager
+    * object to enable easier and more intuitive dynamic
+    * lock free buffer resizing and re-alignment.
     */
-   Buffer::Data< T, type>      *data;
+   DataManager< T, type >       data;
    /**
     * these two should go inside the buffer, they'll
     * be accessed via the monitoring system.
