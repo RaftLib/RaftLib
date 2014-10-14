@@ -1,10 +1,7 @@
 /**
- * stdalloc.cpp - simple allocation, just initializes the FIFO with a 
- * fixed size buffer (512 items) with an alignment of 16-bytes.  This
- * can easily be changed by changing the constants below.  
- *
+ * dynalloc.cpp - 
  * @author: Jonathan Beard
- * @version: Sat Sep 20 19:56:49 2014
+ * @version: Mon Oct 13 16:36:18 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -20,21 +17,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "stdalloc.hpp"
-#include "graphtools.hpp"
-#include "port_info.hpp"
-#include "ringbuffertypes.hpp"
+#include <chrono>
+#include <thread>
 
-stdalloc::stdalloc( Map &map, volatile bool &exit_alloc) : Allocate( map, exit_alloc )
+#include "dynalloc.hpp"
+
+dynalloc::dynalloc( Map &map, volatile bool &exit_alloc ) : 
+   Allocate( map, exit_alloc )
 {
 }
 
-stdalloc::~stdalloc()
+
+dynalloc::~dynalloc()
 {
+}
+
+std::size_t
+dynalloc::hash( PortInfo &a, PortInfo &b )
+{
+   union{
+      std::size_t      all;
+      struct{
+         std::uint32_t a;
+         std::uint32_t b;
+      };
+   } u;
+   u.a = &a & 0xffff;
+   u.b = &b & 0xffff;
+   return( u.all );
 }
 
 void
-stdalloc::run()
+dynalloc::run()
 {
    auto alloc_func = [&]( PortInfo &a, PortInfo &b )
    {
@@ -42,7 +56,9 @@ stdalloc::run()
       /** assume everyone needs a heap for the moment to get working **/
       instr_map_t *func_map( a.const_map[ Type::Heap ] );
       auto test_func( (*func_map)[ false ] );
-      FIFO *fifo( test_func( 512, 16, (void*)NULL ) );
+      FIFO *fifo( test_func( 16 /* items */, 
+                             16 /* align */, 
+                             (void*)NULL ) );
       assert( fifo != nullptr );
       (this)->initialize( &a, &b, fifo );
    };
@@ -50,9 +66,25 @@ stdalloc::run()
                     alloc_func );
    
    (this)->setReady();
+   std::map< std::size_t, int > size_map;
+   
    /** 
-    * NOTE: we'll keep this thread running in future versions 
-    * to dynamically update buffer size 
+    * make this a fixed quantity right now, if size > .75% at
+    * montor interval then increase size.
     */
+
+   auto mon_func = [&]( PortInfo &a, PortInfo &b )
+   {
+      
+   }
+   
+   while( ! exit_alloc )
+   {
+      /** monitor fifo's **/
+      std::chrono::milliseconds dura( 2 );
+      std::this_thread::sleep_for( dura );
+      
+
+   }
    return;
 }

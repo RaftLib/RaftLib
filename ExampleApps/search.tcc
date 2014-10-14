@@ -95,7 +95,7 @@ public:
             }
 
 
-            auto rkfunction = [&]( Chunk &chunk, std::vector< Hit > &hits )
+            auto rkfunction = [&]()
             {
                /**
                 * here's the game plan: 
@@ -134,11 +134,6 @@ public:
                }while( s <= ( CHUNKSIZE - search_term_length ) );
             };
             /** assign the worker funciton for the Rabin Karp algorithm **/
-            worker_function = 
-               std::bind( worker_function_base, 
-                          std::placeholders::_1, 
-                          std::placeholders::_2, 
-                          std::ref( rkfunction ) );
          }
          break;
          default:
@@ -150,9 +145,12 @@ public:
    
    void run();
    {
-      
+      raft::signal d_signal;
+      filechunk< chunksize > input[ "input_data" ].peek( &d_signal );
+      worker_function( 
    }
 private:
    std::function< void( void ) > worker_function;
+   std::vector< std::string >    search_terms;
 };
 #endif /* END _SEARCH_TCC_ */

@@ -1,7 +1,7 @@
 /**
- * simpleschedule.hpp - 
+ * dynalloc.hpp - 
  * @author: Jonathan Beard
- * @version: Thu Sep 11 15:49:57 2014
+ * @version: Mon Oct 13 16:36:18 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,31 +17,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _SIMPLESSCHEDULE_HPP_
-#define _SIMPLESSCHEDULE_HPP_  1
-#include <vector>
+#ifndef _DYNALLOC_HPP_
+#define _DYNALLOC_HPP_  1
+#include "allocate.hpp"
 
 class Map;
-class Kernel;
-
-class simple_schedule : public Schedule
+class dynalloc : public Allocate
 {
 public:
-   simple_schedule( Map &map );
+   dynalloc( Map &map );
 
-   virtual ~simple_schedule();
+   virtual ~dynalloc();
 
-   virtual void start(); 
-   
-protected:
-   
-   virtual bool scheduleKernel( Kernel *kernel );
+   virtual void run();
 
-   /**
-    * NOTE: for more complex schedules it'd behoove us
-    * to keep more information here for each scheduled
-    * kernel.
-    */
-   std::vector< Kernel* > kernel_map;
+private:
+   static std::size_t hash( PortInfo &a, PortInfo &b );
 };
-#endif /* END _SIMPLESSCHEDULE_HPP_ */
+
+#endif /* END _DYNALLOC_HPP_ */

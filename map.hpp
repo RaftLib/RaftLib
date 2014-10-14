@@ -31,6 +31,7 @@
 #include "kernel.hpp"
 #include "port_info.hpp"
 #include "allocate.hpp"
+#include "dynalloc.hpp"
 #include "stdalloc.hpp"
 
 /**
@@ -312,11 +313,12 @@ public:
     *         allocated for some reason.
     * @throws PortException - thrown if an unconnected edge is found.
     */ 
-   template< class scheduler = simple_schedule, class allocator = stdalloc > 
+   template< class scheduler = simple_schedule, class allocator = dynalloc > 
       void exe()
    {
       checkEdges( source_kernels );
-      allocator alloc( (*this) );
+      volatile bool exit_alloc( false );
+      allocator alloc( (*this), exit_alloc );
       /** launch allocator in a thread **/
       std::thread mem_thread( [&](){
          alloc.run();
@@ -330,7 +332,7 @@ public:
       std::thread sched_thread( [&](){
          sched.start();
       });
-      
+      exit_alloc = true;
       /** join scheduler first **/
       sched_thread.join();
       mem_thread.join();
@@ -371,6 +373,7 @@ private:
 
    /** need to keep source kernels **/
    std::set< Kernel* > source_kernels;
+   
    /** and keep a list of all kernels **/
    std::set< Kernel* > all_kernels; 
    

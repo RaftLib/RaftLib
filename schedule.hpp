@@ -52,17 +52,6 @@ protected:
     */
    virtual bool scheduleKernel( Kernel *kernel );
    
-   /**
-    * start_func - calls kernel run functions,
-    * should be implemented by individual scheduler
-    * since each one will have slightly differing
-    * implementations.  The data struct is to be
-    * cast to some internal representation if desired
-    * or left as a nullptr.
-    * @param   kernel - Kernel*
-    * @param   data   - void*
-    */
-   virtual void start_func( Kernel *kernel, void *data ) = 0;
 private:
    Map &map_ref;
 };

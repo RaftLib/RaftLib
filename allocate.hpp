@@ -41,8 +41,11 @@ public:
     * save for setting the global variables all_kernels and 
     * source_kernels from the Map object.  
     * @param map - Map&
+    * @param exit_alloc - bool used to terminate loop,
+    *  for monitoring allocations, controlled by map 
+    *  object.
     */
-   Allocate( Map &map );
+   Allocate( Map &map, volatile bool &exit_alloc );
    
    /**
     * destructor 
@@ -102,6 +105,12 @@ protected:
     */
    std::set< FIFO*   > allocated_fifo;
 
+   /**
+    * exit_alloc - bool whose value is set by the map 
+    * object, controls when the loop within the alloc thread
+    * is exited.
+    */
+   volatile bool &exit_alloc;
 private:
    volatile bool ready = false;
 };

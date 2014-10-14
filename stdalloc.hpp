@@ -36,8 +36,11 @@ public:
     * function must be called so that the queue sees fully
     * allocated buffers as opposed ot null objects.
     * @param map - Map&, map with full application
+    * @param exit_alloc - bool whose value is set by the map object
+    * owning this one.  Controls when the loop within the run thread
+    * is exited.
     */
-   stdalloc( Map &map );
+   stdalloc( Map &map, volatile bool &exit_alloc  );
    /**
     * destructor, doesn't really do much at he moment.
     */

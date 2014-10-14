@@ -50,33 +50,46 @@ simple_schedule::start()
 {
    struct thread_info_t
    {
-      std::thread *th = nullptr;
+      std::thread *th      = nullptr;
+      bool        finished = false;
    };
-   std::vector< thread_info_t > thread_map( kernel_map.size() );
 
+   std::vector< thread_info_t > thread_map( kernel_map.size() );
+   
    for( auto index( 0 ); index < kernel_map.size(); index++ )
    {
-      auto bound_func = [&]( Kernel *kernel ){
-         while( kernel->run() == raft::proceed );
+      auto bound_func = [&]( Kernel *kernel, bool &finished ){
+         while( kernel->run() == raft::proceed )
+         {
+             
+         }
+         finished = true;
       };
-      //auto bound_func = std::bind( start_func, 
-      //                             kernel_map [ index ],
-      //                             nullptr );
-      thread_map[ index ].th = new std::thread( bound_func, kernel_map[ index ]  );
+      thread_map[ index ].th = 
+         new std::thread( bound_func                               /* kernel loop */, 
+                          kernel_map[ index ]                      /* kernel ptr  */,
+                          std::ref( thread_map[ index ].finished ) /* finished ref */);
    }
 
-   for( auto  &t_info : thread_map )
+   bool keep_going( true );
+   while( keep_going )
    {
-      t_info.th->join();
-      delete( t_info.th );
-      t_info.th = nullptr;
+      keep_going = false;
+      for( auto  &t_info : thread_map )
+      {
+         if( t_info.th != nullptr )
+         {
+            if( t_info.finished )
+            {
+               t_info.th->join();
+               delete( t_info.th );
+               t_info.th = nullptr;
+            }
+            else /* ! finished */
+            {
+               keep_going =  true;
+            }
+         }
+      }
    }
-}
-
-void
-simple_schedule::start_func( Kernel *kernel, void *data )
-{
-   assert( data == (void*)NULL );
-   /** ignore data **/
-   while( kernel->run() );
 }
