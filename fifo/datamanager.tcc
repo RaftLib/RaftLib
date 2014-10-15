@@ -20,14 +20,12 @@
 #ifndef _DATAMANAGER_TCC_
 #define _DATAMANAGER_TCC_  1
 #include <cassert>
+#include <cstddef>
+#include <atomic>
 
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
 
-namespace Buffer
-{
-   enum mode { read, write };
-}
 
 template < class T, 
            Type::RingBufferType B,
@@ -47,57 +45,43 @@ public:
 
    void resize( Buffer::Data< T, B > *new_buffer )
    {
-      /** keep anyone from getting the old buffer for a second **/
-      buffer_a = 0;
-      auto *local_copy( buffer_b );
-      const auto size( local_copy->size() );
-      if( size != 0 )
+      assert( new_buffer != nullptr );
+      resizing = true;
+      while( access_count != 0 )
       {
-         T *range = ( T* ) malloc( sizeof( T ) * size );
-         raft::signal signal;
-         local_copy-> template pop_range< T >( range,
-                                     size,
-                                     signal );
-         /** TODO: gotta fix the insert so it'll work with raw pointers too **/
-         for( std::size_t index( 0 ); index < size; index++ )
-         {
-            if( index == size - 1 )
-            {
-               new_buffer->push( range[ index ] );
-            }
-            else
-            {
-               new_buffer->push( range[ index ], signal );
-            }
-         }
-         free( range );
+         /* spin */
       }
-      delete( local_copy );
-      (this)->set( new_buffer );
+      /* get stuff from old buffer and put into new buffer */
+      buffer->copyTo( new_buffer ); 
+      delete( buffer );
+      buffer = new_buffer;
+      /* set resizing to false, we're done */
+      resizing = false;
    }
 
-   Buffer::Data< T, B >* get( Buffer::mode m = read )
+   auto get() -> Buffer::Data< T, B >*
    {
-      struct Copy
-      {
-         Copy( Buffer::Data< T, B > *a, Buffer::Data< T, B > *b ) : a( a ), b( b )
-         {
-         }
+      return( buffer );
+   }
 
-         Buffer::Data< T, B > *a;        
-         Buffer::Data< T, B > *b;  
-      }copy( buffer_a, buffer_b );
-      while( copy.a != copy.b )
-      {
-         copy.a = buffer_a;
-         copy.b = buffer_b;
-      }
-      return( copy.a );
+   void  enterBuffer() noexcept
+   {
+      access_count++;
+   }
+
+   void exitBuffer() noexcept
+   {
+      access_count--;
+   }
+
+   bool  notResizing()
+   {
+      return( ! resizing );
    }
 
 private:
-   Buffer::Data< T, B > *buffer_a = (Buffer::Data< T, B >*) 1; 
-   Buffer::Data< T, B > *buffer_b = (Buffer::Data< T, B >*) 0;
-
+   Buffer::Data< T, B > *buffer            = nullptr; 
+   volatile bool         resizing          = false;
+   std::atomic< std::size_t > access_count = { 0 };
 };
 #endif /* END _DATAMANAGER_TCC_ */
