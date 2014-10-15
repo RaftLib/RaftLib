@@ -34,6 +34,8 @@
 #include "signalvars.hpp"
 #include "blocked.hpp"
 #include "fifoabstract.tcc"
+#include "datamanager.tcc"
+
 /**
  * Note: there is a NICE define that can be uncommented
  * below if you want sched_yield called when waiting for

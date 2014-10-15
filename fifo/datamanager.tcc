@@ -21,16 +21,24 @@
 #define _DATAMANAGER_TCC_  1
 #include <cassert>
 
-#include "ringbuffertypes.tcc"
+#include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
+
+namespace Buffer
+{
+   enum mode { read, write };
+}
+
 template < class T, 
            Type::RingBufferType B,
            size_t SIZE = 0 > class DataManager
 {
 public:
+   
    DataManager( ) = default;
 
-   void setData( Buffer::Data< T, B > *buffer )
+   
+   void set( Buffer::Data< T, B > *buffer )
    {
       assert( buffer != nullptr );
       buffer_a = buffer;
@@ -47,7 +55,7 @@ public:
       {
          T *range = ( T* ) malloc( sizeof( T ) * size );
          raft::signal signal;
-         local_copy->pop_range< T >( range,
+         local_copy-> template pop_range< T >( range,
                                      size,
                                      signal );
          /** TODO: gotta fix the insert so it'll work with raw pointers too **/
@@ -65,10 +73,10 @@ public:
          free( range );
       }
       delete( local_copy );
-      (this)->setData( new_buffer );
+      (this)->set( new_buffer );
    }
 
-   Buffer::Data< T, B >* getData()
+   Buffer::Data< T, B >* get( Buffer::mode m = read )
    {
       struct Copy
       {
@@ -87,10 +95,9 @@ public:
       return( copy.a );
    }
 
-   operator
-
 private:
    Buffer::Data< T, B > *buffer_a = (Buffer::Data< T, B >*) 1; 
-   Buffer::Data< T, B > *buffer_b = (Buffer::Data< T, B >*) 0; 
+   Buffer::Data< T, B > *buffer_b = (Buffer::Data< T, B >*) 0;
+
 };
 #endif /* END _DATAMANAGER_TCC_ */

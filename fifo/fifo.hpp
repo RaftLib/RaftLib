@@ -83,7 +83,7 @@ public:
     * FIFO.
     * @return std::size_t
     */
-   virtual std::size_t capacity() const  = 0;
+   virtual std::size_t capacity() = 0;
 
    /**
     * allocate - returns a reference to a writeable 
@@ -232,18 +232,9 @@ public:
     */
    virtual void get_zero_write_stats( Blocked &copy );
 
-   /**
-    * get_write_finished - the function param is set to true
-    * if the server process has completed.  Currently this
-    * is hacked to return true when an raft::eof signal
-    * is passed through, future versions will be a bit more
-    * precise and not signal dependant.
-    * @param   write_finished - bool&
-    */
-   virtual void get_write_finished( bool &write_finished ) = 0;
 
-   void invalidate();
-
+   virtual void resize( const std::size_t size,
+                        const std::size_t align = 16 ) = 0;
 protected:
    /** 
     * local_allocate - in order to get this whole thing
@@ -317,6 +308,5 @@ protected:
    virtual void local_peek( void **ptr,
                             raft::signal *signal ) = 0;
 
-   bool  valid = true;
 };
 #endif /* END _FIFO_HPP_ */

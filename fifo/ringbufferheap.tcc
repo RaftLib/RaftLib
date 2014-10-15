@@ -45,16 +45,16 @@ public:
     */
    virtual std::size_t   size()
    {
-      const auto   wrap_write( Pointer::wrapIndicator( data->write_pt  ) ),
-                   wrap_read(  Pointer::wrapIndicator( data->read_pt   ) );
+      const auto   wrap_write( Pointer::wrapIndicator( dm.get()->write_pt  ) ),
+                   wrap_read(  Pointer::wrapIndicator( dm.get()->read_pt   ) );
 
-      const auto   wpt( Pointer::val( data->write_pt ) ), 
-                   rpt( Pointer::val( data->read_pt  ) );
+      const auto   wpt( Pointer::val( dm.get()->write_pt ) ), 
+                   rpt( Pointer::val( dm.get()->read_pt  ) );
       if( wpt == rpt )
       {
          if( wrap_read < wrap_write )
          {
-            return( data->max_cap );
+            return( dm.get()->max_cap );
          }
          else if( wrap_read > wrap_write )
          {
@@ -65,7 +65,7 @@ public:
              * operations slows the queue down drastically so, perhaps
              * this is in fact the best of all possible returns.
              */
-            return( data->max_cap  );
+            return( dm.get()->max_cap  );
          }
          else
          {
@@ -78,7 +78,7 @@ public:
       }
       else if( rpt > wpt )
       {
-         return( data->max_cap - rpt + wpt ); 
+         return( dm.get()->max_cap - rpt + wpt ); 
       }
       return( 0 );
    }
@@ -112,7 +112,7 @@ public:
     */
    virtual std::size_t   space_avail()
    {
-      return( data->max_cap - size() );
+      return( dm.get()->max_cap - size() );
    }
   
    /**
@@ -120,9 +120,9 @@ public:
     * set at compile time by the constructor.
     * @return size_t
     */
-   virtual std::size_t   capacity() const
+   virtual std::size_t   capacity()
    {
-      return( data->max_cap );
+      return( dm.get()->max_cap );
    }
 
    /**
@@ -135,9 +135,9 @@ public:
    {
       if( ! (this)->allocate_called ) return;
       /** should be the end of the write, regardless of which allocate called **/
-      const size_t write_index( Pointer::val( data->write_pt ) );
-      data->signal[ write_index ] = signal;
-      Pointer::inc( data->write_pt );
+      const size_t write_index( Pointer::val( dm.get()->write_pt ) );
+      dm.get()->signal[ write_index ] = signal;
+      Pointer::inc( dm.get()->write_pt );
       write_stats.count += (this)->n_allocated;
       if( signal == raft::eof )
       {
@@ -158,8 +158,8 @@ public:
     */
    virtual void recycle( const std::size_t range = 1 )
    {
-      assert( range <= data->max_cap );
-      Pointer::incBy( range, data->read_pt );
+      assert( range <= dm.get()->max_cap );
+      Pointer::incBy( range, dm.get()->read_pt );
       read_stats.count += range;
    }
    
@@ -228,8 +228,8 @@ protected:
 #endif           
       }
       (this)->allocate_called = true;
-      const size_t write_index( Pointer::val( data->write_pt ) );
-      *ptr = (void*)&(data->store[ write_index ].item);
+      const size_t write_index( Pointer::val( dm.get()->write_pt ) );
+      *ptr = (void*)&(dm.get()->store[ write_index ].item);
    }
 
    virtual std::size_t local_allocate_n( void *ptr, const std::size_t n )
@@ -256,9 +256,9 @@ protected:
            : );
 #endif           
          }
-         const std::size_t write_index( Pointer::val( data->write_pt ) );
-         container->push_back( data->store[ write_index ].item );
-         data->signal[ write_index ] = raft::none;
+         const std::size_t write_index( Pointer::val( dm.get()->write_pt ) );
+         container->push_back( dm.get()->store[ write_index ].item );
+         dm.get()->signal[ write_index ] = raft::none;
       }
       (this)->allocate_called = true;
       (this)->n_allocated     = output;
@@ -293,11 +293,11 @@ protected:
 #endif           
       }
       
-	   const size_t write_index( Pointer::val( data->write_pt ) );
+	   const size_t write_index( Pointer::val( dm.get()->write_pt ) );
       T *item( reinterpret_cast< T* >( ptr ) );
-	   data->store[ write_index ].item     = *item;
-	   data->signal[ write_index ]         = signal;
-	   Pointer::inc( data->write_pt );
+	   dm.get()->store[ write_index ].item     = *item;
+	   dm.get()->signal[ write_index ]         = signal;
+	   Pointer::inc( dm.get()->write_pt );
 	   write_stats.count++;
       if( signal == raft::eof )
       {
@@ -322,19 +322,19 @@ protected:
                write_stats.blocked = 1;
             }
          }
-         const size_t write_index( Pointer::val( data->write_pt ) );
-         data->store[ write_index ].item = (*begin);
+         const size_t write_index( Pointer::val( dm.get()->write_pt ) );
+         dm.get()->store[ write_index ].item = (*begin);
          
          /** add signal to last el only **/
          if( dist == 0 )
          {
-            data->signal[ write_index ] = signal;
+            dm.get()->signal[ write_index ] = signal;
          }
          else
          {
-            data->signal[ write_index ] = raft::none;
+            dm.get()->signal[ write_index ] = raft::none;
          }
-         Pointer::inc( data->write_pt );
+         Pointer::inc( dm.get()->write_pt );
          write_stats.count++;
          ++begin;
       }
@@ -423,15 +423,15 @@ protected:
            : );
 #endif           
       }
-      const std::size_t read_index( Pointer::val( data->read_pt ) );
+      const std::size_t read_index( Pointer::val( dm.get()->read_pt ) );
       if( signal != nullptr )
       {
-         *signal = data->signal[ read_index ];
+         *signal = dm.get()->signal[ read_index ];
       }
       /** gotta dereference pointer and copy **/
       T *item( reinterpret_cast< T* >( ptr ) );
-      *item = data->store[ read_index ].item;
-      Pointer::inc( data->read_pt );
+      *item = dm.get()->store[ read_index ].item;
+      Pointer::inc( dm.get()->read_pt );
       read_stats.count++;
    }
    
@@ -473,10 +473,10 @@ protected:
       {
          for( size_t i( 0 ); i < n_items ; i++ )
          {
-            read_index = Pointer::val( data->read_pt );
-            items[ i ] = data->store [ read_index ].item;
-            signal  [ i ] = data->signal[ read_index ];
-            Pointer::inc( data->read_pt );
+            read_index = Pointer::val( dm.get()->read_pt );
+            items[ i ] = dm.get()->store [ read_index ].item;
+            signal  [ i ] = dm.get()->signal[ read_index ];
+            Pointer::inc( dm.get()->read_pt );
             read_stats.count++;
          }
       }
@@ -485,9 +485,9 @@ protected:
          /** TODO, incorporate streaming copy here **/
          for( size_t i( 0 ); i < n_items; i++ )
          {
-            read_index = Pointer::val( data->read_pt );
-            items[ i ]    = data->store[ read_index ].item;
-            Pointer::inc( data->read_pt );
+            read_index = Pointer::val( dm.get()->read_pt );
+            items[ i ]    = dm.get()->store[ read_index ].item;
+            Pointer::inc( dm.get()->read_pt );
             read_stats.count++;
          }
 
@@ -517,12 +517,12 @@ protected:
            : );
 #endif
       }
-      const size_t read_index( Pointer::val( data->read_pt ) );
+      const size_t read_index( Pointer::val( dm.get()->read_pt ) );
       if( signal != nullptr )
       {
-         *signal = data->signal[ read_index ];
+         *signal = dm.get()->signal[ read_index ];
       }
-      *ptr = (void*) &( data->store[ read_index ].item );
+      *ptr = (void*) &( dm.get()->store[ read_index ].item );
       return;
    }
 
@@ -531,7 +531,7 @@ protected:
     * object to enable easier and more intuitive dynamic
     * lock free buffer resizing and re-alignment.
     */
-   DataManager< T, type >       data;
+   DataManager< T, type >       dm;
    /**
     * these two should go inside the buffer, they'll
     * be accessed via the monitoring system.

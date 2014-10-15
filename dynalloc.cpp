@@ -88,23 +88,13 @@ dynalloc::run()
       const auto cap( a.getFIFO()->capacity() );
       const auto size( a.getFIFO()->size() );
       const float realized_ratio( (float) size / (float) cap );
-      std::cerr << "realized ratio: " << realized_ratio << "\n";
       if( realized_ratio >= ratio )
       {
          //size_map[ hash_val ]++;
          //if( size_map[ hash_val ] == 3 )
          //{
-            std::cerr << "reallocating " << a.my_name << " -> " << a.other_name << 
-               ", " << cap << " to " << ( cap * 2 ) << "\n";
             /** get initializer function **/
-            instr_map_t *func_map( a.const_map[ Type::Heap ] );
-            auto test_func( (*func_map)[ false ] );
-            FIFO *newfifo( test_func( cap * 2 /* items */,
-                                      16      /* align */,
-                                      (void*)NULL ) );
-            assert( newfifo != nullptr );
-            ///** realloc **/
-            (this)->reinitialize( &a, &b, newfifo ); 
+            a.getFIFO()->resize( cap * 2, 16 );
             size_map[ hash_val ] = 0;
          //}
       }
@@ -118,7 +108,6 @@ dynalloc::run()
       //std::this_thread::sleep_for( dura );
       GraphTools::BFS( (this)->source_kernels ,
                        mon_func );
-      std::cerr << "end of mon loop\n";
       std::this_thread::yield();
    }
    return;

@@ -61,12 +61,12 @@ public:
    RingBuffer( const std::size_t n, const std::size_t align = 16 ) : 
       RingBufferBase< T, type >()
    {
-      (this)->data = new Buffer::Data<T, type >( n, align );
+      (this)->dm.set( new Buffer::Data<T, type >( n, align ) );
    }
 
    virtual ~RingBuffer()
    {
-      delete( (this)->data );
+      delete( (this)->dm.get() );
    }
 
    /**
@@ -88,6 +88,11 @@ public:
       return( new RingBuffer< T, Type::Heap, false >( n_items, align ) ); 
    }
 
+   virtual void resize( const std::size_t size,
+                        const std::size_t align = 16 )
+   {
+      (this)->dm.resize( new Buffer::Data< T, type >( size, align ) );
+   }
 };
 
 template< class T, 
@@ -101,8 +106,8 @@ public:
             monitor( nullptr ),
             term( false )
    {
-      (this)->data = new Buffer::Data<T, 
-                                      Type::Heap >( n, align );
+      (this)->dm.set( new Buffer::Data<T, 
+                                      Type::Heap >( n, align ) );
 
       /** add monitor types immediately after construction **/
       sample_master.registerSample( new MeanSampleType< T, type >() );
@@ -126,7 +131,7 @@ public:
       monitor->join();
       delete( monitor );
       monitor = nullptr;
-      delete( (this)->data );
+      delete( (this)->dm.get() );
    }
 
    std::ostream&
@@ -215,12 +220,12 @@ public:
    RingBuffer( const std::size_t n, const std::size_t align = 16 ) : 
       RingBufferBase< T, Type::Infinite >()
    {
-      (this)->data = new Buffer::Data<T, Type::Heap >( 1, 16 );
+      (this)->dm.set( new Buffer::Data<T, Type::Heap >( 1, 16 ) );
    }
 
    virtual ~RingBuffer()
    {
-      delete( (this)->data );
+      delete( (this)->dm.get() );
    }
 
    /**
@@ -261,15 +266,14 @@ public:
                RingBufferBase< T, Type::SharedMemory >(),
                                               shm_key( key )
    {
-      (this)->data = 
+      (this)->dm.set( 
          new Buffer::Data< T, 
-                           Type::SharedMemory >( nitems, key, dir, alignment );
-      assert( (this)->data != nullptr );
+                           Type::SharedMemory >( nitems, key, dir, alignment ) );
    }
 
    virtual ~RingBuffer()
    {
-      delete( (this)->data );      
+      delete( (this)->dm.get() );      
    }
   
    struct Data
