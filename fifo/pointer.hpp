@@ -31,6 +31,14 @@ public:
     * wrapping.
     */
    Pointer( const size_t cap );
+   /**
+    * Pointer - used to snchronize read and write poitners for the
+    * ring buffer, this constructer is a copy constructor that
+    * copies an old Pointer object and sets a new max_capacity
+    * @param   other, const Pointer&, the other pointer to be cpied
+    * @param   new_cap, the new max cap
+    */
+   Pointer( const Pointer &other, const size_t new_cap );
 
    /**
     * val - returns the current value of val.  Internally

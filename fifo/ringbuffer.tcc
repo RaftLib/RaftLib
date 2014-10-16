@@ -89,7 +89,7 @@ public:
    }
 
    virtual void resize( const std::size_t size,
-                        const std::size_t align = 16 )
+                        const std::size_t align )
    {
       (this)->dm.resize( new Buffer::Data< T, type >( size, align ) );
    }
@@ -139,6 +139,12 @@ public:
    {
       stream << sample_master.printAllData( '\n' );
       return( stream );
+   }
+
+   virtual void resize( const std::size_t size,
+                        const std::size_t align )
+   {
+      //TODO, implement this beast 
    }
 protected:
    std::thread       *monitor;
@@ -246,6 +252,13 @@ public:
       assert( data == nullptr );
       return( new RingBuffer< T, Type::Infinite, false >( n_items, align ) ); 
    }
+   
+   virtual void resize( const std::size_t size,
+                        const std::size_t align )
+   {
+      assert( false );
+      /** TODO, implement me **/
+   }
 
 };
 
@@ -303,6 +316,13 @@ public:
                                                               data_ptr->dir,
                                                               align ) ); 
    }
+   
+   virtual void resize( const std::size_t size,
+                        const std::size_t align )
+   {
+      assert( false );
+      /** TODO, implement me **/
+   }
 
 protected:
    const  std::string shm_key;
@@ -351,7 +371,13 @@ public:
                                                     cast_data->dir,
                                                     align ) );
    }
-
+   
+   virtual void resize( const std::size_t size,
+                        const std::size_t align )
+   {
+      assert( false );
+      /** TODO implement me **/
+   }
 protected:
 };
 #endif /* END _RINGBUFFER_TCC_ */

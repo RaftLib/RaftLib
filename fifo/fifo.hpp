@@ -99,7 +99,17 @@ public:
       local_allocate( &ptr );
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
-
+   /**
+    * allocate_range - returns a std::vector of references to 
+    * n items on the queue.  If for some reason the capacity
+    * of the queue is less than n or some other unspecified
+    * error occurs then the number allocated is returned in 
+    * n_ret. To release items to the queue, use push_range
+    * as opposed to the standard push.
+    * @param   n - const std::size_t, # items to allocate
+    * @param   n_ret - std::size_t number of items actually allocated
+    * @return  std::vector< std::reference_wrapper< T > >
+    */
    template < class T > auto allocate_range( const std::size_t n, 
                                              std::size_t &n_ret ) -> std::vector< 
                                                 std::reference_wrapper< T > >
@@ -118,6 +128,13 @@ public:
     */
    virtual void push( const raft::signal = raft::none ) = 0;
 
+   /** 
+    * push_range - releases the items allocated by allocate_range
+    * to the queue.  Function will simply return if allocate wasn't
+    * called prior to calling this function.
+    * @param   signal - const raft::signal, default: NONE
+    */
+    virtual void push_range( const raft::signal = raft::none ) = 0;
 
    /**
     * push - function which takes an object of type T and a 
@@ -176,20 +193,21 @@ public:
    }
   
    /**
-    * pop_range - pops a range and stores it into the array pointed to 
-    * by items.  The exact range is specified by n_items.  If signalling 
-    * is desired then the signal array should be set to an array of
-    * where the size matches n_items.
-    * @param   items - T* 
-    * @param   n_items - std::size_t
-    * @param   signal  - raft::signal, default = nullptr
+    * pop_range - pops n_items from the buffer into the 
+    * std::vector pointed to by pop_range.  There are 
+    * two different ways this function could operate,
+    * either with a push_back type symantic which would 
+    * mean three copies or dealing with a pre-allocated
+    * vector.  This function assumes that the user has
+    * allocated a vector withthe correct size (= n_items).
+    * @param   items    - std::vector< std::pair< T, raft::signal > >& 
+    * @param   n_items  - std::size_t
     */
    template< class T >
-   void pop_range( T *items,
-                   std::size_t n_items,
-                   raft::signal *signal = nullptr )
+   void pop_range( std::vector< std::pair< T , raft::signal > > &items,
+                   const std::size_t n_items )
    {
-      void *ptr_items( (void*)items );
+      void *ptr_items( (void*)&items );
       local_pop_range( ptr_items, signal, n_items );
       return;
    }
@@ -202,12 +220,19 @@ public:
       return;
    }
 
+   /**
+    * unpeek - call after peek to let the runtime know that 
+    * all references to the returned value are no longer in
+    * use.  Calling has the effect of popping the value
+    * from the fifo without actually using it.
+    */
+   virtual void unpeek() = 0;
 
    /** 
-    * recycle - if using peek() to view an element and you wish
-    * to discard it then this is your function.  Takes a parameter
-    * for future expansion where we allow more than one item to be
-    * peeked.
+    * recycle - so you want to ignore some items from the
+    * input stream without ever even looking at them, then
+    * this is the function for you.  
+    *
     * @param   range - const std::size_t
     */
    virtual void recycle( const std::size_t range = 1 ) = 0;
@@ -232,9 +257,7 @@ public:
     */
    virtual void get_zero_write_stats( Blocked &copy );
 
-
-   virtual void resize( const std::size_t size,
-                        const std::size_t align = 16 ) = 0;
+   virtual void resize( const std::size_t n_items, const std::size_t align ) = 0;
 protected:
    /** 
     * local_allocate - in order to get this whole thing
@@ -293,11 +316,9 @@ protected:
     * local_pop_range - pops a range, of n_items and stores
     * them to the array of T* items pointed to by ptr_data.
     * @param   ptr_data - void*
-    * @param   signal   - raft::signal * 
     * @param   n_items  - std::size_t
     */
    virtual void local_pop_range( void *ptr_data,
-                                 raft::signal *signal,
                                  std::size_t n_items ) = 0;
    /**
     * local_peek - peeks at the head of the queue, the element
@@ -307,6 +328,5 @@ protected:
     */
    virtual void local_peek( void **ptr,
                             raft::signal *signal ) = 0;
-
 };
 #endif /* END _FIFO_HPP_ */

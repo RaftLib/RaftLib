@@ -138,6 +138,33 @@ public:
       const size_t write_index( Pointer::val( dm.get()->write_pt ) );
       dm.get()->signal[ write_index ] = signal;
       Pointer::inc( dm.get()->write_pt );
+      write_stats.count++;
+      if( signal == raft::eof )
+      {
+         /**
+          * TODO, this is a quick hack, rework when proper signalling
+          * is implemented.
+          */
+         (this)->write_finished = true;
+      }
+      (this)->allocate_called = false;
+      dm.exitBuffer( dm::allocate );
+   }
+   
+   /**
+    * push_range - releases the last item allocated by allocate_range() to
+    * the queue.  Function will imply return if allocate wasn't
+    * called prior to calling this function.
+    * @param signal - const raft::signal signal, default: NONE
+    */
+   virtual void push_range( const raft::signal signal = raft::none )
+   {
+      if( ! (this)->allocate_called ) return;
+      /** should be the end of the write, regardless of which allocate called **/
+      const size_t write_index( Pointer::val( dm.get()->write_pt ) );
+      dm.get()->signal[ write_index ] = signal;
+      /* only need to inc one more **/
+      Pointer::inc( dm.get()->write_pt );
       write_stats.count += (this)->n_allocated;
       if( signal == raft::eof )
       {
@@ -148,19 +175,39 @@ public:
          (this)->write_finished = true;
       }
       (this)->allocate_called = false;
-      (this)->n_allocated     = 1; /** set to one for convenience **/
+      (this)->n_allocated     = 0; 
+      dm.exitBuffer( dm::allocate_range );
    }
    
    /**
-    :* recycle - To be used in conjunction with peek().  Simply
-    * removes the item at the head of the queue and discards them
-    * @param range - const size_t, default range is 1
+    * removes range items from the buffer, ignores
+    * them without the copy overhead.
     */
-   virtual void recycle( const std::size_t range = 1 )
+   virtual void recycle( std::size_t range = 1 )
    {
-      assert( range <= dm.get()->max_cap );
-      Pointer::incBy( range, dm.get()->read_pt );
-      read_stats.count += range;
+      if( range == 0 )
+      {
+         return;
+      }
+      for( ;; )
+      {
+         dm.enterBuffer( dm::recycle );
+         if( dm.notResizing() )
+         {
+            if( range > (this)->size() )
+            {
+               Pointer::incBy( (this)->size() , dm.get()->read_pt );
+               range -= (this)->size();
+               dm.exitBuffer( dm::recycle );
+            }
+            else if( range <= (this)->size() )
+            {
+               Pointer::incBy( range, dm.get()->read_pt );
+               dm.exitBuffer( dm::recycle );
+               return;
+            }
+         }
+      }
    }
    
    /**
@@ -210,8 +257,18 @@ protected:
     */
    virtual void local_allocate( void **ptr )
    {
-      while( space_avail() == 0 )
+      for(;;)
       {
+         dm.enterBuffer( dm::allocate );
+         if( space_avail() > 0 && dm.notResizing() )
+         {
+            break;
+         }
+         else
+         {
+            dm.exitBuffer( dm::allocate );
+         }
+         /** else, spin **/
 #ifdef NICE      
          std::this_thread::yield();
 #endif         
@@ -230,32 +287,43 @@ protected:
       (this)->allocate_called = true;
       const size_t write_index( Pointer::val( dm.get()->write_pt ) );
       *ptr = (void*)&(dm.get()->store[ write_index ].item);
+      /** call exitBuffer during push call **/
    }
 
    virtual std::size_t local_allocate_n( void *ptr, const std::size_t n )
    {
-      auto *container( reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
+      for( ;; )
+      {
+         dm.enterBuffer( dm::allocate_range );
+         if( space_avail() >= n && dm.notResizing() )
+         {
+            break;
+         }
+         else
+         {
+            dm.exitBuffer( dm::allocate_range );
+         }
+#ifdef NICE
+         std::this_thread::yield();
+#endif
+         if( write_stats.blocked == 0 )
+         {
+            write_stats.blocked = 1;
+         }
+#if __x86_64
+       __asm__ volatile("\
+         pause"
+         :
+         :
+         : );
+#endif           
+      }
+      auto *container( 
+         reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
       std::size_t output( n <= (this)->capacity() ? n : (this)->capacity() );
       /** iterate over range, pause if not enough items **/
       for( std::size_t index( 0 ); index < output; index++ )
       {
-         while( space_avail() == 0 )
-         {
-#ifdef NICE
-            std::this_thread::yield();
-#endif
-            if( write_stats.blocked == 0 )
-            {
-               write_stats.blocked = 1;
-            }
-#if __x86_64
-         __asm__ volatile("\
-           pause"
-           :
-           :
-           : );
-#endif           
-         }
          const std::size_t write_index( Pointer::val( dm.get()->write_pt ) );
          container->push_back( dm.get()->store[ write_index ].item );
          dm.get()->signal[ write_index ] = raft::none;
@@ -263,7 +331,9 @@ protected:
       (this)->allocate_called = true;
       (this)->n_allocated     = output;
       return( output );
+      /** exitBuffer() called by push_range **/
    }
+
    
    /**
     * local_push - implements the pure virtual function from the 
@@ -275,8 +345,17 @@ protected:
    virtual void  local_push( void *ptr, const raft::signal &signal )
    {
       assert( ptr != nullptr );
-      while( space_avail() == 0 )
+      for(;;)
       {
+         dm.enterBuffer( dm::push );
+         if( space_avail() > 0 && dm.notResizing() )
+         {  
+            break;
+         }
+         else
+         {
+            dm.exitBuffer( dm::push );
+         }
 #ifdef NICE      
          std::this_thread::yield();
 #endif         
@@ -292,7 +371,6 @@ protected:
            : );
 #endif           
       }
-      
 	   const size_t write_index( Pointer::val( dm.get()->write_pt ) );
       T *item( reinterpret_cast< T* >( ptr ) );
 	   dm.get()->store[ write_index ].item     = *item;
@@ -303,44 +381,33 @@ protected:
       {
          (this)->write_finished = true;
       }
+      dm.exitBuffer( dm::push );
    }
   
    template < class iterator_type > void local_insert_helper( iterator_type begin, 
                                                               iterator_type end,
                                                               const raft::signal &signal )
    {
+      /**
+       * TODO, not happy with the performance of the current 
+       * solution.  This could easily be much faster with streaming
+       * copies.
+       */
       auto dist( std::distance( begin, end ) );
+      const raft::signal dummy( raft::none );
       while( dist-- )
       {
-         while( space_avail() == 0 )
-         {
-#ifdef NICE
-            std::this_thread::yield();
-#endif
-            if( write_stats.blocked == 0 )
-            {
-               write_stats.blocked = 1;
-            }
-         }
-         const size_t write_index( Pointer::val( dm.get()->write_pt ) );
-         dm.get()->store[ write_index ].item = (*begin);
-         
-         /** add signal to last el only **/
+         /** use global push function **/
          if( dist == 0 )
          {
-            dm.get()->signal[ write_index ] = signal;
+            /** add signal to last el only **/
+            (this)->local_push( (void*) &(*begin), signal );
          }
          else
          {
-            dm.get()->signal[ write_index ] = raft::none;
+            (this)->local_push( (void*)&(*begin), dummy );
          }
-         Pointer::inc( dm.get()->write_pt );
-         write_stats.count++;
          ++begin;
-      }
-      if( signal == raft::eof )
-      {
-         (this)->write_finished = true;
       }
       return;
    }
@@ -406,8 +473,17 @@ protected:
    local_pop( void *ptr, raft::signal *signal )
    {
       assert( ptr != nullptr );
-      while( size() == 0 )
+      for(;;)
       {
+         dm.enterBuffer( dm::pop );
+         if( size() > 0 && dm.notResizing() )
+         {
+            break;
+         }
+         else
+         {
+            dm.exitBuffer( dm::pop );
+         }
 #ifdef NICE      
          std::this_thread::yield();
 #endif        
@@ -433,6 +509,7 @@ protected:
       *item = dm.get()->store[ read_index ].item;
       Pointer::inc( dm.get()->read_pt );
       read_stats.count++;
+      dm.exitBuffer( dm::pop );
    }
    
    /**
@@ -443,58 +520,35 @@ protected:
     * or some other structure.
     */
    virtual void  local_pop_range( void     *ptr_data,
-                                  raft::signal  *signal,
-                                  std::size_t n_items )
+                                  const std::size_t n_items )
    {
       assert( ptr_data != nullptr );
-      
       if( n_items == 0 )
       {
          return;
       }
-
-      auto *items( reinterpret_cast< T* >( ptr_data ) );
-      
-      while( size() < n_items )
+      auto *items( reinterpret_cast< std::vector< std::pair< T, raft::signal > >* >( ptr_data ) );
+      /** just in case **/
+      assert( items->size() == n_items );
+      /**
+       * TODO: same as with the other range function
+       * I'm not too  happy with the performance on this
+       * one.  It'd be relatively easy to fix with a little
+       * time.
+       */
+      for( auto &pair : (*items))
       {
-#ifdef NICE
-         std::this_thread::yield();
-#endif
-         if( read_stats.blocked == 0 )
-         {
-            read_stats.blocked = 1;
-         }
-      }
-     
-      size_t read_index;
-      
-
-      if( signal != nullptr )
-      {
-         for( size_t i( 0 ); i < n_items ; i++ )
-         {
-            read_index = Pointer::val( dm.get()->read_pt );
-            items[ i ] = dm.get()->store [ read_index ].item;
-            signal  [ i ] = dm.get()->signal[ read_index ];
-            Pointer::inc( dm.get()->read_pt );
-            read_stats.count++;
-         }
-      }
-      else /** ignore signal **/
-      {
-         /** TODO, incorporate streaming copy here **/
-         for( size_t i( 0 ); i < n_items; i++ )
-         {
-            read_index = Pointer::val( dm.get()->read_pt );
-            items[ i ]    = dm.get()->store[ read_index ].item;
-            Pointer::inc( dm.get()->read_pt );
-            read_stats.count++;
-         }
-
+         (this)->pop( pair.first, &(pair.second) );
       }
       return;
    }
    
+   virtual void unpeek()
+   {
+      read_stats.count++;
+      dm.exitBuffer( dm::peek );
+   }
+
    /**
     * local_peek() - look at a reference to the head of the
     * ring buffer.  This doesn't remove the item, but it 
@@ -504,8 +558,17 @@ protected:
     */
    virtual void local_peek(  void **ptr, raft::signal *signal )
    {
-      while( size() < 1 )
+      for(;;) 
       {
+         dm.enterBuffer( dm::peek );
+         if( size() >0 && dm.notResizing() )
+         {
+            break;
+         }
+         else
+         {
+            dm.exitBuffer( dm::peek );
+         }
 #ifdef NICE      
          std::this_thread::yield();
 #endif     
@@ -524,6 +587,11 @@ protected:
       }
       *ptr = (void*) &( dm.get()->store[ read_index ].item );
       return;
+      /** 
+       * exitBuffer() called when recycle is called, can't be sure the 
+       * reference isn't being used until all outside accesses to it are
+       * invalidated from the buffer.
+       */
    }
 
    /** 

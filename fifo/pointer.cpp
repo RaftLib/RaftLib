@@ -28,6 +28,15 @@ Pointer::Pointer(const size_t cap ) : a( 0 ),
 {
 }
 
+Pointer::Pointer( const Pointer &other, const size_t new_cap ) : a( other.a ),
+                                                                 b( other.b ),
+                                                                 wrap_a( other.wrap_a ),
+                                                                 wrap_b( other.wrap_b ),
+                                                                 max_cap( new_cap )
+{
+   
+}
+
 size_t 
 Pointer::val( Pointer *ptr )
 {

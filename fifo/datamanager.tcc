@@ -21,11 +21,15 @@
 #define _DATAMANAGER_TCC_  1
 #include <cassert>
 #include <cstddef>
-#include <atomic>
+#include <bitset>
 
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
 
+namespace dm{
+enum access_key : int { allocate = 0, allocate_range, push, 
+                        recycle, pop, peek, N };
+}
 
 template < class T, 
            Type::RingBufferType B,
@@ -45,43 +49,59 @@ public:
 
    void resize( Buffer::Data< T, B > *new_buffer )
    {
-      assert( new_buffer != nullptr );
+      while( resizing ); /* already resizing, spin for a bit */
       resizing = true;
-      while( access_count != 0 )
+      while( flag.any() )
       {
-         /* spin */
+         /** spin **/
       }
-      /* get stuff from old buffer and put into new buffer */
-      buffer->copyTo( new_buffer ); 
-      delete( buffer );
-      buffer = new_buffer;
-      /* set resizing to false, we're done */
+      /** nobody should have outstanding references to the old buff **/
+      auto *old_buffer( (this)->get() );
+      old_buffer->copyTo( new_buffer );
+      (this)->set( new_buffer );
+      delete( old_buffer );
       resizing = false;
    }
 
-   auto get() -> Buffer::Data< T, B >*
+   auto get() noexcept -> Buffer::Data< T, B >*
    {
-      return( buffer );
+      struct Copy
+      {
+         Copy( Buffer::Data< T, B > *a, Buffer::Data< T, B > *b ) : a(  a ),
+                                                                  b( b )
+         {
+         }
+         Buffer::Data< T, B > *a = nullptr;
+         Buffer::Data< T, B > *b = nullptr;
+      } copy( buffer_a, buffer_b );
+      while( copy.a != copy.b )
+      {
+         copy.a = buffer_a;
+         copy.b = buffer_b;
+      }
+      return( copy.a );
    }
 
-   void  enterBuffer() noexcept
+   void  enterBuffer( dm::access_key key ) noexcept
    {
-      access_count++;
+      flag[ (std::size_t) key ] = true;
    }
 
-   void exitBuffer() noexcept
+   void exitBuffer( dm::access_key key ) noexcept
    {
-      access_count--;
+      flag[ (std::size_t) key ] = false;
    }
 
-   bool  notResizing()
+   bool  notResizing() noexcept
    {
       return( ! resizing );
    }
 
 private:
-   Buffer::Data< T, B > *buffer            = nullptr; 
-   volatile bool         resizing          = false;
-   std::atomic< std::size_t > access_count = { 0 };
+   Buffer::Data< T, B > *buffer_b            = (Buffer::Data< T, B >*)0; 
+   Buffer::Data< T, B > *buffer_a            = (Buffer::Data< T, B >*)1;
+
+   volatile bool                    resizing = false;
+   std::bitset< dm::access_key::N > flag;
 };
 #endif /* END _DATAMANAGER_TCC_ */

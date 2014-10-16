@@ -127,6 +127,16 @@ template < class T > struct DataBase
       length_signal  = ( sizeof( Signal ) * max_cap );
    }
 
+   /** 
+    * copyTo - implement in all sub-structs to 
+    * copy the buffer.  Might need to reinterpret
+    * cast the other object or other type of cast
+    * in order to get all the data members you wish
+    * to copy.
+    * @param   other - struct to be copied
+    */
+   virtual void copyTo( DataBase< T > *other ) = 0;
+
    Pointer           *read_pt;
    Pointer           *write_pt;
    size_t             max_cap;
@@ -175,6 +185,24 @@ template < class T,
       /** TODO, see if there are optimizations to be made with sizing and alignment **/
       (this)->read_pt   = new Pointer( max_cap );
       (this)->write_pt  = new Pointer( max_cap ); 
+   }
+   
+   virtual void copyTo( DataBase< T > *other )
+   {
+      delete( (this)->read_pt );
+      (this)->read_pt = new Pointer( (*other->read_pt), (this)->max_cap );
+      delete( (this)->write_pt );
+      (this)->write_pt = new Pointer( (*other->write_pt), (this)->max_cap );
+
+      /** buffer is already alloc'd, copy **/
+      std::memcpy( (void*)(this)->store /* dst */,
+                   (void*)other->store  /* src */,
+                   other->length_store );
+      /** copy signal buff **/
+      std::memcpy( (void*)(this)->signal /* dst */,
+                   (void*)other->signal  /* src */,
+                   other->length_signal );
+      /** everything should be put back together now **/
    }
 
 
@@ -320,6 +348,12 @@ template < class T > struct Data< T, Type::SharedMemory > :
          }
       }
       /** should be all set now **/
+   }
+
+   virtual void copyTo( DataBase< T > *other )
+   {
+      assert( false );
+      /** TODO, implement me **/
    }
 
    ~Data()
