@@ -527,7 +527,9 @@ protected:
       {
          return;
       }
-      auto *items( reinterpret_cast< std::vector< std::pair< T, raft::signal > >* >( ptr_data ) );
+      auto *items( 
+         reinterpret_cast< 
+            std::vector< std::pair< T, raft::signal > >* >( ptr_data ) );
       /** just in case **/
       assert( items->size() == n_items );
       /**

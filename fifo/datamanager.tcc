@@ -56,7 +56,7 @@ public:
          /** spin **/
       }
       /** nobody should have outstanding references to the old buff **/
-      auto *old_buffer( (this)->get() );
+      Buffer::Data< T, B > *old_buffer( (this)->get() );
       old_buffer->copyTo( new_buffer );
       (this)->set( new_buffer );
       delete( old_buffer );

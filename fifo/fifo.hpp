@@ -208,7 +208,7 @@ public:
                    const std::size_t n_items )
    {
       void *ptr_items( (void*)&items );
-      local_pop_range( ptr_items, signal, n_items );
+      local_pop_range( ptr_items, n_items );
       return;
    }
 

@@ -29,7 +29,6 @@ public:
     * data structures.
     */
    RingBufferBase() : FIFOAbstract< T, Type::Infinite >(),
-                      data( nullptr ),
                       write_finished( false )
    {
    }

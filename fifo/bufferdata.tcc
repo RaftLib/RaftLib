@@ -211,11 +211,11 @@ template < class T,
       //DELETE USED HERE
       delete( (this)->read_pt );
       delete( (this)->write_pt );
-
+      //TODO, come back here, there's a double free of stack corruption
       //FREE USED HERE
-      std::memset( (this)->store, 0, ( sizeof( Element< T > ) * (this)->max_cap ) );
+      //std::memset( (this)->store, 0, ( sizeof( Element< T > ) * (this)->max_cap ) );
       free( (this)->store );
-      std::memset( (this)->signal, 0, ( sizeof( Signal ) * (this)->max_cap ) );
+      //std::memset( (this)->signal, 0, ( sizeof( Signal ) * (this)->max_cap ) );
       free( (this)->signal );
    }
 }; /** end heap **/
