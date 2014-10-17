@@ -90,7 +90,6 @@ public:
       }
       
       /** get length in bytes **/
-      chunktype temp;
       length = st.st_size;
       iterations = std::round( (double) length / 
                      ( (double) (chunktype::getChunkSize()) - chunk_offset - 1 ) );
@@ -100,7 +99,7 @@ public:
    {  
       for( auto &port : output )
       {
-         auto &chunk( port.allocate< chunktype  >() );
+         auto &chunk( port.template allocate< chunktype  >() );
          chunk.start_position = ftell( fp );
          const auto num_read(  
             fread( chunk.buffer, sizeof( char ), chunktype::getChunkSize() , fp ) );

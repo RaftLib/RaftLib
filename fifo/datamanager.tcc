@@ -49,7 +49,6 @@ public:
 
    void resize( Buffer::Data< T, B > *new_buffer )
    {
-      while( resizing ); /* already resizing, spin for a bit */
       resizing = true;
       while( flag.any() )
       {
@@ -57,8 +56,11 @@ public:
       }
       /** nobody should have outstanding references to the old buff **/
       Buffer::Data< T, B > *old_buffer( (this)->get() );
-      old_buffer->copyTo( new_buffer );
+      buffer_a = nullptr;
+      while( flag.any() );
+      new_buffer->copyFrom( old_buffer );
       (this)->set( new_buffer );
+      
       delete( old_buffer );
       resizing = false;
    }

@@ -128,14 +128,14 @@ template < class T > struct DataBase
    }
 
    /** 
-    * copyTo - implement in all sub-structs to 
+    * copyFrom - implement in all sub-structs to 
     * copy the buffer.  Might need to reinterpret
     * cast the other object or other type of cast
     * in order to get all the data members you wish
     * to copy.
     * @param   other - struct to be copied
     */
-   virtual void copyTo( DataBase< T > *other ) = 0;
+   virtual void copyFrom( DataBase< T > *other ) = 0;
 
    Pointer           *read_pt;
    Pointer           *write_pt;
@@ -174,7 +174,7 @@ template < class T,
       }
       
       errno = 0;
-      (this)->signal = (Signal*)       calloc( (this)->length_signal,
+      (this)->signal = (Signal*)       calloc( max_cap,
                                                sizeof( Signal ) );
       if( (this)->signal == nullptr )
       {
@@ -187,7 +187,7 @@ template < class T,
       (this)->write_pt  = new Pointer( max_cap ); 
    }
    
-   virtual void copyTo( DataBase< T > *other )
+   virtual void copyFrom( DataBase< T > *other )
    {
       delete( (this)->read_pt );
       (this)->read_pt = new Pointer( (*other->read_pt), (this)->max_cap );
@@ -211,11 +211,8 @@ template < class T,
       //DELETE USED HERE
       delete( (this)->read_pt );
       delete( (this)->write_pt );
-      //TODO, come back here, there's a double free of stack corruption
       //FREE USED HERE
-      //std::memset( (this)->store, 0, ( sizeof( Element< T > ) * (this)->max_cap ) );
       free( (this)->store );
-      //std::memset( (this)->signal, 0, ( sizeof( Signal ) * (this)->max_cap ) );
       free( (this)->signal );
    }
 }; /** end heap **/
@@ -350,7 +347,7 @@ template < class T > struct Data< T, Type::SharedMemory > :
       /** should be all set now **/
    }
 
-   virtual void copyTo( DataBase< T > *other )
+   virtual void copyFrom( DataBase< T > *other )
    {
       assert( false );
       /** TODO, implement me **/
