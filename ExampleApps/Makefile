@@ -5,8 +5,8 @@ ifneq ($(shell uname -s), Darwin)
 RT = -lrt
 endif
 
-CFLAGS = -O0 -g -fstandalone-debug -Wall -std=c99
-CXXFLAGS = -O0 -g -fstandalone-debug  -Wall -std=c++11 -DRDTSCP=1
+CFLAGS   = -O0 -g  -Wall -std=c99
+CXXFLAGS = -O0 -g  -Wall -std=c++11 -DRDTSCP=1
 
 CFILES   =
 COBJS    =

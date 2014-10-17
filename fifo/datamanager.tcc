@@ -28,7 +28,7 @@
 
 namespace dm{
 enum access_key : int { allocate = 0, allocate_range, push, 
-                        recycle, pop, peek, N };
+                        recycle, pop, peek, size, N };
 }
 
 template < class T, 
@@ -50,17 +50,14 @@ public:
    void resize( Buffer::Data< T, B > *new_buffer )
    {
       resizing = true;
-      while( flag.any() )
+      while( (volatile bool) flag.any() )
       {
          /** spin **/
       }
       /** nobody should have outstanding references to the old buff **/
       Buffer::Data< T, B > *old_buffer( (this)->get() );
-      buffer_a = nullptr;
-      while( flag.any() );
       new_buffer->copyFrom( old_buffer );
       (this)->set( new_buffer );
-      
       delete( old_buffer );
       resizing = false;
    }
@@ -69,8 +66,8 @@ public:
    {
       struct Copy
       {
-         Copy( Buffer::Data< T, B > *a, Buffer::Data< T, B > *b ) : a(  a ),
-                                                                  b( b )
+         Copy( Buffer::Data< T, B > *a, Buffer::Data< T, B > *b ) : a( a ),
+                                                                    b( b )
          {
          }
          Buffer::Data< T, B > *a = nullptr;
@@ -94,7 +91,7 @@ public:
       flag[ (std::size_t) key ] = false;
    }
 
-   bool  notResizing() noexcept
+   volatile bool notResizing() noexcept
    {
       return( ! resizing );
    }

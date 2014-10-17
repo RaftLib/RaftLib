@@ -45,6 +45,19 @@ public:
     */
    virtual std::size_t   size()
    {
+      for( ;; )
+      {
+         dm.enterBuffer( dm::size );
+         if( dm.notResizing() )
+         {
+            break;
+         }
+         else
+         {
+            dm.exitBuffer( dm::size );
+            std::this_thread::yield();
+         }
+      }
       const auto   wrap_write( Pointer::wrapIndicator( dm.get()->write_pt  ) ),
                    wrap_read(  Pointer::wrapIndicator( dm.get()->read_pt   ) );
 
@@ -80,6 +93,7 @@ public:
       {
          return( dm.get()->max_cap - rpt + wpt ); 
       }
+      dm.exitBuffer( dm::size );
       return( 0 );
    }
 
