@@ -52,13 +52,20 @@ public:
 
    void resize( Buffer::Data< T, B > *new_buffer )
    {
-      DataManager< T, B >::getlock( mutex_arr );
+      for(;;)
+      {
+         resizing = true;
+         if( ! (volatile bool) flag.any() )
+         {
+            break;
+         }
+      }
       /** nobody should have outstanding references to the old buff **/
       Buffer::Data< T, B > *old_buffer( (this)->get() );
       new_buffer->copyFrom( old_buffer );
       (this)->set( new_buffer );
       delete( old_buffer );
-      DataManager< T, B >::unlock( mutex_arr );
+      resizing = false;
    }
 
    auto get() noexcept -> Buffer::Data< T, B >*
@@ -82,48 +89,24 @@ public:
 
    void  enterBuffer( dm::access_key key ) noexcept
    {
-      mutex_arr[ (std::size_t)key ].lock();
+      flag[ (std::size_t) key ] = true;
    }
 
    void exitBuffer( dm::access_key key ) noexcept
    {
-      mutex_arr[ (std::size_t)key ].unlock();
+      flag[ (std::size_t) key ] = false;
    }
 
+   volatile bool notResizing() noexcept
+   {
+      return( ! resizing );
+   }
 
 private:
    Buffer::Data< T, B > *buffer_b            = (Buffer::Data< T, B >*)0; 
    Buffer::Data< T, B > *buffer_a            = (Buffer::Data< T, B >*)1;
    
-   typedef std::array< std::mutex, dm::access_key::N > mutex_arr_t;
-
-   static void getlock( mutex_arr_t &mutex_arr )
-   {
-      std::queue< int > lock_queue;
-      for( int index( 0 ); index < ( int )dm::access_key::N ; index++ )
-      {
-         lock_queue.push( index );
-      }
-      while( lock_queue.size() > 0 )
-      {
-         auto index( lock_queue.front() );
-         lock_queue.pop();
-         if( ! mutex_arr[ index ].try_lock() )
-         {
-            lock_queue.push( index );
-         }
-      }
-   }
-
-   static void unlock( mutex_arr_t &mutex_arr )
-   {
-      /** assume all are locked **/
-      for( auto &mu : mutex_arr )
-      {
-         mu.unlock();
-      }
-   }
-
-   mutex_arr_t       mutex_arr; 
+   volatile bool                    resizing = false;
+   std::bitset< dm::access_key::N > flag;
 };
 #endif /* END _DATAMANAGER_TCC_ */

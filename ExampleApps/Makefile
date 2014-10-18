@@ -13,7 +13,7 @@ COBJS    =
 
 CXXFILES = sumapp.cpp readtest.cpp singlequeue.cpp
 CXXOBJS  = sumapp.o readtest.o singlequeue.o
-
+EXENAMES = sumapp readtest singlequeue
 
 INCS = 
 
@@ -28,4 +28,4 @@ compile: $(CXXFILES) $(CFILES)
 
 .PHONY: clean
 clean:
-	rm -rf readtest sumapp $(CXXOBJS) $(COBJS)
+	rm -rf $(EXENAMES) $(CXXOBJS) $(COBJS)

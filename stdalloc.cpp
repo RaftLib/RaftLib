@@ -20,6 +20,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <chrono>
+#include <thread>
+
 #include "stdalloc.hpp"
 #include "graphtools.hpp"
 #include "port_info.hpp"
@@ -54,5 +57,11 @@ stdalloc::run()
     * NOTE: we'll keep this thread running in future versions 
     * to dynamically update buffer size 
     */
+
+   while( ! exit_alloc )
+   {
+      std::chrono::milliseconds dura( 2 );
+      std::this_thread::sleep_for( dura );
+   }
    return;
 }

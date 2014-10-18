@@ -174,7 +174,7 @@ template < class T,
       }
       
       errno = 0;
-      (this)->signal = (Signal*)       calloc( (this)->length_signal,
+      (this)->signal = (Signal*)       calloc( (this)->max_cap,
                                                sizeof( Signal ) );
       if( (this)->signal == nullptr )
       {
@@ -190,7 +190,7 @@ template < class T,
    virtual void copyFrom( DataBase< T > *other )
    {
       delete( (this)->read_pt );
-      (this)->read_pt = new Pointer( (other->read_pt), (this)->max_cap );
+      (this)->read_pt = new Pointer( (other->read_pt),   (this)->max_cap );
       delete( (this)->write_pt );
       (this)->write_pt = new Pointer( (other->write_pt), (this)->max_cap );
 
