@@ -21,7 +21,10 @@
 #define _DATAMANAGER_TCC_  1
 #include <cassert>
 #include <cstddef>
-#include <bitset>
+#include <array>
+#include <mutex>
+#include <thread>
+#include <queue>
 
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
@@ -49,17 +52,13 @@ public:
 
    void resize( Buffer::Data< T, B > *new_buffer )
    {
-      resizing = true;
-      while( (volatile bool) flag.any() )
-      {
-         /** spin **/
-      }
+      DataManager< T, B >::getlock( mutex_arr );
       /** nobody should have outstanding references to the old buff **/
       Buffer::Data< T, B > *old_buffer( (this)->get() );
       new_buffer->copyFrom( old_buffer );
       (this)->set( new_buffer );
       delete( old_buffer );
-      resizing = false;
+      DataManager< T, B >::unlock( mutex_arr );
    }
 
    auto get() noexcept -> Buffer::Data< T, B >*
@@ -83,24 +82,48 @@ public:
 
    void  enterBuffer( dm::access_key key ) noexcept
    {
-      flag[ (std::size_t) key ] = true;
+      mutex_arr[ (std::size_t)key ].lock();
    }
 
    void exitBuffer( dm::access_key key ) noexcept
    {
-      flag[ (std::size_t) key ] = false;
+      mutex_arr[ (std::size_t)key ].unlock();
    }
 
-   volatile bool notResizing() noexcept
-   {
-      return( ! resizing );
-   }
 
 private:
    Buffer::Data< T, B > *buffer_b            = (Buffer::Data< T, B >*)0; 
    Buffer::Data< T, B > *buffer_a            = (Buffer::Data< T, B >*)1;
+   
+   typedef std::array< std::mutex, dm::access_key::N > mutex_arr_t;
 
-   volatile bool                    resizing = false;
-   std::bitset< dm::access_key::N > flag;
+   static void getlock( mutex_arr_t &mutex_arr )
+   {
+      std::queue< int > lock_queue;
+      for( int index( 0 ); index < ( int )dm::access_key::N ; index++ )
+      {
+         lock_queue.push( index );
+      }
+      while( lock_queue.size() > 0 )
+      {
+         auto index( lock_queue.front() );
+         lock_queue.pop();
+         if( ! mutex_arr[ index ].try_lock() )
+         {
+            lock_queue.push( index );
+         }
+      }
+   }
+
+   static void unlock( mutex_arr_t &mutex_arr )
+   {
+      /** assume all are locked **/
+      for( auto &mu : mutex_arr )
+      {
+         mu.unlock();
+      }
+   }
+
+   mutex_arr_t       mutex_arr; 
 };
 #endif /* END _DATAMANAGER_TCC_ */

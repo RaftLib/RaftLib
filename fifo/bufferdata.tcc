@@ -174,7 +174,7 @@ template < class T,
       }
       
       errno = 0;
-      (this)->signal = (Signal*)       calloc( max_cap,
+      (this)->signal = (Signal*)       calloc( (this)->length_signal,
                                                sizeof( Signal ) );
       if( (this)->signal == nullptr )
       {
@@ -190,16 +190,16 @@ template < class T,
    virtual void copyFrom( DataBase< T > *other )
    {
       delete( (this)->read_pt );
-      (this)->read_pt = new Pointer( (*other->read_pt), (this)->max_cap );
+      (this)->read_pt = new Pointer( (other->read_pt), (this)->max_cap );
       delete( (this)->write_pt );
-      (this)->write_pt = new Pointer( (*other->write_pt), (this)->max_cap );
+      (this)->write_pt = new Pointer( (other->write_pt), (this)->max_cap );
 
       /** buffer is already alloc'd, copy **/
-      std::memcpy( (void*)(this)->store /* dst */,
+      std::memmove( (void*)(this)->store /* dst */,
                    (void*)other->store  /* src */,
                    other->length_store );
       /** copy signal buff **/
-      std::memcpy( (void*)(this)->signal /* dst */,
+      std::memmove( (void*)(this)->signal /* dst */,
                    (void*)other->signal  /* src */,
                    other->length_signal );
       /** everything should be put back together now **/

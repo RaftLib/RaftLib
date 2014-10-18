@@ -11,8 +11,8 @@ CXXFLAGS = -O0 -g  -Wall -std=c++11 -DRDTSCP=1
 CFILES   =
 COBJS    =
 
-CXXFILES = sumapp.cpp readtest.cpp
-CXXOBJS  = sumapp.o readtest.o
+CXXFILES = sumapp.cpp readtest.cpp singlequeue.cpp
+CXXOBJS  = sumapp.o readtest.o singlequeue.o
 
 
 INCS = 
@@ -24,6 +24,7 @@ compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(CXXOBJS) $(COBJS)
 	$(CXX)  $(LDFLAGS) $(CXXFLAGS) -o sumapp sumapp.o $(LIBS)
 	$(CXX)  $(LDFLAGS) $(CXXFLAGS) -o readtest readtest.o $(LIBS)
+	$(CXX)  $(LDFLAGS) $(CXXFLAGS) -o singlequeue singlequeue.o $(LIBS)
 
 .PHONY: clean
 clean:

@@ -66,7 +66,7 @@ public:
 
    virtual ~RingBuffer()
    {
-      while( ! (this)->dm.notResizing() );
+      /** TODO, might need to get a lock here **/
       /** might have bad behavior if we double delete **/
       delete( (this)->dm.get() );
    }

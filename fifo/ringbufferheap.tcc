@@ -45,29 +45,17 @@ public:
     */
    virtual std::size_t   size()
    {
-      for( ;; )
-      {
-         dm.enterBuffer( dm::size );
-         if( dm.notResizing() )
-         {
-            break;
-         }
-         else
-         {
-            dm.exitBuffer( dm::size );
-            std::this_thread::yield();
-         }
-      }
-      const auto   wrap_write( Pointer::wrapIndicator( dm.get()->write_pt  ) ),
-                   wrap_read(  Pointer::wrapIndicator( dm.get()->read_pt   ) );
+      auto * const buff_ptr( dm.get() );
+      const auto   wrap_write( Pointer::wrapIndicator( buff_ptr->write_pt  ) ),
+                   wrap_read(  Pointer::wrapIndicator( buff_ptr->read_pt   ) );
 
-      const auto   wpt( Pointer::val( dm.get()->write_pt ) ), 
-                   rpt( Pointer::val( dm.get()->read_pt  ) );
+      const auto   wpt( Pointer::val( buff_ptr->write_pt ) ), 
+                   rpt( Pointer::val( buff_ptr->read_pt  ) );
       if( wpt == rpt )
       {
          if( wrap_read < wrap_write )
          {
-            return( dm.get()->max_cap );
+            return( buff_ptr->max_cap );
          }
          else if( wrap_read > wrap_write )
          {
@@ -78,7 +66,7 @@ public:
              * operations slows the queue down drastically so, perhaps
              * this is in fact the best of all possible returns.
              */
-            return( dm.get()->max_cap  );
+            return( buff_ptr->max_cap  );
          }
          else
          {
@@ -91,9 +79,8 @@ public:
       }
       else if( rpt > wpt )
       {
-         return( dm.get()->max_cap - rpt + wpt ); 
+         return( buff_ptr->max_cap - rpt + wpt ); 
       }
-      dm.exitBuffer( dm::size );
       return( 0 );
    }
 
@@ -362,14 +349,11 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::push );
-         if( space_avail() > 0 && dm.notResizing() )
+         if( dm.notResizing() && space_avail() > 0 )
          {  
             break;
          }
-         else
-         {
-            dm.exitBuffer( dm::push );
-         }
+         dm.exitBuffer( dm::push );
 #ifdef NICE      
          std::this_thread::yield();
 #endif         
@@ -385,11 +369,12 @@ protected:
            : );
 #endif           
       }
-	   const size_t write_index( Pointer::val( dm.get()->write_pt ) );
+      auto * const buff_ptr( dm.get() );
+	   const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       T *item( reinterpret_cast< T* >( ptr ) );
-	   dm.get()->store[ write_index ].item     = *item;
-	   dm.get()->signal[ write_index ]         = signal;
-	   Pointer::inc( dm.get()->write_pt );
+	   buff_ptr->store[ write_index ].item     = *item;
+	   buff_ptr->signal[ write_index ]         = signal;
+	   Pointer::inc( buff_ptr->write_pt );
 	   write_stats.count++;
       if( signal == raft::eof )
       {
@@ -490,14 +475,11 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::pop );
-         if( size() > 0 && dm.notResizing() )
+         if( dm.notResizing() && size() > 0 ) 
          {
             break;
          }
-         else
-         {
-            dm.exitBuffer( dm::pop );
-         }
+         dm.exitBuffer( dm::pop );
 #ifdef NICE      
          std::this_thread::yield();
 #endif        
@@ -513,15 +495,16 @@ protected:
            : );
 #endif           
       }
-      const std::size_t read_index( Pointer::val( dm.get()->read_pt ) );
+      auto * const buff_ptr( dm.get() );
+      const std::size_t read_index( Pointer::val( buff_ptr->read_pt ) );
       if( signal != nullptr )
       {
-         *signal = dm.get()->signal[ read_index ];
+         *signal = buff_ptr->signal[ read_index ];
       }
       /** gotta dereference pointer and copy **/
       T *item( reinterpret_cast< T* >( ptr ) );
-      *item = dm.get()->store[ read_index ].item;
-      Pointer::inc( dm.get()->read_pt );
+      *item = buff_ptr->store[ read_index ].item;
+      Pointer::inc( buff_ptr->read_pt );
       read_stats.count++;
       dm.exitBuffer( dm::pop );
    }

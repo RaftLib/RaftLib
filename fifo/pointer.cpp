@@ -19,7 +19,7 @@
  */
 #include "pointer.hpp"
 #include <thread>
-
+#include <unistd.h>
 Pointer::Pointer(const size_t cap ) : a( 0 ),
                                       b( 0 ),
                                       wrap_a( 0 ),
@@ -28,21 +28,19 @@ Pointer::Pointer(const size_t cap ) : a( 0 ),
 {
 }
 
-Pointer::Pointer( const Pointer &other, const size_t new_cap ) : a( other.a ),
-                                                                 b( other.b ),
-                                                                 wrap_a( other.wrap_a ),
-                                                                 wrap_b( other.wrap_b ),
-                                                                 max_cap( new_cap )
+Pointer::Pointer( Pointer *other, const size_t new_cap ) : max_cap( new_cap )
 {
-   
+   sleep( 1 );
+   a = b = Pointer::val( other );
+   wrap_a = wrap_b = Pointer::wrapIndicator( other );
 }
 
 size_t 
 Pointer::val( Pointer *ptr )
 {
    struct{
-      size_t a;
-      size_t b;
+      std::uint64_t a;
+      std::uint64_t b;
    }copy;
    do{
       copy.a = ptr->a;
@@ -81,8 +79,8 @@ size_t
 Pointer::wrapIndicator( Pointer *ptr )
 {
    struct{
-      size_t a;
-      size_t b;
+      std::uint64_t a;
+      std::uint64_t b;
    }copy;
    do{
       copy.a = ptr->wrap_a;

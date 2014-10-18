@@ -38,7 +38,7 @@ public:
     * @param   other, const Pointer&, the other pointer to be cpied
     * @param   new_cap, the new max cap
     */
-   Pointer( const Pointer &other, const size_t new_cap );
+   Pointer( Pointer *other, const size_t new_cap );
 
    /**
     * val - returns the current value of val.  Internally
