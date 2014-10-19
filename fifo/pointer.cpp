@@ -30,9 +30,12 @@ Pointer::Pointer(const size_t cap ) : a( 0 ),
 
 Pointer::Pointer( Pointer *other, const size_t new_cap ) : max_cap( new_cap )
 {
-   sleep( 1 );
-   a = b = Pointer::val( other );
-   wrap_a = wrap_b = Pointer::wrapIndicator( other );
+   const auto wrap( Pointer::wrapIndicator( other ) );
+   wrap_a = wrap;
+   wrap_b = wrap;
+   const auto val(  Pointer::val( other ) );
+   a = val;
+   b = val;
 }
 
 size_t 

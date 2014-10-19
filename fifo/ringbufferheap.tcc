@@ -64,7 +64,8 @@ public:
              * is a better way to fix this with atomic operations...
              * or on second thought benchmarking shows the atomic
              * operations slows the queue down drastically so, perhaps
-             * this is in fact the best of all possible returns.
+             * this is in fact the best of all possible returns (see Leibniz or Candide 
+             * for further info).
              */
             return( buff_ptr->max_cap  );
          }
@@ -261,7 +262,7 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::allocate );
-         if( space_avail() > 0 && dm.notResizing() )
+         if( dm.notResizing() && space_avail() > 0 )
          {
             break;
          }
@@ -296,7 +297,7 @@ protected:
       for( ;; )
       {
          dm.enterBuffer( dm::allocate_range );
-         if( space_avail() >= n && dm.notResizing() )
+         if( dm.notResizing() && space_avail() >= n )
          {
             break;
          }
@@ -349,9 +350,12 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::push );
-         if( dm.notResizing() && space_avail() > 0 )
-         {  
-            break;
+         if( dm.notResizing() )
+         { 
+            if( space_avail() > 0 )
+            {
+               break;
+            }
          }
          dm.exitBuffer( dm::push );
 #ifdef NICE      
@@ -475,9 +479,12 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::pop );
-         if( dm.notResizing() && size() > 0 ) 
+         if( dm.notResizing() ) 
          {
-            break;
+            if( size() > 0 )
+            {
+               break;
+            }
          }
          dm.exitBuffer( dm::pop );
 #ifdef NICE      
@@ -560,7 +567,7 @@ protected:
       for(;;) 
       {
          dm.enterBuffer( dm::peek );
-         if( size() >0 && dm.notResizing() )
+         if( dm.notResizing() && size() > 0  )
          {
             break;
          }

@@ -23,6 +23,8 @@
 #include <cstring>
 #include <cassert>
 #include <thread>
+#include <cinttypes>
+
 #include "shm.hpp"
 #include "signalvars.hpp"
 #include "pointer.hpp"
@@ -189,17 +191,25 @@ template < class T,
    
    virtual void copyFrom( DataBase< T > *other )
    {
+      
+      const std::int64_t   wrap_write( Pointer::wrapIndicator( other->write_pt  ) ),
+                   wrap_read(  Pointer::wrapIndicator( other->read_pt   ) );
+
+      const std::int64_t wpt( Pointer::val( other->write_pt ) ), 
+                   rpt( Pointer::val( other->read_pt  ) );
+      fprintf( stderr, "%" PRIu64 ", %" PRIu64 ", %" PRIu64", %" PRIu64 ", %zu\n", wrap_write, wrap_read, wpt, rpt, other->max_cap );
+
       delete( (this)->read_pt );
       (this)->read_pt = new Pointer( (other->read_pt),   (this)->max_cap );
       delete( (this)->write_pt );
       (this)->write_pt = new Pointer( (other->write_pt), (this)->max_cap );
 
       /** buffer is already alloc'd, copy **/
-      std::memmove( (void*)(this)->store /* dst */,
+      std::memcpy( (void*)(this)->store /* dst */,
                    (void*)other->store  /* src */,
                    other->length_store );
       /** copy signal buff **/
-      std::memmove( (void*)(this)->signal /* dst */,
+      std::memcpy( (void*)(this)->signal /* dst */,
                    (void*)other->signal  /* src */,
                    other->length_signal );
       /** everything should be put back together now **/

@@ -10,7 +10,7 @@
 template < typename T > class Generate : public Kernel
 {
 public:
-   Generate( std::int64_t count = 1000 ) : Kernel(),
+   Generate( std::int64_t count = 1000000) : Kernel(),
                                           count( count )
    {
       output.addPort< T >( "number_stream" );

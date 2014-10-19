@@ -91,9 +91,20 @@ public:
    }
 
    virtual void resize( const std::size_t size,
-                        const std::size_t align )
+                        const std::size_t align,
+                        volatile bool &exit_alloc )
    {
-      (this)->dm.resize( new Buffer::Data< T, type >( size, align ) );
+      (this)->dm.resize( new Buffer::Data< T, type >( size, align ), exit_alloc );
+   }
+   
+   virtual float get_frac_write_blocked()
+   {
+      const auto copy( (this)->write_stats );
+      if( copy.blocked == 0 || copy.count == 0 )
+      {
+         return( 0.0 );
+      }
+      return( (float) copy.blocked / (float) copy.count );
    }
 };
 
@@ -144,9 +155,17 @@ public:
    }
 
    virtual void resize( const std::size_t size,
-                        const std::size_t align )
+                        const std::size_t align,
+                        volatile bool &exit_alloc )
    {
       //TODO, implement this beast 
+      assert( false );
+   }
+   
+   virtual float get_frac_write_blocked()
+   {
+      //TODO, implement me
+      assert( false );
    }
 protected:
    std::thread       *monitor;
@@ -256,10 +275,17 @@ public:
    }
    
    virtual void resize( const std::size_t size,
-                        const std::size_t align )
+                        const std::size_t align,
+                        bool  &exit_alloc )
    {
       assert( false );
       /** TODO, implement me **/
+   }
+   
+   virtual float get_frac_write_blocked()
+   {
+      /** TODO, implement me **/
+      assert( false );
    }
 
 };
@@ -320,10 +346,17 @@ public:
    }
    
    virtual void resize( const std::size_t size,
-                        const std::size_t align )
+                        const std::size_t align,
+                        volatile bool &exit_alloc )
    {
       assert( false );
       /** TODO, implement me **/
+   }
+
+   virtual float get_frac_write_blocked()
+   {
+      assert( false );
+      return( 0.0 );
    }
 
 protected:
@@ -375,10 +408,17 @@ public:
    }
    
    virtual void resize( const std::size_t size,
-                        const std::size_t align )
+                        const std::size_t align,
+                        volatile bool &exit_alloc )
    {
       assert( false );
       /** TODO implement me **/
+   }
+   
+   virtual float get_frac_write_blocked()
+   {
+      assert( false );
+      return( 0.0 );
    }
 protected:
 };

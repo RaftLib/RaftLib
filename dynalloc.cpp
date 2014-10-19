@@ -63,7 +63,7 @@ dynalloc::run()
       /** assume everyone needs a heap for the moment to get working **/
       instr_map_t *func_map( a.const_map[ Type::Heap ] );
       auto test_func( (*func_map)[ false ] );
-      FIFO *fifo( test_func( 1 /* items */, 
+      FIFO *fifo( test_func( 2 /* items */, 
                              16 /* align */, 
                              (void*)NULL ) );
       assert( fifo != nullptr );
@@ -79,24 +79,23 @@ dynalloc::run()
     * make this a fixed quantity right now, if size > .75% at
     * montor interval three times or more then increase size.
     */
-   std::cerr.setf( std::ios::fixed );
-   std::cerr << std::setprecision( 30 );
    auto mon_func = [&]( PortInfo &a, PortInfo &b ) -> void
    {
       const float ratio( .5 );
       const auto hash_val( dynalloc::hash( a, b ) );
-      const auto cap( a.getFIFO()->capacity() );
-      const auto size( a.getFIFO()->size() );
-      const float realized_ratio( (float) size / (float) cap );
+      /** TODO, the values might wrap if no monitoring on **/
+      const auto realized_ratio( a.getFIFO()->get_frac_write_blocked() );
       if( realized_ratio >= ratio )
       {
-         //size_map[ hash_val ]++;
-         //if( size_map[ hash_val ] == 3 )
-         //{
+         if( size_map[ hash_val ]++ == 2 )
+         {
             /** get initializer function **/
-            a.getFIFO()->resize( cap * 2, 16 );
+            /** TODO, add term signal here **/
+            auto * const buff_ptr( a.getFIFO() );
+            const auto cap( buff_ptr->capacity() );
+            buff_ptr->resize( cap * 2, 16, exit_alloc );
             size_map[ hash_val ] = 0;
-         //}
+         }
       }
       return;
    };
@@ -104,11 +103,10 @@ dynalloc::run()
    while( ! exit_alloc )
    {
       /** monitor fifo's **/
-      //std::chrono::microseconds dura( 1 );
-      //std::this_thread::sleep_for( dura );
+      std::chrono::microseconds dura( 1 );
+      std::this_thread::sleep_for( dura );
       GraphTools::BFS( (this)->source_kernels ,
                        mon_func );
-      std::this_thread::yield();
    }
    return;
 }

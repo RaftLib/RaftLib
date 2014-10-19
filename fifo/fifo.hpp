@@ -257,7 +257,12 @@ public:
     */
    virtual void get_zero_write_stats( Blocked &copy );
 
-   virtual void resize( const std::size_t n_items, const std::size_t align ) = 0;
+   virtual void resize( const std::size_t n_items, 
+                        const std::size_t align, 
+                        volatile bool &exit_alloc ) = 0;
+
+   virtual float get_frac_write_blocked() = 0;
+
 protected:
    /** 
     * local_allocate - in order to get this whole thing
