@@ -14,7 +14,7 @@ PTHREAD = -lpthread
 endif
 
 CFLAGS   =  -O1 -g  -Wall -std=c99
-CXXFLAGS =  -O1 -g  -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
+CXXFLAGS =  -O1 -g -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \

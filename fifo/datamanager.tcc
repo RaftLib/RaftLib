@@ -203,15 +203,13 @@ private:
       std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
    }thread_access[ 2 ];
    
-   /**
-    * NOTE: silliness with std::bind below is necessary to get 'icpc'
-    * to capture the thread_access array, otherwise it'll throw an
-    * error. Clang works well though, as does gcc.
+   /** 
+    * TODO, consider reworking this, some compilers (icc) have 
+    * issues with the lambda capture of thread_access.
     */
    std::function< void ( dm::access_key key, 
                          const int val  ) > set_helper = 
-   std::bind( 
-   [&]( ThreadAccess thread_access[2], dm::access_key key, int val )
+   [&]( dm::access_key key, int val ) -> void
    {
       if( (int) key <= (int) dm::push )
       {
@@ -221,6 +219,7 @@ private:
       {
          thread_access[ 1 ].flag[ (int) key ] = val;
       }
-   }, (this)->thread_access, std::placeholders::_1, std::placeholders::_2 );
+      return;
+   };
 };
 #endif /* END _DATAMANAGER_TCC_ */
