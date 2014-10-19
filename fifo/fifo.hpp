@@ -257,10 +257,34 @@ public:
     */
    virtual void get_zero_write_stats( Blocked &copy );
 
+   /**
+    * resize - called from the dynamic allocator  to 
+    * resize the queue.  The function itself is 
+    * implemented in the various template specializations
+    * found in ringuffer.tcc.  A new queue is allocated
+    * with the size specified and alignment and the old 
+    * queue is copied over.  The third parameter, exit_alloc
+    * must be passed from the dynamic allocator to signal
+    * with the application is finished so that the resize
+    * function doesn't wait indefinitely for queue conditions
+    * that will never arise (for exact conditions, see 
+    * datamanager.tcc.
+    * @param   n_items - number of items to resize q to
+    * @param   align   - alignment of queue to allocate
+    * @param   exit_alloc - bool to signal when app is finished
+    */
    virtual void resize( const std::size_t n_items, 
                         const std::size_t align, 
                         volatile bool &exit_alloc ) = 0;
 
+   /**
+    * get_frac_write_blocked - returns the fraction
+    * of time that this queue was blocked.  This might
+    * become a private function accessible only to the
+    * dynamic allocator mechanism, but for now its a 
+    * public function.
+    * @return float
+    */
    virtual float get_frac_write_blocked() = 0;
 
 protected:
