@@ -24,7 +24,7 @@
 #include <array>
 #include <mutex>
 #include <thread>
-#include <queue>
+#include <bitset>
 
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
