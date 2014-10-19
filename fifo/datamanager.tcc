@@ -23,15 +23,13 @@
 #include <cstddef>
 #include <array>
 #include <thread>
-#include <bitset>
-#include <atomic>
 
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
 
 namespace dm{
 enum access_key : int { allocate = 0, allocate_range, push, 
-                        recycle, pop, peek, size, N };
+                        recycle, pop, peek, N };
 }
 
 template < class T, 
@@ -39,37 +37,29 @@ template < class T,
            size_t SIZE = 0 > class DataManager
 {
 public:
-   
-   DataManager( ) = default;
-
+   DataManager( )        = default;
+   virtual ~DataManager() = default;
    
    void set( Buffer::Data< T, B > *buffer )
    {
       assert( buffer != nullptr );
-      buffer_a = buffer;
-      buffer_b = buffer;
+      (this)->buffer = buffer;
    }
 
    void resize( Buffer::Data< T, B > *new_buffer, volatile bool &exit_buffer )
    {
-      auto set = [&]( bool val )
+      auto allclear = [&]() -> bool
       {
-         resizing_a = val;
-         resizing_b = val;
-      };
-      auto getflag = [&]()
-      {
-         struct{
-            std::bitset< dm::access_key::N > a;
-            std::bitset< dm::access_key::N > b;
-         }copy;
-         do
+         for( auto &flag_array : thread_access )
          {
-            copy.a = flag_a;
-            copy.b = flag_b;
-         }while( copy.a != copy.b );
-         return( (volatile bool) copy.a.any() );
+            if( flag_array.whole != 0 )
+            {
+               return( false );
+            }
+         }
+         return( true );
       };
+
       auto buffercondition = [&]() -> bool
       {
          /** 
@@ -84,6 +74,7 @@ public:
          const auto wpt( Pointer::val( buff_ptr->write_pt ) );
          return( rpt < wpt );
       };
+      
       for(;;)
       {
          if( exit_buffer )
@@ -92,79 +83,68 @@ public:
             delete( new_buffer );
             return;
          }
-         set( true );
-         if( ! getflag() )
+         resizing = true;
+         if( allclear() )
          {
             if( buffercondition() )
             {
                break;
             }
-            set( false );
+            resizing = false;
             std::this_thread::yield();
          }
       }
       /** nobody should have outstanding references to the old buff **/
-      Buffer::Data< T, B > *old_buffer( (this)->get() );
+      auto *old_buffer( get() );
       new_buffer->copyFrom( old_buffer );
-      (this)->set( new_buffer );
+      set( new_buffer );
       delete( old_buffer );
-      set( false );
+      resizing = false;
    }
 
    auto get() noexcept -> Buffer::Data< T, B >*
    {
-      struct Copy
-      {
-         Copy( Buffer::Data< T, B > *a, Buffer::Data< T, B > *b ) : a( a ),
-                                                                    b( b )
-         {
-         }
-         Buffer::Data< T, B > *a = nullptr;
-         Buffer::Data< T, B > *b = nullptr;
-      } copy( buffer_a, buffer_b );
-      while( copy.a != copy.b )
-      {
-         copy.a = buffer_a;
-         copy.b = buffer_b;
-      }
-      return( copy.a );
+      return( buffer );
    }
 
    void  enterBuffer( dm::access_key key ) noexcept
    {
-      flag_a[ (std::size_t) key ] = true;
-      flag_b[ (std::size_t) key ] = true;
+      set_helper( key, 1 );
    }
 
    void exitBuffer( dm::access_key key ) noexcept
    {
-      flag_a[ (std::size_t) key ] = false;
-      flag_b[ (std::size_t) key ] = false;
+      set_helper( key, 0 );
    }
 
    bool notResizing() noexcept
    {
-      struct
-      {
-         bool a;
-         bool b;
-      }copy;
-      do
-      {
-         copy.a = resizing_a;
-         copy.b = resizing_b;
-      }while( copy.a != copy.b );
-      return( ! copy.a );
+      return( ! resizing ); 
    }
 
 private:
-   Buffer::Data< T, B > *buffer_b            = (Buffer::Data< T, B >*)0; 
-   Buffer::Data< T, B > *buffer_a            = (Buffer::Data< T, B >*)1;
+   Buffer::Data< T, B > *buffer              = nullptr; 
    
-   std::atomic<  bool >                    resizing_a  = { false };
-   std::atomic<  bool >                    resizing_b  = { false };
-
-   std::bitset< dm::access_key::N > flag_a;
-   std::bitset< dm::access_key::N > flag_b;
+   volatile bool                 resizing    = false;
+   struct
+   {
+      union{
+         std::uint64_t whole = 0; /** just in case, default zero **/
+         std::uint8_t  flag[ 8 ];
+      };
+      std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
+   }thread_access[ 2 ];
+   
+   std::function< void ( dm::access_key key, const int val  ) > set_helper = [&]( dm::access_key key, int val )
+   {
+      if( (int) key <= (int) dm::push )
+      {
+         thread_access[ 0 ].flag[ (int) key ] = val;
+      }
+      else
+      {
+         thread_access[ 1 ].flag[ (int) key ] = val;
+      }
+   };
 };
 #endif /* END _DATAMANAGER_TCC_ */
