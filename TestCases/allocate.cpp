@@ -18,11 +18,17 @@ public:
    {
       if( count-- > 1 )
       {
-         output[ "number_stream" ].push( count );
+         
+         auto &ref( output[ "number_stream" ].allocate< T >() );
+         ref = count;
+         count.push();
+         
          return( raft::proceed );
       }
       /** else **/
-      output[ "number_stream" ].push( count, raft::eof );
+      auto &ref( output[ "number_stream" ].allocate< T >() );
+      ref = count;
+      count.push( raft::eof );
       return( raft::stop );
    }
 

@@ -34,8 +34,7 @@ private:
 int
 main( int argc, char **argv )
 {
-   
-   Map map;
+   using namespace raft;
    map.link( new Generate< std::int64_t >(), new Print< std::int64_t, '\n' >() );
    map.exe();
    return( EXIT_SUCCESS );

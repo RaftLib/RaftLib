@@ -63,4 +63,8 @@
 #include "./raft_dir/sample.tcc"
 #include "./raft_dir/sampletype.tcc"
 
+namespace raft
+{
+   Map map;
+}
 #endif /* END _RAFT_HPP_ */

@@ -64,7 +64,7 @@ public:
 int
 main( int argc, char **argv )
 {
-   Map map;
+   using namespace raft;
    const std::size_t count( 100000 );
    auto linked_kernels( map.link( new Generate< std::int64_t >( count ),
                                   new Sum< std::int64_t,std::int64_t, std::int64_t >(),
