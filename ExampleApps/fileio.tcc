@@ -40,7 +40,6 @@ template < std::size_t size = 65536 > struct filechunk
    }
 
    char              buffer[ size ]; 
-   std::size_t       BUFFERSIZE;
    std::size_t       start_position;
    std::size_t       length;
 
@@ -99,20 +98,26 @@ public:
    {  
       for( auto &port : output )
       {
+         fprintf( stderr, "filiostart\n" );
          auto &chunk( port.template allocate< chunktype  >() );
          chunk.start_position = ftell( fp );
+         const auto chunksize( chunktype::getChunkSize() );
          const auto num_read(  
-            fread( chunk.buffer, sizeof( char ), chunktype::getChunkSize() , fp ) );
+            fread( chunk.buffer, sizeof( char ), chunksize , fp ) );
          chunk.buffer[ num_read ] = '\0';
          chunk.length = num_read;
          port.push( 
             ( iterations - output.count() /* num ports */ ) > 0 ? 
                raft::none : 
                raft::eof );
+
+         fprintf( stderr, "iterations %d\n", (int) iterations );
          if( iterations-- == 0 )
-         {
+         {  
+            fprintf( stderr, "fileioending\n" );
             return( raft::stop );
          }
+         fprintf( stderr, "fileioproceeding\n" );
       }
       return( raft::proceed );
    }

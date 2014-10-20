@@ -201,7 +201,7 @@ private:
          std::uint8_t  flag[ 8 ];
       };
       std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
-   }thread_access[ 2 ];
+   } __attribute__((aligned(64))) thread_access[ 2 ];
    
    void set_helper( dm::access_key key, const int val )
    {

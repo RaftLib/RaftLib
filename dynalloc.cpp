@@ -63,7 +63,7 @@ dynalloc::run()
       /** assume everyone needs a heap for the moment to get working **/
       instr_map_t *func_map( a.const_map[ Type::Heap ] );
       auto test_func( (*func_map)[ false ] );
-      FIFO *fifo( test_func( 2 /* items */, 
+      FIFO *fifo( test_func( 2  /* items */, 
                              16 /* align */, 
                              (void*)NULL ) );
       assert( fifo != nullptr );

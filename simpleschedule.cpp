@@ -70,6 +70,10 @@ simple_schedule::start()
             {
                sig_status = raft::stop;
             }
+            else
+            {
+               std::this_thread::yield();
+            }
          }
          /** invalidate output queues **/
          Schedule::invalidateOutputPorts( kernel );

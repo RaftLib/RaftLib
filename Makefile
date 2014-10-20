@@ -15,8 +15,8 @@ endif
 
 TEST = -DUNITTEST=1
 
-CFLAGS   =  -O1 -g  -Wall -std=c99 $(TEST)
-CXXFLAGS =  -O1 -g -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1 $(TEST)
+CFLAGS   =  -O0 -g  -Wall -std=c99 $(TEST)
+CXXFLAGS =  -O0 -g -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1 $(TEST)
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \

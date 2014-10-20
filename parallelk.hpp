@@ -1,7 +1,7 @@
 /**
- * split.tcc - 
+ * parallelk.hpp - 
  * @author: Jonathan Beard
- * @version: Mon Oct 20 09:49:17 2014
+ * @version: Mon Oct 20 13:18:21 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,34 +17,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _SPLIT_TCC_
-#define _SPLIT_TCC_  1
+#ifndef _PARALLELK_HPP_
+#define _PARALLELK_HPP_  1
 #include <raft>
-#inlcude "parallelk"
 
-template <class T> Split : public parallelk
+class parallelk : public Kernel 
 {
 public:
-   Split()
-   {
-      input.addPort<  T >( "0" );
-      output.addPort< T >( "0" );
-   }
-
-   virtual ~Split() = default;
-
-   virtual raft::kstatus run()
-   {
-      /** assume one input port, multiple output ports **/
-      /** round robin style behavior **/
-      T &item( input[ "0" ].peek() );
-      for( auto &port : output )
-      {
-        //TODO, come back here 
-      }
-   }
+   parallelk()          = default;
+   virtual ~parallelk() = default;
 
 protected:
+   /** 
+    * addPort - adds a port, either to the input or 
+    * output depending on what the sub-class type is
+    * @param   name - const std::string
+    */
+   virtual void addPort( const std::string name ) = 0;
    
+   friend class Schedule;
+   friend class Map;
 };
-#endif /* END _SPLIT_TCC_ */
+#endif /* END _PARALLELK_HPP_ */
