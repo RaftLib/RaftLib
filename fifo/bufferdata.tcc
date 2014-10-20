@@ -191,14 +191,6 @@ template < class T,
    
    virtual void copyFrom( DataBase< T > *other )
    {
-      
-      const std::int64_t   wrap_write( Pointer::wrapIndicator( other->write_pt  ) ),
-                   wrap_read(  Pointer::wrapIndicator( other->read_pt   ) );
-
-      const std::int64_t wpt( Pointer::val( other->write_pt ) ), 
-                   rpt( Pointer::val( other->read_pt  ) );
-      fprintf( stderr, "%" PRIu64 ", %" PRIu64 ", %" PRIu64", %" PRIu64 ", %zu\n", wrap_write, wrap_read, wpt, rpt, other->max_cap );
-
       delete( (this)->read_pt );
       (this)->read_pt = new Pointer( (other->read_pt),   (this)->max_cap );
       delete( (this)->write_pt );

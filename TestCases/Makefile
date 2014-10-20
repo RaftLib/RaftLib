@@ -6,17 +6,17 @@ RT = -lrt
 endif
 
 CFLAGS   = -O2 -Wall -std=c99
-CXXFLAGS = -O2 -Wall -std=c++11 -DRDTSCP=1
+CXXFLAGS = -O2 -Wall -std=c++11 -DRDTSCP=1 -DUNITTEST=1
 LDFLAGS  = -lraftlight
 
-EXE = allocate portTypeException
+EXE = allocate portTypeException dynallocate
 OBS = $(addsuffix .o, $(EXE))
 
 all: $(EXE)
 
 allocate: allocate.o
-
 portTypeException: portTypeException.o
+dynallocate: dynallocate.o
 
 .PHONY: clean
 clean:

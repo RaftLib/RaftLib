@@ -13,8 +13,10 @@ STATIC = -static -static-libgcc -static-libstdc++
 PTHREAD = -lpthread  
 endif
 
-CFLAGS   =  -O1 -g  -Wall -std=c99
-CXXFLAGS =  -O1 -g -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1
+TEST = -DUNITTEST=1
+
+CFLAGS   =  -O1 -g  -Wall -std=c99 $(TEST)
+CXXFLAGS =  -O1 -g -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1 $(TEST)
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \

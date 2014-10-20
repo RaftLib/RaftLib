@@ -87,8 +87,12 @@ dynalloc::run()
       const auto realized_ratio( a.getFIFO()->get_frac_write_blocked() );
       if( realized_ratio >= ratio )
       {
-         if( size_map[ hash_val ]++ == 2 )
+         const auto curr_count( size_map[ hash_val ]++ );
+         if( curr_count  == 2 )
          {
+#ifdef UNITTEST
+            fprintf( stderr, "RESIZECALLED\n" );
+#endif 
             /** get initializer function **/
             /** TODO, add term signal here **/
             auto * const buff_ptr( a.getFIFO() );
