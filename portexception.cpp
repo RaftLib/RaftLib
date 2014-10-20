@@ -55,3 +55,7 @@ AmbiguousPortAssignmentException::AmbiguousPortAssignmentException(
 {
 }
 
+ClosedPortAccessException::ClosedPortAccessException(
+   const std::string message ) : PortException( message )
+{
+}

@@ -1,7 +1,7 @@
 /**
- * kernel.hpp - 
+ * split.tcc - 
  * @author: Jonathan Beard
- * @version: Thu Sep 11 15:34:24 2014
+ * @version: Mon Oct 20 09:49:17 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,29 +17,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _KERNEL_HPP_
-#define _KERNEL_HPP_  1
-#include "port.hpp"
-#include "signalvars.hpp"
-#include "rafttypes.hpp"
+#ifndef _SPLIT_TCC_
+#define _SPLIT_TCC_  1
+#include <raft>
 
-class Kernel
+template <class T> Split : public Kernel
 {
 public:
-   Kernel()          = default;
-   virtual ~Kernel() = default;
+   Split()
+   {
+      input.addPort<  T >( "0" );
+      output.addPort< T >( "0" );
+   }
 
+   virtual ~Split() = default;
 
-   virtual raft::kstatus run() = 0;
+   virtual raft::kstatus run()
+   {
+      /** assume one input port, multiple output ports **/
+      /** peek from input port, push to however many output ports there are **/
+   }
 
 protected:
-   Port               input  = { this };
-   Port               output = { this };
    
-   friend class Map;
-   friend class Schedule;
-   friend void GraphTools::BFS( std::set< Kernel* > &source_kernels,
-                                edge_func fun,
-                                bool connection_error );
 };
-#endif /* END _KERNEL_HPP_ */
+#endif /* END _SPLIT_TCC_ */

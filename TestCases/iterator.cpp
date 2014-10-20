@@ -3,9 +3,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <raft>
-#include <vector>
 
-#include "print.tcc"
 
 template < typename T > class Generate : public Kernel
 {
@@ -20,10 +18,17 @@ public:
    {
       if( count-- > 1 )
       {
-         output[ "number_stream" ].push( count );
+         
+         auto &ref( output[ "number_stream" ].allocate< T >() );
+         ref = count;
+         output[ "number_stream"].push();
+         
          return( raft::proceed );
       }
-      output[ "number_stream" ].push( count, raft::eof );
+      /** else **/
+      auto &ref( output[ "number_stream" ].allocate< T >() );
+      ref = count;
+      output[ "number_stream" ].push( raft::eof );
       return( raft::stop );
    }
 
@@ -50,23 +55,47 @@ public:
       input[ "input_b" ].pop( b, &sig_b );
       assert( sig_a == sig_b );
       C c( a + b );
-      output[ "sum" ].push( c, sig_a );
+      output[ "sum" ].push( c , sig_a );
+      if( sig_b == raft::eof )
+      {
+         return( raft::stop );
+      }
       return( raft::proceed );
    }
 
 };
 
+template< typename T > class Print : public Kernel
+{
+public:
+   Print() : Kernel()
+   {
+      input.addPort< T >( "in" );
+   }
+
+   virtual raft::kstatus run()
+   {
+      T data;
+      raft::signal  signal( raft::none );
+      input[ "in" ].pop( data, &signal );
+      fprintf( stderr, "%" PRIu64 "\n", data );
+      if( signal == raft::eof )
+      {
+         return( raft::stop );
+      }
+      return( raft::proceed );
+   }
+};
 
 int
 main( int argc, char **argv )
 {
    using namespace raft;
-   const std::size_t count( 100000 );
-   auto linked_kernels( map.link( new Generate< std::int64_t >( count ),
+   auto linked_kernels( map.link( new Generate< std::int64_t >(),
                                   new Sum< std::int64_t,std::int64_t, std::int64_t >(),
                                   "input_a" ) );
-   map.link( new Generate< std::int64_t >( count ), &( linked_kernels.dst ), "input_b" );
-   map.link( &( linked_kernels.dst ), new Print< std::int64_t ,'\n'>() );
+   map.link( new Generate< std::int64_t >(), &( linked_kernels.dst ), "input_b" );
+   map.link( &( linked_kernels.dst ), new Print< std::int64_t >() );
    map.exe();
    return( EXIT_SUCCESS );
 }

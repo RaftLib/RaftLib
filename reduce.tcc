@@ -1,7 +1,7 @@
 /**
- * fifo.cpp - 
+ * reduce.tcc - 
  * @author: Jonathan Beard
- * @version: Thu Sep  4 12:59:45 2014
+ * @version: Mon Oct 20 09:49:17 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,35 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "fifo.hpp"
+#ifndef _REDUCE_TCC_
+#define _REDUCE_TCC_  1
 
-FIFO::FIFO()
-{
-
-}
-
-void
-FIFO::get_zero_read_stats( Blocked &copy )
-{
-   /** default version does nothing at all **/
-   return;
-}
-
-void
-FIFO::get_zero_write_stats( Blocked &copy )
-{
-   /** default version does nothing at all **/
-   return;
-}
-
-void
-FIFO::invalidate()
-{
-   valid = false;
-}
-
-bool
-FIFO::is_invalid()
-{
-   return( ! valid );
-}
+#endif /* END _REDUCE_TCC_ */

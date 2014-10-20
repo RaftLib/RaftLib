@@ -287,6 +287,8 @@ public:
     */
    virtual float get_frac_write_blocked() = 0;
 
+   void invalidate();
+   bool is_invalid();
 protected:
    /** 
     * local_allocate - in order to get this whole thing
@@ -357,5 +359,7 @@ protected:
     */
    virtual void local_peek( void **ptr,
                             raft::signal *signal ) = 0;
+
+   volatile bool valid = true;
 };
 #endif /* END _FIFO_HPP_ */

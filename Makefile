@@ -5,7 +5,7 @@ PREFIX = /usr/local
 
 include fifo/buffer.makefile
 
-DIRINCS = $(RINGBUFFERDIR)
+DIRINCS = $(RINGBUFFERDIR) ./
 
 ifneq ($(shell uname -s), Darwin)
 RT = -lrt

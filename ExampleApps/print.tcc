@@ -47,8 +47,7 @@ public:
    virtual raft::kstatus run()
    {
       T data;
-      raft::signal  signal( raft::none );
-      input[ "in" ].pop( data, &signal );
+      input[ "in" ].pop( data );
       if( delim != '\0' )
       {
          std::cout << data << delim;
@@ -56,10 +55,6 @@ public:
       else
       {
          std::cout << data;
-      }
-      if( signal == raft::eof )
-      {
-         return( raft::stop );
       }
       return( raft::proceed );
    }

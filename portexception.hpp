@@ -59,4 +59,10 @@ class AmbiguousPortAssignmentException : public PortException
 public:
    AmbiguousPortAssignmentException( const std::string message );
 };
+
+class ClosedPortAccessException : public PortException
+{
+public:
+   ClosedPortAccessException( const std::string message );
+};
 #endif /* END _PORTEXCEPTION_HPP_ */

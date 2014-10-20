@@ -20,6 +20,8 @@
 #ifndef _RINGBUFFERHEAP_TCC_
 #define _RINGBUFFERHEAP_TCC_  1
 
+#include "portexception.hpp"
+
 template < class T, 
            Type::RingBufferType type > class RingBufferBase : 
             public FIFOAbstract< T, type > {
@@ -207,6 +209,11 @@ public:
                Pointer::incBy( range, dm.get()->read_pt );
                dm.exitBuffer( dm::recycle );
                return;
+            }
+            else if( (this)->size() == 0 && (this)->is_invalid() )
+            {
+               /** TODO, decide if an exception is warranted **/
+               return; 
             }
          }
       }
@@ -485,6 +492,11 @@ protected:
             {
                break;
             }
+            else if( (this)->is_invalid() )
+            {  
+               throw ClosedPortAccessException( 
+                  "Accessing closed port with pop call, exiting!!" );
+            }
          }
          dm.exitBuffer( dm::pop );
 #ifdef NICE      
@@ -566,6 +578,7 @@ protected:
    {
       for(;;) 
       {
+         
          dm.enterBuffer( dm::peek );
          if( dm.notResizing() && size() > 0  )
          {
@@ -573,6 +586,11 @@ protected:
          }
          else
          {
+            if( (this)->is_invalid() )
+            {  
+               throw ClosedPortAccessException( 
+                  "Accessing closed port with local_insert call, exiting!!" );
+            }
             dm.exitBuffer( dm::peek );
          }
 #ifdef NICE      

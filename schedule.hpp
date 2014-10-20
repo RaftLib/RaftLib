@@ -51,7 +51,10 @@ protected:
     * already scheduled.
     */
    virtual bool scheduleKernel( Kernel *kernel );
-   
+
+   static void invalidateOutputPorts( Kernel *kernel );
+   static bool kernelHasInputData( Kernel *kernel );
+   static bool kernelHasNoInputPorts( Kernel *kernel );
 private:
    Map &map_ref;
 };
