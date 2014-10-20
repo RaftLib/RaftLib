@@ -7,6 +7,7 @@ endif
 
 CFLAGS   = -O2 -Wall -std=c99
 CXXFLAGS = -O2 -Wall -std=c++11 -DRDTSCP=1
+LDFLAGS  = -lraftlight
 
 EXE = allocate portTypeException
 OBS = $(addsuffix .o, $(EXE))
@@ -19,4 +20,4 @@ portTypeException: portTypeException.o
 
 .PHONY: clean
 clean:
-	rm -rf $(EXE) $(OBS)
+	rm -rf $(EXE) $(OBS) intelremotemonfifo*

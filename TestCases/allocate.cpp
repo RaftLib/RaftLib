@@ -21,14 +21,14 @@ public:
          
          auto &ref( output[ "number_stream" ].allocate< T >() );
          ref = count;
-         count.push();
+         output[ "number_stream"].push();
          
          return( raft::proceed );
       }
       /** else **/
       auto &ref( output[ "number_stream" ].allocate< T >() );
       ref = count;
-      count.push( raft::eof );
+      output[ "number_stream" ].push( raft::eof );
       return( raft::stop );
    }
 
@@ -91,7 +91,7 @@ int
 main( int argc, char **argv )
 {
    using namespace raft;
-   auto linked_kernels( map.link( new Generate< float >(),
+   auto linked_kernels( map.link( new Generate< std::int64_t >(),
                                   new Sum< std::int64_t,std::int64_t, std::int64_t >(),
                                   "input_a" ) );
    map.link( new Generate< std::int64_t >(), &( linked_kernels.dst ), "input_b" );
