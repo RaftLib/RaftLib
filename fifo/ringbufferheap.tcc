@@ -604,12 +604,13 @@ protected:
            : );
 #endif
       }
-      const size_t read_index( Pointer::val( dm.get()->read_pt ) );
+      auto * const buff_ptr( dm.get() );
+      const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
       if( signal != nullptr )
       {
-         *signal = dm.get()->signal[ read_index ];
+         *signal = buff_ptr->signal[ read_index ];
       }
-      *ptr = (void*) &( dm.get()->store[ read_index ].item );
+      *ptr = (void*) &( buff_ptr->store[ read_index ].item );
       return;
       /** 
        * exitBuffer() called when recycle is called, can't be sure the 
