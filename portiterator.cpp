@@ -29,8 +29,8 @@
 PortIterator::PortIterator( portmap_t *port_map ) : port_map( port_map )
 {
    PortIterator::initKeyMap( port_map, key_map );
-   port_map->map_mutex.lock();
    /** TODO, might should be trylock with error if already lock, same for below **/
+   //port_map->map_mutex.lock();
 }
 
 PortIterator::PortIterator( portmap_t *port_map, const std::size_t index ) : 
@@ -48,7 +48,7 @@ PortIterator::PortIterator( const PortIterator &it ) : port_map( it.port_map ),
 
 PortIterator::~PortIterator()
 {
-   port_map->map_mutex.unlock();
+   //port_map->map_mutex.unlock();
 }
 
 PortIterator&
