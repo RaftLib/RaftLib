@@ -56,17 +56,17 @@ simple_schedule::start()
 
    std::vector< thread_info_t > thread_map( kernel_map.size() );
    
-   for( auto index( 0 ); index < kernel_map.size(); index++ )
+   for( std::size_t index( 0 ); index < kernel_map.size(); index++ )
    {
       auto bound_func = [&]( Kernel *kernel, bool &finished ){
          auto sig_status( raft::proceed );
          while( sig_status == raft::proceed )
          {
-            if( Schedule::kernelHasInputData( kernel ) )
+            if( kernelHasInputData( kernel ) )
             {
                sig_status = kernel->run();
             }
-            else if( Schedule::kernelHasNoInputPorts( kernel ) /** no data too **/ )
+            else if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
             {
                sig_status = raft::stop;
             }
@@ -76,7 +76,7 @@ simple_schedule::start()
             }
          }
          /** invalidate output queues **/
-         Schedule::invalidateOutputPorts( kernel );
+        invalidateOutputPorts( kernel );
          finished = true;
       };
       thread_map[ index ].th = 

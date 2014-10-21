@@ -98,7 +98,6 @@ public:
    {  
       for( auto &port : output )
       {
-         fprintf( stderr, "filiostart\n" );
          auto &chunk( port.template allocate< chunktype  >() );
          chunk.start_position = ftell( fp );
          const auto chunksize( chunktype::getChunkSize() );
@@ -111,13 +110,10 @@ public:
                raft::none : 
                raft::eof );
 
-         fprintf( stderr, "iterations %d\n", (int) iterations );
          if( iterations-- == 0 )
          {  
-            fprintf( stderr, "fileioending\n" );
             return( raft::stop );
          }
-         fprintf( stderr, "fileioproceeding\n" );
       }
       return( raft::proceed );
    }

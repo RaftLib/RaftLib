@@ -94,7 +94,6 @@ dynalloc::run()
             fprintf( stderr, "RESIZECALLED\n" );
 #endif 
             /** get initializer function **/
-            /** TODO, add term signal here **/
             auto * const buff_ptr( a.getFIFO() );
             const auto cap( buff_ptr->capacity() );
             buff_ptr->resize( cap * 2, 16, exit_alloc );
