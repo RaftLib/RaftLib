@@ -198,25 +198,42 @@ public:
          dm.enterBuffer( dm::recycle );
          if( dm.notResizing() )
          {
-            if( range > (this)->size() )
+            if( (this)->size() > 0 )
             {
-               Pointer::incBy( (this)->size() , dm.get()->read_pt );
-               range -= (this)->size();
-               dm.exitBuffer( dm::recycle );
+               break;
             }
-            else if( range <= (this)->size() )
+            else if( (this)->is_invalid() )
             {
-               Pointer::incBy( range, dm.get()->read_pt );
                dm.exitBuffer( dm::recycle );
                return;
             }
-            else if( (this)->size() == 0 && (this)->is_invalid() )
-            {
-               /** TODO, decide if an exception is warranted **/
-               return; 
-            }
+            /**
+             * TODO, fix this mess, need to double check
+             * the code in Pointer::incBy
+             */
+            //if( range > (this)->size() )
+            //{
+            //   Pointer::incBy( (this)->size() , dm.get()->read_pt );
+            //   range -= (this)->size();
+            //   dm.exitBuffer( dm::recycle );
+            //}
+            //else if( range <= (this)->size() )
+            //{
+            //   Pointer::incBy( range, dm.get()->read_pt );
+            //   dm.exitBuffer( dm::recycle );
+            //   return;
+            //}
+            //else if( (this)->size() == 0 || (this)->is_invalid() )
+            //{
+            //   /** TODO, decide if an exception is warranted **/
+            //   dm.exitBuffer( dm::recycle );
+            //   return; 
+            //}
          }
       }
+      auto * const buff_ptr( dm.get() );
+      Pointer::inc( buff_ptr->read_pt );
+      dm.exitBuffer( dm::recycle );
    }
    
    /**
@@ -333,6 +350,10 @@ protected:
       /** iterate over range, pause if not enough items **/
       for( std::size_t index( 0 ); index < output; index++ )
       {
+         /**
+          * TODO, fix this logic here, write index must get iterated, but 
+          * not here
+          */
          const std::size_t write_index( Pointer::val( dm.get()->write_pt ) );
          container->push_back( dm.get()->store[ write_index ].item );
          dm.get()->signal[ write_index ] = raft::none;
@@ -584,15 +605,12 @@ protected:
          {
             break;
          }
-         else
-         {
-            if( (this)->is_invalid() )
-            {  
-               throw ClosedPortAccessException( 
-                  "Accessing closed port with local_insert call, exiting!!" );
-            }
-            dm.exitBuffer( dm::peek );
+         if( (this)->size() == 0 && (this)->is_invalid() )
+         {  
+            throw ClosedPortAccessException( 
+               "Accessing closed port with local_insert call, exiting!!" );
          }
+         dm.exitBuffer( dm::peek );
 #ifdef NICE      
          std::this_thread::yield();
 #endif     

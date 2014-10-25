@@ -26,14 +26,99 @@
 #include <vector>
 #include <map>
 #include <functional>
+#include <cassert>
 
 #include "blocked.hpp"
 #include "signalvars.hpp"
 
 
+
 class FIFO
 {
 public:
+
+   enum autotype { allocatetype, poptype };
+
+   template< class T, autotype type = poptype > class autorelease
+   {
+   public:
+      autorelease( FIFO &fifo ) : fifo( fifo ),
+                                     item( fifo.peek< T >( &signal ) )
+      {}
+
+      autorelease( const autorelease< T, type >  &other ) : 
+         fifo( other.fifo ),
+         item( other.item )
+      {
+         other.copied = true;
+      }
+      
+      ~autorelease()
+      {
+         if( ! copied )
+         {
+            fifo.unpeek();
+            fifo.recycle( 1 );
+         }
+      }
+
+      T& operator *()
+      {
+         return( item );
+      }
+
+      raft::signal& sig()
+      {
+         return( (this)->signal );
+      }
+   private:
+      FIFO         &fifo;
+      raft::signal signal;
+      T            &item;
+      bool         copied = false;
+   };
+
+
+   template < class T > class autorelease< T, autotype::allocatetype >
+   {
+   public:
+      
+      autorelease(  T *item, FIFO &fifo ) : item( item ), fifo( fifo )
+      {
+      }
+
+      autorelease( const autorelease< T, autotype::allocatetype > &other ) : 
+         item( other.item ), 
+         fifo( other.fifo )
+      {
+         other.copied = true;
+      }
+      
+      ~autorelease()
+      {
+         if( ! copied )
+         {
+            fifo.push( signal );   
+         }
+      }
+   
+      T& operator *()
+      {
+         return( (*item) ); 
+      }
+   
+      raft::signal& sig()
+      {
+         return( (this)->signal );
+      }
+   
+   private:
+      T                   *item;
+      raft::signal         signal = raft::none;
+      FIFO                 &fifo;
+      bool                 copied = false;
+   };
+
    /**
     * FIFO - default constructor for base class for 
     * all subsequent ringbuffers.
@@ -99,6 +184,16 @@ public:
       local_allocate( &ptr );
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
+
+   template < class T > auto allocates() -> 
+      autorelease< T, autotype::allocatetype >
+   {
+      void *ptr( nullptr );
+      local_allocate( &ptr );
+      return( autorelease< T, autotype::allocatetype >( 
+         reinterpret_cast< T* >( ptr ), (*this) ) );
+   }
+   
    /**
     * allocate_range - returns a std::vector of references to 
     * n items on the queue.  If for some reason the capacity
@@ -191,7 +286,13 @@ public:
       local_pop( ptr, signal );
       return;
    }
-  
+
+   template< class T >
+   auto pops() -> autorelease< T, autotype::poptype >
+   {
+      return( autorelease< T, autotype::poptype >( (*this) ) );
+   }
+
    /**
     * pop_range - pops n_items from the buffer into the 
     * std::vector pointed to by pop_range.  There are 
@@ -217,7 +318,7 @@ public:
    {
       void *ptr( nullptr );
       local_peek( &ptr, signal );
-      return;
+      return( *( reinterpret_cast< T* >( ptr ) ) );
    }
 
    /**
@@ -361,5 +462,10 @@ protected:
                             raft::signal *signal ) = 0;
 
    volatile bool valid = true;
+
+private:
 };
+
+#include "autorelease.tcc"
+
 #endif /* END _FIFO_HPP_ */

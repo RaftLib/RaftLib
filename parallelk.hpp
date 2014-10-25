@@ -21,11 +21,11 @@
 #define _PARALLELK_HPP_  1
 #include <raft>
 
-class parallelk : public Kernel 
+class ParallelK : public Kernel 
 {
 public:
-   parallelk()          = default;
-   virtual ~parallelk() = default;
+   ParallelK()          = default;
+   virtual ~ParallelK() = default;
 
 protected:
    /** 

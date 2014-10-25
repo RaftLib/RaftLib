@@ -19,5 +19,23 @@
  */
 #ifndef _REDUCE_TCC_
 #define _REDUCE_TCC_  1
+#include <raft>
+#include "parallelk.hpp"
 
+template <class T> Reduce : public ParallelK
+{
+public:
+   Reduce()
+   {
+      input.addPort< T >(  "0" );
+      output.addPort< T >( "0" );
+   }
+
+   virtual ~Reduce() = default;
+
+   virtual rat::kstatus run()
+   {
+      T &item( input[ "0" ].peek() ); 
+   }
+};
 #endif /* END _REDUCE_TCC_ */

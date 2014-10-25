@@ -62,6 +62,7 @@
 #include "./raft_dir/ringbufferinfinite.tcc"
 #include "./raft_dir/sample.tcc"
 #include "./raft_dir/sampletype.tcc"
+#include "./raft_dir/autorelease.tcc"
 
 namespace raft
 {

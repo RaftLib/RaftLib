@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <raft>
 #include <vector>
+#include <type_traits>
+#include <utility>
 
 #include "print.tcc"
 
@@ -38,19 +40,15 @@ public:
    {
       input.addPort< A >( "input_a" );
       input.addPort< B >( "input_b" );
-      output.addPort< C  >( "sum" );
+      output.addPort< C >( "sum" );
    }
    
    virtual raft::kstatus run()
    {
-      A a;
-      B b;
-      raft::signal  sig_a( raft::none  ), sig_b( raft::none );
-      input[ "input_a" ].pop( a, &sig_a );
-      input[ "input_b" ].pop( b, &sig_b );
-      assert( sig_a == sig_b );
-      C c( a + b );
-      output[ "sum" ].push( c, sig_a );
+      auto a( input[ "input_a" ].pops< A >() );
+      auto b( input[ "input_b" ].pops< B >() );
+      auto c( output[ "sum" ].allocates< C >() );
+      (*c) = (*a) + (*b);
       return( raft::proceed );
    }
 
@@ -62,11 +60,15 @@ main( int argc, char **argv )
 {
    using namespace raft;
    const std::size_t count( 100000 );
-   auto linked_kernels( map.link( new Generate< std::int64_t >( count ),
-                                  new Sum< std::int64_t,std::int64_t, std::int64_t >(),
-                                  "input_a" ) );
-   map.link( new Generate< std::int64_t >( count ), &( linked_kernels.dst ), "input_b" );
-   map.link( &( linked_kernels.dst ), new Print< std::int64_t ,'\n'>() );
+   auto linked_kernels( 
+      map.link( new Generate< std::int64_t >( count ),
+                new Sum< std::int64_t,std::int64_t, std::int64_t >(),
+                  "input_a" ) );
+   map.link( new Generate< std::int64_t >( count ), 
+             &( linked_kernels.dst ), 
+               "input_b" );
+   map.link( &( linked_kernels.dst ), 
+             new Print< std::int64_t ,'\n'>() );
    map.exe();
    return( EXIT_SUCCESS );
 }

@@ -79,15 +79,6 @@ protected:
     * @throws  PortDoubleInitializeException - if either port is already initialized.
     */
    void initialize( PortInfo *src, PortInfo *dst, FIFO *fifo );
- 
-   /**
-    * reinitialize - internal method to be used within the run method
-    * takes care of dynamic reinitialization, updates all internal 
-    * functions so that they are shutdown properly at the end of execution. 
-    * @param   src - PortInfo*, nullptr if not to be set
-    * @param   dst - PortInfo*, nullptr if not to be set
-    */
-   void reinitialize( PortInfo *src, PortInfo *dst, FIFO *fifo );
 
    /**
     * setReady - call within the implemented run function to signal

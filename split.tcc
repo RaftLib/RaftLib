@@ -22,7 +22,7 @@
 #include <raft>
 #inlcude "parallelk"
 
-template <class T> Split : public parallelk
+template <class T> Split : public ParallelK
 {
 public:
    Split()
@@ -35,12 +35,10 @@ public:
 
    virtual raft::kstatus run()
    {
-      /** assume one input port, multiple output ports **/
-      /** round robin style behavior **/
       T &item( input[ "0" ].peek() );
       for( auto &port : output )
       {
-        //TODO, come back here 
+         
       }
    }
 
