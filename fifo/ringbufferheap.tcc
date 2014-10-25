@@ -196,7 +196,7 @@ public:
       for( ;; )
       {
          dm.enterBuffer( dm::recycle );
-         if( dm.notResizing() )
+         if( ! dm.resizing )
          {
             if( (this)->size() > 0 )
             {
@@ -286,7 +286,7 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::allocate );
-         if( dm.notResizing() && space_avail() > 0 )
+         if( ! dm.resizing && space_avail() > 0 )
          {
             break;
          }
@@ -320,7 +320,7 @@ protected:
       for( ;; )
       {
          dm.enterBuffer( dm::allocate_range );
-         if( dm.notResizing() && space_avail() >= n )
+         if( ! dm.resizing && space_avail() >= n )
          {
             break;
          }
@@ -377,7 +377,7 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::push );
-         if( dm.notResizing() )
+         if( ! dm.resizing )
          { 
             if( space_avail() > 0 )
             {
@@ -506,7 +506,7 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::pop );
-         if( dm.notResizing() ) 
+         if( ! dm.resizing ) 
          {
             if( size() > 0 )
             {
@@ -600,14 +600,17 @@ protected:
       {
          
          dm.enterBuffer( dm::peek );
-         if( dm.notResizing() && size() > 0  )
+         if( ! dm.resizing )
          {
-            break;
-         }
-         if( (this)->size() == 0 && (this)->is_invalid() )
-         {  
-            throw ClosedPortAccessException( 
-               "Accessing closed port with local_insert call, exiting!!" );
+            if( size() > 0  )
+            { 
+               break;
+            }
+            else if( (this)->is_invalid() )
+            {
+               throw ClosedPortAccessException( 
+                  "Accessing closed port with local_insert call, exiting!!" );
+            }
          }
          dm.exitBuffer( dm::peek );
 #ifdef NICE      
