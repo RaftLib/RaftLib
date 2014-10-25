@@ -290,10 +290,7 @@ protected:
          {
             break;
          }
-         else
-         {
-            dm.exitBuffer( dm::allocate );
-         }
+         dm.exitBuffer( dm::allocate );
          /** else, spin **/
 #ifdef NICE      
          std::this_thread::yield();
@@ -310,9 +307,11 @@ protected:
            : );
 #endif           
       }
+      auto * const buff_ptr( dm.get() );
+      
+      const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
+      *ptr = (void*)&( buff_ptr->store[ write_index ].item );
       (this)->allocate_called = true;
-      const size_t write_index( Pointer::val( dm.get()->write_pt ) );
-      *ptr = (void*)&(dm.get()->store[ write_index ].item);
       /** call exitBuffer during push call **/
    }
 

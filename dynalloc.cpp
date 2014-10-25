@@ -106,7 +106,7 @@ dynalloc::run()
    while( ! exit_alloc )
    {
       /** monitor fifo's **/
-      std::chrono::microseconds dura( 1 );
+      std::chrono::microseconds dura( 100 );
       std::this_thread::sleep_for( dura );
       GraphTools::BFS( (this)->source_kernels ,
                        mon_func );

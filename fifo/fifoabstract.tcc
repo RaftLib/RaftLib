@@ -34,8 +34,6 @@ public:
    {
    }
 
-   virtual ~FIFOAbstract() = default;
-
 protected:
    /** TODO, package this as as struct **/
    volatile bool            allocate_called = false;

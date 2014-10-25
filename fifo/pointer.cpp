@@ -28,11 +28,11 @@ Pointer::Pointer(const size_t cap ) : a( 0 ),
 {
 }
 
-Pointer::Pointer( Pointer *other, const size_t new_cap ) : max_cap( new_cap )
+Pointer::Pointer( Pointer *other, const size_t new_cap ) :  wrap_a( 0 ),
+                                                            wrap_b( 0 ),
+                                                            max_cap( new_cap )
+                                                           
 {
-   const auto wrap( Pointer::wrapIndicator( other ) );
-   wrap_a = wrap;
-   wrap_b = wrap;
    const auto val(  Pointer::val( other ) );
    a = val;
    b = val;

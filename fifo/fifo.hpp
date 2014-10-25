@@ -177,7 +177,7 @@ public:
     * this object to the FIFO once it is written.
     * @return  T&
     */
-   template < class T > auto allocate() ->T&
+   template < class T > T& allocate()
    {
       void *ptr( nullptr );
       /** call blocks till an element is available **/
@@ -185,7 +185,7 @@ public:
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
 
-   template < class T > auto allocates() -> 
+   template < class T > auto allocate_s() -> 
       autorelease< T, autotype::allocatetype >
    {
       void *ptr( nullptr );
@@ -466,6 +466,5 @@ protected:
 private:
 };
 
-#include "autorelease.tcc"
 
 #endif /* END _FIFO_HPP_ */

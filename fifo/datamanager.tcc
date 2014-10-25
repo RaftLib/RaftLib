@@ -23,6 +23,7 @@
 #include <cstddef>
 #include <array>
 #include <thread>
+#include <atomic>
 
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
@@ -193,7 +194,7 @@ public:
 private:
    Buffer::Data< T, B > *buffer              = nullptr; 
    
-   volatile bool                 resizing    = false;
+   std::atomic< bool >           resizing    = { false };
    struct ThreadAccess
    {
       union{
