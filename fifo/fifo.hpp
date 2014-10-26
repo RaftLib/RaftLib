@@ -46,12 +46,20 @@ public:
                                      item( fifo.peek< T >( &signal ) )
       {}
 
-      //autorelease( const autorelease< T, type >  &other ) : 
-      //   fifo( other.fifo ),
-      //   item( other.item )
-      //{
-      //   other.copied = true;
-      //}
+      autorelease( const autorelease< T, type >  &other ) : 
+         fifo( other.fifo ),
+         item( other.item )
+      {
+         /**
+          * NOTE: I hate doing this here, but can't quite get 
+          * move semantics to work the way I'd like so this works,
+          * and there's not much more than references to copy 
+          * anyways if the compiler can't figure out how to inline
+          * the object return for the rvalue which we're assigning
+          * to the lvalue with an auto type
+          */
+         const_cast< autorelease< T, type >& >( other ).copied = true;
+      }
       
       ~autorelease()
       {

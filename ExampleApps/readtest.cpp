@@ -9,8 +9,8 @@ int
 main( int argc, char **argv )
 {
    using namespace raft;
-   map.link( new filereader<filechunk< 4096  >,false>( "ecoli.txt" ), 
-             new Print< filechunk< 4096  > >() );
+   map.link( new filereader<filechunk< 1024  >,false>( "ecoli.txt" ), 
+             new Print< filechunk< 1024  > >() );
 
    map.exe();
    return( EXIT_SUCCESS );

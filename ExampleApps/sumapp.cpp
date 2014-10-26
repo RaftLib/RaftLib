@@ -42,22 +42,36 @@ public:
       input.addPort< B >( "input_b" );
       output.addPort< C >( "sum" );
    }
-   
+#define M3 1 
    virtual raft::kstatus run()
    {
-      //A a;
-      //B b;
-      //input[ "input_a" ].pop( a );
-      //input[ "input_b" ].pop( b );
-      /** there's a bug in the allocate code */
-      //auto &c( output[ "sum" ].allocate< C >() );
-      //c = a + b;
-      //C c = a + b;
-      //output[ "sum" ].push( c );
+#ifdef M1 
+      A a;
+      B b;
+      /** copies a & b **/
+      input[ "input_a" ].pop( a );
+      input[ "input_b" ].pop( b );
+      C c = a + b;
+      output[ "sum" ].push( c );
+#elif defined M2 
+      A a;
+      B b;
+      /** copies a & b **/
+      input[ "input_a" ].pop( a );
+      input[ "input_b" ].pop( b );
+      /** allocate directly on queue **/
+      auto &c( output[ "sum" ].allocate< C >() );
+      c = a + b;
+      output[ "sum" ].push();
+#elif defined M3
+      /** look at mem on head of queue for a & b, no copy **/
       auto a( input[ "input_a" ].template pop_s< A >() );
       auto b( input[ "input_b" ].template pop_s< B >() );
+      /** allocate mem directly on queue **/
       auto c( output[ "sum" ].template allocate_s< C >() );
       (*c) = (*a) + (*b);
+      /** mem automatically freed upon scope exit **/
+#endif      
       return( raft::proceed );
    }
 
