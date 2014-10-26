@@ -192,13 +192,13 @@ template < class T,
    virtual void copyFrom( DataBase< T > *other )
    {
       /** get trace of ptr vars **/
-      const auto rdptr( Pointer::val( other->read_pt ) );
-      const auto wptr ( Pointer::val( other->write_pt ) );
-      const auto wrap_r( Pointer::wrapIndicator( other->read_pt  ) );
-      const auto wrap_w( Pointer::wrapIndicator( other->write_pt ) );
+      //const auto rdptr( Pointer::val( other->read_pt ) );
+      //const auto wptr ( Pointer::val( other->write_pt ) );
+      //const auto wrap_r( Pointer::wrapIndicator( other->read_pt  ) );
+      //const auto wrap_w( Pointer::wrapIndicator( other->write_pt ) );
 
-      std::cerr << rdptr << "," << wptr << "," << wrap_r << "," << wrap_w << "," <<
-         other->max_cap << "\n";
+      //std::cerr << rdptr << "," << wptr << "," << wrap_r << "," << wrap_w << "," <<
+      //   other->max_cap << "\n";
       delete( (this)->read_pt );
       (this)->read_pt = new Pointer( (other->read_pt),   (this)->max_cap );
       delete( (this)->write_pt );

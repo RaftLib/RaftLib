@@ -46,12 +46,12 @@ public:
                                      item( fifo.peek< T >( &signal ) )
       {}
 
-      autorelease( const autorelease< T, type >  &other ) : 
-         fifo( other.fifo ),
-         item( other.item )
-      {
-         other.copy();
-      }
+      //autorelease( const autorelease< T, type >  &other ) : 
+      //   fifo( other.fifo ),
+      //   item( other.item )
+      //{
+      //   other.copied = true;
+      //}
       
       ~autorelease()
       {
@@ -72,10 +72,6 @@ public:
          return( (this)->signal );
       }
    private:
-      void copy()
-      {
-         (this)->copied = true;
-      }
 
       FIFO         &fifo;
       raft::signal signal;
@@ -92,12 +88,12 @@ public:
       {
       }
 
-      autorelease( const autorelease< T, autotype::allocatetype > &other ) : 
-         item( other.item ), 
-         fifo( other.fifo )
-      {
-         other.copied = true;
-      }
+      //autorelease( const autorelease< T, autotype::allocatetype > &other ) : 
+      //   item( other.item ), 
+      //   fifo( other.fifo )
+      //{
+      //   other.copied = true;
+      //}
       
       ~autorelease()
       {

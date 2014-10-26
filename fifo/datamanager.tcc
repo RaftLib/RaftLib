@@ -204,18 +204,14 @@ private:
       std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
    } __attribute__((aligned(64))) volatile thread_access[ 2 ];
    
-   //std::array< std::atomic< bool >, 8 > thread_access[ 2 ];
-   
    void set_helper( dm::access_key key, const int val )
    {
       if( (int) key <= (int) dm::push )
       {
-         //thread_access[ 0 ][ (int) key ] = val;
          thread_access[ 0 ].flag[ (int) key ] = val;
       }
       else
       {
-         //thread_access[ 1 ][ (int) key ] = val;
          thread_access[ 1 ].flag[ (int) key ] = val;
       }
       return;

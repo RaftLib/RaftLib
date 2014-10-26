@@ -54,9 +54,9 @@ public:
       //c = a + b;
       //C c = a + b;
       //output[ "sum" ].push( c );
-      auto a( input[ "input_a" ].pop_s< A >() );
-      auto b( input[ "input_b" ].pop_s< B >() );
-      auto c( output[ "sum" ].allocate_s< C >() );
+      auto a( input[ "input_a" ].template pop_s< A >() );
+      auto b( input[ "input_b" ].template pop_s< B >() );
+      auto c( output[ "sum" ].template allocate_s< C >() );
       (*c) = (*a) + (*b);
       return( raft::proceed );
    }

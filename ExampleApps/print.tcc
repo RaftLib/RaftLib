@@ -46,15 +46,14 @@ public:
     */
    virtual raft::kstatus run()
    {
-      T data;
-      input[ "in" ].pop( data );
+      auto data( input[ "in" ].template pop_s< T >() );
       if( delim != '\0' )
       {
-         std::cout << data << delim;
+         std::cout << (*data) << delim;
       }
       else
       {
-         std::cout << data;
+         std::cout << (*data);
       }
       return( raft::proceed );
    }
