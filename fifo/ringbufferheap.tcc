@@ -196,7 +196,7 @@ public:
       for( ;; )
       {
          dm.enterBuffer( dm::recycle );
-         if( ! dm.resizing )
+         if( dm.notResizing() )
          {
             if( (this)->size() > 0 )
             {
@@ -286,7 +286,7 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::allocate );
-         if( ! dm.resizing && space_avail() > 0 )
+         if( dm.notResizing() && space_avail() > 0 )
          {
             break;
          }
@@ -320,7 +320,7 @@ protected:
       for( ;; )
       {
          dm.enterBuffer( dm::allocate_range );
-         if( ! dm.resizing && space_avail() >= n )
+         if( dm.notResizing() && space_avail() >= n )
          {
             break;
          }
@@ -377,7 +377,7 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::push );
-         if( ! dm.resizing )
+         if( dm.notResizing() )
          { 
             if( space_avail() > 0 )
             {
@@ -506,7 +506,7 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::pop );
-         if( ! dm.resizing ) 
+         if( dm.notResizing() ) 
          {
             if( size() > 0 )
             {
@@ -600,7 +600,7 @@ protected:
       {
          
          dm.enterBuffer( dm::peek );
-         if( ! dm.resizing )
+         if( dm.notResizing() )
          {
             if( size() > 0  )
             { 

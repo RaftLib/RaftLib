@@ -50,7 +50,7 @@ public:
          fifo( other.fifo ),
          item( other.item )
       {
-         other.copied = true;
+         other.copy();
       }
       
       ~autorelease()
@@ -72,6 +72,11 @@ public:
          return( (this)->signal );
       }
    private:
+      void copy()
+      {
+         (this)->copied = true;
+      }
+
       FIFO         &fifo;
       raft::signal signal;
       T            &item;
@@ -288,7 +293,7 @@ public:
    }
 
    template< class T >
-   auto pops() -> autorelease< T, autotype::poptype >
+   auto pop_s() -> autorelease< T, autotype::poptype >
    {
       return( autorelease< T, autotype::poptype >( (*this) ) );
    }

@@ -132,14 +132,11 @@ public:
             /** check to see if the state of the buffer is good **/
             if( buffercondition() )
             {
-               std::this_thread::yield();
                break;
             }
-            /** else, set global resizing flag back to false **/
-            resizing = false;
-            /** yield to be polite to everyone else **/
-            std::this_thread::yield();
          }
+         resizing = false;
+         std::this_thread::yield();
       }
       /** nobody should have outstanding references to the old buff **/
       auto *old_buffer( get() );
@@ -187,15 +184,15 @@ public:
     * to check first entry flag before signalling enterBuffer()
     * @return bool - currently not resizing 
     */
-   //bool notResizing() noexcept
-   //{
-   //   return( ! resizing ); 
-   //}
+   bool notResizing() noexcept
+   {
+      return( ! resizing ); 
+   }
    
-   std::atomic< bool >           resizing    = { false };
 
 private:
    Buffer::Data< T, B > *buffer              = nullptr; 
+   volatile bool         resizing            =  false;
    
    
    struct ThreadAccess
@@ -207,14 +204,18 @@ private:
       std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
    } __attribute__((aligned(64))) volatile thread_access[ 2 ];
    
+   //std::array< std::atomic< bool >, 8 > thread_access[ 2 ];
+   
    void set_helper( dm::access_key key, const int val )
    {
       if( (int) key <= (int) dm::push )
       {
+         //thread_access[ 0 ][ (int) key ] = val;
          thread_access[ 0 ].flag[ (int) key ] = val;
       }
       else
       {
+         //thread_access[ 1 ][ (int) key ] = val;
          thread_access[ 1 ].flag[ (int) key ] = val;
       }
       return;

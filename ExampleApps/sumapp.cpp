@@ -45,19 +45,19 @@ public:
    
    virtual raft::kstatus run()
    {
-      A a;
-      B b;
-      input[ "input_a" ].pop( a );
-      input[ "input_b" ].pop( b );
+      //A a;
+      //B b;
+      //input[ "input_a" ].pop( a );
+      //input[ "input_b" ].pop( b );
       /** there's a bug in the allocate code */
       //auto &c( output[ "sum" ].allocate< C >() );
       //c = a + b;
-      C c = a + b;
-      output[ "sum" ].push( c );
-      //auto a( input[ "input_a" ].pops< A >() );
-      //auto b( input[ "input_b" ].pops< B >() );
-      //auto c( output[ "sum" ].allocates< C >() );
-      //(*c) = (*a) + (*b);
+      //C c = a + b;
+      //output[ "sum" ].push( c );
+      auto a( input[ "input_a" ].pop_s< A >() );
+      auto b( input[ "input_b" ].pop_s< B >() );
+      auto c( output[ "sum" ].allocate_s< C >() );
+      (*c) = (*a) + (*b);
       return( raft::proceed );
    }
 
