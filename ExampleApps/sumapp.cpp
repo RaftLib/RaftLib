@@ -65,10 +65,10 @@ public:
       output[ "sum" ].push();
 #elif defined M3
       /** look at mem on head of queue for a & b, no copy **/
-      auto a( input[ "input_a" ].template pop_s< A >() );
-      auto b( input[ "input_b" ].template pop_s< B >() );
+      auto a( input[ "input_a" ].pop_s< A >() );
+      auto b( input[ "input_b" ].pop_s< B >() );
       /** allocate mem directly on queue **/
-      auto c( output[ "sum" ].template allocate_s< C >() );
+      auto c( output[ "sum" ].allocate_s< C >() );
       (*c) = (*a) + (*b);
       /** mem automatically freed upon scope exit **/
 #endif      
