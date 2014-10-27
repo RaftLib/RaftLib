@@ -189,6 +189,7 @@ public:
     */
    virtual void recycle( std::size_t range = 1 )
    {
+      assert( range == 1 );
       if( range == 0 )
       {
          return;

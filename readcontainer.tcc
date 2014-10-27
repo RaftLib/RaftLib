@@ -1,7 +1,7 @@
 /**
- * split.tcc - 
+ * readcontainer.tcc - 
  * @author: Jonathan Beard
- * @version: Mon Oct 20 09:49:17 2014
+ * @version: Sun Oct 26 15:51:46 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,32 +17,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _SPLIT_TCC_
-#define _SPLIT_TCC_  1
+#ifndef _READCONTAINER_TCC_
+#define _READCONTAINER_TCC_  1
 #include <raft>
-#inlcude "parallelk"
 
-template <class T> split : public parallel_k
+template < class T,  class iterator_type > class read_container : 
+   public parallel_k
 {
 public:
-   split()
+   read_container( iterator_type begin, iterator_type end ) : begin( begin ),
+                                                              end( end )
    {
-      input.addPort<  T >( "0" );
-      output.addPort< T >( "0" );
+      output.addPort< T& >( "0" );
    }
-
-   virtual ~split() = default;
 
    virtual raft::kstatus run()
    {
-      T &item( input[ "0" ].peek() );
       for( auto &port : output )
       {
-         
+         if( begin == end )
+         {
+            return( raft::stop );
+         }
+         port.push( (*begin) );
+         begin++;
       }
+      return( raft::proceed );
    }
 
-protected:
-   
+private:
+   iterator_type begin;
+   iterator_type end;
 };
-#endif /* END _SPLIT_TCC_ */
+#endif /* END _READCONTAINER_TCC_ */
