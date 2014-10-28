@@ -34,6 +34,14 @@
 #include "./raft_dir/stdalloc.hpp"
 #include "./raft_dir/rafttypes.hpp"
 
+/** parallel headers **/
+#include "./raft_dir/parallelk.hpp"
+
+
+/** c++stdlib utilities **/
+#include "./raft_dir/readcontainer.tcc"
+#include "./raft_dir/writecontainer.tcc"
+
 /** fifo includes **/
 #include "./raft_dir/Clock.hpp"
 #include "./raft_dir/blocked.hpp"

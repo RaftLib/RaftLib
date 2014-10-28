@@ -31,9 +31,8 @@ protected:
    /** 
     * addPort - adds a port, either to the input or 
     * output depending on what the sub-class type is
-    * @param   name - const std::string
     */
-   virtual void addPort( const std::string name ) = 0;
+   virtual void addPort() = 0;
    
    friend class Schedule;
    friend class Map;
