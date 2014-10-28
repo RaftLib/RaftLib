@@ -18,7 +18,7 @@ EXENAMES = sumapp readtest singlequeue
 INCS = 
 
 LDFLAGS = 
-LIBS = -lraftlight $(RT)
+LIBS = -lraft $(RT)
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(CXXOBJS) $(COBJS)

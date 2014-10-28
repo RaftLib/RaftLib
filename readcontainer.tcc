@@ -20,7 +20,6 @@
 #ifndef _READCONTAINER_TCC_
 #define _READCONTAINER_TCC_  1
 #include <iterator>
-#include <string>
 #include <functional>
 #include <map>
 #include <cstddef>
@@ -117,7 +116,7 @@ public:
    {     
       (this)->it_begin_ptr = &begin;
       (this)->it_end_ptr   = &end;
-      output.addPort< T >( std::to_string( port_name_index++ ) );
+      addPortTo< T >( output );
 
       /** 
        * hacky way of getting the right iterator type for the ptr
@@ -149,11 +148,10 @@ public:
 protected:
    virtual void addPort()
    {
-      output.addPort< T >( std::to_string( port_name_index++ ) );
+      addPortTo< T >( output );
    }
 
 private:
-   std::size_t port_name_index = 0;
    void       * const it_begin_ptr    = nullptr;
    void       * const it_end_ptr      = nullptr;
    std::function< bool ( void*, void*, Port& ) > inc_func;

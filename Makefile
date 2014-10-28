@@ -16,11 +16,12 @@ endif
 #TEST = -DUNITTEST=1
 
 CFLAGS   =  -O0 -g  -Wall -std=c99 $(TEST)
-CXXFLAGS =  -O0 -g -Wall -std=c++11  -DRDTSCP=1 -DLIMITRATE=1 $(TEST)
+CXXFLAGS =  -O0 -g -Wall -std=c++11  -DRDTSCP=1  $(TEST)
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
-                   simpleschedule stdalloc portiterator dynalloc
+                   simpleschedule stdalloc portiterator dynalloc \
+                   roundrobin
 
 COBJS   = $(RBCOBJS)
 CXXOBJS = $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)
@@ -36,10 +37,10 @@ LIBS = $(RT) $(PTHREAD)
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(OBJS)
-	$(AR) rvs libraftlight.a $(OBJS)
+	$(AR) rvs libraft.a $(OBJS)
 
 install:
-	cp libraftlight.a $(PREFIX)/lib/
+	cp libraft.a $(PREFIX)/lib/
 	mkdir -p $(PREFIX)/include/raft_dir
 	cp *.hpp $(PREFIX)/include/raft_dir/
 	cp *.tcc $(PREFIX)/include/raft_dir/
@@ -49,7 +50,7 @@ install:
 	echo "Install complete!"
 
 uninstall:
-	rm -rf $(PREFIX)/lib/libraftlight.a
+	rm -rf $(PREFIX)/lib/libraft.a
 	rm -rf $(PREFIX)/include/raft_dir
 	rm -rf $(PREFIX)/include/raft
 	echo "Uninstalled!"
@@ -61,4 +62,4 @@ uninstall:
 
 .PHONY: clean
 clean:
-	rm -rf libraftlight.a $(OBJS)
+	rm -rf libraft.a $(OBJS)

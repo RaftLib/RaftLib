@@ -14,35 +14,43 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * See the License for the specific language sendverning permissions and
  * limitations under the License.
  */
 #ifndef _SPLIT_TCC_
 #define _SPLIT_TCC_  1
+#include <string>
 #include <raft>
-#inlcude "parallelk"
 
-template <class T> split : public parallel_k
+template < class T, class method = roundrobin > class split : public parallel_k
 {
 public:
    split()
    {
       input.addPort<  T >( "0" );
-      output.addPort< T >( "0" );
+      addPortTo< T >( output );
    }
 
    virtual ~split() = default;
 
    virtual raft::kstatus run()
    {
-      T &item( input[ "0" ].peek() );
-      for( auto &port : output )
+      /** TODO, add code to do multi-item inserts **/
+      raft::signal signal;
+      T &item( input[ "0" ].peek< T >( &signal ) );
+      if( split_func.send( item, signal, output ) )
       {
-         
+         /* recycle item */
+         input[ "0" ].recycle( 1 );
       }
+      return( raft::proceed );
    }
 
 protected:
-   
+   virtual void addPort()
+   {
+      addPortTo< T >( output );
+   }
+   method split_func;
 };
 #endif /* END _SPLIT_TCC_ */

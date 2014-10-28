@@ -59,6 +59,7 @@ struct PortInfo
       my_name      = other.my_name;
       other_kernel = other.other_kernel;
       other_name   = other.other_name;
+      out_of_order = other.out_of_order;
    }
 
    virtual ~PortInfo()
@@ -121,5 +122,6 @@ struct PortInfo
    std::string my_name      = "";
    Kernel     *other_kernel = nullptr;
    std::string other_name   = "";
+   bool        out_of_order = false;
 };
 #endif /* END _PORT_INFO_HPP_ */

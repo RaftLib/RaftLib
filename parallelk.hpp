@@ -20,6 +20,7 @@
 #ifndef _PARALLELK_HPP_
 #define _PARALLELK_HPP_  1
 #include <raft>
+#include <cstddef>
 
 class parallel_k : public Kernel 
 {
@@ -32,8 +33,16 @@ protected:
     * addPort - adds a port, either to the input or 
     * output depending on what the sub-class type is
     */
+   template < class T >
+      void addPortTo( Port &port )
+   {
+      port.addPort< T >( std::to_string( port_name_index++ ) );
+   }
+
+
    virtual void addPort() = 0;
-   
+
+   std::size_t  port_name_index = 0; 
    friend class Schedule;
    friend class Map;
 };

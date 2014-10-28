@@ -36,7 +36,10 @@
 
 /** parallel headers **/
 #include "./raft_dir/parallelk.hpp"
-
+#include "./raft_dir/splitmethod.hpp"
+#include "./raft_dir/roundrobin.hpp"
+#include "./raft_dir/split.tcc"
+#include "./raft_dir/join.tcc"
 
 /** c++stdlib utilities **/
 #include "./raft_dir/readcontainer.tcc"

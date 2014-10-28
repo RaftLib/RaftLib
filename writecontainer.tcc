@@ -36,7 +36,7 @@
  * so the write object can respond to data stream or 
  * asynch signals appropriately
  */
-template < class T, std::size_t N = 1 > class write_container : public parallel_k
+template < class T > class write_container : public parallel_k
 {
 
 typedef typename std::back_insert_iterator< std::list< T > >           it_list;
@@ -93,8 +93,7 @@ public:
       write_container( iterator_type &&insert_position ) 
    {
       /* no output ports, writing to container */
-      input.addPort< T >( "0" );
-      
+      addPortTo< T >( input ); 
       (this)->position = &insert_position;
       /** 
        * hacky way of getting the right iterator type for the ptr
@@ -122,11 +121,10 @@ public:
 protected:
    virtual void addPort()
    {
-      input.addPort< T >( std::to_string( port_name_index++ ) );
+      addPortTo< T >( input );
    }
 
 private:
-   std::size_t port_name_index = 0;
    void * const position = nullptr;
    std::function < void( void*, Port& ) > inc_func;
 

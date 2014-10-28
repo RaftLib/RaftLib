@@ -7,9 +7,9 @@ endif
 
 CFLAGS   = -O0 -g -Wall -std=c99
 CXXFLAGS = -O0 -g  -Wall -std=c++11 -DRDTSCP=1 -DUNITTEST=1
-LDFLAGS  = -lraftlight
+LDFLAGS  = -lraft
 
-EXE = allocate portTypeException dynallocate stdlibsupport 
+EXE = allocate portTypeException dynallocate stdlibsupport split 
 OBS = $(addsuffix .o, $(EXE))
 
 all: $(EXE)
@@ -18,6 +18,7 @@ allocate: allocate.o
 portTypeException: portTypeException.o
 dynallocate: dynallocate.o
 stdlibsupport: stdlibsupport.o
+split: split.o
 
 .PHONY: clean
 clean:
