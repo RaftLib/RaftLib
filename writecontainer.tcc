@@ -20,37 +20,116 @@
 #ifndef _WRITECONTAINER_TCC_
 #define _WRITECONTAINER_TCC_  1
 #include <iterator>
+#include <raft>
+
+#include <cstddef>
+#include <typeinfo>
+#include <functional>
+
+#include <list>
+#include <vector>
+#include <deque>
+#include <forward_list>
 
 /** 
  * TODO: add functor as an option to set signal handlers
  * so the write object can respond to data stream or 
  * asynch signals appropriately
  */
-template < class T, 
-           class Position > class write_container : public parallel_k
+template < class T, std::size_t N = 1 > class write_container : public parallel_k
 {
-public:
-   write_container( Position &position_it ) : p( position_it )
+
+typedef typename std::back_insert_iterator< std::list< T > >           it_list;
+typedef typename std::back_insert_iterator< std::vector< T > >         it_vect;
+typedef typename std::back_insert_iterator< std::deque< T > >          it_deq;
+
+template< class iterator_type > 
+   static void inc_helper( iterator_type &insert_position, Port &port_list )
    {
+      T temp;
+      for( auto &port : port_list )
+      {
+         if( port.size() > 0 )
+         {
+            port.pop< T >( temp );
+            (*insert_position) = temp;
+            /** hope the iterator defined overloaded ++ **/
+            insert_position++;
+         }
+      }
+      return;
+   }
+
+const std::map< std::size_t,
+         std::function< void ( void*, Port& ) > > func_map
+            =  {
+                  { 
+                     typeid( it_list ).hash_code(),
+                     [ ](  void *e_ptr, Port &port_list )
+                     {
+                        it_list *end  ( reinterpret_cast< it_list* >( e_ptr ) );
+                        return( inc_helper( *end, port_list ) );
+                     }
+                  },
+                  { 
+                     typeid( it_vect ).hash_code(),
+                     [ ](  void *e_ptr, Port &port_list )
+                     {
+                        it_vect *end  ( reinterpret_cast< it_vect* >( e_ptr ) );
+                        return( inc_helper( *end, port_list ) );
+                     }
+                  },
+                  { 
+                     typeid( it_deq ).hash_code(),
+                     [ ](  void *e_ptr, Port &port_list )
+                     {
+                        it_deq *end  ( reinterpret_cast< it_deq* >( e_ptr ) );
+                        return( inc_helper( *end, port_list ) );
+                     }
+                  }
+               };
+public:
+   template < class iterator_type >
+      write_container( iterator_type &&insert_position ) 
+   {
+      /* no output ports, writing to container */
       input.addPort< T >( "0" );
-      /* no output ports */
+      
+      (this)->position = &insert_position;
+      /** 
+       * hacky way of getting the right iterator type for the ptr
+       * pehaps change if I can figure out how to do without having
+       * to move the constructor template to the class template 
+       * param
+       */
+       const auto ret_val( func_map.find( typeid( iterator_type ).hash_code() ) );
+       if( ret_val != func_map.end() )
+       {
+          inc_func = (*ret_val).second; 
+       }
+       else
+       {
+          /** TODO, make exception for this **/
+          assert( false );
+       }
    }
 
    virtual raft::kstatus run()
    {
-      for( auto &port : input )
-      {
-         if( port.size() > 0 )
-         {
-            port.pop( (*p) );
-            /** hope the iterator defined overloaded ++ **/
-            p++;
-         }
-      }
+      inc_func( position, input );
       return( raft::proceed );
+   }
+protected:
+   virtual void addPort()
+   {
+      input.addPort< T >( std::to_string( port_name_index++ ) );
    }
 
 private:
-   Position  &p;
+   std::size_t port_name_index = 0;
+   void * const position = nullptr;
+   std::function < void( void*, Port& ) > inc_func;
+
+   bool readable = false;
 };
 #endif /* END _WRITECONTAINER_TCC_ */

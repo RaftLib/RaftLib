@@ -23,6 +23,7 @@
 #include <string>
 #include <functional>
 #include <map>
+#include <cstddef>
 
 #include <list>
 #include <vector>
@@ -51,13 +52,13 @@ template< class iterator_type >
       {
          if( begin == end )
          {
-            return( false );
+            return( true );
          }
-         port.push( (*begin) );
-         std::cout << "Sending: " << (*begin) << "\n";
+         std::uint32_t val( (*begin ) );
+         port.push< T >( (*begin) );
          begin++;
       }
-      return( true );
+      return( false );
    }
 
 const std::map< std::size_t,
@@ -112,9 +113,10 @@ const std::map< std::size_t,
 
 public:
    template < class iterator_type > 
-   read_container( iterator_type begin, iterator_type end ) : it_begin_ptr((void*)&begin),
-                                                              it_end_ptr((void*)&end)
+   read_container( iterator_type &&begin, iterator_type &&end )
    {     
+      (this)->it_begin_ptr = &begin;
+      (this)->it_end_ptr   = &end;
       output.addPort< T >( std::to_string( port_name_index++ ) );
 
       /** 
@@ -123,7 +125,7 @@ public:
        * to move the constructor template to the class template 
        * param
        */
-       auto ret_val( func_map.find( typeid( iterator_type ).hash_code() ) );
+       const auto ret_val( func_map.find( typeid( iterator_type ).hash_code() ) );
        if( ret_val != func_map.end() )
        {
           inc_func = (*ret_val).second; 
@@ -152,8 +154,8 @@ protected:
 
 private:
    std::size_t port_name_index = 0;
-   void       *it_begin_ptr    = nullptr;
-   void       *it_end_ptr      = nullptr;
+   void       * const it_begin_ptr    = nullptr;
+   void       * const it_end_ptr      = nullptr;
    std::function< bool ( void*, void*, Port& ) > inc_func;
 
 };
