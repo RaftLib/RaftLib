@@ -3,45 +3,38 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-<meta name="keywords" content="data flow programming, data flow library, data flow, c++ stream processing, RaftLight,Raft,C++,stream,stream processing, streaming computation, StreaMIT,Auto-Pipe,ScalaPipe,AutoPipe,Parallel,Safe"/>
-    <meta name="description" content="Simple, easy to use stream computation library for C++"/>
+
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
-    <title>Raft Light by jonathan-beard</title>
+    <title>Raft Lib by jonathan-beard</title>
   </head>
 
   <body>
 
     <header>
       <div class="container">
-        <h1>Raft Light</h1>
+        <h1>Raft Lib</h1>
         <h2>Simple, easy to use stream computation library for C++.</h2>
-        <center>
+
         <section id="downloads">
-          <a href="https://github.com/jonathan-beard/RaftLight/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/jonathan-beard/RaftLight/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/jonathan-beard/RaftLight" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+          <a href="https://github.com/jonathan-beard/RaftLib/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/jonathan-beard/RaftLib/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/jonathan-beard/RaftLib" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
         </section>
-        <section id="downloads">
-          <a href="#what" class="btn">Intro</a>
-          <a href="#setup" class="btn">Setup</a>
-          <a href="#tutorial" class="btn">Tutorial</a>
-        </section>
-        </center>
       </div>
     </header>
 
     <div class="container">
       <section id="main_content">
         <h3>
-<a name="welcome-to-the-raft-light-c-template-library" class="anchor" href="#welcome-to-the-raft-light-c-template-library"><span class="octicon octicon-link"></span></a>Welcome to the Raft Light C++ template library</h3>
+<a name="welcome-to-the-raft-c-template-library" class="anchor" href="#welcome-to-the-raft-c-template-library"><span class="octicon octicon-link"></span></a>Welcome to the Raft C++ template library</h3>
 
 <h3>
 <a name="current-status" class="anchor" href="#current-status"><span class="octicon octicon-link"></span></a>Current Status</h3>
 
-<p>The RaftLight library is currently an alpha release.  The API itself is stable, however the back end
+<p>The Raft library is currently an alpha release.  The API itself is stable, however the back end
 is subject to updates.  The release is subject to the Apache Version 2.0 license.</p>
 
 <h3>
@@ -50,20 +43,20 @@ is subject to updates.  The release is subject to the Apache Version 2.0 license
 <p>To checkout the library do the following:</p>
 
 <pre><code>$ cd location_for_the_repo
-$ git clone git@github.com:jonathan-beard/RaftLight.git
-$ cd RaftLight
+$ git clone git@github.com:jonathan-beard/RaftLib.git
+$ cd RaftLib
 $ make
 $ sudo make install
 </code></pre>
 
-<p>This will generate the static library file <em>raftlight.a</em>.  When building an application
+<p>This will generate the static library file <em>libraft.a</em>.  When building an application
 using the library the only header file needed is the <em>raft</em> header.  Once the library
 is build you're basically set save for a few details, which will be laid out within the tutorial
  as we go through the example we're about to build.</p>
 
 <p>To build the example application simply:</p>
 
-<pre><code>$ cd RaftLight/ExampleApps
+<pre><code>$ cd RaftLib/ExampleApps
 $ make
 </code></pre>
 
@@ -227,7 +220,7 @@ declared to compartmentalize code.  As an example:</p>
 on how the scheduler schedules it.  In either case, it will be called until it returns
 raft::stop, otherwise raft::proceed should be returned.  Otherwise there is nothing
 really special about the Kernel class.  In future tutorials I'll add an example of how
-the RaftLight library system an be used with OpenCL with the queue talking directly to
+the Raft library system an be used with OpenCL with the queue talking directly to
 a kernel running on a GPU.  GPU kernels will have a slightly differing structure, but 
 from the programmers perspective will have similar port semantics as the C++ kernels.</p>
 
