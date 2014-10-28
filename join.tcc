@@ -41,7 +41,7 @@ public:
       /** multiple calls to allocate will return same reference **/
       T &mem( output[ "0" ].allocate< T >() );
       raft::signal temp_signal;
-      if( split_func( mem, temp_signal, input ) )
+      if( split_func.get( mem, temp_signal, input ) )
       {
          /** call push to release above allocated memory **/
          output[ "0" ].push( temp_signal );
@@ -52,7 +52,7 @@ public:
 protected:
    virtual void addPort()
    {
-      addPort< T >( input );
+      addPortTo< T >( input );
    }
 
    method split_func; 

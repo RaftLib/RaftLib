@@ -30,7 +30,7 @@ public:
    roundrobin();
    virtual ~roundrobin();
 
-
-   virtual FIFO*  select_fifo( Port &port_list );
+protected:
+   virtual FIFO*  select_fifo( Port &port_list, const functype type );
 };
 #endif /* END _ROUNDROBIN_HPP_ */

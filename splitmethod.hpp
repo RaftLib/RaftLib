@@ -33,7 +33,7 @@ public:
    template < class T /* item */ >
       bool send( T &item, const raft::signal signal, Port &outputs )
    {
-      auto *fifo( select_fifo( outputs ) );
+      auto *fifo( select_fifo( outputs, sendtype ) );
       if( fifo != nullptr )
       {
          fifo->push( item, signal );
@@ -48,7 +48,7 @@ public:
    template < class T /* item */ >
       bool get( T &item, raft::signal &signal, Port &inputs )
    {
-      auto *fifo( select_fifo( inputs ) );
+      auto *fifo( select_fifo( inputs, gettype ) );
       if( fifo != nullptr )
       {
          fifo->pop< T >( item, &signal );
@@ -59,7 +59,8 @@ public:
          return( false );
       }
    }
-
-   virtual FIFO*  select_fifo( Port &port_list ) = 0;
+protected:
+   enum functype { sendtype, gettype };
+   virtual FIFO*  select_fifo( Port &port_list, const functype type ) = 0;
 };
 #endif /* END _SPLITMETHOD_HPP_ */
