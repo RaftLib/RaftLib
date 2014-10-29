@@ -11,10 +11,10 @@
 #include <chrono>
 #include <thread>
 
-template < typename T > class Generate : public Kernel
+template < typename T > class Generate : public raft::kernel
 {
 public:
-   Generate( std::int64_t count = 1000 ) : Kernel(),
+   Generate( std::int64_t count = 1000 ) : raft::kernel(),
                                           count( count )
    {
       output.addPort< T >( "number_stream" );
@@ -35,10 +35,10 @@ private:
    std::int64_t count;
 };
 
-template< typename T, char delim = '\0' > class Print : public Kernel
+template< typename T, char delim = '\0' > class Print : public raft::kernel
 {
 public:
-   Print( ) : Kernel()
+   Print( ) : raft::kernel()
    {
       input.addPort< T >( "in" );
    }

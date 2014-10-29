@@ -20,7 +20,9 @@
 #ifndef _SCHEDULE_HPP_
 #define _SCHEDULE_HPP_  1
 
-class Kernel;
+namespace raft {
+   class kernel;
+}
 class Map;
 
 class Schedule
@@ -46,15 +48,15 @@ protected:
     * schedule, ensures that it is run.  Other than
     * that there are no guarantees for its execution.
     * It is purely virtual in its implementation.
-    * @param kernel - Kernel*
+    * @param kernel - raft::kernel*
     * @return  bool  - returns false if the kernel is
     * already scheduled.
     */
-   virtual bool scheduleKernel( Kernel *kernel );
+   virtual bool scheduleKernel( raft::kernel *kernel );
 
-   static void invalidateOutputPorts( Kernel *kernel );
-   static bool kernelHasInputData( Kernel *kernel );
-   static bool kernelHasNoInputPorts( Kernel *kernel );
+   static void invalidateOutputPorts( raft::kernel *kernel );
+   static bool kernelHasInputData( raft::kernel *kernel );
+   static bool kernelHasNoInputPorts( raft::kernel *kernel );
 private:
    Map &map_ref;
 };

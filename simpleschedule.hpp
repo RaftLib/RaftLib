@@ -22,7 +22,9 @@
 #include <vector>
 
 class Map;
-class Kernel;
+namespace raft{
+   class kernel;
+}
 
 class simple_schedule : public Schedule
 {
@@ -35,13 +37,13 @@ public:
    
 protected:
    
-   virtual bool scheduleKernel( Kernel *kernel );
+   virtual bool scheduleKernel( raft::kernel *kernel );
 
    /**
     * NOTE: for more complex schedules it'd behoove us
     * to keep more information here for each scheduled
     * kernel.
     */
-   std::vector< Kernel* > kernel_map;
+   std::vector< raft::kernel* > kernel_map;
 };
 #endif /* END _SIMPLESSCHEDULE_HPP_ */

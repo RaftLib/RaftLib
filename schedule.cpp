@@ -4,6 +4,7 @@
 #include "map.hpp"
 #include "schedule.hpp"
 
+
 Schedule::Schedule( Map &map ) : map_ref( map )
 {
 }
@@ -16,21 +17,21 @@ Schedule::~Schedule()
 void
 Schedule::init()
 {
-   for( Kernel *kern : map_ref.all_kernels )
+   for( raft::kernel *kern : map_ref.all_kernels )
    {
       (this)->scheduleKernel( kern );
    }
 }
 
 bool
-Schedule::scheduleKernel( Kernel *kernel )
+Schedule::scheduleKernel( raft::kernel *kernel )
 {
    /** does nothing **/
    return( false );
 }
 
 void
-Schedule::invalidateOutputPorts( Kernel *kernel )
+Schedule::invalidateOutputPorts( raft::kernel *kernel )
 {
    for( auto &port : kernel->output )
    {
@@ -39,7 +40,7 @@ Schedule::invalidateOutputPorts( Kernel *kernel )
 }
 
 bool
-Schedule::kernelHasInputData( Kernel *kernel )
+Schedule::kernelHasInputData( raft::kernel *kernel )
 {
    auto &port_list( kernel->input );
    if( port_list.count() == 0 )
@@ -58,7 +59,7 @@ Schedule::kernelHasInputData( Kernel *kernel )
 }
 
 bool
-Schedule::kernelHasNoInputPorts( Kernel *kernel )
+Schedule::kernelHasNoInputPorts( raft::kernel *kernel )
 {
    /** assume data check is already complete **/
    for( auto &port : kernel->input )

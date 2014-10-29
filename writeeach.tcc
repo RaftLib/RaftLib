@@ -1,5 +1,5 @@
 /**
- * writecontainer.tcc - 
+ * write_each.tcc - 
  * @author: Jonathan Beard
  * @version: Sun Oct 26 15:51:46 2014
  * 
@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _WRITECONTAINER_TCC_
-#define _WRITECONTAINER_TCC_  1
+#ifndef _WRITEEACH_TCC_
+#define _WRITEEACH_TCC_  1
 #include <iterator>
 #include <raft>
 
@@ -36,7 +36,9 @@
  * so the write object can respond to data stream or 
  * asynch signals appropriately
  */
-template < class T > class write_container : public parallel_k
+namespace raft{
+
+template < class T > class write_each : public parallel_k
 {
 
 typedef typename std::back_insert_iterator< std::list< T > >           it_list;
@@ -90,7 +92,7 @@ const std::map< std::size_t,
                };
 public:
    template < class iterator_type >
-      write_container( iterator_type &&insert_position ) 
+      write_each( iterator_type &&insert_position ) 
    {
       /* no output ports, writing to container */
       addPortTo< T >( input ); 
@@ -130,4 +132,6 @@ private:
 
    bool readable = false;
 };
-#endif /* END _WRITECONTAINER_TCC_ */
+
+} /** end namespace raft **/
+#endif /* END _WRITEEACH_TCC_ */

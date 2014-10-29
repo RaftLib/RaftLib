@@ -30,7 +30,7 @@
 #include "port.hpp"
 #include "portexception.hpp"
 
-Port::Port( Kernel *k ) : kernel( k )
+Port::Port( raft::kernel *k ) : kernel( k )
 {
 }
 

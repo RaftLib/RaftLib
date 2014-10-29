@@ -87,8 +87,8 @@ protected:
    void setReady();
 
    /** both convenience structs, hold exactly what the names say **/
-   std::set< Kernel* > &source_kernels;
-   std::set< Kernel* > &all_kernels;
+   std::set< raft::kernel* > &source_kernels;
+   std::set< raft::kernel* > &all_kernels;
    
    /** 
     * keeps a list of all currently allocated FIFO objects,

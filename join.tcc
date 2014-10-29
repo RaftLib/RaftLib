@@ -25,7 +25,8 @@
 #include "roundrobin.hpp"
 #include "parallelk.hpp"
 
-template < class T, class method = roundrobin  > class join : public parallel_k
+namespace raft{
+template < class T, class method = roundrobin  > class join : public raft::parallel_k
 {
 public:
    join()
@@ -57,4 +58,5 @@ protected:
 
    method split_func; 
 };
+}
 #endif /* END _JOIN_TCC_ */

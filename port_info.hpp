@@ -32,7 +32,9 @@
 #include "port_info_types.hpp"
 #include "fifo.hpp"
 
-class Kernel;
+namespace raft{
+   class kernel;
+}
 
 struct PortInfo
 {
@@ -118,9 +120,9 @@ struct PortInfo
     */
    std::map< Type::RingBufferType , instr_map_t* > const_map;
 
-   Kernel     *my_kernel    = nullptr;
+   raft::kernel     *my_kernel    = nullptr;
    std::string my_name      = "";
-   Kernel     *other_kernel = nullptr;
+   raft::kernel     *other_kernel = nullptr;
    std::string other_name   = "";
    bool        out_of_order = false;
 };

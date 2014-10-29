@@ -22,7 +22,8 @@
 #include <string>
 #include <raft>
 
-template < class T, class method = roundrobin > class split : public parallel_k
+namespace raft {
+template < class T, class method = roundrobin > class split : public raft::parallel_k
 {
 public:
    split()
@@ -53,4 +54,5 @@ protected:
    }
    method split_func;
 };
+} /** end namespace raft **/
 #endif /* END _SPLIT_TCC_ */

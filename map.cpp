@@ -39,14 +39,14 @@ Map::Map()
 
 Map::~Map()
 {
-   for( Kernel *kern : all_kernels )
+   for( raft::kernel *kern : all_kernels )
    {
       delete( kern );
    }
 }
 
 void
-Map::checkEdges( std::set< Kernel* > &source_k )
+Map::checkEdges( std::set< raft::kernel* > &source_k )
 {
    /**
     * NOTE: will throw an error that we're not catching here
@@ -61,8 +61,8 @@ Map::checkEdges( std::set< Kernel* > &source_k )
 }
 
 void
-Map::join( Kernel &a, const std::string name_a, PortInfo &a_info, 
-           Kernel &b, const std::string name_b, PortInfo &b_info )
+Map::join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
+           raft::kernel &b, const std::string name_b, PortInfo &b_info )
 {
    if( a_info.type != b_info.type )
    {
@@ -85,7 +85,7 @@ Map::join( Kernel &a, const std::string name_a, PortInfo &a_info,
 }
 
 void
-Map::printEdges( std::set< Kernel* > &source_k )
+Map::printEdges( std::set< raft::kernel* > &source_k )
 {
    std::stringstream                 gviz_output;
    std::map< std::string /* kernel name */, 

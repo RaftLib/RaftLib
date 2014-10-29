@@ -22,20 +22,25 @@
 #include <raft>
 #include "parallelk.hpp"
 
-template <class T> Reduce : public ParallelK
+namespace raft {
+
+
+template <class T> reduce : public parallel_k
 {
 public:
-   Reduce()
+   reduce()
    {
       input.addPort< T >(  "0" );
       output.addPort< T >( "0" );
    }
 
-   virtual ~Reduce() = default;
+   virtual ~reduce() = default;
 
    virtual rat::kstatus run()
    {
       T &item( input[ "0" ].peek() ); 
    }
 };
+
+}
 #endif /* END _REDUCE_TCC_ */

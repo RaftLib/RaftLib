@@ -19,15 +19,22 @@
  */
 #ifndef _KERNEL_HPP_
 #define _KERNEL_HPP_  1
+
+#include <utility>
+
 #include "port.hpp"
 #include "signalvars.hpp"
 #include "rafttypes.hpp"
 
-class Kernel
+class Map;
+class Schedule;
+
+namespace raft {
+class kernel
 {
 public:
-   Kernel()          = default;
-   virtual ~Kernel() = default;
+   kernel()          = default;
+   virtual ~kernel() = default;
 
 
    /**
@@ -38,6 +45,29 @@ public:
     * behavior desired by the user.
     */
    virtual raft::kstatus run() = 0;
+   
+
+   template < class T /** kernel type **/,
+               class ... Args >
+      static kernel* make( Args&&... params )
+      {
+         return( new T( std::forward< Args >( params )... ) );
+      }
+   
+   /** 
+    * clone - used for parallelization of kernels, if necessary 
+    * sub-kernels should include an appropriate copy 
+    * constructor so all class member variables can be
+    * set.
+    * @param   other, T& - reference to object to be cloned
+    * @return  kernel*   - takes base type, however is same as 
+    * allocated by copy constructor for T.
+    */
+   template < class T /* other kernel */ >
+      static kernel* clone( T &other )
+      {
+         return( new T( other ) );
+      }
 
 protected:
    /**
@@ -47,25 +77,12 @@ protected:
    Port               input  = { this };
    Port               output = { this };
  
-   /** 
-    * clone - used for parallelization of kernels, if necessary 
-    * sub-kernels should include an appropriate copy 
-    * constructor so all class member variables can be
-    * set.
-    * @param   other, T& - reference to object to be cloned
-    * @return  Kernel*   - takes base type, however is same as 
-    * allocated by copy constructor for T.
-    */
-   template < class T /* other kernel */ >
-      static Kernel* clone( T &other )
-      {
-         return( new T( other ) );
-      }
 
-   friend class Map;
-   friend class Schedule;
-   friend void GraphTools::BFS( std::set< Kernel* > &source_kernels,
-                                edge_func fun,
-                                bool connection_error );
+   friend class ::Map;
+   friend class ::Schedule;
+   friend void  GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
+                                 edge_func fun,
+                                 bool connection_error );
 };
+} /** end namespace raft */
 #endif /* END _KERNEL_HPP_ */

@@ -39,14 +39,14 @@
 #include "portmap_t.hpp"
 #include "portiterator.hpp"
 
-
-class Kernel;
-
+namespace raft{
+   class kernel;
+}
 
 class Port
 {
 public:
-   Port( Kernel *k );
+   Port( raft::kernel *k );
    /**
     * ~Port - destructor, deletes the FIFO that was given
     * when the object was initalized.
@@ -161,11 +161,11 @@ protected:
    /** 
     * parent kernel that owns this port 
     */
-   Kernel *kernel;
+   raft::kernel *kernel;
   
    /** we need some friends **/
    friend class Map;
-   friend void GraphTools::BFS( std::set< Kernel* > &source_kernels,
+   friend void GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                                 edge_func fun,
                                 bool connection_error );
    

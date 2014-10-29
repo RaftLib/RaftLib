@@ -26,10 +26,10 @@
 #include <cstdlib>
 
 
-template< typename T, char delim = '\0' > class Print : public Kernel
+template< typename T, char delim = '\0' > class Print : public raft::kernel
 {
 public:
-   Print( ) : Kernel()
+   Print( ) : raft::kernel()
    {
       input.addPort< T >( "in" );
    }

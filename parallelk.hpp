@@ -22,7 +22,12 @@
 #include <raft>
 #include <cstddef>
 
-class parallel_k : public Kernel 
+class Map;
+class Schedule;
+
+namespace raft{
+
+class parallel_k : public raft::kernel 
 {
 public:
    parallel_k()          = default;
@@ -43,7 +48,9 @@ protected:
    virtual void addPort() = 0;
 
    std::size_t  port_name_index = 0; 
-   friend class Schedule;
-   friend class Map;
+   friend class ::Schedule;
+   friend class ::Map;
 };
+
+}
 #endif /* END _PARALLELK_HPP_ */

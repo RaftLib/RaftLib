@@ -1,5 +1,5 @@
 /**
- * readcontainer.tcc - 
+ * read_each.tcc - 
  * @author: Jonathan Beard
  * @version: Sun Oct 26 15:51:46 2014
  * 
@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _READCONTAINER_TCC_
-#define _READCONTAINER_TCC_  1
+#ifndef _READEACH_TCC_
+#define _READEACH_TCC_  1
 #include <iterator>
 #include <functional>
 #include <map>
@@ -34,7 +34,9 @@
 
 #include <raft>
 
-template < class T, std::size_t N = 1 > class read_container : 
+namespace raft{
+
+template < class T, std::size_t N = 1 > class read_each : 
    public parallel_k
 {
 
@@ -112,7 +114,7 @@ const std::map< std::size_t,
 
 public:
    template < class iterator_type > 
-   read_container( iterator_type &&begin, iterator_type &&end )
+   read_each( iterator_type &&begin, iterator_type &&end )
    {     
       (this)->it_begin_ptr = &begin;
       (this)->it_end_ptr   = &end;
@@ -157,4 +159,5 @@ private:
    std::function< bool ( void*, void*, Port& ) > inc_func;
 
 };
-#endif /* END _READCONTAINER_TCC_ */
+} /** end namespace raft **/
+#endif /* END _READEACH_TCC_ */

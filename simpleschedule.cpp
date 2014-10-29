@@ -38,7 +38,7 @@ simple_schedule::~simple_schedule()
 }
 
 bool
-simple_schedule::scheduleKernel( Kernel *kernel )
+simple_schedule::scheduleKernel( raft::kernel *kernel )
 {
    assert( kernel != nullptr );
    kernel_map.push_back( kernel ); 
@@ -58,7 +58,7 @@ simple_schedule::start()
    
    for( std::size_t index( 0 ); index < kernel_map.size(); index++ )
    {
-      auto bound_func = [&]( Kernel *kernel, bool &finished ){
+      auto bound_func = [&]( raft::kernel *kernel, bool &finished ){
          auto sig_status( raft::proceed );
          while( sig_status == raft::proceed )
          {

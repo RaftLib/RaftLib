@@ -22,7 +22,9 @@
 #include <functional>
 #include <set>
 
-class  Kernel;
+namespace raft{
+   class  kernel;
+}
 struct PortInfo;
 
 typedef std::function< void(  PortInfo&,  PortInfo& ) > edge_func;
@@ -32,7 +34,7 @@ class GraphTools
 public:
    GraphTools() = delete;
    
-   static void BFS( std::set< Kernel* > &source_kernels,  
+   static void BFS( std::set< raft::kernel* > &source_kernels,  
                     edge_func func,
                     bool connected_error = false );
 };

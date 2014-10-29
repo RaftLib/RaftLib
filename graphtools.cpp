@@ -33,15 +33,15 @@
 #include "kernel.hpp"
 
 void
-GraphTools::BFS( std::set< Kernel* > &source_kernels,
+GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                  edge_func func,
                  bool      connected_error )
 {
-   std::set< Kernel* > visited_set;
-   std::queue< Kernel* >     queue;
+   std::set< raft::kernel* > visited_set;
+   std::queue< raft::kernel* >     queue;
    std::for_each( source_kernels.begin(),
                   source_kernels.end(),
-                  [&]( Kernel *k )
+                  [&]( raft::kernel *k )
                   { 
                      queue.push( k );
                      visited_set.insert( k );

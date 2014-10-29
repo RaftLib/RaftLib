@@ -6,10 +6,10 @@
 #include <raft>
 
 
-template< typename T > class print : public Kernel
+template< typename T > class print : public raft::kernel
 {
 public:
-   print() : Kernel()
+   print() : raft::kernel()
    {
       input.addPort< T >( "in" );
    }
@@ -33,8 +33,11 @@ main( int argc, char **argv )
    while( i < 1000 ){ v.push_back( func() ); }
    std::vector< std::uint32_t > o;
    /** link iterator reader to print kernel **/
-   map.link( new read_container< std::uint32_t >( v.begin(), v.end() ),
-             new write_container< std::uint32_t >( std::back_inserter( o ) ) );
+   map.link( kernel::make< raft::read_each< std::uint32_t > >( v.begin(), v.end() ),
+             kernel::make< raft::write_each< std::uint32_t > >( std::back_inserter( o ) ) );
+   
+   //map.link( new read_each< std::uint32_t >( v.begin(), v.end() ),
+   //          new write_each< std::uint32_t >( std::back_inserter( o ) ) );
    map.exe();
    /** once function returns, o should be readable **/
    for( auto val : o )
