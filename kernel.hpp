@@ -30,12 +30,38 @@ public:
    virtual ~Kernel() = default;
 
 
+   /**
+    * run - function to be extended for the actual execution.
+    * Code can be executed outside of the run function, i.e., 
+    * with any function call, however the scheduler will only 
+    * call the run function so it must initiate any follow-on
+    * behavior desired by the user.
+    */
    virtual raft::kstatus run() = 0;
 
 protected:
+   /**
+    * PORTS - input and output, use these to interact with the
+    * outside world.
+    */
    Port               input  = { this };
    Port               output = { this };
-   
+ 
+   /** 
+    * clone - used for parallelization of kernels, if necessary 
+    * sub-kernels should include an appropriate copy 
+    * constructor so all class member variables can be
+    * set.
+    * @param   other, T& - reference to object to be cloned
+    * @return  Kernel*   - takes base type, however is same as 
+    * allocated by copy constructor for T.
+    */
+   template < class T /* other kernel */ >
+      static Kernel* clone( T &other )
+      {
+         return( new T( other ) );
+      }
+
    friend class Map;
    friend class Schedule;
    friend void GraphTools::BFS( std::set< Kernel* > &source_kernels,

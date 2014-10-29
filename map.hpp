@@ -139,7 +139,7 @@ public:
          break;
          case( order::out ):
          {
-            assert( false );
+            
          }
          break;
       }
