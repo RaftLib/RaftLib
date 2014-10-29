@@ -42,7 +42,7 @@ public:
       input.addPort< B >( "input_b" );
       output.addPort< C >( "sum" );
    }
-#define M3 1 
+#define M1 1 
    virtual raft::kstatus run()
    {
 #ifdef M1 
