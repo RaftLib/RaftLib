@@ -1,16 +1,16 @@
 CC  ?= gcc
-CXX = g++
+CXX ?= g++
 
 ifneq ($(shell uname -s), Darwin)
 RT = -lrt
 endif
 
-CFLAGS   = -O0 -g -Wall -std=c99
-CXXFLAGS = -O0 -g  -Wall -std=c++11 -DRDTSCP=1 -DUNITTEST=1
+CFLAGS   = -O3 -g -Wall -std=c99
+CXXFLAGS = -O3 -g  -Wall -std=c++11 -DRDTSCP=1 -DUNITTEST=1
 LDLIBS  = -lstdc++ -lraft $(RT)
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
-      join #lambdatest
+      join lambdatest
 OBS = $(addsuffix .o, $(EXE))
 
 all: $(EXE)

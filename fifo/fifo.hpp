@@ -272,9 +272,8 @@ public:
    template < class T > 
    void push( T &&item, const raft::signal signal = raft::none )
    {
-      /* object lives here */
-      auto item_copy( item );
-      void *ptr( (void*) &item_copy );
+      /** TODO, think about changing this **/
+      void *ptr( (void*) &item );
       /** call blocks till element is written and released to queue **/
       local_push( ptr, signal );
       return;

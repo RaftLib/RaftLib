@@ -26,6 +26,12 @@
 
 namespace raft
 {
+/** TODO, this needs some more error checking before production **/
+   
+/** pre-declare recursive struct / functions **/
+template < class... PORTSL > struct AddPorts;
+template < class... PORTSK > struct AddSamePorts;
+
 template < class... PORTS >
    class lambdak : public raft::kernel
 {
@@ -51,9 +57,6 @@ private:
    /** lambda func passed by user **/
    lambdafunc_t  run_func;
 
-   /** pre-declare recursive struct / functions **/
-   template < class... PORTSL > struct AddPorts;
-   template < class... PORTSK > struct AddSamePorts;
    
    /** function **/
    template < class... PORTSM >
@@ -87,82 +90,89 @@ private:
    }
 
 
-   /** class recursion **/
-   template < class PORT, class... PORTSL > struct AddPorts< PORT, PORTSL...>
-   {
-      static void add( std::size_t &input_index, 
-                       const std::size_t input_max,
-                       Port &input_ports,
-                       std::size_t &output_index, 
-                       const std::size_t output_max,
-                       Port &output_ports )
-      {
-         if( input_index < input_max )
-         {
-            /** add ports in order, 0,1,2, etc. **/
-            input_ports.addPort< PORT >( std::to_string( input_index++ ) );
-            AddPorts< PORTSL... >::add( input_index,
-                                        input_max,
-                                        input_ports,
-                                        output_index,
-                                        output_max,
-                                        output_ports );
-         }
-         else if( output_index < output_max )
-         {
-            /** add ports in order, 0, 1, 2, etc. **/
-            output_ports.addPort< PORT >( std::to_string( output_index++ ) );
-            AddPorts< PORTSL... >::add( input_index,
-                                        input_max,
-                                        input_ports,
-                                        output_index,
-                                        output_max,
-                                        output_ports );
-         }
-         else
-         {
-            /** 
-             * I think it'll be okay here simply to return, however
-             * we might need the blank specialization below 
-             */
-         }
-         return;
-      }
-   };
-
-   template <> struct AddPorts<>
-   {
-      static void add( std::size_t &input_index,
-                       const std::size_t input_max,
-                       Port &input_ports,
-                       std::size_t &output_index,
-                       const std::size_t output_max,
-                       Port &output_ports )
-      {
-         return;
-      }
-   };
-
-
-   /** single class type, no recursion **/
-   template < class PORT, class... PORTSK > struct AddSamePorts< PORT, PORTSK... >
-   {
-      /** no recursion needed here **/
-      static void add( const std::size_t input_count, Port &inputs,
-                       const std::size_t output_count, Port &outputs )
-      {
-         for( auto it( 0 ); it < input_count; it++ )
-         {
-            inputs.addPort< PORT >( std::to_string( it ) );
-         }
-         for( auto it( 0 ); it < output_count; it++ )
-         {
-            outputs.addPort< PORT >( std::to_string( it ) );
-         }
-      }
-   };
 
 }; /** end template lambdak **/
+   
+/** class recursion **/
+template < class PORT, class... PORTSL > struct AddPorts< PORT, PORTSL...>
+{
+   static void add( std::size_t &input_index, 
+                    const std::size_t input_max,
+                    Port &input_ports,
+                    std::size_t &output_index, 
+                    const std::size_t output_max,
+                    Port &output_ports )
+   {
+      if( input_index < input_max )
+      {
+         /** add ports in order, 0,1,2, etc. **/
+         input_ports.addPort< PORT >( std::to_string( input_index++ ) );
+         AddPorts< PORTSL... >::add( input_index,
+                                     input_max,
+                                     input_ports,
+                                     output_index,
+                                     output_max,
+                                     output_ports );
+      }
+      else if( output_index < output_max )
+      {
+         /** add ports in order, 0, 1, 2, etc. **/
+         output_ports.addPort< PORT >( std::to_string( output_index++ ) );
+         AddPorts< PORTSL... >::add( input_index,
+                                     input_max,
+                                     input_ports,
+                                     output_index,
+                                     output_max,
+                                     output_ports );
+      }
+      else
+      {
+         /** 
+          * I think it'll be okay here simply to return, however
+          * we might need the blank specialization below 
+          */
+      }
+      return;
+   }
+};
+
+template <> struct AddPorts<>
+{
+   static void add( std::size_t &input_index,
+                    const std::size_t input_max,
+                    Port &input_ports,
+                    std::size_t &output_index,
+                    const std::size_t output_max,
+                    Port &output_ports )
+   {
+      return;
+   }
+};
+
+/** single class type, no recursion **/
+template < class PORT, class... PORTSK > struct AddSamePorts< PORT, PORTSK... >
+{
+   /** no recursion needed here **/
+   static void add( const std::size_t input_count, Port &inputs,
+                    const std::size_t output_count, Port &outputs )
+   {
+      for( auto it( 0 ); it < input_count; it++ )
+      {
+         inputs.addPort< PORT >( std::to_string( it ) );
+      }
+      for( auto it( 0 ); it < output_count; it++ )
+      {
+         outputs.addPort< PORT >( std::to_string( it ) );
+      }
+   }
+};
+
+template <> struct AddSamePorts<>
+{
+   static void add( const std::size_t input_count, Port &inputs,
+                    const std::size_t output_count, Port &outputs )
+   { return; }
+};
 
 } /* end namespace raft */
 #endif /* END _LAMBDAK_TCC_ */
