@@ -92,11 +92,11 @@ const std::map< std::size_t,
                };
 public:
    template < class iterator_type >
-      write_each( iterator_type &&insert_position ) 
+      write_each( iterator_type &&insert_position ) :
+         position( &insert_position )
    {
       /* no output ports, writing to container */
       addPortTo< T >( input ); 
-      (this)->position = &insert_position;
       /** 
        * hacky way of getting the right iterator type for the ptr
        * pehaps change if I can figure out how to do without having
@@ -127,7 +127,7 @@ protected:
    }
 
 private:
-   void * const position = nullptr;
+   void * const position;
    std::function < void( void*, Port& ) > inc_func;
 
    bool readable = false;

@@ -1,5 +1,5 @@
 CC  ?= gcc
-CXX ?= g++
+CXX = g++
 
 ifneq ($(shell uname -s), Darwin)
 RT = -lrt
@@ -7,7 +7,7 @@ endif
 
 CFLAGS   = -O0 -g -Wall -std=c99
 CXXFLAGS = -O0 -g  -Wall -std=c++11 -DRDTSCP=1 -DUNITTEST=1
-LDFLAGS  = -lraft
+LDLIBS  = -lstdc++ -lraft $(RT)
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
       join #lambdatest
@@ -21,7 +21,7 @@ dynallocate: dynallocate.o
 stdlibsupport: stdlibsupport.o
 split: split.o
 join: join.o
-#lambdatest: lambdatest.o
+lambdatest: lambdatest.o
 
 .PHONY: clean
 clean:

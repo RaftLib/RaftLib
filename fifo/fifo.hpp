@@ -250,14 +250,14 @@ public:
     * @param   item -  T&
     * @param   signal -  raft::signal, default raft::none
     */
-   template < class T > 
-   void push( T &item, const raft::signal signal = raft::none )
-   {
-      void *ptr( (void*) &item );
-      /** call blocks till element is written and released to queue **/
-      local_push( ptr, signal );
-      return;
-   }
+   //template < class T > 
+   //void push( T &item, const raft::signal signal = raft::none )
+   //{
+   //   void *ptr( (void*) &item );
+   //   /** call blocks till element is written and released to queue **/
+   //   local_push( ptr, signal );
+   //   return;
+   //}
    
    /**
     * push - function which takes an object of type T and a 
@@ -269,16 +269,16 @@ public:
     * @param   item -  T&&
     * @param   signal -  raft::signal, default raft::none
     */
-   //template < class T > 
-   //void push( T &&item, const raft::signal signal = raft::none )
-   //{
-   //   /* object lives here */
-   //   T item_copy( item );
-   //   void *ptr( (void*) &item_copy );
-   //   /** call blocks till element is written and released to queue **/
-   //   local_push( ptr, signal );
-   //   return;
-   //}
+   template < class T > 
+   void push( T &&item, const raft::signal signal = raft::none )
+   {
+      /* object lives here */
+      auto item_copy( item );
+      void *ptr( (void*) &item_copy );
+      /** call blocks till element is written and released to queue **/
+      local_push( ptr, signal );
+      return;
+   }
 
    /**
     * insert - inserts the range from begin to end in the FIFO,

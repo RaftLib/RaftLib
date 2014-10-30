@@ -30,29 +30,14 @@ template < class... PORTS >
    class lambdak : public raft::kernel
 {
 public:
-   typedef std::function< raft::kstatus ( Port &input, Port &output ) > lambdafunc_t;
+   typedef std::function< raft::kstatus ( Port &input, 
+                                          Port &output ) > lambdafunc_t;
    lambdak( const std::size_t inputs, 
             const std::size_t outputs, 
             lambdafunc_t  &&func ) : raft::kernel(),
                                      run_func( func )
    {
-      const auto num_types( sizeof... (PORTS) );
-      if( num_types == 1 )
-      {
-         /** everybody gets same type, add here **/
-         AddSamePorts< PORTS... >::add( inputs /* count */, 
-                                        input  /* in-port obj */,
-                                        outputs /* count */,
-                                        output /* out-port obj */ );
-      }
-      /** no idea what type each port is, throw error **/
-      else if( num_types != (inputs + outputs ) ) 
-      {
-         /** TODO, make exception for here **/
-         assert( false );
-      }
-      /** call recursive add function **/
-      add_ports< Ports... >::add( inputs, outputs );
+      add_ports< PORTS... >( inputs, outputs );
    }
 
    virtual raft::kstatus run()
@@ -63,29 +48,47 @@ public:
 
 
 private:
-
+   /** lambda func passed by user **/
    lambdafunc_t  run_func;
 
+   /** pre-declare recursive struct / functions **/
+   template < class... PORTSL > struct AddPorts;
+   template < class... PORTSK > struct AddSamePorts;
    
    /** function **/
-   template < class... PORTS >
+   template < class... PORTSM >
       void add_ports( const std::size_t input_max, 
                       const std::size_t output_max )
    {
+      const auto num_types( sizeof... (PORTSM) );
+      if( num_types == 1 )
+      {
+         /** everybody gets same type, add here **/
+         AddSamePorts< PORTSM... >::add( input_max     /* count */, 
+                                         input         /* in-port obj */,
+                                         output_max    /* count */,
+                                         output        /* out-port obj */ );
+      }
+      /** no idea what type each port is, throw error **/
+      else if( num_types != (input_max + output_max ) ) 
+      {
+         /** TODO, make exception for here **/
+         assert( false );
+      }
+      /** multiple port type case **/
       std::size_t input_index(  0 );
       std::size_t output_index( 0 );
-      AddPorts< PORTS >::add( input_index,
-                              input_max, 
-                              input /* ports */, 
-                              output_index,
-                              output_max, 
-                              output /* ports */);
+      AddPorts< PORTSM... >::add( input_index,
+                                  input_max, 
+                                  input /* ports */, 
+                                  output_index,
+                                  output_max, 
+                                  output /* ports */);
    }
 
-   template < class... PORTS > struct AddPorts;
 
    /** class recursion **/
-   template < class PORT, class... PORTS > struct AddPorts< PORT, PORTS...>
+   template < class PORT, class... PORTSL > struct AddPorts< PORT, PORTSL...>
    {
       static void add( std::size_t &input_index, 
                        const std::size_t input_max,
@@ -98,23 +101,23 @@ private:
          {
             /** add ports in order, 0,1,2, etc. **/
             input_ports.addPort< PORT >( std::to_string( input_index++ ) );
-            AddPorts< PORTS >::add( input_index,
-                                    input_max,
-                                    input_ports,
-                                    output_index,
-                                    output_max,
-                                    output_ports );
+            AddPorts< PORTSL... >::add( input_index,
+                                        input_max,
+                                        input_ports,
+                                        output_index,
+                                        output_max,
+                                        output_ports );
          }
          else if( output_index < output_max )
          {
             /** add ports in order, 0, 1, 2, etc. **/
             output_ports.addPort< PORT >( std::to_string( output_index++ ) );
-            AddPorts< PORTS >::add( input_index,
-                                    input_max,
-                                    input_ports,
-                                    output_index,
-                                    output_max,
-                                    output_ports );
+            AddPorts< PORTSL... >::add( input_index,
+                                        input_max,
+                                        input_ports,
+                                        output_index,
+                                        output_max,
+                                        output_ports );
          }
          else
          {
@@ -142,8 +145,9 @@ private:
 
 
    /** single class type, no recursion **/
-   template < class PORT > struct AddSamePorts
+   template < class PORT, class... PORTSK > struct AddSamePorts< PORT, PORTSK... >
    {
+      /** no recursion needed here **/
       static void add( const std::size_t input_count, Port &inputs,
                        const std::size_t output_count, Port &outputs )
       {

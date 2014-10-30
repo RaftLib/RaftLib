@@ -1,0 +1,779 @@
+allocate.o: In function `main':
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:98: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:98: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:98: undefined reference to `operator new(unsigned long)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:98: undefined reference to `operator new(unsigned long)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:98: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:98: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:100: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:100: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:100: undefined reference to `operator new(unsigned long)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:100: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:100: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:101: undefined reference to `operator new(unsigned long)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:97: undefined reference to `operator delete(void*)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:96: undefined reference to `operator delete(void*)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:98: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:98: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:100: undefined reference to `operator delete(void*)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:100: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:100: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:101: undefined reference to `operator delete(void*)'
+allocate.o: In function `__static_initialization_and_destruction_0':
+/usr/include/c++/4.8.3/iostream:74: undefined reference to `std::ios_base::Init::Init()'
+/usr/include/c++/4.8.3/iostream:74: undefined reference to `std::ios_base::Init::~Init()'
+allocate.o: In function `__static_initialization_and_destruction_0':
+/usr/local/include/raft:81: undefined reference to `Map::Map()'
+/usr/local/include/raft:81: undefined reference to `Map::~Map()'
+allocate.o: In function `std::type_info::hash_code() const':
+/usr/include/c++/4.8.3/typeinfo:144: undefined reference to `std::_Hash_bytes(void const*, unsigned long, unsigned long)'
+allocate.o: In function `PortInfo::PortInfo(std::type_info const&)':
+/usr/local/include/raft_dir/port_info.hpp:49: undefined reference to `std::allocator<char>::allocator()'
+/usr/local/include/raft_dir/port_info.hpp:49: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/usr/local/include/raft_dir/port_info.hpp:49: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/port_info.hpp:49: undefined reference to `std::allocator<char>::allocator()'
+/usr/local/include/raft_dir/port_info.hpp:49: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/usr/local/include/raft_dir/port_info.hpp:49: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/port_info.hpp:49: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/port_info.hpp:49: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/port_info.hpp:49: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `PortInfo::PortInfo(PortInfo const&)':
+/usr/local/include/raft_dir/port_info.hpp:55: undefined reference to `std::allocator<char>::allocator()'
+/usr/local/include/raft_dir/port_info.hpp:55: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/usr/local/include/raft_dir/port_info.hpp:55: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/port_info.hpp:55: undefined reference to `std::allocator<char>::allocator()'
+/usr/local/include/raft_dir/port_info.hpp:55: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/usr/local/include/raft_dir/port_info.hpp:55: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/port_info.hpp:61: undefined reference to `std::string::operator=(std::string const&)'
+/usr/local/include/raft_dir/port_info.hpp:63: undefined reference to `std::string::operator=(std::string const&)'
+/usr/local/include/raft_dir/port_info.hpp:55: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/port_info.hpp:55: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/port_info.hpp:55: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/port_info.hpp:55: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `PortInfo::~PortInfo()':
+/usr/local/include/raft_dir/port_info.hpp:68: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/port_info.hpp:68: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/port_info.hpp:70: undefined reference to `operator delete(void*)'
+allocate.o: In function `PortInfo::~PortInfo()':
+/usr/local/include/raft_dir/port_info.hpp:70: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::thread::~thread()':
+/usr/include/c++/4.8.3/thread:143: undefined reference to `std::terminate()'
+allocate.o: In function `std::thread::_Impl_base::~_Impl_base()':
+/usr/include/c++/4.8.3/thread:97: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::thread::_Impl_base::~_Impl_base()':
+/usr/include/c++/4.8.3/thread:97: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::pair<std::string const, PortInfo>::pair<std::string, PortInfo, void>(std::pair<std::string, PortInfo>&&)':
+/usr/include/c++/4.8.3/bits/stl_pair.h:152: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string&&)'
+/usr/include/c++/4.8.3/bits/stl_pair.h:152: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o:(.gcc_except_table+0x3cc): undefined reference to `typeinfo for bad_shm_alloc'
+allocate.o:(.gcc_except_table+0x3f8): undefined reference to `typeinfo for bad_shm_alloc'
+allocate.o: In function `std::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*)':
+/usr/include/c++/4.8.3/bits/basic_string.h:2405: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string const&)'
+/usr/include/c++/4.8.3/bits/basic_string.h:2406: undefined reference to `std::string::append(char const*)'
+/usr/include/c++/4.8.3/bits/basic_string.h:2407: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `raft::kernel::kernel()':
+/usr/local/include/raft_dir/kernel.hpp:36: undefined reference to `Port::Port(raft::kernel*)'
+/usr/local/include/raft_dir/kernel.hpp:36: undefined reference to `Port::Port(raft::kernel*)'
+/usr/local/include/raft_dir/kernel.hpp:36: undefined reference to `Port::~Port()'
+allocate.o: In function `raft::kernel::~kernel()':
+/usr/local/include/raft_dir/kernel.hpp:37: undefined reference to `Port::~Port()'
+/usr/local/include/raft_dir/kernel.hpp:37: undefined reference to `Port::~Port()'
+/usr/local/include/raft_dir/kernel.hpp:37: undefined reference to `operator delete(void*)'
+allocate.o: In function `raft::kernel::~kernel()':
+/usr/local/include/raft_dir/kernel.hpp:37: undefined reference to `operator delete(void*)'
+allocate.o: In function `Generate<long>::Generate(long)':
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:15: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:15: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:15: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:15: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:15: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:15: undefined reference to `std::allocator<char>::~allocator()'
+allocate.o: In function `Sum<long, long, long>::Sum()':
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:45: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:45: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:45: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:45: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:46: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:46: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:46: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:46: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:47: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:47: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:47: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:47: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:45: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:45: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:46: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:46: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:47: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:47: undefined reference to `std::allocator<char>::~allocator()'
+allocate.o: In function `PortException::~PortException()':
+/usr/local/include/raft_dir/portexception.hpp:24: undefined reference to `vtable for PortException'
+/usr/local/include/raft_dir/portexception.hpp:24: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/portexception.hpp:24: undefined reference to `std::exception::~exception()'
+/usr/local/include/raft_dir/portexception.hpp:24: undefined reference to `operator delete(void*)'
+allocate.o: In function `PortException::~PortException()':
+/usr/local/include/raft_dir/portexception.hpp:24: undefined reference to `operator delete(void*)'
+allocate.o: In function `AmbiguousPortAssignmentException::~AmbiguousPortAssignmentException()':
+/usr/local/include/raft_dir/portexception.hpp:57: undefined reference to `operator delete(void*)'
+allocate.o: In function `AmbiguousPortAssignmentException::~AmbiguousPortAssignmentException()':
+/usr/local/include/raft_dir/portexception.hpp:57: undefined reference to `operator delete(void*)'
+allocate.o: In function `kernel_pair_t Map::link<(order::spec)0>(raft::kernel*, raft::kernel*, std::string)':
+/usr/local/include/raft_dir/map.hpp:226: undefined reference to `Port::hasPorts()'
+/usr/local/include/raft_dir/map.hpp:234: undefined reference to `Port::getPortInfo()'
+/usr/local/include/raft_dir/map.hpp:246: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string const&)'
+/usr/local/include/raft_dir/map.hpp:246: undefined reference to `Port::getPortInfoFor(std::string)'
+/usr/local/include/raft_dir/map.hpp:246: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:249: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string const&)'
+/usr/local/include/raft_dir/map.hpp:249: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string const&)'
+/usr/local/include/raft_dir/map.hpp:248: undefined reference to `Map::join(raft::kernel&, std::string, PortInfo&, raft::kernel&, std::string, PortInfo&)'
+/usr/local/include/raft_dir/map.hpp:249: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:249: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:243: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:243: undefined reference to `__cxa_free_exception'
+/usr/local/include/raft_dir/map.hpp:243: undefined reference to `std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::~basic_stringstream()'
+/usr/local/include/raft_dir/map.hpp:236: undefined reference to `__cxa_end_catch'
+/usr/local/include/raft_dir/map.hpp:236: undefined reference to `__cxa_begin_catch'
+/usr/local/include/raft_dir/map.hpp:238: undefined reference to `std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode)'
+/usr/local/include/raft_dir/map.hpp:241: undefined reference to `__cxa_demangle'
+/usr/local/include/raft_dir/map.hpp:241: undefined reference to `__cxa_bad_typeid'
+/usr/local/include/raft_dir/map.hpp:240: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/map.hpp:240: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/map.hpp:240: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/map.hpp:243: undefined reference to `__cxa_allocate_exception'
+/usr/local/include/raft_dir/map.hpp:243: undefined reference to `std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::str() const'
+/usr/local/include/raft_dir/map.hpp:243: undefined reference to `AmbiguousPortAssignmentException::AmbiguousPortAssignmentException(std::string)'
+/usr/local/include/raft_dir/map.hpp:243: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:243: undefined reference to `__cxa_throw'
+/usr/local/include/raft_dir/map.hpp:246: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:249: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:249: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `Print<long>::Print()':
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:74: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:74: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:74: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:74: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:74: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:74: undefined reference to `std::allocator<char>::~allocator()'
+allocate.o: In function `kernel_pair_t Map::link<(order::spec)0>(raft::kernel*, raft::kernel*)':
+/usr/local/include/raft_dir/map.hpp:100: undefined reference to `Port::hasPorts()'
+/usr/local/include/raft_dir/map.hpp:108: undefined reference to `Port::getPortInfo()'
+/usr/local/include/raft_dir/map.hpp:123: undefined reference to `Port::getPortInfo()'
+/usr/local/include/raft_dir/map.hpp:136: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string const&)'
+/usr/local/include/raft_dir/map.hpp:136: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string const&)'
+/usr/local/include/raft_dir/map.hpp:135: undefined reference to `Map::join(raft::kernel&, std::string, PortInfo&, raft::kernel&, std::string, PortInfo&)'
+/usr/local/include/raft_dir/map.hpp:136: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:136: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:119: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:119: undefined reference to `__cxa_free_exception'
+/usr/local/include/raft_dir/map.hpp:119: undefined reference to `std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::~basic_stringstream()'
+/usr/local/include/raft_dir/map.hpp:110: undefined reference to `__cxa_end_catch'
+/usr/local/include/raft_dir/map.hpp:110: undefined reference to `__cxa_begin_catch'
+/usr/local/include/raft_dir/map.hpp:113: undefined reference to `std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode)'
+/usr/local/include/raft_dir/map.hpp:116: undefined reference to `__cxa_demangle'
+/usr/local/include/raft_dir/map.hpp:116: undefined reference to `__cxa_bad_typeid'
+/usr/local/include/raft_dir/map.hpp:114: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/map.hpp:115: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/map.hpp:114: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/map.hpp:119: undefined reference to `__cxa_allocate_exception'
+/usr/local/include/raft_dir/map.hpp:119: undefined reference to `std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::str() const'
+/usr/local/include/raft_dir/map.hpp:119: undefined reference to `AmbiguousPortAssignmentException::AmbiguousPortAssignmentException(std::string)'
+/usr/local/include/raft_dir/map.hpp:119: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:119: undefined reference to `__cxa_throw'
+/usr/local/include/raft_dir/map.hpp:132: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:132: undefined reference to `__cxa_free_exception'
+/usr/local/include/raft_dir/map.hpp:132: undefined reference to `std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::~basic_stringstream()'
+/usr/local/include/raft_dir/map.hpp:125: undefined reference to `__cxa_end_catch'
+/usr/local/include/raft_dir/map.hpp:125: undefined reference to `__cxa_begin_catch'
+/usr/local/include/raft_dir/map.hpp:128: undefined reference to `std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode)'
+/usr/local/include/raft_dir/map.hpp:130: undefined reference to `__cxa_demangle'
+/usr/local/include/raft_dir/map.hpp:130: undefined reference to `__cxa_bad_typeid'
+/usr/local/include/raft_dir/map.hpp:129: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/map.hpp:129: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/map.hpp:129: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/map.hpp:132: undefined reference to `__cxa_allocate_exception'
+/usr/local/include/raft_dir/map.hpp:132: undefined reference to `std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::str() const'
+/usr/local/include/raft_dir/map.hpp:132: undefined reference to `AmbiguousPortAssignmentException::AmbiguousPortAssignmentException(std::string)'
+/usr/local/include/raft_dir/map.hpp:132: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:132: undefined reference to `__cxa_throw'
+/usr/local/include/raft_dir/map.hpp:136: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/map.hpp:136: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `void Map::exe<simple_schedule, dynalloc>()':
+/usr/local/include/raft_dir/map.hpp:319: undefined reference to `Map::checkEdges(std::set<raft::kernel*, std::less<raft::kernel*>, std::allocator<raft::kernel*> >&)'
+/usr/local/include/raft_dir/map.hpp:321: undefined reference to `dynalloc::dynalloc(Map&, bool volatile&)'
+/usr/local/include/raft_dir/map.hpp:327: undefined reference to `Allocate::waitTillReady()'
+/usr/local/include/raft_dir/map.hpp:329: undefined reference to `simple_schedule::simple_schedule(Map&)'
+/usr/local/include/raft_dir/map.hpp:330: undefined reference to `Schedule::init()'
+/usr/local/include/raft_dir/map.hpp:336: undefined reference to `std::thread::join()'
+/usr/local/include/raft_dir/map.hpp:339: undefined reference to `std::thread::join()'
+/usr/local/include/raft_dir/map.hpp:329: undefined reference to `simple_schedule::~simple_schedule()'
+/usr/local/include/raft_dir/map.hpp:341: undefined reference to `dynalloc::~dynalloc()'
+/usr/local/include/raft_dir/map.hpp:329: undefined reference to `simple_schedule::~simple_schedule()'
+/usr/local/include/raft_dir/map.hpp:341: undefined reference to `dynalloc::~dynalloc()'
+allocate.o: In function `std::pair<std::string, PortInfo>::pair<PortInfo&, void>(std::string const&, PortInfo&)':
+/usr/include/c++/4.8.3/bits/stl_pair.h:139: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string const&)'
+/usr/include/c++/4.8.3/bits/stl_pair.h:139: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `std::pair<std::string, PortInfo>::~pair()':
+/usr/include/c++/4.8.3/bits/stl_pair.h:96: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `bool Port::addPort<long>(std::string)':
+/usr/local/include/raft_dir/port.hpp:73: undefined reference to `typeinfo for long'
+/usr/local/include/raft_dir/port.hpp:75: undefined reference to `std::string::operator=(std::string const&)'
+allocate.o: In function `std::thread::thread<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1}>(void Map::exe<simple_schedule, dynalloc>()::{lambda()#1}&&)':
+/usr/include/c++/4.8.3/thread:135: undefined reference to `std::thread::_M_start_thread(std::shared_ptr<std::thread::_Impl_base>)'
+allocate.o: In function `std::thread::thread<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2}>(void Map::exe<simple_schedule, dynalloc>()::{lambda()#2}&&)':
+/usr/include/c++/4.8.3/thread:135: undefined reference to `std::thread::_M_start_thread(std::shared_ptr<std::thread::_Impl_base>)'
+allocate.o: In function `std::_Rb_tree<Type::RingBufferType, std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*>, std::_Select1st<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >, std::less<Type::RingBufferType>, std::allocator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > >::_M_copy(std::_Rb_tree_node<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > const*, std::_Rb_tree_node<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >*)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:1108: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:1108: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:1111: undefined reference to `__cxa_rethrow'
+allocate.o: In function `void Port::initializeConstMap<long>(PortInfo&)':
+/usr/local/include/raft_dir/port.hpp:126: undefined reference to `operator new(unsigned long)'
+/usr/local/include/raft_dir/port.hpp:135: undefined reference to `operator new(unsigned long)'
+/usr/local/include/raft_dir/port.hpp:126: undefined reference to `operator delete(void*)'
+/usr/local/include/raft_dir/port.hpp:135: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::~_Sp_counted_base()':
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:114: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::~_Sp_counted_base()':
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:114: undefined reference to `operator delete(void*)'
+allocate.o: In function `RingBuffer<long, (Type::RingBufferType)0, false>::make_new_fifo(unsigned long, unsigned long, void*)':
+/usr/local/include/raft_dir/ringbuffer.tcc:90: undefined reference to `operator new(unsigned long)'
+/usr/local/include/raft_dir/ringbuffer.tcc:90: undefined reference to `operator delete(void*)'
+allocate.o: In function `RingBuffer<long, (Type::RingBufferType)1, false>::make_new_fifo(unsigned long, unsigned long, void*)':
+/usr/local/include/raft_dir/ringbuffer.tcc:345: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string const&)'
+/usr/local/include/raft_dir/ringbuffer.tcc:345: undefined reference to `operator new(unsigned long)'
+/usr/local/include/raft_dir/ringbuffer.tcc:345: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbuffer.tcc:345: undefined reference to `operator delete(void*)'
+/usr/local/include/raft_dir/ringbuffer.tcc:345: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `std::_Rb_tree_iterator<raft::kernel*> std::_Rb_tree<raft::kernel*, raft::kernel*, std::_Identity<raft::kernel*>, std::less<raft::kernel*>, std::allocator<raft::kernel*> >::_M_insert_<raft::kernel* const&>(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, raft::kernel* const&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:1025: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > >::deallocate(std::_Rb_tree_node<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >*, unsigned long)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:110: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::_Rb_tree_node<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >* std::_Rb_tree<Type::RingBufferType, std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*>, std::_Select1st<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >, std::less<Type::RingBufferType>, std::allocator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > >::_M_create_node<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> const&>(std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> const&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:413: undefined reference to `__cxa_rethrow'
+allocate.o: In function `std::_Rb_tree_iterator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > std::_Rb_tree<Type::RingBufferType, std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*>, std::_Select1st<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >, std::less<Type::RingBufferType>, std::allocator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<Type::RingBufferType&&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >, std::piecewise_construct_t const&, std::tuple<Type::RingBufferType&&>&&, std::tuple<>&&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:1681: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:1681: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:1684: undefined reference to `__cxa_rethrow'
+allocate.o: In function `RingBuffer<long, (Type::RingBufferType)0, false>::RingBuffer(unsigned long, unsigned long)':
+/usr/local/include/raft_dir/ringbuffer.tcc:64: undefined reference to `operator new(unsigned long)'
+/usr/local/include/raft_dir/ringbuffer.tcc:64: undefined reference to `operator delete(void*)'
+allocate.o: In function `RingBuffer<long, (Type::RingBufferType)1, false>::RingBuffer(unsigned long, std::string, Direction, unsigned long)':
+/usr/local/include/raft_dir/ringbuffer.tcc:308: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string const&)'
+/usr/local/include/raft_dir/ringbuffer.tcc:310: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string const&)'
+/usr/local/include/raft_dir/ringbuffer.tcc:310: undefined reference to `operator new(unsigned long)'
+/usr/local/include/raft_dir/ringbuffer.tcc:310: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbuffer.tcc:310: undefined reference to `operator delete(void*)'
+/usr/local/include/raft_dir/ringbuffer.tcc:310: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbuffer.tcc:308: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `std::_Rb_tree_iterator<std::pair<std::string const, PortInfo> > std::_Rb_tree<std::string, std::pair<std::string const, PortInfo>, std::_Select1st<std::pair<std::string const, PortInfo> >, std::less<std::string>, std::allocator<std::pair<std::string const, PortInfo> > >::_M_insert_<std::pair<std::string, PortInfo> >(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::pair<std::string, PortInfo>&&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:1025: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+allocate.o: In function `std::_Rb_tree_iterator<raft::kernel*>::operator--()':
+/usr/include/c++/4.8.3/bits/stl_tree.h:204: undefined reference to `std::_Rb_tree_decrement(std::_Rb_tree_node_base*)'
+allocate.o: In function `std::_Rb_tree_node<raft::kernel*>* std::_Rb_tree<raft::kernel*, raft::kernel*, std::_Identity<raft::kernel*>, std::less<raft::kernel*>, std::allocator<raft::kernel*> >::_M_create_node<raft::kernel* const&>(raft::kernel* const&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:413: undefined reference to `__cxa_rethrow'
+allocate.o: In function `std::_Rb_tree_iterator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > std::_Rb_tree<Type::RingBufferType, std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*>, std::_Select1st<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >, std::less<Type::RingBufferType>, std::allocator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > >::_M_insert_<std::pair<Type::RingBufferType, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::pair<Type::RingBufferType, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*>&&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:1025: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+allocate.o: In function `std::_Rb_tree_node<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >* std::_Rb_tree<Type::RingBufferType, std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*>, std::_Select1st<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >, std::less<Type::RingBufferType>, std::allocator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > >::_M_create_node<std::piecewise_construct_t const&, std::tuple<Type::RingBufferType&&>, std::tuple<> >(std::piecewise_construct_t const&, std::tuple<Type::RingBufferType&&>&&, std::tuple<>&&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:413: undefined reference to `__cxa_rethrow'
+allocate.o: In function `std::_Rb_tree<Type::RingBufferType, std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*>, std::_Select1st<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >, std::less<Type::RingBufferType>, std::allocator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > >::_M_insert_node(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >*)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:1575: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+allocate.o: In function `FIFO::~FIFO()':
+/usr/local/include/raft_dir/fifo.hpp:140: undefined reference to `vtable for FIFO'
+/usr/local/include/raft_dir/fifo.hpp:140: undefined reference to `operator delete(void*)'
+allocate.o: In function `FIFO::~FIFO()':
+/usr/local/include/raft_dir/fifo.hpp:140: undefined reference to `operator delete(void*)'
+allocate.o: In function `FIFOAbstract<long, (Type::RingBufferType)0>::~FIFOAbstract()':
+/usr/local/include/raft_dir/fifoabstract.tcc:30: undefined reference to `operator delete(void*)'
+allocate.o: In function `FIFOAbstract<long, (Type::RingBufferType)0>::~FIFOAbstract()':
+/usr/local/include/raft_dir/fifoabstract.tcc:30: undefined reference to `operator delete(void*)'
+allocate.o: In function `DataManager<long, (Type::RingBufferType)0, 0ul>::~DataManager()':
+/usr/local/include/raft_dir/datamanager.tcc:48: undefined reference to `operator delete(void*)'
+allocate.o:/usr/local/include/raft_dir/datamanager.tcc:48: more undefined references to `operator delete(void*)' follow
+allocate.o: In function `Buffer::Data<long, (Type::RingBufferType)0, 0ul>::Data(unsigned long, unsigned long)':
+/usr/local/include/raft_dir/bufferdata.tcc:173: undefined reference to `std::cerr'
+/usr/local/include/raft_dir/bufferdata.tcc:173: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:173: undefined reference to `std::ostream::operator<<(int)'
+/usr/local/include/raft_dir/bufferdata.tcc:173: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:174: undefined reference to `std::cerr'
+/usr/local/include/raft_dir/bufferdata.tcc:174: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:174: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:174: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:188: undefined reference to `operator new(unsigned long)'
+/usr/local/include/raft_dir/bufferdata.tcc:188: undefined reference to `Pointer::Pointer(unsigned long)'
+/usr/local/include/raft_dir/bufferdata.tcc:189: undefined reference to `operator new(unsigned long)'
+/usr/local/include/raft_dir/bufferdata.tcc:189: undefined reference to `Pointer::Pointer(unsigned long)'
+/usr/local/include/raft_dir/bufferdata.tcc:188: undefined reference to `operator delete(void*)'
+/usr/local/include/raft_dir/bufferdata.tcc:189: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::_Rb_tree_iterator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > std::_Rb_tree<bool, std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> >, std::_Select1st<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > >, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >::_M_insert_<std::pair<bool, FIFO* (*)(unsigned long, unsigned long, void*)> >(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::pair<bool, FIFO* (*)(unsigned long, unsigned long, void*)>&&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:1025: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+allocate.o: In function `FIFOAbstract<long, (Type::RingBufferType)1>::~FIFOAbstract()':
+/usr/local/include/raft_dir/fifoabstract.tcc:30: undefined reference to `operator delete(void*)'
+allocate.o: In function `FIFOAbstract<long, (Type::RingBufferType)1>::~FIFOAbstract()':
+/usr/local/include/raft_dir/fifoabstract.tcc:30: undefined reference to `operator delete(void*)'
+allocate.o: In function `DataManager<long, (Type::RingBufferType)1, 0ul>::~DataManager()':
+/usr/local/include/raft_dir/datamanager.tcc:48: undefined reference to `operator delete(void*)'
+allocate.o: In function `DataManager<long, (Type::RingBufferType)1, 0ul>::~DataManager()':
+/usr/local/include/raft_dir/datamanager.tcc:48: undefined reference to `operator delete(void*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)1>::~RingBufferBase()':
+/usr/local/include/raft_dir/ringbufferheap.tcc:40: undefined reference to `operator delete(void*)'
+allocate.o:/usr/local/include/raft_dir/ringbufferheap.tcc:40: more undefined references to `operator delete(void*)' follow
+allocate.o: In function `Buffer::Data<long, (Type::RingBufferType)1, 0ul>::Data(unsigned long, std::string, Direction, unsigned long)::{lambda(void**, unsigned long, char const*)#1}::operator()(void**, unsigned long, char const*) const':
+/usr/local/include/raft_dir/bufferdata.tcc:262: undefined reference to `SHM::Init(char const*, unsigned long, bool, void*)'
+/usr/local/include/raft_dir/bufferdata.tcc:263: undefined reference to `__cxa_end_catch'
+/usr/local/include/raft_dir/bufferdata.tcc:263: undefined reference to `__cxa_begin_catch'
+/usr/local/include/raft_dir/bufferdata.tcc:265: undefined reference to `std::cerr'
+/usr/local/include/raft_dir/bufferdata.tcc:265: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:266: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:267: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:267: undefined reference to `std::ostream::operator<<(unsigned long)'
+/usr/local/include/raft_dir/bufferdata.tcc:265: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:268: undefined reference to `std::cerr'
+/usr/local/include/raft_dir/bufferdata.tcc:268: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:268: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:268: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+allocate.o: In function `Buffer::Data<long, (Type::RingBufferType)1, 0ul>::Data(unsigned long, std::string, Direction, unsigned long)::{lambda(void**, char const*)#2}::operator()(void**, char const*) const':
+/usr/local/include/raft_dir/bufferdata.tcc:301: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string()'
+/usr/local/include/raft_dir/bufferdata.tcc:307: undefined reference to `SHM::Open(char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:325: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/bufferdata.tcc:320: undefined reference to `std::cerr'
+/usr/local/include/raft_dir/bufferdata.tcc:320: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:320: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:320: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:322: undefined reference to `std::cerr'
+/usr/local/include/raft_dir/bufferdata.tcc:322: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:322: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <char, std::char_traits<char>, std::allocator<char> >(std::basic_ostream<char, std::char_traits<char> >&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/local/include/raft_dir/bufferdata.tcc:322: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:309: undefined reference to `__cxa_end_catch'
+/usr/local/include/raft_dir/bufferdata.tcc:309: undefined reference to `__cxa_begin_catch'
+/usr/local/include/raft_dir/bufferdata.tcc:313: undefined reference to `std::string::operator=(char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:309: undefined reference to `__cxa_end_catch'
+/usr/local/include/raft_dir/bufferdata.tcc:325: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `Buffer::Data<long, (Type::RingBufferType)1, 0ul>::Data(unsigned long, std::string, Direction, unsigned long)':
+/usr/local/include/raft_dir/bufferdata.tcc:275: undefined reference to `std::string::c_str() const'
+/usr/local/include/raft_dir/bufferdata.tcc:278: undefined reference to `std::string::c_str() const'
+/usr/local/include/raft_dir/bufferdata.tcc:281: undefined reference to `std::string::c_str() const'
+/usr/local/include/raft_dir/bufferdata.tcc:285: undefined reference to `Pointer::Pointer(unsigned long)'
+/usr/local/include/raft_dir/bufferdata.tcc:326: undefined reference to `std::string::c_str() const'
+/usr/local/include/raft_dir/bufferdata.tcc:327: undefined reference to `std::string::c_str() const'
+/usr/local/include/raft_dir/bufferdata.tcc:328: undefined reference to `std::string::c_str() const'
+/usr/local/include/raft_dir/bufferdata.tcc:339: undefined reference to `Pointer::Pointer(unsigned long)'
+/usr/local/include/raft_dir/bufferdata.tcc:353: undefined reference to `std::cerr'
+/usr/local/include/raft_dir/bufferdata.tcc:353: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/local/include/raft_dir/bufferdata.tcc:250: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/bufferdata.tcc:250: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/bufferdata.tcc:250: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `std::_Rb_tree_iterator<std::pair<std::string const, PortInfo> >::operator--()':
+/usr/include/c++/4.8.3/bits/stl_tree.h:204: undefined reference to `std::_Rb_tree_decrement(std::_Rb_tree_node_base*)'
+allocate.o: In function `std::_Rb_tree_node<std::pair<std::string const, PortInfo> >* std::_Rb_tree<std::string, std::pair<std::string const, PortInfo>, std::_Select1st<std::pair<std::string const, PortInfo> >, std::less<std::string>, std::allocator<std::pair<std::string const, PortInfo> > >::_M_create_node<std::pair<std::string, PortInfo> >(std::pair<std::string, PortInfo>&&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:413: undefined reference to `__cxa_rethrow'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > >::allocate(unsigned long, void const*)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:102: undefined reference to `std::__throw_bad_alloc()'
+/usr/include/c++/4.8.3/ext/new_allocator.h:104: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `std::_Rb_tree_iterator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >::operator--()':
+/usr/include/c++/4.8.3/bits/stl_tree.h:204: undefined reference to `std::_Rb_tree_decrement(std::_Rb_tree_node_base*)'
+allocate.o: In function `std::_Rb_tree_node<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >* std::_Rb_tree<Type::RingBufferType, std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*>, std::_Select1st<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >, std::less<Type::RingBufferType>, std::allocator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> > >::_M_create_node<std::pair<Type::RingBufferType, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >(std::pair<Type::RingBufferType, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*>&&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:413: undefined reference to `__cxa_rethrow'
+allocate.o: In function `std::_Rb_tree_iterator<std::pair<Type::RingBufferType const, std::map<bool, std::function<FIFO* (unsigned long, unsigned long, void*)>, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >*> >::operator++()':
+/usr/include/c++/4.8.3/bits/stl_tree.h:189: undefined reference to `std::_Rb_tree_increment(std::_Rb_tree_node_base*)'
+allocate.o: In function `FIFOAbstract<long, (Type::RingBufferType)0>::FIFOAbstract()':
+/usr/local/include/raft_dir/fifoabstract.tcc:33: undefined reference to `FIFO::FIFO()'
+allocate.o: In function `std::_Rb_tree_iterator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > >::operator--()':
+/usr/include/c++/4.8.3/bits/stl_tree.h:204: undefined reference to `std::_Rb_tree_decrement(std::_Rb_tree_node_base*)'
+allocate.o: In function `std::_Rb_tree_node<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > >* std::_Rb_tree<bool, std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> >, std::_Select1st<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > >, std::less<bool>, std::allocator<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >::_M_create_node<std::pair<bool, FIFO* (*)(unsigned long, unsigned long, void*)> >(std::pair<bool, FIFO* (*)(unsigned long, unsigned long, void*)>&&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:413: undefined reference to `__cxa_rethrow'
+allocate.o: In function `FIFOAbstract<long, (Type::RingBufferType)1>::FIFOAbstract()':
+/usr/local/include/raft_dir/fifoabstract.tcc:33: undefined reference to `FIFO::FIFO()'
+allocate.o: In function `bool std::operator< <char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)':
+/usr/include/c++/4.8.3/bits/basic_string.h:2571: undefined reference to `std::string::compare(std::string const&) const'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Rb_tree_node<raft::kernel*> >::allocate(unsigned long, void const*)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:102: undefined reference to `std::__throw_bad_alloc()'
+/usr/include/c++/4.8.3/ext/new_allocator.h:104: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Rb_tree_node<raft::kernel*> >::deallocate(std::_Rb_tree_node<raft::kernel*>*, unsigned long)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:110: undefined reference to `operator delete(void*)'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<std::string const, PortInfo> > >::allocate(unsigned long, void const*)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:102: undefined reference to `std::__throw_bad_alloc()'
+/usr/include/c++/4.8.3/ext/new_allocator.h:104: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<std::string const, PortInfo> > >::deallocate(std::_Rb_tree_node<std::pair<std::string const, PortInfo> >*, unsigned long)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:110: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >, void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()>(std::_Sp_make_shared_tag, std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >*, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> > const&, void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} (&&)())':
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:506: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:506: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:509: undefined reference to `__cxa_rethrow'
+allocate.o: In function `std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >, void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()>(std::_Sp_make_shared_tag, std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >*, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> > const&, void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} (&&)())':
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:506: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:506: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:509: undefined reference to `__cxa_rethrow'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >::deallocate(std::_Rb_tree_node<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > >*, unsigned long)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:110: undefined reference to `operator delete(void*)'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<bool const, std::function<FIFO* (unsigned long, unsigned long, void*)> > > >::allocate(unsigned long, void const*)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:102: undefined reference to `std::__throw_bad_alloc()'
+/usr/include/c++/4.8.3/ext/new_allocator.h:104: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:102: undefined reference to `std::__throw_bad_alloc()'
+/usr/include/c++/4.8.3/ext/new_allocator.h:104: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >, (__gnu_cxx::_Lock_policy)2> >::deallocate(__gnu_cxx::_Lock_policy*, unsigned long)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:110: undefined reference to `operator delete(void*)'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:102: undefined reference to `std::__throw_bad_alloc()'
+/usr/include/c++/4.8.3/ext/new_allocator.h:104: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >, (__gnu_cxx::_Lock_policy)2> >::deallocate(__gnu_cxx::_Lock_policy*, unsigned long)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:110: undefined reference to `operator delete(void*)'
+allocate.o:(.rodata._ZTVN6Buffer8DataBaseIlEE[_ZTVN6Buffer8DataBaseIlEE]+0x10): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV14RingBufferBaseIlLN4Type14RingBufferTypeE1EE[_ZTV14RingBufferBaseIlLN4Type14RingBufferTypeE1EE]+0x78): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV14RingBufferBaseIlLN4Type14RingBufferTypeE1EE[_ZTV14RingBufferBaseIlLN4Type14RingBufferTypeE1EE]+0x80): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x20): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x28): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x30): more undefined references to `__cxa_pure_virtual' follow
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x68): undefined reference to `FIFO::get_zero_read_stats(Blocked&)'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x70): undefined reference to `FIFO::get_zero_write_stats(Blocked&)'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x78): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x80): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x88): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x90): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x98): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0xa0): more undefined references to `__cxa_pure_virtual' follow
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE]+0x68): undefined reference to `FIFO::get_zero_read_stats(Blocked&)'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE]+0x70): undefined reference to `FIFO::get_zero_write_stats(Blocked&)'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE]+0x78): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE]+0x80): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE]+0x88): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE]+0x90): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE]+0x98): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE[_ZTV12FIFOAbstractIlLN4Type14RingBufferTypeE0EE]+0xa0): more undefined references to `__cxa_pure_virtual' follow
+allocate.o: In function `std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >::~_Impl()':
+/usr/include/c++/4.8.3/thread:107: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >::~_Impl()':
+/usr/include/c++/4.8.3/thread:107: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >::~_Impl()':
+/usr/include/c++/4.8.3/thread:107: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >::~_Impl()':
+/usr/include/c++/4.8.3/thread:107: undefined reference to `operator delete(void*)'
+allocate.o: In function `Print<long>::~Print()':
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:69: undefined reference to `operator delete(void*)'
+allocate.o:/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:69: more undefined references to `operator delete(void*)' follow
+allocate.o:(.rodata._ZTVN4raft6kernelE[_ZTVN4raft6kernelE]+0x20): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTV25ClosedPortAccessException[_ZTV25ClosedPortAccessException]+0x20): undefined reference to `PortException::what() const'
+allocate.o:(.rodata._ZTV32AmbiguousPortAssignmentException[_ZTV32AmbiguousPortAssignmentException]+0x20): undefined reference to `PortException::what() const'
+allocate.o:(.rodata._ZTVNSt6thread10_Impl_baseE[_ZTVNSt6thread10_Impl_baseE]+0x20): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x20): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x30): undefined reference to `__cxa_pure_virtual'
+allocate.o:(.rodata._ZTISt23_Sp_counted_ptr_inplaceINSt6thread5_ImplISt12_Bind_simpleIFZN3Map3exeI15simple_schedule8dynallocEEvvEUlvE0_vEEEESaISA_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceINSt6thread5_ImplISt12_Bind_simpleIFZN3Map3exeI15simple_schedule8dynallocEEvvEUlvE0_vEEEESaISA_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTISt23_Sp_counted_ptr_inplaceINSt6thread5_ImplISt12_Bind_simpleIFZN3Map3exeI15simple_schedule8dynallocEEvvEUlvE_vEEEESaISA_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceINSt6thread5_ImplISt12_Bind_simpleIFZN3Map3exeI15simple_schedule8dynallocEEvvEUlvE_vEEEESaISA_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTISt19_Sp_make_shared_tag[_ZTISt19_Sp_make_shared_tag]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTIN6Buffer4DataIlLN4Type14RingBufferTypeE1ELm0EEE[_ZTIN6Buffer4DataIlLN4Type14RingBufferTypeE1ELm0EEE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTIPFP4FIFOmmPvE[_ZTIPFP4FIFOmmPvE]+0x0): undefined reference to `vtable for __cxxabiv1::__pointer_type_info'
+allocate.o:(.rodata._ZTIN6Buffer4DataIlLN4Type14RingBufferTypeE0ELm0EEE[_ZTIN6Buffer4DataIlLN4Type14RingBufferTypeE0ELm0EEE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTIN6Buffer8DataBaseIlEE[_ZTIN6Buffer8DataBaseIlEE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTI10RingBufferIlLN4Type14RingBufferTypeE1ELb0EE[_ZTI10RingBufferIlLN4Type14RingBufferTypeE1ELb0EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI14RingBufferBaseIlLN4Type14RingBufferTypeE1EE[_ZTI14RingBufferBaseIlLN4Type14RingBufferTypeE1EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI11DataManagerIlLN4Type14RingBufferTypeE1ELm0EE[_ZTI11DataManagerIlLN4Type14RingBufferTypeE1ELm0EE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTI12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTI12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI12FIFOAbstractIlLN4Type14RingBufferTypeE1EE[_ZTI12FIFOAbstractIlLN4Type14RingBufferTypeE1EE]+0x10): undefined reference to `typeinfo for FIFO'
+allocate.o:(.rodata._ZTI10RingBufferIlLN4Type14RingBufferTypeE0ELb0EE[_ZTI10RingBufferIlLN4Type14RingBufferTypeE0ELb0EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI14RingBufferBaseIlLN4Type14RingBufferTypeE0EE[_ZTI14RingBufferBaseIlLN4Type14RingBufferTypeE0EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI11DataManagerIlLN4Type14RingBufferTypeE0ELm0EE[_ZTI11DataManagerIlLN4Type14RingBufferTypeE0ELm0EE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTI12FIFOAbstractIlLN4Type14RingBufferTypeE0EE[_ZTI12FIFOAbstractIlLN4Type14RingBufferTypeE0EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI12FIFOAbstractIlLN4Type14RingBufferTypeE0EE[_ZTI12FIFOAbstractIlLN4Type14RingBufferTypeE0EE]+0x10): undefined reference to `typeinfo for FIFO'
+allocate.o:(.rodata._ZTINSt6thread5_ImplISt12_Bind_simpleIFZN3Map3exeI15simple_schedule8dynallocEEvvEUlvE0_vEEEE[_ZTINSt6thread5_ImplISt12_Bind_simpleIFZN3Map3exeI15simple_schedule8dynallocEEvvEUlvE0_vEEEE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTINSt6thread5_ImplISt12_Bind_simpleIFZN3Map3exeI15simple_schedule8dynallocEEvvEUlvE_vEEEE[_ZTINSt6thread5_ImplISt12_Bind_simpleIFZN3Map3exeI15simple_schedule8dynallocEEvvEUlvE_vEEEE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI5PrintIlE[_ZTI5PrintIlE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI3SumIlllE[_ZTI3SumIlllE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI8GenerateIlE[_ZTI8GenerateIlE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTIN4raft6kernelE[_ZTIN4raft6kernelE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTI32AmbiguousPortAssignmentException[_ZTI32AmbiguousPortAssignmentException]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI32AmbiguousPortAssignmentException[_ZTI32AmbiguousPortAssignmentException]+0x10): undefined reference to `typeinfo for PortException'
+allocate.o:(.rodata._ZTI21PortNotFoundException[_ZTI21PortNotFoundException]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI21PortNotFoundException[_ZTI21PortNotFoundException]+0x10): undefined reference to `typeinfo for PortException'
+allocate.o:(.rodata._ZTINSt6thread10_Impl_baseE[_ZTINSt6thread10_Impl_baseE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTI8PortInfo[_ZTI8PortInfo]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o: In function `std::_Sp_counted_ptr_inplace<std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr_inplace()':
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:403: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::_Sp_counted_ptr_inplace<std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#2} ()> >, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr_inplace()':
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:403: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::_Sp_counted_ptr_inplace<std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr_inplace()':
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:403: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::_Sp_counted_ptr_inplace<std::thread::_Impl<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >, std::allocator<std::_Bind_simple<void Map::exe<simple_schedule, dynalloc>()::{lambda()#1} ()> >, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr_inplace()':
+/usr/include/c++/4.8.3/bits/shared_ptr_base.h:403: undefined reference to `operator delete(void*)'
+allocate.o: In function `Buffer::Data<long, (Type::RingBufferType)0, 0ul>::copyFrom(Buffer::DataBase<long>*)':
+/usr/local/include/raft_dir/bufferdata.tcc:202: undefined reference to `operator delete(void*)'
+/usr/local/include/raft_dir/bufferdata.tcc:203: undefined reference to `operator new(unsigned long)'
+/usr/local/include/raft_dir/bufferdata.tcc:203: undefined reference to `Pointer::Pointer(Pointer*, unsigned long)'
+/usr/local/include/raft_dir/bufferdata.tcc:204: undefined reference to `operator delete(void*)'
+/usr/local/include/raft_dir/bufferdata.tcc:205: undefined reference to `operator new(unsigned long)'
+/usr/local/include/raft_dir/bufferdata.tcc:205: undefined reference to `Pointer::Pointer(Pointer*, unsigned long)'
+/usr/local/include/raft_dir/bufferdata.tcc:203: undefined reference to `operator delete(void*)'
+/usr/local/include/raft_dir/bufferdata.tcc:205: undefined reference to `operator delete(void*)'
+allocate.o: In function `RingBuffer<long, (Type::RingBufferType)1, false>::~RingBuffer()':
+/usr/local/include/raft_dir/ringbuffer.tcc:317: undefined reference to `operator delete(void*)'
+/usr/local/include/raft_dir/ringbuffer.tcc:318: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbuffer.tcc:318: undefined reference to `operator delete(void*)'
+allocate.o: In function `RingBuffer<long, (Type::RingBufferType)1, false>::~RingBuffer()':
+/usr/local/include/raft_dir/ringbuffer.tcc:318: undefined reference to `operator delete(void*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)1>::size()':
+/usr/local/include/raft_dir/ringbufferheap.tcc:51: undefined reference to `Pointer::wrapIndicator(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:52: undefined reference to `Pointer::wrapIndicator(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:54: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:55: undefined reference to `Pointer::val(Pointer*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)1>::push(raft::signal)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:142: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:144: undefined reference to `Pointer::inc(Pointer*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)1>::push_range(raft::signal)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:168: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:171: undefined reference to `Pointer::inc(Pointer*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)1>::recycle(unsigned long)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:236: undefined reference to `Pointer::inc(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:206: undefined reference to `FIFO::is_invalid()'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)1>::local_allocate(void**)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:313: undefined reference to `Pointer::val(Pointer*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)1>::local_allocate_n(void*, unsigned long)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:357: undefined reference to `Pointer::val(Pointer*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)1>::local_push(void*, raft::signal const&)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:405: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:409: undefined reference to `Pointer::inc(Pointer*)'
+allocate.o: In function `ClosedPortAccessException::~ClosedPortAccessException()':
+/usr/local/include/raft_dir/portexception.hpp:63: undefined reference to `operator delete(void*)'
+allocate.o: In function `ClosedPortAccessException::~ClosedPortAccessException()':
+/usr/local/include/raft_dir/portexception.hpp:63: undefined reference to `operator delete(void*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)1>::local_pop(void*, raft::signal*)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:539: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:516: undefined reference to `FIFO::is_invalid()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `__cxa_allocate_exception'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::allocator<char>::allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `ClosedPortAccessException::ClosedPortAccessException(std::string)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:519: undefined reference to `__cxa_throw'
+/usr/local/include/raft_dir/ringbufferheap.tcc:547: undefined reference to `Pointer::inc(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:519: undefined reference to `__cxa_free_exception'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)1>::local_peek(void**, raft::signal*)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:629: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:610: undefined reference to `FIFO::is_invalid()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `__cxa_allocate_exception'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::allocator<char>::allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `ClosedPortAccessException::ClosedPortAccessException(std::string)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:613: undefined reference to `__cxa_throw'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:613: undefined reference to `__cxa_free_exception'
+allocate.o: In function `RingBuffer<long, (Type::RingBufferType)0, false>::~RingBuffer()':
+/usr/local/include/raft_dir/ringbuffer.tcc:71: undefined reference to `operator delete(void*)'
+/usr/local/include/raft_dir/ringbuffer.tcc:72: undefined reference to `operator delete(void*)'
+allocate.o: In function `RingBuffer<long, (Type::RingBufferType)0, false>::~RingBuffer()':
+/usr/local/include/raft_dir/ringbuffer.tcc:72: undefined reference to `operator delete(void*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)0>::size()':
+/usr/local/include/raft_dir/ringbufferheap.tcc:51: undefined reference to `Pointer::wrapIndicator(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:52: undefined reference to `Pointer::wrapIndicator(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:54: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:55: undefined reference to `Pointer::val(Pointer*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)0>::push(raft::signal)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:142: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:144: undefined reference to `Pointer::inc(Pointer*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)0>::push_range(raft::signal)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:168: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:171: undefined reference to `Pointer::inc(Pointer*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)0>::recycle(unsigned long)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:236: undefined reference to `Pointer::inc(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:206: undefined reference to `FIFO::is_invalid()'
+allocate.o: In function `RingBuffer<long, (Type::RingBufferType)0, false>::resize(unsigned long, unsigned long, bool volatile&)':
+/usr/local/include/raft_dir/ringbuffer.tcc:97: undefined reference to `operator new(unsigned long)'
+/usr/local/include/raft_dir/ringbuffer.tcc:97: undefined reference to `operator delete(void*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)0>::local_allocate(void**)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:313: undefined reference to `Pointer::val(Pointer*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)0>::local_allocate_n(void*, unsigned long)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:357: undefined reference to `Pointer::val(Pointer*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)0>::local_push(void*, raft::signal const&)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:405: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:409: undefined reference to `Pointer::inc(Pointer*)'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)0>::local_pop(void*, raft::signal*)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:539: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:516: undefined reference to `FIFO::is_invalid()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `__cxa_allocate_exception'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::allocator<char>::allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `ClosedPortAccessException::ClosedPortAccessException(std::string)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:519: undefined reference to `__cxa_throw'
+/usr/local/include/raft_dir/ringbufferheap.tcc:547: undefined reference to `Pointer::inc(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:518: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:519: undefined reference to `__cxa_free_exception'
+allocate.o: In function `RingBufferBase<long, (Type::RingBufferType)0>::local_peek(void**, raft::signal*)':
+/usr/local/include/raft_dir/ringbufferheap.tcc:629: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:610: undefined reference to `FIFO::is_invalid()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `__cxa_allocate_exception'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::allocator<char>::allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `ClosedPortAccessException::ClosedPortAccessException(std::string)'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:613: undefined reference to `__cxa_throw'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:612: undefined reference to `std::allocator<char>::~allocator()'
+/usr/local/include/raft_dir/ringbufferheap.tcc:613: undefined reference to `__cxa_free_exception'
+allocate.o: In function `Print<long>::run()':
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:81: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:81: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:81: undefined reference to `Port::operator[](std::string)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:81: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:81: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:81: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:81: undefined reference to `std::allocator<char>::~allocator()'
+allocate.o: In function `Sum<long, long, long>::run()':
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:55: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:55: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:55: undefined reference to `Port::operator[](std::string)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:55: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:55: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:56: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:56: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:56: undefined reference to `Port::operator[](std::string)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:56: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:56: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:59: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:59: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:59: undefined reference to `Port::operator[](std::string)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:59: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:59: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:55: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:55: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:56: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:56: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:59: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:59: undefined reference to `std::allocator<char>::~allocator()'
+allocate.o: In function `Generate<long>::run()':
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:23: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:23: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:23: undefined reference to `Port::operator[](std::string)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:23: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:23: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:25: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:25: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:25: undefined reference to `Port::operator[](std::string)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:25: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:25: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:30: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:30: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:30: undefined reference to `Port::operator[](std::string)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:30: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:30: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:32: undefined reference to `std::allocator<char>::allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:32: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:32: undefined reference to `Port::operator[](std::string)'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:32: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:32: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:23: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:23: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:25: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:25: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:30: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:30: undefined reference to `std::allocator<char>::~allocator()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:32: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/home/mercury/beardj/GIT_RPO/RaftLib/TestCases/allocate.cpp:32: undefined reference to `std::allocator<char>::~allocator()'
+allocate.o: In function `Buffer::Data<long, (Type::RingBufferType)1, 0ul>::~Data()':
+/usr/local/include/raft_dir/bufferdata.tcc:373: undefined reference to `std::string::c_str() const'
+/usr/local/include/raft_dir/bufferdata.tcc:369: undefined reference to `SHM::Close(char const*, void*, unsigned long, bool, bool)'
+/usr/local/include/raft_dir/bufferdata.tcc:378: undefined reference to `std::string::c_str() const'
+/usr/local/include/raft_dir/bufferdata.tcc:374: undefined reference to `SHM::Close(char const*, void*, unsigned long, bool, bool)'
+/usr/local/include/raft_dir/bufferdata.tcc:383: undefined reference to `std::string::c_str() const'
+/usr/local/include/raft_dir/bufferdata.tcc:379: undefined reference to `SHM::Close(char const*, void*, unsigned long, bool, bool)'
+/usr/local/include/raft_dir/bufferdata.tcc:384: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/bufferdata.tcc:384: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+/usr/local/include/raft_dir/bufferdata.tcc:384: undefined reference to `std::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string()'
+allocate.o: In function `std::function<void (void*, void*, raft::signal const&)>::operator()(void*, void*, raft::signal const&) const':
+/usr/include/c++/4.8.3/functional:2470: undefined reference to `std::__throw_bad_function_call()'
+allocate.o: In function `Buffer::Data<long, (Type::RingBufferType)0, 0ul>::~Data()':
+/usr/local/include/raft_dir/bufferdata.tcc:222: undefined reference to `operator delete(void*)'
+/usr/local/include/raft_dir/bufferdata.tcc:223: undefined reference to `operator delete(void*)'
+allocate.o: In function `DataManager<long, (Type::RingBufferType)0, 0ul>::resize(Buffer::Data<long, (Type::RingBufferType)0, 0ul>*, bool volatile&)::{lambda()#2}::operator()() const':
+/usr/local/include/raft_dir/datamanager.tcc:113: undefined reference to `Pointer::val(Pointer*)'
+/usr/local/include/raft_dir/datamanager.tcc:114: undefined reference to `Pointer::val(Pointer*)'
+allocate.o: In function `DataManager<long, (Type::RingBufferType)0, 0ul>::resize(Buffer::Data<long, (Type::RingBufferType)0, 0ul>*, bool volatile&)':
+/usr/local/include/raft_dir/datamanager.tcc:124: undefined reference to `operator delete(void*)'
+/usr/local/include/raft_dir/datamanager.tcc:145: undefined reference to `operator delete(void*)'
+allocate.o: In function `void std::vector<std::reference_wrapper<long>, std::allocator<std::reference_wrapper<long> > >::_M_emplace_back_aux<std::reference_wrapper<long> >(std::reference_wrapper<long>&&)':
+/usr/include/c++/4.8.3/bits/vector.tcc:419: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/vector.tcc:419: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/vector.tcc:426: undefined reference to `__cxa_rethrow'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)1>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#1}>::_M_init_functor(std::_Any_data&, {lambda(void*, void*, raft::signal const&)#1}&&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1987: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)1>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#1}>::_M_clone(std::_Any_data&, std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)1>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#1}> const&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1910: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)1>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#1}>::_M_destroy(std::_Any_data&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1926: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)1>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#2}>::_M_init_functor(std::_Any_data&, {lambda(void*, void*, raft::signal const&)#2}&&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1987: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)1>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#2}>::_M_clone(std::_Any_data&, std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)1>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#2}> const&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1910: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)1>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#2}>::_M_destroy(std::_Any_data&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1926: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)0>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#1}>::_M_init_functor(std::_Any_data&, {lambda(void*, void*, raft::signal const&)#1}&&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1987: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)0>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#1}>::_M_clone(std::_Any_data&, std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)0>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#1}> const&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1910: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)0>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#1}>::_M_destroy(std::_Any_data&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1926: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)0>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#2}>::_M_init_functor(std::_Any_data&, {lambda(void*, void*, raft::signal const&)#2}&&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1987: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)0>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#2}>::_M_clone(std::_Any_data&, std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)0>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#2}> const&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1910: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `std::_Function_base::_Base_manager<RingBufferBase<long, (Type::RingBufferType)0>::local_insert(void*, void*, raft::signal const&, unsigned long)::{lambda(void*, void*, raft::signal const&)#2}>::_M_destroy(std::_Any_data&, std::integral_constant<bool, false>)':
+/usr/include/c++/4.8.3/functional:1926: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::vector<std::reference_wrapper<long>, std::allocator<std::reference_wrapper<long> > >::_M_check_len(unsigned long, char const*) const':
+/usr/include/c++/4.8.3/bits/stl_vector.h:1339: undefined reference to `std::__throw_length_error(char const*)'
+allocate.o: In function `std::_Rb_tree_iterator<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > > std::_Rb_tree<unsigned long, std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> >, std::_Select1st<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > >, std::less<unsigned long>, std::allocator<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > > >::_M_insert_<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > const&>(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > const&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:1025: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+allocate.o: In function `__gnu_cxx::new_allocator<std::reference_wrapper<long> >::allocate(unsigned long, void const*)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:102: undefined reference to `std::__throw_bad_alloc()'
+/usr/include/c++/4.8.3/ext/new_allocator.h:104: undefined reference to `operator new(unsigned long)'
+allocate.o: In function `__gnu_cxx::new_allocator<std::reference_wrapper<long> >::deallocate(std::reference_wrapper<long>*, unsigned long)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:110: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::_Rb_tree_iterator<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > >::operator--()':
+/usr/include/c++/4.8.3/bits/stl_tree.h:204: undefined reference to `std::_Rb_tree_decrement(std::_Rb_tree_node_base*)'
+allocate.o: In function `std::_Rb_tree_iterator<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > >::operator++()':
+/usr/include/c++/4.8.3/bits/stl_tree.h:189: undefined reference to `std::_Rb_tree_increment(std::_Rb_tree_node_base*)'
+allocate.o: In function `std::_Rb_tree_node<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > >* std::_Rb_tree<unsigned long, std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> >, std::_Select1st<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > >, std::less<unsigned long>, std::allocator<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > > >::_M_create_node<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > const&>(std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > const&)':
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:410: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/stl_tree.h:413: undefined reference to `__cxa_rethrow'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > > >::deallocate(std::_Rb_tree_node<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > >*, unsigned long)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:110: undefined reference to `operator delete(void*)'
+allocate.o: In function `std::reference_wrapper<long>* std::__uninitialized_copy<false>::__uninit_copy<std::move_iterator<std::reference_wrapper<long>*>, std::reference_wrapper<long>*>(std::move_iterator<std::reference_wrapper<long>*>, std::move_iterator<std::reference_wrapper<long>*>, std::reference_wrapper<long>*)':
+/usr/include/c++/4.8.3/bits/stl_uninitialized.h:78: undefined reference to `__cxa_end_catch'
+/usr/include/c++/4.8.3/bits/stl_uninitialized.h:78: undefined reference to `__cxa_begin_catch'
+/usr/include/c++/4.8.3/bits/stl_uninitialized.h:81: undefined reference to `__cxa_rethrow'
+allocate.o: In function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<unsigned long const, std::function<void (void*, void*, raft::signal const&)> > > >::allocate(unsigned long, void const*)':
+/usr/include/c++/4.8.3/ext/new_allocator.h:102: undefined reference to `std::__throw_bad_alloc()'
+/usr/include/c++/4.8.3/ext/new_allocator.h:104: undefined reference to `operator new(unsigned long)'
+allocate.o:(.rodata._ZTIZN14RingBufferBaseIlLN4Type14RingBufferTypeE0EE12local_insertEPvS3_RKN4raft6signalEmEUlS3_S3_S7_E0_[_ZTIZN14RingBufferBaseIlLN4Type14RingBufferTypeE0EE12local_insertEPvS3_RKN4raft6signalEmEUlS3_S3_S7_E0_]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTIZN14RingBufferBaseIlLN4Type14RingBufferTypeE0EE12local_insertEPvS3_RKN4raft6signalEmEUlS3_S3_S7_E_[_ZTIZN14RingBufferBaseIlLN4Type14RingBufferTypeE0EE12local_insertEPvS3_RKN4raft6signalEmEUlS3_S3_S7_E_]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTIZN14RingBufferBaseIlLN4Type14RingBufferTypeE1EE12local_insertEPvS3_RKN4raft6signalEmEUlS3_S3_S7_E0_[_ZTIZN14RingBufferBaseIlLN4Type14RingBufferTypeE1EE12local_insertEPvS3_RKN4raft6signalEmEUlS3_S3_S7_E0_]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTIZN14RingBufferBaseIlLN4Type14RingBufferTypeE1EE12local_insertEPvS3_RKN4raft6signalEmEUlS3_S3_S7_E_[_ZTIZN14RingBufferBaseIlLN4Type14RingBufferTypeE1EE12local_insertEPvS3_RKN4raft6signalEmEUlS3_S3_S7_E_]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTIN9__gnu_cxx17__normal_iteratorIPlSt6vectorIlSaIlEEEE[_ZTIN9__gnu_cxx17__normal_iteratorIPlSt6vectorIlSaIlEEEE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.rodata._ZTISt14_List_iteratorIlE[_ZTISt14_List_iteratorIlE]+0x0): more undefined references to `vtable for __cxxabiv1::__class_type_info' follow
+allocate.o:(.rodata._ZTI25ClosedPortAccessException[_ZTI25ClosedPortAccessException]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+allocate.o:(.rodata._ZTI25ClosedPortAccessException[_ZTI25ClosedPortAccessException]+0x10): undefined reference to `typeinfo for PortException'
+allocate.o:(.rodata._ZTIFP4FIFOmmPvE[_ZTIFP4FIFOmmPvE]+0x0): undefined reference to `vtable for __cxxabiv1::__function_type_info'
+allocate.o:(.rodata._ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+allocate.o:(.eh_frame+0x1ab): undefined reference to `__gxx_personality_v0'
+collect2: error: ld returned 1 exit status
+make: *** [allocate] Error 1

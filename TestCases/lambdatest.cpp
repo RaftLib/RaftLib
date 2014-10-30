@@ -21,7 +21,9 @@ main( int argc, char **argv )
                                             {
                                                 if( gen_count++ < 10000 )
                                                 {
-                                                   output[ "0" ].push( rand_func() );
+                                                   output[ "0" ].push( 
+                                                      rand_func(),
+                                                      raft::none );
                                                    return( raft::proceed );
                                                 }
                                                 return( raft::stop );

@@ -114,10 +114,10 @@ const std::map< std::size_t,
 
 public:
    template < class iterator_type > 
-   read_each( iterator_type &&begin, iterator_type &&end )
+   read_each( iterator_type &&begin, iterator_type &&end ) : 
+      it_begin_ptr( &begin ),
+      it_end_ptr( &end )                                                         
    {     
-      (this)->it_begin_ptr = &begin;
-      (this)->it_end_ptr   = &end;
       addPortTo< T >( output );
 
       /** 
@@ -154,8 +154,8 @@ protected:
    }
 
 private:
-   void       * const it_begin_ptr    = nullptr;
-   void       * const it_end_ptr      = nullptr;
+   void       * const it_begin_ptr;
+   void       * const it_end_ptr;
    std::function< bool ( void*, void*, Port& ) > inc_func;
 
 };
