@@ -47,12 +47,14 @@ install:
 	cp ./fifo/*.hpp $(PREFIX)/include/raft_dir/
 	cp ./fifo/*.tcc $(PREFIX)/include/raft_dir/
 	cp raft $(PREFIX)/include/
+	cp raftio $(PREFIX)/include/
 	echo "Install complete!"
 
 uninstall:
 	rm -rf $(PREFIX)/lib/libraft.a
 	rm -rf $(PREFIX)/include/raft_dir
 	rm -rf $(PREFIX)/include/raft
+	rm -rf $(PREFIX)/include/raftio
 	echo "Uninstalled!"
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCS) -o $@ $<

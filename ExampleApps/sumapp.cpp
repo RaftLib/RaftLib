@@ -3,17 +3,18 @@
 #include <cstdint>
 #include <cstdlib>
 #include <raft>
+#include <raftio>
+
 #include <vector>
 #include <type_traits>
 #include <utility>
 
-#include "print.tcc"
 
-template < typename T > class Generate : public Kernel
+template < typename T > class generate : public raft::kernel
 {
 public:
-   Generate( std::int64_t count = 1000 ) : Kernel(),
-                                          count( count )
+   generate( std::int64_t count = 1000 ) : raft::kernel(),
+                                           count( count )
    {
       output.addPort< T >( "number_stream" );
    }
@@ -33,10 +34,10 @@ private:
    std::int64_t count;
 };
 
-template< typename A, typename B, typename C > class Sum : public Kernel
+template< typename A, typename B, typename C > class sum : public raft::kernel
 {
 public:
-   Sum() : Kernel()
+   sum() : raft::kernel()
    {
       input.addPort< A >( "input_a" );
       input.addPort< B >( "input_b" );
@@ -84,14 +85,14 @@ main( int argc, char **argv )
    using namespace raft;
    const std::size_t count( 100000 );
    auto linked_kernels( 
-      map.link( new Generate< std::int64_t >( count ),
-                new Sum< std::int64_t,std::int64_t, std::int64_t >(),
+      map.link( kernel::make< generate< std::int64_t > >( count ),
+                kernel::make< sum< std::int64_t,std::int64_t, std::int64_t > >(),
                   "input_a" ) );
-   map.link( new Generate< std::int64_t >( count ), 
+   map.link( kernel::make< generate< std::int64_t > >( count ), 
              &( linked_kernels.dst ), 
                "input_b" );
    map.link( &( linked_kernels.dst ), 
-             new Print< std::int64_t ,'\n'>() );
+             kernel::make< raft::print< std::int64_t ,'\n'> >() );
    map.exe();
    return( EXIT_SUCCESS );
 }

@@ -28,6 +28,8 @@
 
 #include <raft>
 
+namespace raft{
+
 template < std::size_t size = 65536 > struct filechunk
 {
    filechunk() = default;
@@ -56,7 +58,7 @@ template < std::size_t size = 65536 > struct filechunk
 };
 
 template < class chunktype = filechunk< 65536 >, 
-           bool copy = false > class filereader : public Kernel
+           bool copy = false > class filereader : public raft::kernel
 {
 public:
    filereader( const std::string inputfile, 
@@ -123,4 +125,6 @@ public:
    std::streamsize length;
    std::size_t     iterations;
 };
+
+} /* end namespace raft */
 #endif /* END _FILEIO_TCC_ */

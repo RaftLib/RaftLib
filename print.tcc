@@ -25,11 +25,11 @@
 #include <raft>
 #include <cstdlib>
 
-
-template< typename T, char delim = '\0' > class Print : public Kernel
+namespace raft{
+template< typename T, char delim = '\0' > class print : public raft::kernel
 {
 public:
-   Print( ) : Kernel()
+   print( ) : raft::kernel()
    {
       input.addPort< T >( "in" );
    }
@@ -58,5 +58,5 @@ public:
       return( raft::proceed );
    }
 };
-
+} /* end namespace raft */
 #endif /* END _PRINT_TCC_ */

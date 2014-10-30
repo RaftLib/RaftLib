@@ -74,6 +74,8 @@
 #include "./raft_dir/sample.tcc"
 #include "./raft_dir/sampletype.tcc"
 
+#include "./raft_dir/lambdak.tcc"
+
 namespace raft
 {
    Map map;

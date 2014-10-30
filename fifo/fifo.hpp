@@ -258,6 +258,27 @@ public:
       local_push( ptr, signal );
       return;
    }
+   
+   /**
+    * push - function which takes an object of type T and a 
+    * signal, makes a copy of the object using the copy 
+    * constructor and passes it to the FIFO along with the
+    * signal which is guaranteed to be delivered at the 
+    * same time as the object (if of course the receiving 
+    * object is responding to signals).
+    * @param   item -  T&&
+    * @param   signal -  raft::signal, default raft::none
+    */
+   template < class T > 
+   void push( T &&item, const raft::signal signal = raft::none )
+   {
+      /* object lives here */
+      T item_copy( item );
+      void *ptr( (void*) &item_copy );
+      /** call blocks till element is written and released to queue **/
+      local_push( ptr, signal );
+      return;
+   }
 
    /**
     * insert - inserts the range from begin to end in the FIFO,

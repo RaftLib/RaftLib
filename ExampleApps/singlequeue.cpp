@@ -3,15 +3,15 @@
 #include <cstdint>
 #include <cstdlib>
 #include <raft>
-#include <vector>
+#include <raftio>
 
-#include "print.tcc"
 
-template < typename T > class Generate : public Kernel
+
+template < typename T > class generate : public raft::kernel
 {
 public:
-   Generate( std::int64_t count = 1000000) : Kernel(),
-                                          count( count )
+   generate( std::int64_t count = 1000000) : raft::kernel(),
+                                             count( count )
    {
       output.addPort< T >( "number_stream" );
    }
@@ -35,7 +35,8 @@ int
 main( int argc, char **argv )
 {
    using namespace raft;
-   map.link( new Generate< std::int64_t >(), new Print< std::int64_t, '\n' >() );
+   map.link( kernel::make< generate< std::int64_t > >(), 
+             kernel::make< raft::print< std::int64_t, '\n' > >() );
    map.exe();
    return( EXIT_SUCCESS );
 }
