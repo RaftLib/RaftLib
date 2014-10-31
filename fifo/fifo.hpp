@@ -107,7 +107,7 @@ public:
       {
          if( ! copied )
          {
-            fifo.push( signal );   
+            fifo.send( signal );   
          }
       }
    
@@ -225,20 +225,20 @@ public:
       return( output );
    }
    /**
-    * releases the last item allocated by allocate() to the 
+    * send - releases the last item allocated by allocate() to the 
     * queue.  Function will simply return if allocate wasn't
     * called prior to calling this function.
     * @param   signal - const raft::signal, default: NONE
     */
-   virtual void push( const raft::signal = raft::none ) = 0;
+   virtual void send( const raft::signal = raft::none ) = 0;
 
    /** 
-    * push_range - releases the items allocated by allocate_range
+    * send_range - releases the items allocated by allocate_range
     * to the queue.  Function will simply return if allocate wasn't
     * called prior to calling this function.
     * @param   signal - const raft::signal, default: NONE
     */
-    virtual void push_range( const raft::signal = raft::none ) = 0;
+    virtual void send_range( const raft::signal = raft::none ) = 0;
 
    /**
     * push - function which takes an object of type T and a 
@@ -250,14 +250,14 @@ public:
     * @param   item -  T&
     * @param   signal -  raft::signal, default raft::none
     */
-   //template < class T > 
-   //void push( T &item, const raft::signal signal = raft::none )
-   //{
-   //   void *ptr( (void*) &item );
-   //   /** call blocks till element is written and released to queue **/
-   //   local_push( ptr, signal );
-   //   return;
-   //}
+   template < class T > 
+   void push( const T &item, const raft::signal signal = raft::none )
+   {
+      void *ptr( (void*) &item );
+      /** call blocks till element is written and released to queue **/
+      local_push( ptr, signal );
+      return;
+   }
    
    /**
     * push - function which takes an object of type T and a 

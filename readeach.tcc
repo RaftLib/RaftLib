@@ -55,7 +55,6 @@ template< class iterator_type >
          {
             return( true );
          }
-         std::uint32_t val( (*begin ) );
          port.push< T >( (*begin) );
          begin++;
       }

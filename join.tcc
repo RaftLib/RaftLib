@@ -45,7 +45,7 @@ public:
       if( split_func.get( mem, temp_signal, input ) )
       {
          /** call push to release above allocated memory **/
-         output[ "0" ].push( temp_signal );
+         output[ "0" ].send( temp_signal );
       }
       return( raft::proceed );
    }

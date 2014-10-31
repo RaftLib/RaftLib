@@ -87,12 +87,12 @@ public:
    
 
    /**
-    * push - releases the last item allocated by allocate() to
+    * send - releases the last item allocated by allocate() to
     * the queue.  Function will imply return if allocate wasn't
     * called prior to calling this function.
     * @param signal - const raft::signal signal, default: raft::signal::none
     */
-   virtual void push( const raft::signal signal = raft::none )
+   virtual void send( const raft::signal signal = raft::none )
    {
       if( ! (this)->allocate_called ) return;
       dm.get()->signal[ 0 ].sig = signal;
@@ -101,7 +101,8 @@ public:
       (this)->n_allocated = 1;
    }
 
-   
+   /** TODO, add send_range func to match fifo.hpp **/
+
    /**
     * recycle - remove ``range'' items from the head of the
     * queue and discard them.  Can be used in conjunction with

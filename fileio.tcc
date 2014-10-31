@@ -107,7 +107,7 @@ public:
             fread( chunk.buffer, sizeof( char ), chunksize , fp ) );
          chunk.buffer[ num_read ] = '\0';
          chunk.length = num_read;
-         port.push( 
+         port.send( 
             ( iterations - output.count() /* num ports */ ) > 0 ? 
                raft::none : 
                raft::eof );

@@ -130,12 +130,12 @@ public:
    }
 
    /**
-    * push - releases the last item allocated by allocate() to
+    * send- releases the last item allocated by allocate() to
     * the queue.  Function will imply return if allocate wasn't
     * called prior to calling this function.
     * @param signal - const raft::signal signal, default: NONE
     */
-   virtual void push( const raft::signal signal = raft::none )
+   virtual void send( const raft::signal signal = raft::none )
    {
       if( ! (this)->allocate_called ) return;
       /** should be the end of the write, regardless of which allocate called **/
@@ -156,12 +156,12 @@ public:
    }
    
    /**
-    * push_range - releases the last item allocated by allocate_range() to
+    * send_range - releases the last item allocated by allocate_range() to
     * the queue.  Function will imply return if allocate wasn't
     * called prior to calling this function.
     * @param signal - const raft::signal signal, default: NONE
     */
-   virtual void push_range( const raft::signal signal = raft::none )
+   virtual void send_range( const raft::signal signal = raft::none )
    {
       if( ! (this)->allocate_called ) return;
       /** should be the end of the write, regardless of which allocate called **/

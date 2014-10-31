@@ -21,14 +21,14 @@ public:
          
          auto &ref( output[ "number_stream" ].allocate< T >() );
          ref = count;
-         output[ "number_stream"].push();
+         output[ "number_stream"].send();
          
          return( raft::proceed );
       }
       /** else **/
       auto &ref( output[ "number_stream" ].allocate< T >() );
       ref = count;
-      output[ "number_stream" ].push( raft::eof );
+      output[ "number_stream" ].send( raft::eof );
       return( raft::stop );
    }
 
