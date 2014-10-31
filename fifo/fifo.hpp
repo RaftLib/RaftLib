@@ -88,7 +88,7 @@ public:
    };
 
 
-   template < class T > class autorelease< T, autotype::allocatetype >
+   template < class T > class autorelease< T, allocatetype >
    {
    public:
       
@@ -96,12 +96,12 @@ public:
       {
       }
 
-      //autorelease( const autorelease< T, autotype::allocatetype > &other ) : 
-      //   item( other.item ), 
-      //   fifo( other.fifo )
-      //{
-      //   other.copied = true;
-      //}
+      autorelease( const autorelease< T, allocatetype > &other ) : 
+         item( other.item ), 
+         fifo( other.fifo )
+      {
+         const_cast< autorelease< T, allocatetype >& >( other ).copied = true;
+      }
       
       ~autorelease()
       {
@@ -195,11 +195,11 @@ public:
    }
 
    template < class T > auto allocate_s() -> 
-      autorelease< T, autotype::allocatetype >
+      autorelease< T, allocatetype >
    {
       void *ptr( nullptr );
       local_allocate( &ptr );
-      return( autorelease< T, autotype::allocatetype >( 
+      return( autorelease< T, allocatetype >( 
          reinterpret_cast< T* >( ptr ), (*this) ) );
    }
    
@@ -317,9 +317,9 @@ public:
    }
 
    template< class T >
-   auto pop_s() -> autorelease< T, autotype::poptype >
+   auto pop_s() -> autorelease< T, poptype >
    {
-      return( autorelease< T, autotype::poptype >( (*this) ) );
+      return( autorelease< T, poptype >( (*this) ) );
    }
 
    /**

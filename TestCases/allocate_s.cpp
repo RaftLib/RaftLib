@@ -8,7 +8,7 @@
 template < typename T > class Generate : public raft::kernel
 {
 public:
-   Generate( std::int64_t count = 1000 ) : raft::kernel(),
+   Generate( std::int64_t count = 10 ) : raft::kernel(),
                                            count( count )
    {
       output.addPort< T >( "number_stream" );

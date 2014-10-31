@@ -40,11 +40,19 @@ public:
                                           Port &output ) > lambdafunc_t;
    lambdak( const std::size_t inputs, 
             const std::size_t outputs, 
-            lambdafunc_t  &&func ) : raft::kernel(),
+            lambdafunc_t  func ) :   raft::kernel(),
                                      run_func( func )
    {
       add_ports< PORTS... >( inputs, outputs );
    }
+
+   //lambdak( const std::size_t inputs, 
+   //         const std::size_t outputs, 
+   //         const lambdafunc_t  &&func ) : raft::kernel(),
+   //                                        run_func( func )
+   //{
+   //   add_ports< PORTS... >( inputs, outputs );
+   //}
 
    virtual raft::kstatus run()
    {
