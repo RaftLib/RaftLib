@@ -40,7 +40,7 @@ public:
    virtual raft::kstatus run()
    {
       /** multiple calls to allocate will return same reference **/
-      T &mem( output[ "0" ].template allocate< T >() );
+      T &mem( output[ "0" ].allocate< T >() );
       raft::signal temp_signal;
       if( split_func.get( mem, temp_signal, input ) )
       {

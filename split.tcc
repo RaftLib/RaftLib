@@ -38,7 +38,7 @@ public:
    {
       /** TODO, add code to do multi-item inserts **/
       raft::signal signal;
-      T &item( input[ "0" ].template peek< T >( &signal ) );
+      T &item( input[ "0" ].peek< T >( &signal ) );
       if( split_func.send( item, signal, output ) )
       {
          /* recycle item */

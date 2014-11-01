@@ -43,7 +43,7 @@ public:
    {
    public:
       autorelease( FIFO &fifo ) : fifo( fifo ),
-                                     item( fifo.template peek< T >( &signal ) )
+                                  item( fifo.peek< T >( &signal ) )
       {}
 
       autorelease( const autorelease< T, type >  &other ) : 
