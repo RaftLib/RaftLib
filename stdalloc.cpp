@@ -45,7 +45,7 @@ stdalloc::run()
       /** assume everyone needs a heap for the moment to get working **/
       instr_map_t *func_map( a.const_map[ Type::Heap ] );
       auto test_func( (*func_map)[ false ] );
-      FIFO *fifo( test_func( 512, 16, (void*)NULL ) );
+      FIFO *fifo( test_func( 64, 16, (void*)NULL ) );
       assert( fifo != nullptr );
       (this)->initialize( &a, &b, fifo );
    };
