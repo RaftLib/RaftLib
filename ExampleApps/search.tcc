@@ -1,7 +1,7 @@
 /**
  * search.tcc - 
  * @author: Jonathan Beard
- * @version: Thu Jun 19 14:07:49 2014
+ * @version: Sun Nov  2 06:23:18 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -20,137 +20,113 @@
 #ifndef _SEARCH_TCC_
 #define _SEARCH_TCC_  1
 #include <cassert>
-#include <cstring>
-#include <vector>
-#include <functional>
+#include <cstddef>
+#include <cstdint>
 #include <cmath>
-#include <sstream>
-#include <fstream>
-#include <thread>
-#include <utility>
-#include <algorithm>
 
+#include <raft>
+#include <raftio>
 
-enum SearchAlgorithm 
-{ 
-   RabinKarp,
-   KnuthMorrisPratt,
-   Automata
-};
+namespace raft
+{
+   using hit_t    = std::size_t;
+   using chunk_t  = filechunk< 4096 >;
+   enum searchalgorithm { rabinkarp, 
+                          kmp,
+                          automata };
 
-typedef std::size_t hit_t;
+template < searchalgorithm alg > class search;
 
-template < std::size_t chunksize = 16384, 
-           SearchAlgorithm algorithm = RabinKarp > search : public Kernel
+template <> class search< rabinkarp > : public kernel
 {
 public:
-   search( const std::string search_term )
+   search( const std::string term ) : kernel(),
+                                      search_term_length( term.length() ),
+                                      pattern( hashfunc( term, search_term_length, d, q ) ),
+                                      h( comp_h( q, d, search_term_length, h ) )
    {
-      /** setup ports, only one in and one out **/
-      input.addPort< filechunk< chunksize > >( "in_data" );
-      input.addPort< char[256] >( "in_term" );
-      output.addPort< hit_t >( "out" );
-      
-      uint64_t q;
-      uint64_t d;
-
-      switch( algorithm )
-      {
-         case( RabinKarp ):
-         {
-            
-            q = 33554393 ;
-            d = 0xff ;
-            /**
-             * hash_function - used to compute initial hashes
-             * for pattern values "p"
-             * @param - line, full line to be hashed
-             * @param - length, length from start ( 0 ) to be 
-             * hashed.  It is assumed that this function is only
-             * used for the starts of lines.
-             */
-            auto hash_function = [&]( const std::string line, 
-                                      const size_t      length )
-            {
-               std::int64_t t( 0 );
-               for( std::size_t i( 0 ); i < length; i++ )
-               {
-                  t = ( ( t * d ) + line[ i ] ) % q;
-               }
-               return( t );
-            };
-            
-            /**
-             * h - max radix power to subtract off in rolling hash
-             */
-            std::uint64_t h( 1 );
-            /**
-             * p - pattern hash value, only computed once and read
-             * only after that
-             */
-            std::int64_t p(  hash_function( search_term, search_term_length ) );
-            for( auto i( 1 ); i < search_term_length; i++ )
-            {
-               h = ( h * d ) % q;
-            }
-
-
-            auto rkfunction = [&]()
-            {
-               /**
-                * here's the game plan: 
-                * 1) the thread shared patterns "p" are stored in a globally
-                *    accessible variable "p" as in64_t values.
-                * 2) the max radix value to subtract off is stored for each
-                *    pattern length in "h".
-                * 3) here we need to compute the initial hash for each length 
-                *    of pattern.
-                * 4) then we have to keep track of when to stop for pattern, 
-                *    obviously the longest is first but the shorter ones 
-                */
-               /** 
-                * start by calculating initial hash values for line for each
-                * of the pattern lengths, might be just as easy to "roll" 
-                * different lengths, but this seems like it might be a bit
-                * faster to just keep |search_terms| hash values for each 
-                * pattern.
-                */
-               auto t( hash_function( chunk.chunk, 
-                                      search_term_length ) );
-
-               /** increment var for do loop below **/
-               size_t s( 0 );
-               do{
-                  if( p == t )
-                  {
-                     hits.push_back( s + chunk.start_position );
-                  }
-                  /** calc new offsets **/
-                  const auto remove_val( ( chunk.chunk[ s ] * h ) % q );
-                  t = ( t + (d * q )- remove_val ) % q;
-                  t = ( d * t ) % q;
-                  t = ( t + chunk.chunk[ s + search_term_length ] ) % q;
-                  s++;
-               }while( s <= ( CHUNKSIZE - search_term_length ) );
-            };
-            /** assign the worker funciton for the Rabin Karp algorithm **/
-         }
-         break;
-         default:
-            assert( false );
-      }
-   }     
-   
-   virtual ~search() = delete;
-   
-   void run();
-   {
-      raft::signal d_signal;
-      filechunk< chunksize > input[ "input_data" ].peek( &d_signal );
-      worker_function( 
+      assert( search_term_length > 0 ); 
+      input.addPort<  chunk_t >( "in"  );
+      output.addPort< hit_t   >( "out" );
    }
+   
+   virtual kstatus run()
+   {
+      auto text( input[ "in" ].pop_s< chunk_t >() );
+      const auto term_cond( std::min( chunk_t::getChunkSize(), (*text).length ) );
+      std::size_t s( 0 );
+      const char * const buffer = (*text).buffer;
+
+      std::int64_t t( hashfunc( buffer, search_term_length, d, q ) ); 
+      std::vector< hit_t > hits;
+      do{
+         if( pattern == t )
+         {
+            hits.push_back( s + (*text).start_position );
+         }
+         const auto remove_val( ( buffer[ s ] * h ) % q );
+         t = ( t + ( d * q ) - remove_val ) % q;
+         t = ( d * t ) % q;
+         t = ( t + buffer[ s + search_term_length ] ) % q;
+         s++;
+      }while( s <= ( term_cond - search_term_length) );
+      if( hits.size() > 0 )
+      {
+         output[ "out" ].insert( hits.begin(), hits.end() );
+      }
+      return( raft::proceed );
+   }
+
 private:
-   std::function< void( void ) > worker_function;
-   std::vector< std::string >    search_terms;
+   /** prime number **/
+   const std::uint64_t q = 33554393;
+   /** shift **/
+   const std::uint64_t d = 0xff;
+   /** search term length **/
+   const std::size_t   search_term_length = 0;
+   /** term hash pattern **/
+   const std::int64_t  pattern;
+   /** max radix power to subtract from rolling hash **/
+   const std::int64_t  h = 1;
+
+   /** functions **/
+   /**
+    * hashfunc - rabinkarp rolling hash function, used once for the term
+    * and to start off each chunk that the kernel intakes.
+    * @param   text - const std::string, text to be hashed
+    * @param   length - const std::size_t, length of string assumed to start at zero
+    * @return  std::int64_t
+    */
+   static auto hashfunc( const std::string &text, 
+                         const std::size_t length, 
+                         const std::uint64_t d,
+                         const std::uint64_t q ) -> std::int64_t
+   {
+      std::int64_t t( 0 );
+      for( std::int64_t i( 0 ); i < length; i++ )
+      {
+         t = ( ( t * d ) + text[ i ] ) % q;
+      }
+      return( t );
+   }
+
+   template< typename Q, 
+             typename D, 
+             typename H, 
+             typename L > static H comp_h( const Q q, 
+                                              const D d, 
+                                              const L l, 
+                                              const H h )
+   {
+      H h2( 1 );
+      for( auto i( 1 ); i < l; i++ )
+      {
+         h2 = ( h2 * d ) % q;
+      }
+      return( h2 );
+   }
 };
+
+
+} /** end namespace raft **/
 #endif /* END _SEARCH_TCC_ */

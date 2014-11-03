@@ -37,6 +37,8 @@ class FIFO
 {
 public:
 
+   template< class T > using pop_range_t = std::vector< std::pair< T , raft::signal > >;
+
    enum autotype { allocatetype, poptype };
 
    template< class T, autotype type = poptype > class autorelease
@@ -334,7 +336,7 @@ public:
     * @param   n_items  - std::size_t
     */
    template< class T >
-   void pop_range( std::vector< std::pair< T , raft::signal > > &items,
+   void pop_range( pop_range_t< T >  &items,
                    const std::size_t n_items )
    {
       void *ptr_items( (void*)&items );
