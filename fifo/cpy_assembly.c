@@ -7,6 +7,11 @@
 
 //TODO, comment all below code
 
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 typedef struct {
      uint32_t
          CF      :  1,
@@ -155,10 +160,9 @@ enum feature_levels get_highest_feature (unsigned int max_level)
 			jge	loop128%=		\n\
 			jmp	l8ctl%=			\n\*/
 
-inline 
 void 
-rb_write( unsigned char *dstp, 
-          unsigned char *srcp, 
+rb_write( void *dstp, 
+          void *srcp, 
 	       size_t size, 
           char feature_level )
 {
@@ -251,10 +255,10 @@ rb_write( unsigned char *dstp,
 			mfence"
 			:
 			:
-			[in] "g" (srcp), 
-			[out] "g" (dstp),			
+			[in]   "g" (srcp), 
+			[out]  "g" (dstp),			
 			[SIZE] "m" (size),
-			[fl] "g" (feature_level)
+			[fl]   "g" (feature_level)
 			:
 			"mm0", "mm1", "mm2", "mm3", 
 			"xmm0", "xmm1", "xmm2", "xmm3",
