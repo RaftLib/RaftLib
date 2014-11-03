@@ -31,6 +31,11 @@ private:
    std::int64_t count;
 };
 
+namespace raft
+{
+   Map map;
+}
+
 int
 main( int argc, char **argv )
 {

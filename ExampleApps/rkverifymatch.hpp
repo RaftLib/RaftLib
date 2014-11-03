@@ -77,7 +77,7 @@ private:
    const std::string searchterm;
    /** filestuff for mmap **/
    char * filebuffer            = nullptr;
-   std::size_t file_buffer_size = 0;
+   std::size_t filebuffer_size = 0;
    /** functions **/
 
    static bool verify_match( const char * const buffer,

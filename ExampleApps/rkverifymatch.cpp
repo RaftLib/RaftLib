@@ -25,7 +25,7 @@
 #include <fcntl.h>
 
 #include "rkverifymatch.hpp"
-#include "search.tcc"
+#include "searchdefs.hpp"
 
 using namespace raft;
 using filename_t = char[ 256 ];
@@ -37,7 +37,7 @@ rkverifymatch::rkverifymatch( const std::string filename,
    input.addPort< hit_t >( "input" );
    output.addPort< match_t >( "output" );
    
-   int fd( open( filename, O_RDONLY ) );
+   int fd( open( filename.c_str() , O_RDONLY ) );
    if( fd < 0 )
    {
       perror( "Failed to open input file, exiting!!\n" );
@@ -52,7 +52,12 @@ rkverifymatch::rkverifymatch( const std::string filename,
    }
    filebuffer_size = st.st_size;
    /** else mmap **/
-   filebuffer =  mmap( (void*)NULL, filebuffer_size, PROT_READ, MAP_PRIVATE, fd, 0 );
+   filebuffer =  (char*) mmap( (void*)NULL, 
+                               filebuffer_size, 
+                               PROT_READ, 
+                               MAP_PRIVATE, 
+                               fd, 
+                               0 );
    if( filebuffer == MAP_FAILED )
    {
       perror( "Failed to mmap input file\n" );
@@ -77,16 +82,25 @@ rkverifymatch::run()
 {
    /** else != nullptr **/
    auto &port( input[ "input" ] );
+   auto &out( output[ "output" ] );
    const auto avail( port.size() );
-   poprange_t< hit_t > range( avail );
+   FIFO::pop_range_t< hit_t > range( avail );
    port.pop_range< hit_t >( range, avail );
    for( auto &hit : range )
    {
-      auto &m( output[ "output" ].allocate< match_t >() );
-      if( verify_match( filebuffer, search_term, hit.first, m ) )
+      auto &m( out.allocate< match_t >() );
+      if( verify_match( filebuffer, 
+                        filebuffer_size, 
+                        searchterm, 
+                        hit.first, 
+                        m ) )
       {
          /** TODO, get rid of copy **/
-         output[ "output" ].send();
+         out.send();
+      }
+      else
+      {
+         out.deallocate();
       }
    }
    return( raft::proceed );
@@ -119,6 +133,10 @@ rkverifymatch::verify_match( const char * const buffer,
          {
             m.seg[ index ] = buffer[ position + index ];
          }
+      }
+      for( ; index < match_t::buff_length; index++ )
+      {
+         m.seg[ index ] = buffer[ position + index ];
       }
    }
    m.seg[ index ] = '\0';

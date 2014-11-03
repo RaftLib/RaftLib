@@ -9,6 +9,9 @@
 #include <type_traits>
 #include <utility>
 
+namespace raft{
+   Map map;
+}
 
 template < typename T > class generate : public raft::kernel
 {

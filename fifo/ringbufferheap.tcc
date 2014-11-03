@@ -129,6 +129,13 @@ public:
       return( dm.get()->max_cap );
    }
 
+   /** TODO, comment me **/
+   virtual void deallocate()
+   {
+      (this)->allocate_called = false;
+      dm.exitBuffer( dm::allocate );
+   }
+
    /**
     * send- releases the last item allocated by allocate() to
     * the queue.  Function will imply return if allocate wasn't

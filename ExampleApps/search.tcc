@@ -26,11 +26,10 @@
 
 #include <raft>
 #include <raftio>
+#include "searchdefs.hpp"
 
 namespace raft
 {
-   using hit_t    = std::size_t;
-   using chunk_t  = filechunk< 4096 >;
    enum searchalgorithm { rabinkarp, 
                           kmp,
                           automata };

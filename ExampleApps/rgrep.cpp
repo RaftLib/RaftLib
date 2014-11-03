@@ -8,7 +8,14 @@
 #include <vector>
 #include <iterator>
 
+#include "rkverifymatch.hpp"
+#include "searchdefs.hpp"
 #include "search.tcc"
+   
+namespace raft
+{
+   Map map;
+}
 
 int
 main( int argc, char **argv )
@@ -18,8 +25,9 @@ main( int argc, char **argv )
 
    const std::size_t num_threads( 1 );
 
-   std::vector< raft::hit_t > total_hits; 
+   std::vector< raft::match_t > total_hits; 
    
+
    auto kern_start( 
    raft::map.link( 
       raft::kernel::make< raft::filereader< raft::chunk_t > >( file, 
@@ -27,14 +35,21 @@ main( int argc, char **argv )
                                                          search_term.length() ),
       raft::kernel::make< raft::search< raft::rabinkarp > >( search_term ) ) );
 
+   auto kern_mid(
    raft::map.link(
       &(kern_start.dst),
-      raft::kernel::make< raft::write_each< raft::hit_t > >( std::back_inserter( total_hits ) ) );
+      raft::kernel::make< raft::rkverifymatch >( file, search_term ) ) ); 
+      
 
+   raft::map.link( 
+      &(kern_mid.dst),
+      raft::kernel::make< 
+         raft::write_each< raft::match_t > >( 
+            std::back_inserter( total_hits ) ) );
    raft::map.exe();
-   for( auto val : total_hits )
+   for( auto &val : total_hits )
    {
-      std::cerr << val << "\n";
+      std::cout << val.hit_pos << ": " << val.seg << "\n";
    }
    return( EXIT_SUCCESS );
 }

@@ -196,6 +196,8 @@ public:
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
 
+   virtual void deallocate() = 0;
+
    template < class T > auto allocate_s() -> 
       autorelease< T, allocatetype >
    {

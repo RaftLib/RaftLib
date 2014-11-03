@@ -76,8 +76,4 @@
 
 #include "./raft_dir/lambdak.tcc"
 
-namespace raft
-{
-   Map map;
-}
 #endif /* END _RAFT_HPP_ */
