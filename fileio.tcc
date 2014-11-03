@@ -65,11 +65,10 @@ public:
                const std::size_t n_output_ports = 1,
                const std::size_t chunk_offset = 0 )
    {
-      const std::string prefix( "output_" );
       for( auto index( 0 ); index < n_output_ports; index++ )
       {
          /** add a port for each index var, all named "output_#" **/
-         output.addPort< chunktype  >( prefix + std::to_string( index ) );
+         output.addPort< chunktype  >( std::to_string( index ) );
       }
       
       /** stat file **/

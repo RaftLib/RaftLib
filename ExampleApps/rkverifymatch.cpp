@@ -136,9 +136,24 @@ rkverifymatch::verify_match( const char * const buffer,
       }
       for( ; index < match_t::buff_length; index++ )
       {
-         m.seg[ index ] = buffer[ position + index ];
+         const auto buff_pos( position + index );
+         if( buffer[ buff_pos ] == '\n' )
+         {
+            goto NEXTLOOP; 
+         }
+         else
+         {
+            m.seg[ index ] = buffer[ position + index ];
+         }
+      }
+      goto END;
+NEXTLOOP:
+      for( int c( 0 ) ; c < 3 && index < match_t::buff_length; c++, index++ )
+      {
+         m.seg[ index ] = '.';
       }
    }
+END:
    m.seg[ index ] = '\0';
    m.seg_length   = term_length;
    m.hit_pos      = position;

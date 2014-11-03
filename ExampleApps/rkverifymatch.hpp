@@ -47,11 +47,11 @@ struct match_t
    }
 
    match_t( const match_t &other )
-   {
-      std::size_t index( 0 );
-      for( ; index < other.seg_length; index++ )
+   {  
+      const char *s( other.seg );
+      for( char *i( seg ); *s != '\0'; ++s, ++i )
       {
-         seg[ index ] = other.seg[ index ];
+         *i = *s;
       }
       seg_length = other.seg_length;
       hit_pos    = other.hit_pos;
