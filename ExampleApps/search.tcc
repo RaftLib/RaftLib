@@ -53,6 +53,7 @@ public:
    {
       auto text( input[ "in" ].pop_s< chunk_t >() );
       const auto term_cond( std::min( chunk_t::getChunkSize(), (*text).length ) );
+      if( term_cond == 0 ) return( raft::proceed );
       std::size_t s( 0 );
       const char * const buffer = (*text).buffer;
 
@@ -102,7 +103,7 @@ private:
                          const std::uint64_t q ) -> std::int64_t
    {
       std::int64_t t( 0 );
-      for( std::int64_t i( 0 ); i < length; i++ )
+      for( std::size_t i( 0 ); i < length; i++ )
       {
          t = ( ( t * d ) + text[ i ] ) % q;
       }

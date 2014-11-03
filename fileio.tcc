@@ -111,7 +111,7 @@ public:
                raft::none : 
                raft::eof );
 
-         if( iterations-- == 0 )
+         if( --iterations <= 0 )
          {  
             return( raft::stop );
          }

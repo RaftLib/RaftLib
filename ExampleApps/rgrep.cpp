@@ -8,6 +8,7 @@
 #include <array>
 #include <vector>
 #include <iterator>
+#include <fstream>
 
 #include "rkverifymatch.hpp"
 #include "searchdefs.hpp"
@@ -21,10 +22,19 @@ namespace raft
 int
 main( int argc, char **argv )
 {
+   if( argc != 3 )
+   {  
+      std::cerr << "usage: ./rgrep <SEARCH TERM> <TEXT FILE>\n";
+      exit( EXIT_SUCCESS );
+   }
+   
    const std::string search_term( argv[ 1 ] );
    const std::string file( argv[ 2 ] );
+   
+   std::cout << "Searching for: " << search_term << "\n";
+   std::cout << "In filename: " << file << "\n";
 
-   const std::size_t num_threads( 1 );
+   const std::size_t num_threads( 2 );
 
    std::vector< raft::match_t > total_hits; 
    
@@ -43,25 +53,23 @@ main( int argc, char **argv )
       search_term.length() ) );
    std::array< raft::kernel*, num_threads > rbk;
    std::size_t index( 0 );
-   for( auto *ptr : rbk )
+   for( index = 0; index < num_threads; index++ )
    {
-      ptr = raft::kernel::make< 
+      rbk[ index ] = raft::kernel::make< 
          raft::search< raft::rabinkarp > >( search_term );
-      raft::map.link( filereader, std::to_string( index++ ),
-                      ptr );
+      raft::map.link( filereader, std::to_string( index ), rbk[ index ] );
    }
    std::array< raft::kernel*, num_threads > rbkverify;
    for( index = 0; index < num_threads; index++ ) 
    {
       rbkverify[ index ] = 
          raft::kernel::make< raft::rkverifymatch >( file, search_term );
-
       raft::map.link( rbk[ index ], rbkverify[ index ] );
    }
 
    auto *filefinish(
       raft::kernel::make< raft::write_each< raft::match_t > >(
-         std::back_inserter( total_hits ) ) );
+         std::back_inserter( total_hits ), num_threads ) );
 
    for( index = 0; index < num_threads; index++ )
    {
@@ -85,10 +93,10 @@ main( int argc, char **argv )
    
    raft::map.exe();
 
-
-   for( raft::match_t &val : total_hits )
-   {
-      std::cerr << val.hit_pos << ": " << val.seg << "\n";
-   }
+   //std::ofstream ofs("/dev/null");
+   //for( raft::match_t &val : total_hits )
+   //{
+   //   ofs << val.hit_pos << ": " << val.seg << "\n";
+   //}
    return( EXIT_SUCCESS );
 }

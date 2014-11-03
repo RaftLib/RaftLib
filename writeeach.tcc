@@ -92,11 +92,15 @@ const std::map< std::size_t,
                };
 public:
    template < class iterator_type >
-      write_each( iterator_type &&insert_position ) :
+      write_each( iterator_type &&insert_position, 
+                  const std::size_t num_ports = 1  ) :
          position( &insert_position )
    {
       /* no output ports, writing to container */
-      addPortTo< T >( input ); 
+      for( auto index( 0 ); index < num_ports; index++ )
+      {
+         addPortTo< T >( input ); 
+      }
       /** 
        * hacky way of getting the right iterator type for the ptr
        * pehaps change if I can figure out how to do without having

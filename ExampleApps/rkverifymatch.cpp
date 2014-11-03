@@ -55,7 +55,7 @@ rkverifymatch::rkverifymatch( const std::string filename,
    filebuffer =  (char*) mmap( (void*)NULL, 
                                filebuffer_size, 
                                PROT_READ, 
-                               MAP_PRIVATE, 
+                               MAP_SHARED, 
                                fd, 
                                0 );
    if( filebuffer == MAP_FAILED )
@@ -95,7 +95,6 @@ rkverifymatch::run()
                         hit.first, 
                         m ) )
       {
-         /** TODO, get rid of copy **/
          out.send();
       }
       else
@@ -114,11 +113,10 @@ rkverifymatch::verify_match( const char * const buffer,
                               match_t &m )
 {
    const auto term_length( term.size() );
-   const auto end( std::min( term_length, ( match_t::buff_length - 1 ) ) );
+   //const auto end( std::min( term_length, ( match_t::buff_length - 1 ) ) );
    std::size_t index( 0 );
    if( ( term_length + position ) > buff_size )
    {
-      m.seg[ 0 ] = '\0';
       return( false );
    }
    else
@@ -129,33 +127,34 @@ rkverifymatch::verify_match( const char * const buffer,
          {
             return( false );
          }
-         if( index < end )
-         {
-            m.seg[ index ] = buffer[ position + index ];
-         }
+         //if( index < end )
+         //{
+         //   m.seg[ index ] = buffer[ position + index ];
+         //}
       }
-      for( ; index < match_t::buff_length; index++ )
-      {
-         const auto buff_pos( position + index );
-         if( buffer[ buff_pos ] == '\n' )
-         {
-            goto NEXTLOOP; 
-         }
-         else
-         {
-            m.seg[ index ] = buffer[ position + index ];
-         }
-      }
-      goto END;
-NEXTLOOP:
-      for( int c( 0 ) ; c < 3 && index < match_t::buff_length; c++, index++ )
-      {
-         m.seg[ index ] = '.';
-      }
+//      for( ; index < match_t::buff_length; index++ )
+//      {
+//         const auto buff_pos( position + index );
+//         if( buffer[ buff_pos ] == '\n' )
+//         {
+//            goto NEXTLOOP; 
+//         }
+//         else
+//         {
+//            m.seg[ index ] = buffer[ position + index ];
+//         }
+//      }
+//      goto END;
+//NEXTLOOP:
+//      for( int c( 0 ) ; c < 3 && index < match_t::buff_length; c++, index++ )
+//      {
+//         m.seg[ index ] = '.';
+//      }
    }
-END:
-   m.seg[ index ] = '\0';
-   m.seg_length   = term_length;
-   m.hit_pos      = position;
+//END:
+//   m.seg[ --index ] = '\0';
+//   m.seg_length   = term_length;
+//   m.hit_pos      = position;
+   m = position;
    return( true );
 }
