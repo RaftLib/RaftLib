@@ -94,9 +94,14 @@ main( int argc, char **argv )
    raft::map.exe();
 
    //std::ofstream ofs("/dev/null");
+   if( total_hits.size() > 0 )
+   { 
+      std::cerr << "matches: " << "\n";
+   }
    for( raft::match_t &val : total_hits )
    {
-      std::cout << val.hit_pos << ": " << val.seg << "\n";
+      std::cout << val << "\n"; 
+      //": " << val.seg << "\n";
    }
    return( EXIT_SUCCESS );
 }

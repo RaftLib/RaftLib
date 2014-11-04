@@ -21,12 +21,15 @@
 #define _RKVERIFYMATCH_HPP_  1
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <string>
 
 #include <raft>
 
 namespace raft{
+using match_t = std::uint64_t;
 
+#if 0
 struct match_t
 {
    match_t()
@@ -63,6 +66,7 @@ struct match_t
    std::size_t seg_length = 0;
    std::size_t hit_pos    = 0;
 };
+#endif
 
 class rkverifymatch : public kernel
 {

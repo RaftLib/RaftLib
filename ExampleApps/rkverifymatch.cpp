@@ -112,49 +112,49 @@ rkverifymatch::verify_match( const char * const buffer,
                               const std::size_t position,
                               match_t &m )
 {
-   const auto term_length( term.size() );
-   const auto end( std::min( term_length, ( match_t::buff_length - 1 ) ) );
-   std::size_t index( 0 );
+   auto term_length( term.size() );
    if( ( term_length + position ) > buff_size )
    {
       return( false );
    }
-   else
+   char *ptr(      (char*) &buffer[ position ] );
+   char *term_ptr( (char*) term.c_str() );
+   for( ;; )
    {
-      for( ; index < term_length; index++ )
+      if( term_length >= 8 )
       {
-         if( term[ index ] != buffer[ position + index ] )
+         std::uint64_t a_v = *((std::uint64_t*)ptr);
+         std::uint64_t b_v = *((std::uint64_t*)term_ptr);
+         if( a_v != b_v ){ return( false ); }
+         ptr         += sizeof( std::uint64_t );
+         term_ptr    += sizeof( std::uint64_t );
+         term_length -= sizeof( std::uint64_t );
+      }
+      else if( term_length >= 4 )
+      {
+         std::uint32_t a_v = *((std::uint32_t*)ptr);
+         std::uint32_t b_v = *((std::uint32_t*)term_ptr );
+         if( a_v != b_v ){ return( false ); }
+         ptr         += sizeof( std::uint32_t );
+         term_ptr    += sizeof( std::uint32_t );
+         term_length -= sizeof( std::uint32_t );
+      }
+      else if( term_length > 0 )
+      {
+         for( ; *term_ptr != '\0'; ++ptr, ++term_ptr, term_length-- )
          {
-            return( false );
-         }
-         if( index < end )
-         {
-            m.seg[ index ] = buffer[ position + index ];
+            if( *ptr != *term_ptr )
+            {
+               return( false );
+            }
          }
       }
-      
-      for( ; index < match_t::buff_length; index++ )
+      else
       {
-         const auto buff_pos( position + index );
-         if( buffer[ buff_pos ] == '\n' )
-         {
-            goto NEXTLOOP; 
-         }
-         else
-         {
-            m.seg[ index ] = buffer[ position + index ];
-         }
-      }
-      goto END;
-NEXTLOOP:
-      for( int c( 0 ) ; c < 3 && index < match_t::buff_length; c++, index++ )
-      {
-         m.seg[ index ] = '.';
+         break;
       }
    }
-END:
-   m.seg[ --index ] = '\0';
-   m.seg_length   = term_length;
-   m.hit_pos      = position;
+   
+   m     = position;
    return( true );
 }
