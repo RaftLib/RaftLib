@@ -34,7 +34,7 @@ main( int argc, char **argv )
    std::cout << "Searching for: " << search_term << "\n";
    std::cout << "In filename: " << file << "\n";
 
-   const std::size_t num_threads( 2 );
+   const std::size_t num_threads( 1 );
 
    std::vector< raft::match_t > total_hits; 
    
@@ -94,9 +94,9 @@ main( int argc, char **argv )
    raft::map.exe();
 
    //std::ofstream ofs("/dev/null");
-   //for( raft::match_t &val : total_hits )
-   //{
-   //   ofs << val.hit_pos << ": " << val.seg << "\n";
-   //}
+   for( raft::match_t &val : total_hits )
+   {
+      std::cout << val.hit_pos << ": " << val.seg << "\n";
+   }
    return( EXIT_SUCCESS );
 }
