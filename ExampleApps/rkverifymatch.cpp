@@ -102,7 +102,6 @@ rkverifymatch::run()
          out.deallocate();
       }
    }
-   std::cerr << "verifymatch\n";
    return( raft::proceed );
 }
 
