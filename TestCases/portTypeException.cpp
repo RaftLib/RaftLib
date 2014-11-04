@@ -85,6 +85,7 @@ int
 main( int argc, char **argv )
 {
    using namespace raft;
+   Map map;
    auto linked_kernels( map.link( new Generate< float >(),
                                   new Sum< std::int64_t,std::int64_t, std::int64_t >(),
                                   "input_a" ) );

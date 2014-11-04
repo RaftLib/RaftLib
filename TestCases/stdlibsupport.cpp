@@ -27,6 +27,7 @@ int
 main( int argc, char **argv )
 {
    using namespace raft;
+   Map map;
    std::vector< std::uint32_t > v;
    int i( 0 );
    auto func( [&](){ return( i++ ); } );

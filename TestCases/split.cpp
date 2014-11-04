@@ -31,6 +31,7 @@ int
 main( int argc, char **argv )
 {
    using namespace raft;
+   Map map;
    /** manually link split kernels **/
    auto kernels( 
    map.link( new Generate< std::int64_t >(),

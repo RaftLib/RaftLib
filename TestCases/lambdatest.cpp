@@ -10,6 +10,7 @@ int
 main( int argc, char **argv )
 {
    using namespace raft;
+   Map map;
 
    map.link( 
       kernel::make< lambdak< int > >( 0, 1, [&]( Port &input,
