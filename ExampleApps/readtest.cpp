@@ -13,7 +13,7 @@ main( int argc, char **argv )
 {
    using namespace raft;
    
-   map.link( kernel::make< raft::filereader<filechunk< 1024  >, false> > ( "ecoli.txt" ), 
+   map.link( kernel::make< raft::filereader<filechunk< 1024  >, false> > ( argv[ 1 ]  ), 
              kernel::make< raft::print< filechunk< 1024  > > >() );
 
    map.exe();

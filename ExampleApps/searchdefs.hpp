@@ -23,6 +23,6 @@
 
 namespace raft{
    using hit_t    = std::size_t;
-   using chunk_t  = filechunk< 4096 >;
+   using chunk_t  = filechunk< 65536 >;
 }
 #endif /* END _SEARCHDEFS_HPP_ */

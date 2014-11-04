@@ -110,7 +110,7 @@ public:
             ( iterations - output.count() /* num ports */ ) > 0 ? 
                raft::none : 
                raft::eof );
-
+         
          if( --iterations <= 0 )
          {  
             return( raft::stop );
@@ -120,9 +120,9 @@ public:
    }
 
    /** opened in the constructor **/
-   FILE *fp = nullptr;
-   std::streamsize length;
-   std::size_t     iterations;
+   FILE           *fp         = nullptr;
+   std::streamsize length     = 0;
+   std::int64_t    iterations = 0;
 };
 
 } /* end namespace raft */
