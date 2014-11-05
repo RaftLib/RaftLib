@@ -5,8 +5,8 @@ ifneq ($(shell uname -s), Darwin)
 RT = -lrt -static -static-libgcc -static-libstdc++ -lpthread
 endif
 
-CFLAGS   = -O3   -Wall -std=c99
-CXXFLAGS = -O3  -Wall -std=c++11 -DRDTSCP=1
+CFLAGS   = -O3 -mavx  -Wall -std=c99
+CXXFLAGS = -O3 -mavx -Wall -std=c++11 -DRDTSCP=1
 
 CFILES   =
 COBJS    =

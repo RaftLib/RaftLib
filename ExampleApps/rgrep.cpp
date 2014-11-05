@@ -34,7 +34,7 @@ main( int argc, char **argv )
    std::cout << "Searching for: " << search_term << "\n";
    std::cout << "In filename: " << file << "\n";
 
-   const std::size_t num_threads( 3 );
+   const std::size_t num_threads( 12 );
 
    std::vector< raft::match_t > total_hits; 
    
