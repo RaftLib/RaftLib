@@ -34,7 +34,7 @@ main( int argc, char **argv )
    std::cout << "Searching for: " << search_term << "\n";
    std::cout << "In filename: " << file << "\n";
 
-   const std::size_t num_threads( 12 );
+   const std::size_t num_threads( 4 );
 
    std::vector< raft::match_t > total_hits; 
    
@@ -96,7 +96,7 @@ main( int argc, char **argv )
    //std::ofstream ofs("/dev/null");
    if( total_hits.size() > 0 )
    { 
-      std::cerr << "matches: " << "\n";
+      std::cout << "matches: " << "\n";
    }
    for( raft::match_t &val : total_hits )
    {

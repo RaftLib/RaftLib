@@ -23,6 +23,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <cstring>
 
 #include "rkverifymatch.hpp"
 #include "searchdefs.hpp"
@@ -112,6 +113,7 @@ rkverifymatch::verify_match( const char * const buffer,
                               const std::size_t position,
                               match_t &m )
 {
+#if 1    
    auto term_length( term.size() );
    if( ( term_length + position ) > buff_size )
    {
@@ -154,7 +156,13 @@ rkverifymatch::verify_match( const char * const buffer,
          break;
       }
    }
-   
+#else
+   if( std::strncmp( &buffer[ position ], term.c_str(), term.length() ) != 0 )
+   {
+      return( false );
+   }
+
+#endif
    m     = position;
    return( true );
 }

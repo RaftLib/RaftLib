@@ -42,7 +42,8 @@ public:
    search( const std::string term ) : kernel(),
                                       search_term_length( term.length() ),
                                       pattern( hashfunc( term, search_term_length, d, q ) ),
-                                      h( comp_h( q, d, search_term_length, h ) )
+                                      h( comp_h( q, d, search_term_length, h ) ),
+                                      start( term[ 0 ] )
    {
       assert( search_term_length > 0 ); 
       input.addPort<  chunk_t >( "in"  );
@@ -57,23 +58,32 @@ public:
       std::size_t s( 0 );
       const char * const buffer = (*text).buffer;
 
-      std::int64_t t( hashfunc( buffer, search_term_length, d, q ) ); 
-      std::vector< hit_t > hits;
+      while( buffer[ s ] != start  && s <= ( term_cond - search_term_length ))
+      {
+         s++;
+      }
+      
+      std::int64_t t( hashfunc( &buffer[ s ], search_term_length, d, q ) ); 
+     // std::vector< hit_t > hits;
+      const auto start_position( (*text).start_position);
+      auto &port( output[ "out" ] );
       do{
          if( pattern == t )
          {
-            hits.push_back( s + (*text).start_position );
+            //hits.push_back( s + (*text).start_position );
+            port.push< hit_t >( s + start_position );
          }
          const auto remove_val( ( buffer[ s ] * h ) % q );
-         t = ( t + ( d * q ) - remove_val ) % q;
-         t = ( d * t ) % q;
+         t = ( t + ( ( q << 8 ) - q ) - remove_val ) % q;
+         t = ( ( t << 8 ) - t ) % q;
          t = ( t + buffer[ s + search_term_length ] ) % q;
          s++;
       }while( s <= ( term_cond - search_term_length) );
-      if( hits.size() > 0 )
-      {
-         output[ "out" ].insert( hits.begin(), hits.end() );
-      }
+      //if( hits.size() > 0 )
+      //{
+         //output[ "out" ].insert( hits.begin(), hits.end() );
+         
+      //}
       return( raft::proceed );
    }
 
@@ -89,6 +99,7 @@ private:
    /** max radix power to subtract from rolling hash **/
    const std::int64_t  h = 1;
 
+   const char          start;
    /** functions **/
    /**
     * hashfunc - rabinkarp rolling hash function, used once for the term
@@ -105,7 +116,7 @@ private:
       std::int64_t t( 0 );
       for( std::size_t i( 0 ); i < length; i++ )
       {
-         t = ( ( t * d ) + text[ i ] ) % q;
+         t = ( ( ( t << 8 ) - t ) + text[ i ] ) % q;
       }
       return( t );
    }
