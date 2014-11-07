@@ -50,6 +50,15 @@ struct PortInfo
    {
 
    }
+   
+   PortInfo( const std::type_info &the_type,
+             void * const ptr,
+             const std::size_t nitems )  : type( the_type ),
+                                           existing_buffer( ptr ),
+                                           nitems( nitems )
+   {
+
+   }
 
 
    PortInfo( const PortInfo &other ) : type( other.type )
@@ -126,7 +135,6 @@ struct PortInfo
    std::string       other_name      = "";
    bool              out_of_order    = false;
    void             *existing_buffer = nullptr;
-   std::size_t       start           = 0;
-   std::size_t       end             = 0;
+   std::size_t       nitems          = 0;
 };
 #endif /* END _PORT_INFO_HPP_ */

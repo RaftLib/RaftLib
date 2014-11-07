@@ -31,6 +31,10 @@ class parallel_k : public raft::kernel
 {
 public:
    parallel_k()          = default;
+   parallel_k( void * const ptr, 
+               const std::size_t nbytes ) : kernel( ptr, nbytes )
+   {}
+
    virtual ~parallel_k() = default;
 
 protected:

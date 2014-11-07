@@ -44,8 +44,19 @@ stdalloc::run()
       assert( a.type == b.type );
       /** assume everyone needs a heap for the moment to get working **/
       instr_map_t *func_map( a.const_map[ Type::Heap ] );
+      FIFO *fifo( nullptr );
       auto test_func( (*func_map)[ false ] );
-      FIFO *fifo( test_func( 64, 16, (void*)NULL ) );
+      /** check and see if a has a defined allocation **/
+      if( a.existing_buffer != nullptr )
+      {
+         fifo = test_func( a.nitems, 0, a.existing_buffer );     
+      }
+      else
+      {
+         fifo = test_func( 64 /** size **/, 
+                           16 /** align **/,
+                           (void*)NULL /* data struct **/);
+      }
       assert( fifo != nullptr );
       (this)->initialize( &a, &b, fifo );
    };

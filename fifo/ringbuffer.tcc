@@ -58,10 +58,23 @@ public:
     * RingBuffer - default constructor, initializes basic
     * data structures.
     */
-   RingBuffer( const std::size_t n, const std::size_t align = 16 ) : 
+   RingBuffer( const std::size_t n, 
+               const std::size_t align = 16 ) : 
       RingBufferBase< T, type >()
    {
       (this)->dm.set( new Buffer::Data<T, type >( n, align ) );
+   }
+   
+   /**
+    * RingBuffer - default constructor, initializes basic
+    * data structures.
+    */
+   RingBuffer( void * const      ptr, 
+               const std::size_t length ) : 
+      RingBufferBase< T, type >()
+   {
+      T *ptrcast = reinterpret_cast< T* >( ptr );
+      (this)->dm.set( new Buffer::Data<T, type >( ptrcast, length ) );
    }
 
    virtual ~RingBuffer()
@@ -84,10 +97,20 @@ public:
     */
    static FIFO* make_new_fifo( std::size_t n_items,
                                std::size_t align,
-                               void *data )
+                               void * const data )
    {
-      assert( data == nullptr );
-      return( new RingBuffer< T, Type::Heap, false >( n_items, align ) ); 
+      if( data != nullptr )
+      {
+         return( new RingBuffer< T, 
+                                 Type::Heap, 
+                                 false >( data, n_items ) );
+      }
+      else
+      {
+         return( new RingBuffer< T, 
+                                 Type::Heap, 
+                                 false >( n_items, align ) ); 
+      }
    }
 
    virtual void resize( const std::size_t size,

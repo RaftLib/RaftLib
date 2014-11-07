@@ -35,6 +35,7 @@ class kernel
 public:
    /** default constructor **/
    kernel();
+   
    /** in-place allocation **/
    kernel( void * const ptr,
            const std::size_t nbytes );

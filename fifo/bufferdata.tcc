@@ -163,8 +163,8 @@ template < class T,
            std::size_t SIZE = 0 > struct Data : public DataBase< T >
 {
 
-   Data( const std::size_t max_cap ,
-         T  *ptr ) : DataBase< T >( max_cap )
+   Data( T  *ptr, 
+         const std::size_t max_cap ) : DataBase< T >( max_cap )
    {
       (this)->store->ptr;
       (this)->signal = (Signal*)       calloc( (this)->max_cap,
@@ -178,6 +178,7 @@ template < class T,
       /** TODO, see if there are optimizations to be made with sizing and alignment **/
       (this)->read_pt   = new Pointer( max_cap );
       (this)->write_pt  = new Pointer( max_cap ); 
+      external_alloc = true;
    }
 
 
@@ -218,6 +219,11 @@ template < class T,
 
       //std::cerr << rdptr << "," << wptr << "," << wrap_r << "," << wrap_w << "," <<
       //   other->max_cap << "\n";
+      //TODO, figure something better out for here 
+      if( external_alloc )
+      {
+         assert( false );
+      }
       delete( (this)->read_pt );
       (this)->read_pt = new Pointer( (other->read_pt),   (this)->max_cap );
       delete( (this)->write_pt );
@@ -241,9 +247,14 @@ template < class T,
       delete( (this)->read_pt );
       delete( (this)->write_pt );
       //FREE USED HERE
-      free( (this)->store );
+      if( ! external_alloc )
+      {
+         free( (this)->store );
+      }
       free( (this)->signal );
    }
+
+   bool external_alloc = false;
 }; /** end heap **/
 
 template < class T > struct Data< T, Type::SharedMemory > : 
