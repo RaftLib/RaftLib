@@ -33,7 +33,12 @@ namespace raft {
 class kernel
 {
 public:
-   kernel()          = default;
+   /** default constructor **/
+   kernel();
+   /** in-place allocation **/
+   kernel( void * const ptr,
+           const std::size_t nbytes );
+
    virtual ~kernel() = default;
 
 

@@ -56,12 +56,12 @@ struct PortInfo
    {
       fifo_a         = other.fifo_a;
       fifo_b         = other.fifo_b;
-      const_map    = other.const_map;
-      my_kernel    = other.my_kernel;
-      my_name      = other.my_name;
-      other_kernel = other.other_kernel;
-      other_name   = other.other_name;
-      out_of_order = other.out_of_order;
+      const_map      = other.const_map;
+      my_kernel      = other.my_kernel;
+      my_name        = other.my_name;
+      other_kernel   = other.other_kernel;
+      other_name     = other.other_name;
+      out_of_order   = other.out_of_order;
    }
 
    virtual ~PortInfo()
@@ -120,10 +120,13 @@ struct PortInfo
     */
    std::map< Type::RingBufferType , instr_map_t* > const_map;
 
-   raft::kernel     *my_kernel    = nullptr;
-   std::string my_name      = "";
-   raft::kernel     *other_kernel = nullptr;
-   std::string other_name   = "";
-   bool        out_of_order = false;
+   raft::kernel     *my_kernel       = nullptr;
+   std::string       my_name         = "";
+   raft::kernel     *other_kernel    = nullptr;
+   std::string       other_name      = "";
+   bool              out_of_order    = false;
+   void             *existing_buffer = nullptr;
+   std::size_t       start           = 0;
+   std::size_t       end             = 0;
 };
 #endif /* END _PORT_INFO_HPP_ */

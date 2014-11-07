@@ -46,7 +46,23 @@ namespace raft{
 class Port
 {
 public:
+   /** 
+    * Port - constructor used to construct a standard port
+    * object, needs a reference to the parent kernel for
+    * the port_info struct
+    * @param   k  - raft::kernel*
+    */
    Port( raft::kernel *k );
+   
+   /**
+    * Port - constructor used to construct a port with 
+    * pre-allocated memory, useful for things like 
+    * array distribution and reduction
+    * @param   k - raft::kernel*
+    * @param   ptr - void*
+    * @param   nbytes - const std::size_t length in bytes
+    */
+   Port( raft::kernel *k, void * const ptr, const std::size_t nbytes );
    /**
     * ~Port - destructor, deletes the FIFO that was given
     * when the object was initalized.
@@ -161,8 +177,11 @@ protected:
    /** 
     * parent kernel that owns this port 
     */
-   raft::kernel *kernel;
-  
+   raft::kernel *    kernel            = nullptr;
+   
+   void * const      alloc_ptr         = nullptr;
+   const std::size_t alloc_ptr_length  = 0;
+   
    /** we need some friends **/
    friend class Map;
    friend void GraphTools::BFS( std::set< raft::kernel* > &source_kernels,

@@ -20,6 +20,7 @@
 #ifndef _BUFFERDATA_TCC_
 #define _BUFFERDATA_TCC_  1
 #include <cstdint>
+#include <cstddef>
 #include <cstring>
 #include <cassert>
 #include <thread>
@@ -159,11 +160,29 @@ template < class T > struct DataBase
 
 template < class T, 
            Type::RingBufferType B = Type::Heap, 
-           size_t SIZE = 0 > struct Data : public DataBase< T >
+           std::size_t SIZE = 0 > struct Data : public DataBase< T >
 {
 
+   Data( const std::size_t max_cap ,
+         T  *ptr ) : DataBase< T >( max_cap )
+   {
+      (this)->store->ptr;
+      (this)->signal = (Signal*)       calloc( (this)->max_cap,
+                                               sizeof( Signal ) );
+      if( (this)->signal == nullptr )
+      {
+         perror( "Failed to allocate signal queue!" );
+         exit( EXIT_FAILURE );
+      }
+      /** allocate read and write pointers **/
+      /** TODO, see if there are optimizations to be made with sizing and alignment **/
+      (this)->read_pt   = new Pointer( max_cap );
+      (this)->write_pt  = new Pointer( max_cap ); 
+   }
 
-   Data( size_t max_cap , const size_t align = 16 ) : DataBase< T >( max_cap )
+
+   Data( const std::size_t max_cap , 
+         const std::size_t align = 16 ) : DataBase< T >( max_cap )
    {
       int ret_val( posix_memalign( (void**)&((this)->store), 
                                    align, 

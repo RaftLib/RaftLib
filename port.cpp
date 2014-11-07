@@ -34,6 +34,14 @@ Port::Port( raft::kernel *k ) : kernel( k )
 {
 }
 
+Port::Port( raft::kernel *k, void * const ptr, const std::size_t nbytes ) :
+   kernel( k ),
+   alloc_ptr( ptr ),
+   alloc_ptr_length( nbytes )
+{
+
+}
+
 Port::~Port()
 {
    /** the port map is allocated on the heap so the port_info destructor is called **/
