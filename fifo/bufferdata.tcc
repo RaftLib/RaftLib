@@ -202,6 +202,15 @@ template < class T,
       (this)->read_pt   = new Pointer( max_cap );
       (this)->write_pt  = new Pointer( max_cap, 1 ); 
       
+      /** get trace of ptr vars **/
+      const auto rdptr( Pointer::val( this->read_pt ) );
+      const auto wptr ( Pointer::val( this->write_pt ) );
+      const auto wrap_r( Pointer::wrapIndicator( this->read_pt  ) );
+      const auto wrap_w( Pointer::wrapIndicator( this->write_pt ) );
+
+      std::cerr << rdptr << "," << wptr << "," << wrap_r << "," << wrap_w << "," <<
+         max_cap << "\n";
+      
       external_alloc = true;
    }
 
@@ -209,6 +218,7 @@ template < class T,
    Data( const std::size_t max_cap , 
          const std::size_t align = 16 ) : DataBase< T >( max_cap )
    {
+      std::cerr << "This guy called\n";
       int ret_val( posix_memalign( (void**)&((this)->store), 
                                    align, 
                                    (this)->length_store ) );
@@ -235,14 +245,6 @@ template < class T,
    
    virtual void copyFrom( DataBase< T > *other )
    {
-      /** get trace of ptr vars **/
-      //const auto rdptr( Pointer::val( other->read_pt ) );
-      //const auto wptr ( Pointer::val( other->write_pt ) );
-      //const auto wrap_r( Pointer::wrapIndicator( other->read_pt  ) );
-      //const auto wrap_w( Pointer::wrapIndicator( other->write_pt ) );
-
-      //std::cerr << rdptr << "," << wptr << "," << wrap_r << "," << wrap_w << "," <<
-      //   other->max_cap << "\n";
       //TODO, figure something better out for here 
       if( external_alloc )
       {

@@ -73,6 +73,9 @@ struct PortInfo
       other_kernel   = other.other_kernel;
       other_name     = other.other_name;
       out_of_order   = other.out_of_order;
+      existing_buffer= other.existing_buffer;
+      nitems         = other.nitems;
+      start_index    = other.start_index;
    }
 
    virtual ~PortInfo()

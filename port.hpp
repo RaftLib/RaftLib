@@ -110,7 +110,7 @@ public:
                       inc + ( index == (n_ports - 1) ? adder : 0 ),
                       start_index );
          pi.my_kernel = kernel;
-         auto name( std::to_string( index ) );
+         const std::string name( std::to_string( index ) );
          pi.my_name   = name;
          (this)->initializeConstMap< T >( pi );
          portmap.map.insert( std::make_pair( name, pi ) );

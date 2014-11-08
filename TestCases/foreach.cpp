@@ -42,6 +42,7 @@ main( int argc, char **argv )
       raft::kernel::make< raft::for_each< int > >( arr, 100, 1),
       raft::kernel::make< print< int > >() );
 
+   raft::map.exe();
 
    return( EXIT_SUCCESS );
 }

@@ -5,7 +5,8 @@
 using namespace raft;
 
 /** default **/
-kernel::kernel(){};
+kernel::kernel()
+{};
 
 /** existing memory **/
 kernel::kernel( void * const ptr, 
@@ -13,4 +14,5 @@ kernel::kernel( void * const ptr,
    input(  this, ptr, nbytes ),
    output( this, ptr, nbytes )
 {
+   fprintf( stderr, "This constructor called\n" );
 }

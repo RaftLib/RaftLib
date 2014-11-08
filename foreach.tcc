@@ -36,7 +36,6 @@ public:
    }
    
    virtual raft::kstatus run(){ 
-      std::cerr << output[ "0" ].size() << "\n";
       return( raft::stop ); 
    }
 
