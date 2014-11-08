@@ -131,7 +131,7 @@ protected:
    virtual void  local_allocate( void **ptr )
    {
       (this)->allocate_called = true;
-      *ptr = (void*)&(dm.get()->store[ 0 ].item);
+      *ptr = (void*)&(dm.get()->store[ 0 ]);
    }
 
    virtual std::size_t local_allocate_n( void *ptr, const std::size_t n )
@@ -140,7 +140,7 @@ protected:
       auto *container( reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
       for( std::size_t index( 0 ); index < output; index++ )
       {
-         container->push_back( dm.get()->store[ 0 ].item );
+         container->push_back( dm.get()->store[ 0 ] );
       }
       (this)->allocate_called = true;
       (this)->n_allocated     = output;
@@ -150,7 +150,7 @@ protected:
    virtual void  local_push( void *ptr, const raft::signal &signal )
    {
       T *item (reinterpret_cast< T* >( ptr ) );
-      dm.get()->store [ 0 ].item  = *item;
+      dm.get()->store [ 0 ]  = *item;
       /** a bit awkward since it gives the same behavior as the actual queue **/
       dm.get()->signal[ 0 ].sig  = signal;
       write_stats.count++;
@@ -163,7 +163,7 @@ protected:
    {
       while( begin != end )
       {
-         dm.get()->store[ 0 ].item = (*begin);
+         dm.get()->store[ 0 ] = (*begin);
          begin++;
          write_stats.count++;
       }
@@ -212,7 +212,7 @@ protected:
    virtual void local_pop( void *ptr, raft::signal *signal )
    {
       T *item( reinterpret_cast< T* >( ptr ) );
-      *item  = dm.get()->store[ 0 ].item;
+      *item  = dm.get()->store[ 0 ];
       if( signal != nullptr )
       {
          *signal = dm.get()->signal[ 0 ].sig;
@@ -231,7 +231,7 @@ protected:
       {
          for( size_t i( 0 ); i < n_items; i++ )
          {
-            items [ i ]  = dm.get()->store [ 0 ].item;
+            items [ i ]  = dm.get()->store [ 0 ];
             signal[ i ]  = dm.get()->signal[ 0 ].sig;
          }
       }
@@ -239,7 +239,7 @@ protected:
       {
          for( size_t i( 0 ); i < n_items; i++ )
          {
-            items [ i ]  = dm.get()->store [ 0 ].item;
+            items [ i ]  = dm.get()->store [ 0 ];
          }
       }
    }
@@ -247,7 +247,7 @@ protected:
 
    virtual void local_peek( void **ptr, raft::signal  *signal )
    {
-      *ptr = (void*)&( dm.get()->store[ 0 ].item );
+      *ptr = (void*)&( dm.get()->store[ 0 ] );
       if( signal != nullptr )
       {
          *signal = dm.get()->signal[  0  ].sig;

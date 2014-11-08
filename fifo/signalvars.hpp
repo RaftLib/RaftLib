@@ -19,9 +19,10 @@
  */
 #ifndef _SIGNALVARS_HPP_
 #define _SIGNALVARS_HPP_  1
+#include <cstdint>
 
 namespace raft{
-enum signal {
+enum signal : std::int8_t {
    none = 0,
    eof,
    quit,

@@ -28,6 +28,14 @@ Pointer::Pointer(const size_t cap ) : a( 0 ),
 {
 }
 
+Pointer::Pointer(const std::size_t cap, 
+                 const std::int8_t wrap_set ) : a( 0 ),
+                                      b( 0 ),
+                                      wrap_a( wrap_set  ),
+                                      wrap_b( wrap_set  ),
+                                      max_cap( cap )
+{}
+
 Pointer::Pointer( Pointer *other, const size_t new_cap ) :  wrap_a( 0 ),
                                                             wrap_b( 0 ),
                                                             max_cap( new_cap )

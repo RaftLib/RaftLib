@@ -49,7 +49,9 @@ stdalloc::run()
       /** check and see if a has a defined allocation **/
       if( a.existing_buffer != nullptr )
       {
-         fifo = test_func( a.nitems, 0, a.existing_buffer );     
+         fifo = test_func( a.nitems, 
+                           b.start_index, 
+                           a.existing_buffer );     
       }
       else
       {

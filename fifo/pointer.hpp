@@ -22,6 +22,7 @@
 
 #include <cstdlib>
 #include <cstdint>
+#include <cstddef>
 
 class Pointer{
 public:
@@ -31,6 +32,8 @@ public:
     * wrapping.
     */
    Pointer( const size_t cap );
+   
+   Pointer( const std::size_t cap, const std::int8_t wrap_set );
    /**
     * Pointer - used to snchronize read and write poitners for the
     * ring buffer, this constructer is a copy constructor that

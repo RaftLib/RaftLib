@@ -98,19 +98,22 @@ public:
    template < class T >
    bool addPorts( const std::size_t n_ports = 0 )
    {
-      T *existing_buff_t( reinterpret_cast< T* >( existing_buffer ) );
-      auto length( nbytes / sizeof( T ) );
+      T *existing_buff_t( reinterpret_cast< T* >( alloc_ptr ) );
+      auto length( alloc_ptr_length / sizeof( T ) );
       const std::size_t inc( length / n_ports );
       const std::size_t adder( length % n_ports );
       for( std::size_t index( 0 ); index < n_ports; index++ )
       {
+         const auto start_index( index * inc );
          PortInfo pi( typeid( T ), 
-                      (void*)&( existing_buff_t[ index * inc ] ) /** pointer **/,
-                      inc + ( index == (n_ports - 1) ? adder : 0 ) );
+                      (void*)&( existing_buff_t[ start_index ] ) /** pointer **/,
+                      inc + ( index == (n_ports - 1) ? adder : 0 ),
+                      start_index );
          pi.my_kernel = kernel;
-         py.my_name   = port_name;
+         auto name( std::to_string( index ) );
+         pi.my_name   = name;
          (this)->initializeConstMap< T >( pi );
-         portmap.map.insert( std::make_pair( std::to_string( index ), pi ) );
+         portmap.map.insert( std::make_pair( name, pi ) );
       }
       return( true );
    }

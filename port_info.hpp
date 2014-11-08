@@ -53,9 +53,11 @@ struct PortInfo
    
    PortInfo( const std::type_info &the_type,
              void * const ptr,
-             const std::size_t nitems )  : type( the_type ),
-                                           existing_buffer( ptr ),
-                                           nitems( nitems )
+             const std::size_t nitems,
+             const std::size_t start_index )  : type( the_type ),
+                                                existing_buffer( ptr ),
+                                                nitems( nitems ),
+                                                start_index( start_index )
    {
 
    }
@@ -136,5 +138,6 @@ struct PortInfo
    bool              out_of_order    = false;
    void             *existing_buffer = nullptr;
    std::size_t       nitems          = 0;
+   std::size_t       start_index     = 0;
 };
 #endif /* END _PORT_INFO_HPP_ */

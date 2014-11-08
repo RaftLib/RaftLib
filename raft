@@ -45,6 +45,9 @@
 #include "./raft_dir/readeach.tcc"
 #include "./raft_dir/writeeach.tcc"
 
+/** c++stdlib like utilities **/
+#include "./raft_dir/foreach.tcc"
+
 /** fifo includes **/
 #include "./raft_dir/Clock.hpp"
 #include "./raft_dir/blocked.hpp"

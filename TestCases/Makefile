@@ -5,12 +5,12 @@ ifneq ($(shell uname -s), Darwin)
 RT = -lrt
 endif
 
-CFLAGS   = -O3 -g -Wall -std=c99
-CXXFLAGS = -O3 -g  -Wall -std=c++11 -DRDTSCP=1 -DUNITTEST=1
+CFLAGS   = -O0 -g -Wall -std=c99
+CXXFLAGS = -O0 -g  -Wall -std=c++11 -DRDTSCP=1 -DUNITTEST=1
 LDLIBS  = -lstdc++ -lraft $(RT)
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
-      join lambdatest allocate_s
+      join lambdatest allocate_s foreach
 
 OBS = $(addsuffix .o, $(EXE))
 
@@ -24,6 +24,7 @@ split: split.o
 join: join.o
 lambdatest: lambdatest.o
 allocate_s: allocate_s.o
+foreach: foreach.o
 
 .PHONY: clean
 clean:

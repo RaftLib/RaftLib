@@ -318,7 +318,7 @@ protected:
       auto * const buff_ptr( dm.get() );
       
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
-      *ptr = (void*)&( buff_ptr->store[ write_index ].item );
+      *ptr = (void*)&( buff_ptr->store[ write_index ] );
       (this)->allocate_called = true;
       /** call exitBuffer during push call **/
    }
@@ -362,7 +362,7 @@ protected:
           * not here
           */
          const std::size_t write_index( Pointer::val( dm.get()->write_pt ) );
-         container->push_back( dm.get()->store[ write_index ].item );
+         container->push_back( dm.get()->store[ write_index ] );
          dm.get()->signal[ write_index ] = raft::none;
       }
       (this)->allocate_called = true;
@@ -411,7 +411,7 @@ protected:
       auto * const buff_ptr( dm.get() );
 	   const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       T *item( reinterpret_cast< T* >( ptr ) );
-	   buff_ptr->store[ write_index ].item     = *item;
+	   buff_ptr->store[ write_index ]     = *item;
 	   buff_ptr->signal[ write_index ]         = signal;
 	   Pointer::inc( buff_ptr->write_pt );
 	   write_stats.count++;
@@ -550,7 +550,7 @@ protected:
       }
       /** gotta dereference pointer and copy **/
       T *item( reinterpret_cast< T* >( ptr ) );
-      *item = buff_ptr->store[ read_index ].item;
+      *item = buff_ptr->store[ read_index ];
       Pointer::inc( buff_ptr->read_pt );
       read_stats.count++;
       dm.exitBuffer( dm::pop );
@@ -638,7 +638,7 @@ protected:
       {
          *signal = buff_ptr->signal[ read_index ];
       }
-      *ptr = (void*) &( buff_ptr->store[ read_index ].item );
+      *ptr = (void*) &( buff_ptr->store[ read_index ] );
       return;
       /** 
        * exitBuffer() called when recycle is called, can't be sure the 

@@ -22,29 +22,24 @@
 #include <raft>
 namespace raft
 {
-template < class T > class for_each : public raft::parallel_k
+template < class T > class for_each : public kernel
 {
 public:
    for_each( T * const ptr, 
-             const std::size_t nbytes,
-             const std::size_t nports = 0 ) : kernel( ptr, nbytes )
+             const std::size_t nitems,
+             const std::size_t nports = 0 ) : kernel( ptr, 
+                                                      nitems * sizeof( T ) )
    {
       /** if nports == 0, then runtime will specify **/
       output.addPorts< T >( nports ); 
       /** no input ports since we're using the existing allocation **/
    }
-
-protected:
-   virtual void addPort()
-   {
-      /** 
-       * TODO, right now we can't use this, however can be fixed
-       * easily with a little programming
-       */
-      assert( false );
-      addPortTo< T >( input );
+   
+   virtual raft::kstatus run(){ 
+      std::cerr << output[ "0" ].size() << "\n";
+      return( raft::stop ); 
    }
-   virtual raft::kstatus run(){ return( raft::stop ); }
+
 };
 } /** end namespace raft **/
 #endif /* END _FOREACH_TCC_ */

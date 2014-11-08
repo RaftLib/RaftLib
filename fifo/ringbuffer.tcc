@@ -70,11 +70,12 @@ public:
     * data structures.
     */
    RingBuffer( void * const      ptr, 
-               const std::size_t length ) : 
+               const std::size_t length,
+               const std::size_t start_position ) : 
       RingBufferBase< T, type >()
    {
       T *ptrcast = reinterpret_cast< T* >( ptr );
-      (this)->dm.set( new Buffer::Data<T, type >( ptrcast, length ) );
+      (this)->dm.set( new Buffer::Data<T, type >( ptrcast, length, start_position ) );
    }
 
    virtual ~RingBuffer()
@@ -103,7 +104,9 @@ public:
       {
          return( new RingBuffer< T, 
                                  Type::Heap, 
-                                 false >( data, n_items ) );
+                                 false >( data, 
+                                          n_items, 
+                                          align /** actually start pos, redesign **/) );
       }
       else
       {

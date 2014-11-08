@@ -35,31 +35,44 @@
 namespace Buffer
 {
 
+/** 
+ * TODO, re-add this when you have time,
+ * the equals operator
+ */
 /**
  * Element - simple struct that wraps each
  * data element.  This makes modifying the 
  * structure much easier in the future.
  */
-template < class X > struct Element
-{
-   /** default constructor **/
-   Element()
-   {
-   }
-   /**
-    * Element - copy constructor, the type
-    * X must have a defined assignment operator.
-    * This is simple for primitive types, but
-    * probably must be defined for objects,
-    * structs and more complex types.
-    */
-   Element( const Element< X > &other )
-   {
-      (this)->item   = other.item;
-   }
-
-   X item;
-};
+//template < class X > struct Element
+//{
+//   /** default constructor **/
+//   Element()
+//   {
+//   }
+//   /**
+//    * Element - copy constructor, the type
+//    * X must have a defined assignment operator.
+//    * This is simple for primitive types, but
+//    * probably must be defined for objects,
+//    * structs and more complex types.
+//    */
+//   Element( const Element< X > &other )
+//   {
+//      (this)->item   = other.item;
+//   }
+//
+//   Element< X >& operator = ( X &other )
+//   {
+//      //TODO, stream copy goes here
+//      item = other;
+//      return( (*this) );
+//   }
+//
+//   X
+//
+//   X item;
+//};
 
 /**
  * Signal - just like the Element struct,
@@ -108,7 +121,14 @@ struct Signal
    {
       return( (this)->sig );
    }
+   
+   auto getindex() -> std::size_t
+   {
+      return( index );
+   }
+
    raft::signal sig;
+   std::size_t  index = 0;
 };
 
 
@@ -126,7 +146,7 @@ template < class T > struct DataBase
                                       signal  ( nullptr )
    {
 
-      length_store   = ( sizeof( Element< T > ) * max_cap ); 
+      length_store   = ( sizeof( T  ) * max_cap ); 
       length_signal  = ( sizeof( Signal ) * max_cap );
    }
 
@@ -152,10 +172,10 @@ template < class T > struct DataBase
     * be a case for adding items in the store
     * as well.
     */
-   Element< T >      *store;
-   Signal            *signal;
-   size_t             length_store;
-   size_t             length_signal;
+   T                       *store;
+   Signal                  *signal;
+   std::size_t             length_store;
+   std::size_t             length_signal;
 };
 
 template < class T, 
@@ -163,21 +183,25 @@ template < class T,
            std::size_t SIZE = 0 > struct Data : public DataBase< T >
 {
 
-   Data( T  *ptr, 
-         const std::size_t max_cap ) : DataBase< T >( max_cap )
+   Data( T  * const ptr, 
+         const std::size_t max_cap,
+         const std::size_t start_position ) : DataBase< T >( max_cap )
    {
-      (this)->store->ptr;
+      assert( ptr != nullptr );
+      (this)->store  = ptr;
       (this)->signal = (Signal*)       calloc( (this)->max_cap,
                                                sizeof( Signal ) );
       if( (this)->signal == nullptr )
       {
          perror( "Failed to allocate signal queue!" );
          exit( EXIT_FAILURE );
-      }
+      } 
+      (this)->signal[ 0 ].index  = start_position; 
       /** allocate read and write pointers **/
       /** TODO, see if there are optimizations to be made with sizing and alignment **/
       (this)->read_pt   = new Pointer( max_cap );
-      (this)->write_pt  = new Pointer( max_cap ); 
+      (this)->write_pt  = new Pointer( max_cap, 1 ); 
+      
       external_alloc = true;
    }
 
