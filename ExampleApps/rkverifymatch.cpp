@@ -58,20 +58,20 @@ rkverifymatch::run()
    port.pop_range< hit_t >( range, avail );
    for( auto &hit : range )
    {
-      //auto &m( out.allocate< match_t >() );
-      out.push< match_t >( hit.first ); 
-      //if( verify_match( filebuffer, 
-      //                  filebuffer_size, 
-      //                  searchterm, 
-      //                  hit.first, 
-      //                  m ) )
-      //{
-      //   out.send();
-      //}
-      //else
-      //{
-      //   out.deallocate();
-      //}
+      auto &m( out.allocate< match_t >() );
+      //out.push< match_t >( hit.first ); 
+      if( verify_match( filebuffer, 
+                        filebuffer_size, 
+                        searchterm, 
+                        hit.first, 
+                        m ) )
+      {
+         out.send();
+      }
+      else
+      {
+         out.deallocate();
+      }
    }
    return( raft::proceed );
 }

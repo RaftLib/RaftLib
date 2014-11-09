@@ -83,6 +83,7 @@ public:
          t = ( ( t << 8 ) - t ) % q;
          t = ( t + everything[ s + search_term_length  ] ) % q;
          curr_index++;
+         s++;
       }while( s <= (everything.size() - search_term_length ) );
 
       //char c;

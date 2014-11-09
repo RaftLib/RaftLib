@@ -38,7 +38,7 @@ main( int argc, char **argv )
    std::cout << "Searching for: " << search_term << "\n";
    std::cout << "In filename: " << file << "\n";
 
-   const std::size_t num_threads( 4  );
+   const std::size_t num_threads( 8  );
 
    int fd( open( file.c_str(), O_RDONLY ) );
    if( fd < 0 )
@@ -56,7 +56,7 @@ main( int argc, char **argv )
    char *buffer = (char*) mmap( (void*) NULL,
                                 st.st_size,
                                 PROT_READ,
-                                MAP_PRIVATE,
+                                ( MAP_PRIVATE | MAP_NOCACHE ),
                                 fd,
                                 0 );
    if( buffer == MAP_FAILED )
