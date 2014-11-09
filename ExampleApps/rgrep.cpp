@@ -5,6 +5,10 @@
 #include <raft>
 #include <raftio>
 
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #include <array>
 #include <vector>
 #include <iterator>
@@ -34,7 +38,33 @@ main( int argc, char **argv )
    std::cout << "Searching for: " << search_term << "\n";
    std::cout << "In filename: " << file << "\n";
 
-   const std::size_t num_threads( 4 );
+   const std::size_t num_threads( 4  );
+
+   int fd( open( file.c_str(), O_RDONLY ) );
+   if( fd < 0 )
+   {
+      perror( "Failed to open input file, exiting!!\n" );
+      exit( EXIT_FAILURE );
+   }
+   struct stat st;
+   if( fstat( fd, &st ) != 0 )
+   {
+      perror( "Failed ot open input file, exiting!!\n" );
+      exit( EXIT_FAILURE );
+   }
+
+   char *buffer = (char*) mmap( (void*) NULL,
+                                st.st_size,
+                                PROT_READ,
+                                MAP_PRIVATE,
+                                fd,
+                                0 );
+   if( buffer == MAP_FAILED )
+   {
+      perror( "Failed to mmap input file\n" );
+      exit( EXIT_FAILURE );
+   }
+   close( fd );
 
    std::vector< raft::match_t > total_hits; 
    
@@ -47,23 +77,22 @@ main( int argc, char **argv )
    //   raft::kernel::make< raft::search< raft::rabinkarp > >( search_term ) ) );
 
 
-   auto *filereader( raft::kernel::make< raft::filereader< raft::chunk_t > >(
-      file,
-      num_threads,
-      search_term.length() ) );
+   auto *foreach( 
+      raft::kernel::make< raft::for_each< char > >( buffer, st.st_size, num_threads ) );
+
    std::array< raft::kernel*, num_threads > rbk;
    std::size_t index( 0 );
    for( index = 0; index < num_threads; index++ )
    {
       rbk[ index ] = raft::kernel::make< 
          raft::search< raft::rabinkarp > >( search_term );
-      raft::map.link( filereader, std::to_string( index ), rbk[ index ] );
+      raft::map.link( foreach, std::to_string( index ), rbk[ index ] );
    }
    std::array< raft::kernel*, num_threads > rbkverify;
    for( index = 0; index < num_threads; index++ ) 
    {
       rbkverify[ index ] = 
-         raft::kernel::make< raft::rkverifymatch >( file, search_term );
+         raft::kernel::make< raft::rkverifymatch >( buffer, st.st_size, search_term );
       raft::map.link( rbk[ index ], rbkverify[ index ] );
    }
 
@@ -103,5 +132,6 @@ main( int argc, char **argv )
       std::cout << val << "\n"; 
       //": " << val.seg << "\n";
    }
+   /** TODO, munmap **/
    return( EXIT_SUCCESS );
 }

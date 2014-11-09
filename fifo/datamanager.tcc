@@ -57,6 +57,13 @@ public:
    {
       assert( buffer != nullptr );
       (this)->buffer = buffer;
+      /** check to see if buffer is given is resizeable **/
+      resizeable     = (  buffer->external_alloc ? false : true ); 
+   }
+
+   bool is_resizeable()
+   {
+      return( resizeable );
    }
 
    /**
@@ -193,7 +200,8 @@ public:
 private:
    Buffer::Data< T, B > *buffer              = nullptr; 
    volatile bool         resizing            =  false;
-   
+
+   bool                  resizeable          = true;
    
    struct ThreadAccess
    {

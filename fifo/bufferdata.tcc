@@ -25,6 +25,7 @@
 #include <cassert>
 #include <thread>
 #include <cinttypes>
+#include <iostream>
 
 #include "shm.hpp"
 #include "signalvars.hpp"
@@ -176,6 +177,7 @@ template < class T > struct DataBase
    Signal                  *signal;
    std::size_t             length_store;
    std::size_t             length_signal;
+   bool                    external_alloc = false;
 };
 
 template < class T, 
@@ -195,7 +197,8 @@ template < class T,
       {
          perror( "Failed to allocate signal queue!" );
          exit( EXIT_FAILURE );
-      } 
+      }
+      /** set index to be start_position **/
       (this)->signal[ 0 ].index  = start_position; 
       /** allocate read and write pointers **/
       /** TODO, see if there are optimizations to be made with sizing and alignment **/
@@ -203,22 +206,21 @@ template < class T,
       (this)->write_pt  = new Pointer( max_cap, 1 ); 
       
       /** get trace of ptr vars **/
-      const auto rdptr( Pointer::val( this->read_pt ) );
-      const auto wptr ( Pointer::val( this->write_pt ) );
-      const auto wrap_r( Pointer::wrapIndicator( this->read_pt  ) );
-      const auto wrap_w( Pointer::wrapIndicator( this->write_pt ) );
+      //const auto rdptr( Pointer::val( this->read_pt ) );
+      //const auto wptr ( Pointer::val( this->write_pt ) );
+      //const auto wrap_r( Pointer::wrapIndicator( this->read_pt  ) );
+      //const auto wrap_w( Pointer::wrapIndicator( this->write_pt ) );
 
-      std::cerr << rdptr << "," << wptr << "," << wrap_r << "," << wrap_w << "," <<
-         max_cap << "\n";
+      //std::cerr << rdptr << "," << wptr << "," << wrap_r << "," << wrap_w << "," <<
+      //   max_cap << "\n";
       
-      external_alloc = true;
+      (this)->external_alloc = true;
    }
 
 
    Data( const std::size_t max_cap , 
          const std::size_t align = 16 ) : DataBase< T >( max_cap )
    {
-      std::cerr << "This guy called\n";
       int ret_val( posix_memalign( (void**)&((this)->store), 
                                    align, 
                                    (this)->length_store ) );
@@ -246,7 +248,7 @@ template < class T,
    virtual void copyFrom( DataBase< T > *other )
    {
       //TODO, figure something better out for here 
-      if( external_alloc )
+      if( other->external_alloc )
       {
          assert( false );
       }
@@ -273,14 +275,13 @@ template < class T,
       delete( (this)->read_pt );
       delete( (this)->write_pt );
       //FREE USED HERE
-      if( ! external_alloc )
+      if( ! (this)->external_alloc )
       {
          free( (this)->store );
       }
       free( (this)->signal );
    }
 
-   bool external_alloc = false;
 }; /** end heap **/
 
 template < class T > struct Data< T, Type::SharedMemory > : 

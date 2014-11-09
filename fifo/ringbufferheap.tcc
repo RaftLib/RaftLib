@@ -196,52 +196,33 @@ public:
     */
    virtual void recycle( std::size_t range = 1 )
    {
-      assert( range == 1 );
       if( range == 0 )
       {
+         /** do nothing **/
          return;
       }
-      for( ;; )
-      {
-         dm.enterBuffer( dm::recycle );
-         if( dm.notResizing() )
+      do{ /** at least one to remove **/
+         for( ;; )
          {
-            if( (this)->size() > 0 )
+            dm.enterBuffer( dm::recycle );
+            if( dm.notResizing() )
             {
-               break;
+               if( (this)->size() > 0 )
+               {
+                  break;
+               }
+               else if( (this)->is_invalid() )
+               {
+                  dm.exitBuffer( dm::recycle );
+                  return;
+               }
             }
-            else if( (this)->is_invalid() )
-            {
-               dm.exitBuffer( dm::recycle );
-               return;
-            }
-            /**
-             * TODO, fix this mess, need to double check
-             * the code in Pointer::incBy
-             */
-            //if( range > (this)->size() )
-            //{
-            //   Pointer::incBy( (this)->size() , dm.get()->read_pt );
-            //   range -= (this)->size();
-            //   dm.exitBuffer( dm::recycle );
-            //}
-            //else if( range <= (this)->size() )
-            //{
-            //   Pointer::incBy( range, dm.get()->read_pt );
-            //   dm.exitBuffer( dm::recycle );
-            //   return;
-            //}
-            //else if( (this)->size() == 0 || (this)->is_invalid() )
-            //{
-            //   /** TODO, decide if an exception is warranted **/
-            //   dm.exitBuffer( dm::recycle );
-            //   return; 
-            //}
          }
-      }
-      auto * const buff_ptr( dm.get() );
-      Pointer::inc( buff_ptr->read_pt );
-      dm.exitBuffer( dm::recycle );
+         auto * const buff_ptr( dm.get() );
+         Pointer::inc( buff_ptr->read_pt );
+         dm.exitBuffer( dm::recycle );
+      }while( --range > 0 );
+      return;
    }
    
    /**
@@ -323,7 +304,7 @@ protected:
       /** call exitBuffer during push call **/
    }
 
-   virtual std::size_t local_allocate_n( void *ptr, const std::size_t n )
+   virtual void local_allocate_n( void *ptr, const std::size_t n )
    {
       for( ;; )
       {
@@ -353,21 +334,24 @@ protected:
       }
       auto *container( 
          reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
-      std::size_t output( n <= (this)->capacity() ? n : (this)->capacity() );
+      /** 
+       * TODO, fix this condition where the user can ask for more,
+       * double buffer.
+       */
       /** iterate over range, pause if not enough items **/
-      for( std::size_t index( 0 ); index < output; index++ )
+      auto * const buff_ptr( dm.get() );
+      std::size_t write_index( Pointer::val( buff_ptr->write_pt ) );
+      for( std::size_t index( 0 ); index < n; index++ )
       {
          /**
           * TODO, fix this logic here, write index must get iterated, but 
           * not here
           */
-         const std::size_t write_index( Pointer::val( dm.get()->write_pt ) );
-         container->push_back( dm.get()->store[ write_index ] );
-         dm.get()->signal[ write_index ] = raft::none;
+         container->push_back( buff_ptr->store[ write_index ] );
+         buff_ptr->signal[ write_index ] = raft::none;
+         write_index = ( write_index + 1 ) % buff_ptr->max_cap;
       }
       (this)->allocate_called = true;
-      (this)->n_allocated     = output;
-      return( output );
       /** exitBuffer() called by push_range **/
    }
 
@@ -411,7 +395,7 @@ protected:
       auto * const buff_ptr( dm.get() );
 	   const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       T *item( reinterpret_cast< T* >( ptr ) );
-	   buff_ptr->store[ write_index ]     = *item;
+	   buff_ptr->store[ write_index ]          = *item;
 	   buff_ptr->signal[ write_index ]         = signal;
 	   Pointer::inc( buff_ptr->write_pt );
 	   write_stats.count++;
@@ -591,7 +575,6 @@ protected:
    
    virtual void unpeek()
    {
-      read_stats.count++;
       dm.exitBuffer( dm::peek );
    }
 
@@ -645,6 +628,53 @@ protected:
        * reference isn't being used until all outside accesses to it are
        * invalidated from the buffer.
        */
+   }
+   
+   virtual void local_peek_range( void **ptr,
+                                  void **sig,
+                                  const std::size_t n, 
+                                  std::size_t &curr_pointer_loc )
+   {
+      for(;;) 
+      {
+         
+         dm.enterBuffer( dm::peek );
+         if( dm.notResizing() )
+         {
+            if( size() >= n  )
+            { 
+               break;
+            }
+            else if( (this)->is_invalid() )
+            {
+               throw ClosedPortAccessException( 
+                  "Accessing closed port with local_insert call, exiting!!" );
+            }
+         }
+         dm.exitBuffer( dm::peek );
+#ifdef NICE      
+         std::this_thread::yield();
+#endif     
+#if  __x86_64   
+         __asm__ volatile("\
+           pause"
+           :
+           :
+           : );
+#endif
+      }
+      
+      /** 
+       * TODO, fix this condition where the user can ask for more,
+       * double buffer.
+       */
+      /** iterate over range, pause if not enough items **/
+      auto * const buff_ptr( dm.get() );
+      const auto cpl( Pointer::val( buff_ptr->read_pt ) );
+      curr_pointer_loc = cpl; 
+      *sig =  (void*) &buff_ptr->signal[ cpl ];
+      *ptr =  buff_ptr->store;
+      return;
    }
 
    /** 

@@ -7,25 +7,20 @@ endif
 
 CFLAGS   = -O3 -fast -msse4.1 -Wall -std=c99
 CXXFLAGS = -O3 -fast -msse4.1 -Wall -std=c++11 -DRDTSCP=1
+LDLIBS   = -lraft $(RT)
 
-CFILES   =
-COBJS    =
+EXE      = sumapp readtest singlequeue rgrep
+CPPFILES = rkverifymatch
+OBJS     = $(addsuffix .o, $(CPPFILES)) $(addsuffix .o, $(EXE))
 
-CXXFILES = sumapp.cpp readtest.cpp singlequeue.cpp rgrep.cpp rkverifymatch.cpp
-CXXOBJS  = sumapp.o readtest.o singlequeue.o rgrep.o rkverifymatch.o
-EXENAMES = sumapp readtest singlequeue rgrep
+all: $(EXE)
 
-INCS = 
+sumapp: sumapp.o
+readtest: readtest.o
+singlequeue: singlequeue.o
+rgrep: rgrep.o rkverifymatch.o
+rkverifymatch.o: rkverifymatch.cpp
 
-LDFLAGS = 
-LIBS = -lraft $(RT)
-
-compile: $(CXXFILES) $(CFILES)
-	$(MAKE) $(CXXOBJS) $(COBJS)
-	$(CXX)  $(LDFLAGS) $(CXXFLAGS) -o sumapp sumapp.o $(LIBS)
-	$(CXX)  $(LDFLAGS) $(CXXFLAGS) -o readtest readtest.o $(LIBS)
-	$(CXX)  $(LDFLAGS) $(CXXFLAGS) -o singlequeue singlequeue.o $(LIBS)
-	$(CXX)  $(LDFLAGS) $(CXXFLAGS) -o rgrep rgrep.o rkverifymatch.o $(LIBS)
 .PHONY: clean
 clean:
-	rm -rf $(EXENAMES) $(CXXOBJS) $(COBJS)
+	rm -rf $(EXE) $(OBJS) intelremotemonfifo*

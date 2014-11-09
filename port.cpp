@@ -39,7 +39,6 @@ Port::Port( raft::kernel *k, void * const ptr, const std::size_t nbytes ) :
    alloc_ptr( ptr ),
    alloc_ptr_length( nbytes )
 {
-   fprintf( stderr, "Port in-place alloc called\n" );
 }
 
 Port::~Port()

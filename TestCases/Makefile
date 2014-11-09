@@ -10,7 +10,7 @@ CXXFLAGS = -O0 -g  -Wall -std=c++11 -DRDTSCP=1 -DUNITTEST=1
 LDLIBS  = -lstdc++ -lraft $(RT)
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
-      join lambdatest allocate_s foreach
+      join lambdatest allocate_s foreach peekrange
 
 OBS = $(addsuffix .o, $(EXE))
 
@@ -25,6 +25,7 @@ join: join.o
 lambdatest: lambdatest.o
 allocate_s: allocate_s.o
 foreach: foreach.o
+peekrange: peekrange.o
 
 .PHONY: clean
 clean:

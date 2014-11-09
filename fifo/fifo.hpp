@@ -27,7 +27,8 @@
 #include <map>
 #include <functional>
 #include <cassert>
-
+#include <stdexcept>
+#include "bufferdata.tcc"
 #include "blocked.hpp"
 #include "signalvars.hpp"
 
@@ -39,7 +40,10 @@ public:
 
    template< class T > using pop_range_t = std::vector< std::pair< T , raft::signal > >;
 
-   enum autotype { allocatetype, poptype };
+   enum autotype { allocatetype, 
+                   poptype, 
+                   peekrange,
+                   allocaterange };
 
    template< class T, autotype type = poptype > class autorelease
    {
@@ -87,6 +91,83 @@ public:
       raft::signal signal;
       T            &item;
       bool         copied = false;
+   };
+
+   template < class T > class autorelease< T, peekrange >
+   {
+   public:
+      autorelease( FIFO             &fifo, 
+                      T * const      queue,
+                   Buffer::Signal   &sig,
+                   const std::size_t curr_read_ptr,
+                   const std::size_t n_items ) : fifo( fifo ),
+                                                 queue( queue ),
+                                                 signal( sig ),
+                                                 crp  ( curr_read_ptr ),
+                                                 n_items( n_items ),
+                                                 queue_size( fifo.capacity() )
+      {
+         
+      }
+
+      autorelease( const autorelease< T, peekrange > &other ) : 
+         fifo( other.fifo ),
+         queue( other.queue ),
+         signal( other.signal ),
+         crp( other.crp ),
+         n_items( other.n_items ),
+         queue_size( other.queue_size )
+      {
+         const_cast< autorelease< T, peekrange >& >( other ).copied = true;
+      }
+       
+      ~autorelease()
+      {
+         if( ! copied )
+         {
+            fifo.unpeek();
+         }
+      }
+
+      T& operator []( const std::size_t index )
+      {
+         if( index >= n_items )
+         {
+            std::stringstream ss;
+            ss << "Index (" << index << ") out of bounds, "
+            << "max value is (" << (n_items - 1) << ")\n";
+            throw std::length_error( ss.str() );
+         }
+         else
+         {
+            std::size_t ptr_val( (index + crp) % queue_size );
+            return( queue[ ptr_val ] );
+         }
+      }
+
+      raft::signal& sig()
+      {
+         return( signal.sig() );
+      }
+
+      std::size_t getindex()
+      {
+         return( signal.getindex() );
+      }
+
+      std::size_t size() const
+      {
+         return( n_items );
+      }
+
+   private:
+      FIFO             &fifo;
+      T  *  const       queue;
+      Buffer::Signal   &signal;
+      const std::size_t crp;
+      const std::size_t n_items;
+      const std::size_t queue_size;
+      bool              copied = false;
    };
 
 
@@ -207,6 +288,11 @@ public:
          reinterpret_cast< T* >( ptr ), (*this) ) );
    }
    
+   /** 
+    * TODO, fix allocate_range to double buffer properly
+    * if not enough mem available 
+    */
+
    /**
     * allocate_range - returns a std::vector of references to 
     * n items on the queue.  If for some reason the capacity
@@ -215,16 +301,14 @@ public:
     * n_ret. To release items to the queue, use push_range
     * as opposed to the standard push.
     * @param   n - const std::size_t, # items to allocate
-    * @param   n_ret - std::size_t number of items actually allocated
     * @return  std::vector< std::reference_wrapper< T > >
     */
-   template < class T > auto allocate_range( const std::size_t n, 
-                                             std::size_t &n_ret ) -> std::vector< 
+   template < class T > auto allocate_range( const std::size_t n ) -> std::vector< 
                                                 std::reference_wrapper< T > >
    {
       std::vector< std::reference_wrapper< T > > output;
       void *ptr( (void*) &output );
-      n_ret = local_allocate_n( ptr, n );
+      local_allocate_n( ptr, n );
       /** compiler should optimize this copy, if not then it'll be a copy of referneces not full objects **/
       return( output );
    }
@@ -346,6 +430,14 @@ public:
       return;
    }
 
+   /**
+    * peek - returns a reference to the head of the
+    * queue.  unpeek() must be called after this to 
+    * tell the runtime that the reference is no longer
+    * being used.  
+    * @param   signal - raft::signal, default: nullptr
+    * @return T&
+    */
    template< class T >
    T& peek( raft::signal *signal = nullptr )
    {
@@ -355,10 +447,32 @@ public:
    }
 
    /**
+    * peek_range - analogous to peek, only the user gets
+    * a list of items.  unpeek() must be called after
+    * using this function to let the runtime know that
+    * the user is done with the references.
+    * @ n - const std::size_t, number of items to peek
+    * @return - std::vector< std::reference_wrapper< T > >
+    */
+   template< class T >
+   auto  peek_range( const std::size_t n ) -> 
+      autorelease< T, peekrange >
+   {
+      void *ptr;
+      void *sig;
+      std::size_t curr_pointer_loc( 0 );
+      local_peek_range( &ptr, &sig, n, curr_pointer_loc );
+      return( autorelease< T, peekrange >( 
+         (*this),
+         reinterpret_cast< T * const >( ptr ),
+         *reinterpret_cast< Buffer::Signal* >( sig ),
+         curr_pointer_loc,
+         n ) );
+   }
+   /**
     * unpeek - call after peek to let the runtime know that 
     * all references to the returned value are no longer in
-    * use.  Calling has the effect of popping the value
-    * from the fifo without actually using it.
+    * use.e
     */
    virtual void unpeek() = 0;
 
@@ -442,9 +556,8 @@ protected:
     * passed in by ptr.  
     * @param   - ptr, void* dereferenced std::vector
     * @param   - n, const std::size_t
-    * @return  # of items allocated, different only if capacity is less than asked
     */
-   virtual std::size_t local_allocate_n( void *ptr, const std::size_t n ) = 0;
+   virtual void  local_allocate_n( void *ptr, const std::size_t n ) = 0;
    /**
     * local_push - pushes the object reference by the void
     * ptr and pushes it to the FIFO with the associated 
@@ -493,6 +606,12 @@ protected:
     */
    virtual void local_peek( void **ptr,
                             raft::signal *signal ) = 0;
+      
+
+   virtual void local_peek_range( void **ptr, 
+                                  void **sig,
+                                  const std::size_t n_items,
+                                  std::size_t &curr_pointer_loc ) = 0;
 
    volatile bool valid = true;
 

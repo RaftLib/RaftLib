@@ -71,7 +71,9 @@ struct match_t
 class rkverifymatch : public kernel
 {
 public:
-   rkverifymatch( const std::string filename, const std::string term );
+   rkverifymatch( char * const buffer, 
+                  const std::size_t buffer_size,
+                  const std::string term );
    virtual ~rkverifymatch();
 
    virtual kstatus run();
@@ -80,7 +82,7 @@ private:
    /** global single search term **/
    const std::string searchterm;
    /** filestuff for mmap **/
-   char * filebuffer            = nullptr;
+   char * const filebuffer            = nullptr;
    std::size_t filebuffer_size = 0;
    /** functions **/
 

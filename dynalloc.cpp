@@ -62,10 +62,23 @@ dynalloc::run()
       assert( a.type == b.type );
       /** assume everyone needs a heap for the moment to get working **/
       instr_map_t *func_map( a.const_map[ Type::Heap ] );
+      FIFO *fifo( nullptr );
       auto test_func( (*func_map)[ false ] );
-      FIFO *fifo( test_func( 16  /* items */, 
-                             16 /* align */, 
-                             (void*)NULL ) );
+      /**
+       * TODO, fix this one.
+       */
+      if( a.existing_buffer != nullptr )
+      {
+         fifo = test_func( a.nitems,
+                           a.start_index,
+                           a.existing_buffer );
+      }
+      else
+      {
+         fifo = test_func( 16  /* items */, 
+                           16 /* align */, 
+                           (void*)NULL );
+      }
       assert( fifo != nullptr );
       (this)->initialize( &a, &b, fifo );
    };
@@ -81,7 +94,7 @@ dynalloc::run()
     */
    auto mon_func = [&]( PortInfo &a, PortInfo &b ) -> void
    {
-      const float ratio( .5 );
+      const float ratio( .7 );
       const auto hash_val( dynalloc::hash( a, b ) );
       /** TODO, the values might wrap if no monitoring on **/
       const auto realized_ratio( a.getFIFO()->get_frac_write_blocked() );

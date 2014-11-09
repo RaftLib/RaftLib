@@ -29,53 +29,22 @@
 #include "searchdefs.hpp"
 
 using namespace raft;
-using filename_t = char[ 256 ];
 
-rkverifymatch::rkverifymatch( const std::string filename,
+rkverifymatch::rkverifymatch( char * const buffer,
+                              const std::size_t buffer_size,
                               const std::string term ) : kernel(),
-                                                         searchterm( term )
+                                                         searchterm( term ),
+                                                         filebuffer( buffer ),
+                                                         filebuffer_size( buffer_size )
 {
    input.addPort< hit_t >( "input" );
    output.addPort< match_t >( "output" );
    
-   int fd( open( filename.c_str() , O_RDONLY ) );
-   if( fd < 0 )
-   {
-      perror( "Failed to open input file, exiting!!\n" );
-      exit( EXIT_FAILURE );
-   }
-   /** stat to get size **/
-   struct stat st;
-   if( fstat( fd, &st ) != 0 )
-   {
-      perror( "Failed to stat input file, exiting!!\n" );
-      exit( EXIT_FAILURE );
-   }
-   filebuffer_size = st.st_size;
-   /** else mmap **/
-   filebuffer =  (char*) mmap( (void*)NULL, 
-                               filebuffer_size, 
-                               PROT_READ, 
-                               MAP_SHARED, 
-                               fd, 
-                               0 );
-   if( filebuffer == MAP_FAILED )
-   {
-      perror( "Failed to mmap input file\n" );
-      exit( EXIT_FAILURE );
-   }
-   /** don't need this anymore **/
-   close( fd );
 }
 
 
 rkverifymatch::~rkverifymatch()
 {
-   /** close file **/
-   if( filebuffer != nullptr )
-   {
-      munmap( filebuffer, filebuffer_size );
-   }
 }
 
 kstatus
@@ -89,19 +58,20 @@ rkverifymatch::run()
    port.pop_range< hit_t >( range, avail );
    for( auto &hit : range )
    {
-      auto &m( out.allocate< match_t >() );
-      if( verify_match( filebuffer, 
-                        filebuffer_size, 
-                        searchterm, 
-                        hit.first, 
-                        m ) )
-      {
-         out.send();
-      }
-      else
-      {
-         out.deallocate();
-      }
+      //auto &m( out.allocate< match_t >() );
+      out.push< match_t >( hit.first ); 
+      //if( verify_match( filebuffer, 
+      //                  filebuffer_size, 
+      //                  searchterm, 
+      //                  hit.first, 
+      //                  m ) )
+      //{
+      //   out.send();
+      //}
+      //else
+      //{
+      //   out.deallocate();
+      //}
    }
    return( raft::proceed );
 }

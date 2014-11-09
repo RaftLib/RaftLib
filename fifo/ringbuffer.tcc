@@ -120,7 +120,13 @@ public:
                         const std::size_t align,
                         volatile bool &exit_alloc )
    {
-      (this)->dm.resize( new Buffer::Data< T, type >( size, align ), exit_alloc );
+      if( (this)->dm.is_resizeable() )
+      {
+         (this)->dm.resize( 
+            new Buffer::Data< T, type >( size, align ), exit_alloc );
+      }
+      /** else, not resizeable..just return **/
+      return;
    }
    
    virtual float get_frac_write_blocked()
