@@ -24,6 +24,7 @@
 #include <iterator>
 #include <list>
 #include <vector>
+#include <sstream>
 #include <map>
 #include <functional>
 #include <cassert>

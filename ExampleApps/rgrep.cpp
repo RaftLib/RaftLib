@@ -56,7 +56,7 @@ main( int argc, char **argv )
    char *buffer = (char*) mmap( (void*) NULL,
                                 st.st_size,
                                 PROT_READ,
-                                ( MAP_PRIVATE | MAP_NOCACHE ),
+                                ( MAP_PRIVATE),
                                 fd,
                                 0 );
    if( buffer == MAP_FAILED )

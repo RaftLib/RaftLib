@@ -84,7 +84,7 @@ public:
          t = ( t + everything[ s + search_term_length  ] ) % q;
          curr_index++;
          s++;
-      }while( s <= (everything.size() - search_term_length ) );
+      }while( s <= (everything.size() - search_term_length - 1) );
 
       //char c;
       //in_port.pop< char >( c );
