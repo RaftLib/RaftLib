@@ -38,8 +38,8 @@ typedef struct AC_AUTOMATA
     * all nodes. */
     struct AC_NODE ** all_nodes;
 
-    unsigned int all_nodes_num; /* Number of all nodes in the automata */
-    unsigned int all_nodes_max; /* Current max allocated memory for *all_nodes */
+    uint64_t all_nodes_num; /* Number of all nodes in the automata */
+    uint64_t all_nodes_max; /* Current max allocated memory for *all_nodes */
 
     /* this flag indicates that if automata is finalized by
      * ac_automata_finalize() or not. 1 means finalized and 0
@@ -52,7 +52,7 @@ typedef struct AC_AUTOMATA
      * thinks that all chunks are related unless you do ac_automata_reset().
      * followings are variables that keep track of searching state. */
     struct AC_NODE * current_node; /* Pointer to current node while searching */
-    unsigned long base_position; /* Represents the position of current chunk
+    uint64_t base_position; /* Represents the position of current chunk
                                   * related to whole input text */
 
     /* The input text.
@@ -61,12 +61,12 @@ typedef struct AC_AUTOMATA
     
     /* The lase searched position in the chunk. 
      * used only when it is working in settext/findnext mode */
-    unsigned long position;
+    uint64_t position;
     
     /* Statistic Variables */
     
     /* Total patterns in the automata */
-    unsigned long total_patterns;
+    uint64_t total_patterns;
     
 } AC_AUTOMATA_t;
 

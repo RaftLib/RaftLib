@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include <ctype.h>
 
 #include "node.h"
@@ -71,7 +72,7 @@ AC_AUTOMATA_t * ac_automata_init ()
 ******************************************************************************/
 AC_STATUS_t ac_automata_add (AC_AUTOMATA_t * thiz, AC_PATTERN_t * patt)
 {
-    unsigned int i;
+    uint64_t  i;
     AC_NODE_t * n = thiz->root;
     AC_NODE_t * next;
     AC_ALPHABET_t alpha;
@@ -123,7 +124,7 @@ AC_STATUS_t ac_automata_add (AC_AUTOMATA_t * thiz, AC_PATTERN_t * patt)
 ******************************************************************************/
 void ac_automata_finalize (AC_AUTOMATA_t * thiz)
 {
-    unsigned int i;
+    uint64_t i;
     AC_ALPHABET_t alphas[AC_PATTRN_MAX_LENGTH];
     AC_NODE_t * node;
 
@@ -158,10 +159,10 @@ void ac_automata_finalize (AC_AUTOMATA_t * thiz)
 int ac_automata_search (AC_AUTOMATA_t * thiz, AC_TEXT_t * text, int keep, 
         AC_MATCH_CALBACK_f callback, void * param)
 {
-    unsigned long position;
+    uint64_t    position;
     AC_NODE_t * current;
     AC_NODE_t * next;
-    AC_MATCH_t match;
+    AC_MATCH_t  match;
 
     if (thiz->automata_open)
         /* you must call ac_automata_locate_failure() first */
@@ -228,7 +229,7 @@ void ac_automata_settext (AC_AUTOMATA_t * thiz, AC_TEXT_t * text, int keep)
 ******************************************************************************/
 AC_MATCH_t * ac_automata_findnext (AC_AUTOMATA_t * thiz)
 {
-    unsigned long position;
+    uint64_t    position;
     AC_NODE_t * current;
     AC_NODE_t * next;
     static AC_MATCH_t match;
@@ -307,7 +308,7 @@ void ac_automata_reset (AC_AUTOMATA_t * thiz)
 ******************************************************************************/
 void ac_automata_release (AC_AUTOMATA_t * thiz)
 {
-    unsigned int i;
+    uint64_t  i;
     AC_NODE_t * n;
 
     for (i=0; i < thiz->all_nodes_num; i++)
@@ -329,7 +330,7 @@ void ac_automata_release (AC_AUTOMATA_t * thiz)
 ******************************************************************************/
 void ac_automata_display (AC_AUTOMATA_t * thiz, char repcast)
 {
-    unsigned int i, j;
+    uint64_t  i, j;
     AC_NODE_t * n;
     struct edge * e;
     AC_PATTERN_t sid;
@@ -395,7 +396,7 @@ static void ac_automata_register_nodeptr (AC_AUTOMATA_t * thiz, AC_NODE_t * node
 ******************************************************************************/
 static void ac_automata_union_matchstrs (AC_NODE_t * node)
 {
-    unsigned int i;
+    uint64_t  i;
     AC_NODE_t * m = node;
 
     while ((m = m->failure_node))
@@ -416,7 +417,7 @@ static void ac_automata_union_matchstrs (AC_NODE_t * node)
 static void ac_automata_set_failure
     (AC_AUTOMATA_t * thiz, AC_NODE_t * node, AC_ALPHABET_t * alphas)
 {
-    unsigned int i, j;
+    uint64_t i, j;
     AC_NODE_t * m;
 
     for (i=1; i < node->depth; i++)
@@ -444,7 +445,7 @@ static void ac_automata_set_failure
 static void ac_automata_traverse_setfailure
     (AC_AUTOMATA_t * thiz, AC_NODE_t * node, AC_ALPHABET_t * alphas)
 {
-    unsigned int i;
+    uint64_t  i;
     AC_NODE_t * next;
 
     for (i=0; i < node->outgoing_degree; i++)

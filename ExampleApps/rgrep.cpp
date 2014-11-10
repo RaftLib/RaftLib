@@ -133,7 +133,6 @@ main( int argc, char **argv )
       std::cout << val << "\n"; 
       //": " << val.seg << "\n";
    }
-   std::cerr << "Hit count: " << total_hits.size() << "\n";
    munmap( buffer, st.st_size );
    return( EXIT_SUCCESS );
 }

@@ -77,7 +77,7 @@ public:
       auto &out_port( output[ "out" ] );
       param.fifo     = &out_port;
       param.position = everything.getindex();
-      ac_automata_search( atm, &tmp_text, 1, match_handler, (void*)&param );
+      ac_automata_search( atm, &tmp_text, 0, match_handler, (void*)&param );
       return( raft::stop );
    }
    

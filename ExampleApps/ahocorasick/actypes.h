@@ -21,6 +21,8 @@
 #ifndef _AC_TYPES_H_
 #define _AC_TYPES_H_
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,7 +51,7 @@ typedef char AC_ALPHABET_t;
 typedef union AC_REP
 {
     const char * stringy; /* null-terminated string */
-    unsigned long number;
+    uint64_t      number;
 } AC_REP_t;
 
 /* AC_PATTERN_t:
@@ -67,7 +69,7 @@ typedef union AC_REP
 typedef struct AC_PATTERN
 {
     const AC_ALPHABET_t * astring; /* String of alphabets */
-    unsigned int length; /* Length of pattern */
+    uint64_t length; /* Length of pattern */
     AC_REP_t rep; /* Representative string (optional) */
 } AC_PATTERN_t;
 
@@ -79,7 +81,7 @@ typedef struct AC_PATTERN
 typedef struct AC_TEXT
 {
     const AC_ALPHABET_t * astring; /* String of alphabets */
-    unsigned int length; /* Length of string */
+    uint64_t length; /* Length of string */
 } AC_TEXT_t;
 
 /* AC_MATCH_t:
@@ -99,8 +101,8 @@ typedef struct AC_TEXT
 typedef struct AC_MATCH
 {
     AC_PATTERN_t * patterns; /* Array of matched pattern */
-    long position; /* The end position of matching pattern(s) in the text */
-    unsigned int match_num; /* Number of matched patterns */
+    int64_t  position; /* The end position of matching pattern(s) in the text */
+    uint64_t match_num; /* Number of matched patterns */
 } AC_MATCH_t;
 
 /* AC_STATUS_t:
