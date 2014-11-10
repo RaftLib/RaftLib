@@ -38,7 +38,7 @@ main( int argc, char **argv )
    std::cout << "Searching for: " << search_term << "\n";
    std::cout << "In filename: " << file << "\n";
 
-   const std::size_t num_threads( 4  );
+   const std::size_t num_threads( 8 );
 
    int fd( open( file.c_str(), O_RDONLY ) );
    if( fd < 0 )
@@ -85,7 +85,7 @@ main( int argc, char **argv )
    for( index = 0; index < num_threads; index++ )
    {
       rbk[ index ] = raft::kernel::make< 
-         raft::search< raft::rabinkarp > >( search_term );
+         raft::search< raft::ahocorasick > >( search_term );
       raft::map.link( foreach, std::to_string( index ), rbk[ index ] );
    }
    
@@ -133,6 +133,6 @@ main( int argc, char **argv )
       std::cout << val << "\n"; 
       //": " << val.seg << "\n";
    }
-   /** TODO, munmap **/
+   munmap( buffer, st.st_size );
    return( EXIT_SUCCESS );
 }

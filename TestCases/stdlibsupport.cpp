@@ -31,7 +31,7 @@ main( int argc, char **argv )
    std::vector< std::uint32_t > v;
    int i( 0 );
    auto func( [&](){ return( i++ ); } );
-   while( i < 1000 ){ v.push_back( func() ); }
+   while( i < 10){ v.push_back( func() ); }
    std::vector< std::uint32_t > o;
    /** link iterator reader to print kernel **/
    map.link( kernel::make< raft::read_each< std::uint32_t > >( v.begin(), v.end() ),

@@ -50,10 +50,11 @@ public:
       /** initialize automata **/
       atm = ac_automata_init();
       /** add only pattren **/
-      AC_PATTERN_t tmp_patt = { .astring = searchterm.c_str(),
-                                .rep.number  = 0,
-                                .length  = searchterm.length() };
-
+      AC_PATTERN_t tmp_patt;
+      tmp_patt.astring = searchterm.c_str();
+      tmp_patt.rep.number  = 0; 
+      tmp_patt.length  = searchterm.length();
+      ac_automata_add( atm, &tmp_patt );
       ac_automata_finalize( atm );
    }
 
@@ -68,11 +69,12 @@ public:
       const auto text_length( in_port.size() );
       auto everything( in_port.peek_range< char >( text_length ) );
       /** in this case, we know the buffer is contiguous **/
-      AC_TEXT_t tmp_text = { .astring = (char*)&( everything[ 0 ] ),
-                             .length  = text_length };
+      AC_TEXT_t tmp_text;
+      tmp_text.astring = (char*)&( everything[ 0 ] );
+      tmp_text.length  = text_length;
+
       auto &out_port( output[ "out" ] );
       param.fifo = &out_port;
-
       ac_automata_search( atm, &tmp_text, 1, match_handler, (void*)&param );
       return( raft::stop );
    }
