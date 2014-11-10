@@ -7,8 +7,8 @@ LINUXLDFLAGS = -static -static-libgcc -static-libstdc++
 endif
 
 CPPFLAGS = -I./ahocorasick/
-CFLAGS   = -O3 -msse4.1 -Wall -std=c99
-CXXFLAGS = -O3 -msse4.1 -Wall -std=c++11 -DRDTSCP=1
+CFLAGS   = -O3 -mtune=native -fast -msse4.1 -Wall -std=c99
+CXXFLAGS = -O3 -mtune=native -fast -msse4.1 -Wall -std=c++11 -DRDTSCP=1
 LDFLAGS  = -L./ $(LINUXLDFLAGS)
 LDLIBS   = -lahocorasick -lraft $(LINUXLIBS)
 
