@@ -75,7 +75,7 @@ dynalloc::run()
       }
       else
       {
-         fifo = test_func( 16  /* items */, 
+         fifo = test_func( 512  /* items */, 
                            16 /* align */, 
                            (void*)NULL );
       }

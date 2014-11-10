@@ -53,10 +53,16 @@ template< class iterator_type >
       {
          if( port.size() > 0 )
          {
-            port.pop< T >( temp );
-            (*insert_position) = temp;
-            /** hope the iterator defined overloaded ++ **/
-            insert_position++;
+            /** get all info avail **/
+            const auto avail_data( port.size() );
+            auto alldata( port.peek_range< T >( avail_data ) );
+            for( std::size_t index( 0 ); index < alldata.size(); index++ )
+            {
+               (*insert_position) = temp;
+               /** hope the iterator defined overloaded ++ **/
+               insert_position++;
+            }
+            port.recycle( avail_data );
          }
       }
       return;
