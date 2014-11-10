@@ -14,7 +14,7 @@
 #include <iterator>
 #include <fstream>
 
-#include "rkverifymatch.hpp"
+//#include "rkverifymatch.hpp"
 #include "searchdefs.hpp"
 #include "search.tcc"
    
@@ -38,7 +38,7 @@ main( int argc, char **argv )
    std::cout << "Searching for: " << search_term << "\n";
    std::cout << "In filename: " << file << "\n";
 
-   const std::size_t num_threads( 8  );
+   const std::size_t num_threads( 4  );
 
    int fd( open( file.c_str(), O_RDONLY ) );
    if( fd < 0 )
@@ -56,7 +56,7 @@ main( int argc, char **argv )
    char *buffer = (char*) mmap( (void*) NULL,
                                 st.st_size,
                                 PROT_READ,
-                                ( MAP_PRIVATE),
+                                MAP_PRIVATE,
                                 fd,
                                 0 );
    if( buffer == MAP_FAILED )
@@ -66,7 +66,7 @@ main( int argc, char **argv )
    }
    close( fd );
 
-   std::vector< raft::match_t > total_hits; 
+   std::vector< raft::hit_t > total_hits; 
    
 
    //auto kern_start( 
@@ -88,21 +88,22 @@ main( int argc, char **argv )
          raft::search< raft::rabinkarp > >( search_term );
       raft::map.link( foreach, std::to_string( index ), rbk[ index ] );
    }
-   std::array< raft::kernel*, num_threads > rbkverify;
-   for( index = 0; index < num_threads; index++ ) 
-   {
-      rbkverify[ index ] = 
-         raft::kernel::make< raft::rkverifymatch >( buffer, st.st_size, search_term );
-      raft::map.link( rbk[ index ], rbkverify[ index ] );
-   }
+   
+   //std::array< raft::kernel*, num_threads > rbkverify;
+   //for( index = 0; index < num_threads; index++ ) 
+   //{
+   //   rbkverify[ index ] = 
+   //      raft::kernel::make< raft::rkverifymatch >( buffer, st.st_size, search_term );
+   //   raft::map.link( rbk[ index ], rbkverify[ index ] );
+   //}
 
    auto *filefinish(
-      raft::kernel::make< raft::write_each< raft::match_t > >(
+      raft::kernel::make< raft::write_each< raft::hit_t > >(
          std::back_inserter( total_hits ), num_threads ) );
 
    for( index = 0; index < num_threads; index++ )
    {
-      raft::map.link( rbkverify[ index ], 
+      raft::map.link( rbk[ index ], 
                       filefinish, 
                       std::to_string( index ) );
    }
@@ -127,7 +128,7 @@ main( int argc, char **argv )
    { 
       std::cout << "matches: " << "\n";
    }
-   for( raft::match_t &val : total_hits )
+   for( raft::hit_t &val : total_hits )
    {
       std::cout << val << "\n"; 
       //": " << val.seg << "\n";

@@ -25,9 +25,9 @@
 #include <string>
 
 #include <raft>
+#include "searchdefs.hpp"
 
 namespace raft{
-using match_t = std::uint64_t;
 
 #if 0
 struct match_t
@@ -76,7 +76,7 @@ public:
                   const std::string term );
    virtual ~rkverifymatch();
 
-   virtual kstatus run();
+   virtual raft::kstatus run();
 
 private:
    /** global single search term **/

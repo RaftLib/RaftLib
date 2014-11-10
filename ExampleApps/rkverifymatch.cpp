@@ -47,7 +47,7 @@ rkverifymatch::~rkverifymatch()
 {
 }
 
-kstatus
+raft::kstatus
 rkverifymatch::run()
 {
    /** else != nullptr **/

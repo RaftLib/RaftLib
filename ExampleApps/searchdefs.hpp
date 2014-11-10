@@ -23,5 +23,6 @@
 
 namespace raft{
    using hit_t    = std::size_t;
+   using match_t  = std::uint64_t;
 }
 #endif /* END _SEARCHDEFS_HPP_ */
