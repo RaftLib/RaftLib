@@ -191,7 +191,7 @@ template < class T,
    {
       assert( ptr != nullptr );
       (this)->store  = ptr;
-      (this)->signal = (Signal*)       calloc( (this)->max_cap,
+      (this)->signal = (Signal*)       calloc( 1,
                                                sizeof( Signal ) );
       if( (this)->signal == nullptr )
       {

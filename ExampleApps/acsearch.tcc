@@ -27,14 +27,15 @@
 #include <cassert>
 struct parameter
 {
-   FIFO *fifo;
+   std::size_t position = 0;
+   FIFO       *fifo     = nullptr;
 };
 
 static int 
 match_handler( AC_MATCH_t *matchp, void *param )
 {
    auto *p( reinterpret_cast< parameter* >(param) );
-   p->fifo->push< hit_t >( matchp->position );
+   p->fifo->push< hit_t >( matchp->position + p->position );
    return( 0 );
 }
 
@@ -74,7 +75,8 @@ public:
       tmp_text.length  = text_length;
 
       auto &out_port( output[ "out" ] );
-      param.fifo = &out_port;
+      param.fifo     = &out_port;
+      param.position = everything.getindex();
       ac_automata_search( atm, &tmp_text, 1, match_handler, (void*)&param );
       return( raft::stop );
    }
