@@ -58,7 +58,7 @@ template< class iterator_type >
             auto alldata( port.peek_range< T >( avail_data ) );
             for( std::size_t index( 0 ); index < alldata.size(); index++ )
             {
-               (*insert_position) = temp;
+               (*insert_position) = alldata[ index ];
                /** hope the iterator defined overloaded ++ **/
                insert_position++;
             }

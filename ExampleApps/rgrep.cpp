@@ -9,7 +9,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include <array>
 #include <vector>
 #include <iterator>
 #include <fstream>
@@ -26,19 +25,20 @@ namespace raft
 int
 main( int argc, char **argv )
 {
-   if( argc != 3 )
+   if( argc != 4 )
    {  
-      std::cerr << "usage: ./rgrep <SEARCH TERM> <TEXT FILE>\n";
+      std::cerr << "usage: ./rgrep <SEARCH TERM> <TEXT FILE> <THREAD COUNT>\n";
       exit( EXIT_SUCCESS );
    }
    
    const std::string search_term( argv[ 1 ] );
    const std::string file( argv[ 2 ] );
-   
+  
+   const auto num_threads( atoi( argv[ 3 ] ) );
+
    std::cout << "Searching for: " << search_term << "\n";
    std::cout << "In filename: " << file << "\n";
 
-   const std::size_t num_threads( 8 );
 
    int fd( open( file.c_str(), O_RDONLY ) );
    if( fd < 0 )
@@ -80,7 +80,7 @@ main( int argc, char **argv )
    auto *foreach( 
       raft::kernel::make< raft::for_each< char > >( buffer, st.st_size, num_threads ) );
 
-   std::array< raft::kernel*, num_threads > rbk;
+   std::vector< raft::kernel* > rbk( num_threads );
    std::size_t index( 0 );
    for( index = 0; index < num_threads; index++ )
    {
@@ -133,6 +133,7 @@ main( int argc, char **argv )
       std::cout << val << "\n"; 
       //": " << val.seg << "\n";
    }
+   std::cerr << "Hit count: " << total_hits.size() << "\n";
    munmap( buffer, st.st_size );
    return( EXIT_SUCCESS );
 }

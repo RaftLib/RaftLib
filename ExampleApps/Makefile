@@ -3,12 +3,12 @@ CXX ?= g++
 
 ifneq ($(shell uname -s), Darwin)
 LINUXLIBS 	 = -lrt -lpthread
-LINUXLDFLAGS = 
+LINUXLDFLAGS = -static -static-libgcc -static-libstdc++ 
 endif
 
 CPPFLAGS = -I./ahocorasick/
-CFLAGS   = -O3 -msse4.1 -mtune=native -fast -Wall -std=c99
-CXXFLAGS = -O3 -msse4.1 -mtune=native -fast -Wall -std=c++11 -DRDTSCP=1
+CFLAGS   = -Ofast -Wall -std=c99
+CXXFLAGS = -Ofast -Wall -std=c++11 -DRDTSCP=1
 LDFLAGS  = -L./ $(LINUXLDFLAGS)
 LDLIBS   = -lahocorasick -lraft $(LINUXLIBS)
 

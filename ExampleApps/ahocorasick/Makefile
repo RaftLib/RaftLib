@@ -1,6 +1,6 @@
-CC ?= gcc
+CC ?= icc
 LIBNAME := libahocorasick.a
-CFLAGS := -O3 -msse4.1 -mtune=native -Wall
+CFLAGS := -Ofast -mtune=native -Wall
 HEADERS := actypes.h ahocorasick.h node.h
 BUILD_DIRECTORY := build
 
