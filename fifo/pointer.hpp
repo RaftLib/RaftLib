@@ -61,7 +61,7 @@ public:
     * the pointers as well so you don't run off the page
     * @return  size_t, current value of pointer after increment
     */
-   static size_t inc( Pointer *ptr );
+   static void inc( Pointer * const ptr );
    
    /**
     * incBy - increments the current pointer poisition
@@ -70,7 +70,7 @@ public:
     * @param  in - const size_t
     * @return  size_t, current increment after adding 'in'
     */
-   static size_t incBy( const size_t in, Pointer *ptr );
+   static void incBy( const size_t in, Pointer * const ptr );
 
    
    /**

@@ -53,8 +53,6 @@ Pointer::val( Pointer *ptr )
       std::uint64_t a;
       std::uint64_t b;
    }copy;
-   __builtin_prefetch( &ptr->a, 0, 3 );
-   __builtin_prefetch( &ptr->b, 0, 3 );
    do{
       copy.a = ptr->a;
       copy.b = ptr->b;
@@ -62,7 +60,7 @@ Pointer::val( Pointer *ptr )
    return( copy.b );
 }
 
-void
+size_t 
 Pointer::inc( Pointer *ptr )
 {
    ptr->a = ( ptr->a + 1 ) % ptr->max_cap;
@@ -72,9 +70,10 @@ Pointer::inc( Pointer *ptr )
       ptr->wrap_a++;
       ptr->wrap_b++;
    }
+   return( ptr->b );
 }
 
-void
+size_t 
 Pointer::incBy( const size_t in, Pointer *ptr )
 {
    ptr->a = ( ptr->a + in ) % ptr->max_cap;
@@ -84,18 +83,22 @@ Pointer::incBy( const size_t in, Pointer *ptr )
       ptr->wrap_a++;
       ptr->wrap_b++;
    }
+   return( ptr->b );
 }
 
 size_t 
 Pointer::wrapIndicator( Pointer *ptr )
 {
-   struct{
-      std::uint64_t a;
-      std::uint64_t b;
-   }copy;
-   do{
-      copy.a = ptr->wrap_a;
-      copy.b = ptr->wrap_b;
-   }while( copy.a ^ copy.b );
-   return( copy.b );
+   //struct{
+   //   std::uint64_t a;
+   //   std::uint64_t b;
+   //}copy;
+   //do{
+   //   copy.a = ptr->wrap_a;
+   //   copy.b = ptr->wrap_b;
+   //}while( copy.a ^ copy.b );
+   while( ptr->wrap_a ^ ptr->wrap_b )
+   {
+      return( ptr->wrap_b );
+   }
 }
