@@ -53,10 +53,10 @@ main( int argc, char **argv )
       exit( EXIT_FAILURE );
    }
 
-   char *buffer = (char*) mmap( (void*) NULL,
+   char *buffer = (char*) mmap64( (void*) NULL,
                                 st.st_size,
                                 PROT_READ,
-                                MAP_PRIVATE,
+                                ( MAP_SHARED ),
                                 fd,
                                 0 );
    if( buffer == MAP_FAILED )

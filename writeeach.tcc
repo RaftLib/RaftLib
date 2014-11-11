@@ -48,7 +48,6 @@ typedef typename std::back_insert_iterator< std::deque< T > >          it_deq;
 template< class iterator_type > 
    static void inc_helper( iterator_type &insert_position, Port &port_list )
    {
-      T temp;
       for( auto &port : port_list )
       {
          if( port.size() > 0 )
@@ -61,6 +60,7 @@ template< class iterator_type >
                (*insert_position) = alldata[ index ];
                /** hope the iterator defined overloaded ++ **/
                insert_position++;
+               __builtin_prefetch( &insert_position, 1, 3 );
             }
             port.recycle( avail_data );
          }

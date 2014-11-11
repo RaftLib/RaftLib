@@ -53,7 +53,7 @@ public:
 
       const auto   wpt( Pointer::val( buff_ptr->write_pt ) ), 
                    rpt( Pointer::val( buff_ptr->read_pt  ) );
-      if( wpt == rpt )
+      if( __builtin_expect( wpt == rpt, 0 ) )
       {
          if( wrap_read < wrap_write )
          {
@@ -76,7 +76,7 @@ public:
             return( 0 );
          }
       }
-      else if( rpt < wpt )
+      else if( __builtin_expect( rpt < wpt, 1 ) )
       {
          return( wpt - rpt );
       }
@@ -124,7 +124,7 @@ public:
     * set at compile time by the constructor.
     * @return size_t
     */
-   virtual std::size_t   capacity()
+   virtual std::size_t   capacity() 
    {
       return( dm.get()->max_cap );
    }
@@ -144,13 +144,18 @@ public:
     */
    virtual void send( const raft::signal signal = raft::none )
    {
-      if( ! (this)->allocate_called ) return;
+      __builtin_prefetch( dm.get() );
+      if( __builtin_expect( !(this)->allocate_called , 0 ) )
+      {
+         return;
+      }
       /** should be the end of the write, regardless of which allocate called **/
-      const size_t write_index( Pointer::val( dm.get()->write_pt ) );
-      dm.get()->signal[ write_index ] = signal;
-      Pointer::inc( dm.get()->write_pt );
+      auto * const buff_ptr( dm.get() ); 
+      const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
+      buff_ptr->signal[ write_index ] = signal;
+      Pointer::inc( buff_ptr->write_pt );
       write_stats.count++;
-      if( signal == raft::eof )
+      if( __builtin_expect( signal == raft::eof, 0 ) )
       {
          /**
           * TODO, this is a quick hack, rework when proper signalling

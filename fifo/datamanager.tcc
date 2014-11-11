@@ -125,7 +125,7 @@ public:
       for(;;)
       {
          /** check to see if program is done **/
-         if( exit_buffer )
+         if( __builtin_expect( exit_buffer, 0 ) )
          {
             /** get rid of newly allocated buff, don't need **/
             delete( new_buffer );
@@ -159,6 +159,7 @@ public:
     */
    auto get() noexcept -> Buffer::Data< T, B >*
    {
+      __builtin_prefetch( buffer ); 
       return( buffer );
    }
 
@@ -168,7 +169,7 @@ public:
     * will soon be in use.
     * @param - key, dm::access_key
     */
-   void  enterBuffer( dm::access_key key ) noexcept
+   void  enterBuffer( const dm::access_key key ) noexcept
    {
       /** see lambda below **/
       set_helper( key, 1 );
@@ -180,7 +181,7 @@ public:
     * in use.
     * @param - key, dm::access_key
     */
-   void exitBuffer( dm::access_key key ) noexcept
+   void exitBuffer( const dm::access_key key ) noexcept
    {
       /** see lambda below **/
       set_helper( key, 0 );
@@ -212,7 +213,7 @@ private:
       std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
    } __attribute__((aligned(64))) volatile thread_access[ 2 ];
    
-   void set_helper( dm::access_key key, const int val )
+   void set_helper( dm::access_key key, const std::uint8_t val )
    {
       if( (int) key <= (int) dm::push )
       {

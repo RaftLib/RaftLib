@@ -161,9 +161,9 @@ template < class T > struct DataBase
     */
    virtual void copyFrom( DataBase< T > *other ) = 0;
 
-   Pointer           *read_pt;
-   Pointer           *write_pt;
-   size_t             max_cap;
+   Pointer                 *read_pt;
+   Pointer                 *write_pt;
+   const size_t             max_cap;
    /** 
     * allocating these as structs gives a bit
     * more flexibility later in what to pass
