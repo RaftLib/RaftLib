@@ -32,12 +32,14 @@ namespace raft
 {
    enum searchalgorithm { rabinkarp, 
                           ahocorasick,
+                          boyermoore,
                           kmp };
 
 template < searchalgorithm alg > class search;
 
 #include "rksearch.tcc"
 #include "acsearch.tcc"
+#include "bmsearch.tcc"
 
 } /** end namespace raft **/
 #endif /* END _SEARCH_TCC_ */
