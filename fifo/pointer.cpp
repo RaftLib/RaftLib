@@ -53,8 +53,8 @@ Pointer::val( Pointer *ptr )
       std::uint64_t a;
       std::uint64_t b;
    }copy;
-   __builtin_prefetch( &ptr->a, 0, 3 );
-   __builtin_prefetch( &ptr->b, 0, 3 );
+   __builtin_prefetch( &(ptr->a), 0, 3 );
+   __builtin_prefetch( &(ptr->b), 0, 3 );
    do{
       copy.a = ptr->a;
       copy.b = ptr->b;
