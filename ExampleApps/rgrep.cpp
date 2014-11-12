@@ -61,7 +61,7 @@ main( int argc, char **argv )
       exit( EXIT_FAILURE );
    }
 
-   mmap( buffer,
+   buffer = (char*) mmap( buffer,
          st.st_size,
          PROT_READ,
          ( MAP_SHARED ),
@@ -74,11 +74,12 @@ main( int argc, char **argv )
    }
    close( fd );
 
-
-   if( posix_madvise( buffer, 
-                      st.st_size, 
-                      POSIX_MADV_SEQUENTIAL ) != 0 )
+   int ret_val( 0 );
+   if( (ret_val = posix_madvise( buffer, 
+                      st.st_size,
+                      MADV_WILLNEED ) ) != 0 )
    {
+      std::cerr << "return value: " << ret_val << "\n";
       perror( "Failed to give memory advise\n" );
       exit( EXIT_FAILURE );
    }
@@ -102,7 +103,7 @@ main( int argc, char **argv )
    for( index = 0; index < num_threads; index++ )
    {
       rbk[ index ] = raft::kernel::make< 
-         raft::search< raft::boyermoore> >( search_term );
+         raft::search< raft::ahocorasick> >( search_term );
       raft::map.link( foreach, std::to_string( index ), rbk[ index ] );
    }
    
