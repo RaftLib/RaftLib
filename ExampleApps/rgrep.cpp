@@ -6,6 +6,7 @@
 #include <raftio>
 
 #include <sys/mman.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
@@ -53,18 +54,34 @@ main( int argc, char **argv )
       exit( EXIT_FAILURE );
    }
 
-   char *buffer = (char*) mmap64( (void*) NULL,
-                                st.st_size,
-                                PROT_READ,
-                                ( MAP_SHARED ),
-                                fd,
-                                0 );
+   char *buffer = nullptr;
+   if( posix_memalign( (void**)&buffer, 32, st.st_size ) != 0 )
+   {
+      perror( "Failed to allocate aligned memory\n" );
+      exit( EXIT_FAILURE );
+   }
+
+   mmap( buffer,
+         st.st_size,
+         PROT_READ,
+         ( MAP_SHARED ),
+         fd,
+         0 );
    if( buffer == MAP_FAILED )
    {
       perror( "Failed to mmap input file\n" );
       exit( EXIT_FAILURE );
    }
    close( fd );
+
+
+   if( posix_madvise( buffer, 
+                      st.st_size, 
+                      POSIX_MADV_SEQUENTIAL ) != 0 )
+   {
+      perror( "Failed to give memory advise\n" );
+      exit( EXIT_FAILURE );
+   }
 
    std::vector< raft::hit_t > total_hits; 
    
@@ -85,7 +102,7 @@ main( int argc, char **argv )
    for( index = 0; index < num_threads; index++ )
    {
       rbk[ index ] = raft::kernel::make< 
-         raft::search< raft::ahocorasick> >( search_term );
+         raft::search< raft::boyermoore> >( search_term );
       raft::map.link( foreach, std::to_string( index ), rbk[ index ] );
    }
    
