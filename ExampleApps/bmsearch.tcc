@@ -39,7 +39,6 @@ public:
        * probably an overflow in the run with the s,n or m
        * fix in the morning 
        */
-      assert( false );
       assert( searchterm.length() > 0 ); 
       input.addPort< char  >( "in"  );
       output.addPort< hit_t   >( "out" );
