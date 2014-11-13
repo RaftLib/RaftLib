@@ -57,7 +57,7 @@ public:
       auto everything( in_port.peek_range< char >( n ) );
       /** in this case, we know the buffer is contiguous **/
       char * const buff_ptr( (char*)&( everything[ 0 ] ) );
-      std::size_t s( 0 );
+      std::int64_t s( 0 );
       auto &out_port( output[ "out" ] );
       const auto index( everything.getindex() );
       while( s <= ( n - m ) )
@@ -85,7 +85,7 @@ public:
 private:
    const static std::size_t    NO_OF_CHARS = 256;
    std::int64_t  bad_char_arr[ NO_OF_CHARS ];
-   const std::size_t           m           = 0;
+   const std::int64_t          m           = 0;
    const std::string           pat;
    
    
@@ -93,11 +93,11 @@ private:
                          const std::size_t  size,
                          std::int64_t       badchar[ NO_OF_CHARS ] )
    {
-      for( std::size_t i( 0 ); i < NO_OF_CHARS; i++ )
+      for( auto i( 0 ); i < NO_OF_CHARS; i++ )
       {
          badchar[ i ] = -1;
       }
-      for( std::size_t i( 0 ); i < size; i++ )
+      for( auto i( 0 ); i < size; i++ )
       {
          badchar[ (int) str[ i ] ] = i;
       }
