@@ -76,7 +76,7 @@ simple_schedule::start()
             }
          }
          /** invalidate output queues **/
-        invalidateOutputPorts( kernel );
+         invalidateOutputPorts( kernel );
          finished = true;
       };
       thread_map[ index ].th = 

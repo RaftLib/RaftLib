@@ -22,10 +22,12 @@
 #include <raft>
 #include <functional>
 #include <cstddef>
+#include <cstdint>
 #include <cmath>
 
 #include "searchdefs.hpp"
 #include <cassert>
+
 
 template <> class search< boyermoore > : public kernel
 {
@@ -42,63 +44,62 @@ public:
       assert( searchterm.length() > 0 ); 
       input.addPort< char  >( "in"  );
       output.addPort< hit_t   >( "out" );
-      bad_char( searchterm.c_str(), m, bad_char_arr );
+      bad_char( searchterm, &shift_table );
+      assert( shift_table != nullptr );
    }
 
    virtual ~search()
    {
+      delete[]( shift_table );
    }
 
    virtual raft::kstatus run() 
    {
       auto &in_port( input[ "in" ] );
-      const auto n( in_port.size() );
+      const std::int64_t n( in_port.size() );
+      if( m > n )
+      {
+         return( raft::stop );
+      }
       auto everything( in_port.peek_range< char >( n ) );
       /** in this case, we know the buffer is contiguous **/
       char * const buff_ptr( (char*)&( everything[ 0 ] ) );
       std::int64_t s( 0 );
+      /** ref to output port so we don't have to look it up cont.**/
       auto &out_port( output[ "out" ] );
+      /** start index of text **/
       const auto index( everything.getindex() );
-      while( s <= ( n - m ) )
+      /** rightmost index of pattern **/
+      std::int64_t r_index( m - 1 );
+      while( r_index <= n - 1 )
       {
-         std::int64_t j( m - 1 );
-         while( j >= 0 && pat[ j ] == buff_ptr[ s + j ] )
-         {
-            j--;
-         }
-         if( j < 0 )
-         {
-            out_port.push< hit_t >( s + everything.getindex() );
-            s += (  ( ( s + m ) < n ) ? m - bad_char_arr[ buff_ptr[ s + m ] ] : 1 );
-         }
-         else
-         {
-            s += std::max( (std::int64_t )1, 
-                           (std::int64_t ) j - bad_char_arr[ buff_ptr[ s + j ] ] );
-         }
-
+         std::int64_t index
       }
+
+      
       return( raft::stop );
    }
    
 private:
-   const static std::size_t    NO_OF_CHARS = 256;
-   std::int64_t  bad_char_arr[ NO_OF_CHARS ];
-   const std::int64_t          m           = 0;
+   std::int64_t               *shift_table = nullptr ;
    const std::string           pat;
+   const std::int64_t          m           = -1;
    
    
-   static void bad_char( const char * const str,
-                         const std::size_t  size,
-                         std::int64_t       badchar[ NO_OF_CHARS ] )
+   static void bad_char( const std::string  &pattern,
+                         const std::size_t   alphabet_size,
+                         std::int64_t      **shift_table )
    {
-      for( auto i( 0 ); i < NO_OF_CHARS; i++ )
+      assert( patter.size() > 0 );
+      *shift_table = new std::int64_t [ alphabet_size ];
+      for( std::int64_t i( 0 ); i < alphabet_size; i++ )
       {
-         badchar[ i ] = -1;
+         (*shift_table)[ i ] = m;
       }
-      for( auto i( 0 ); i < size; i++ )
+      for( std::int64_t j( 0 ); j < pattern.size() - 1; j++ )
       {
-         badchar[ (int) str[ i ] ] = i;
+         (*shift_table)[ (std::size_t) pattern[ j ] ] = 
+            pattern.size() - 1 - j;
       }
    }
 };

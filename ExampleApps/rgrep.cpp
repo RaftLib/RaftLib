@@ -39,7 +39,7 @@ main( int argc, char **argv )
 
    std::cout << "Searching for: " << search_term << "\n";
    std::cout << "In filename: " << file << "\n";
-
+   std::cout << "Thread count: " << num_threads << "\n";
 
    int fd( open( file.c_str(), O_RDONLY ) );
    if( fd < 0 )
@@ -55,11 +55,11 @@ main( int argc, char **argv )
    }
 
    char *buffer = nullptr;
-   if( posix_memalign( (void**)&buffer, 32, st.st_size ) != 0 )
-   {
-      perror( "Failed to allocate aligned memory\n" );
-      exit( EXIT_FAILURE );
-   }
+   //if( posix_memalign( (void**)&buffer, 32, st.st_size ) != 0 )
+   //{
+   //   perror( "Failed to allocate aligned memory\n" );
+   //   exit( EXIT_FAILURE );
+   //}
 
    buffer = (char*) mmap( buffer,
          st.st_size,
@@ -99,8 +99,7 @@ main( int argc, char **argv )
       raft::kernel::make< raft::for_each< char > >( buffer, st.st_size, num_threads ) );
 
    std::vector< raft::kernel* > rbk( num_threads );
-   std::size_t index( 0 );
-   for( index = 0; index < num_threads; index++ )
+   for( auto index( 0 ); index < num_threads; index++ )
    {
       rbk[ index ] = raft::kernel::make< 
          raft::search< raft::boyermoore> >( search_term );
@@ -119,7 +118,7 @@ main( int argc, char **argv )
       raft::kernel::make< raft::write_each< raft::hit_t > >(
          std::back_inserter( total_hits ), num_threads ) );
 
-   for( index = 0; index < num_threads; index++ )
+   for( auto index( 0 ); index < num_threads; index++ )
    {
       raft::map.link( rbk[ index ], 
                       filefinish, 
