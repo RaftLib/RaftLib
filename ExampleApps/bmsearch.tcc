@@ -22,6 +22,7 @@
 #include <raft>
 #include <functional>
 #include <cstddef>
+#include <cmath>
 
 #include "searchdefs.hpp"
 #include <cassert>
@@ -33,7 +34,6 @@ public:
                                             pat( searchterm ),
                                             m( searchterm.length() )
    {
-      assert( false );
       assert( searchterm.length() > 0 ); 
       input.addPort< char  >( "in"  );
       output.addPort< hit_t   >( "out" );
@@ -53,22 +53,23 @@ public:
       char * const buff_ptr( (char*)&( everything[ 0 ] ) );
       std::size_t s( 0 );
       auto &out_port( output[ "out" ] );
+      const auto index( everything.getindex() );
       while( s <= ( n - m ) )
       {
          std::int64_t j( m - 1 );
-         while( j > 0 && pat[ j ] == buff_ptr[ s + j ] )
+         while( j >= 0 && pat[ j ] == buff_ptr[ s + j ] )
          {
             j--;
          }
          if( j < 0 )
          {
             out_port.push< hit_t >( s + everything.getindex() );
-            s += ( s + m < n ) ? m - bad_char_arr[ buff_ptr[ s + m ] ] : 1;
+            s += (  ( ( s + m ) < n ) ? m - bad_char_arr[ buff_ptr[ s + m ] ] : 1 );
          }
          else
          {
-            s += std::max( ( std::int64_t )1, 
-                           j - (std::int64_t )bad_char_arr[ buff_ptr[ s + j ] ] );
+            s += std::max( (std::int64_t )1, 
+                           (std::int64_t ) j - bad_char_arr[ buff_ptr[ s + j ] ] );
          }
 
       }
