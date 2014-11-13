@@ -103,7 +103,7 @@ main( int argc, char **argv )
    for( index = 0; index < num_threads; index++ )
    {
       rbk[ index ] = raft::kernel::make< 
-         raft::search< raft::ahocorasick >( search_term );
+         raft::search< raft::ahocorasick > >( search_term );
       raft::map.link( foreach, std::to_string( index ), rbk[ index ] );
    }
    
