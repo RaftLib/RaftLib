@@ -64,7 +64,6 @@ public:
       auto everything( in_port.peek_range< char >( n ) );
       /** in this case, we know the buffer is contiguous **/
       char * const buff_ptr( (char*)&( everything[ 0 ] ) );
-      std::int64_t s( 0 );
       /** ref to output port so we don't have to look it up cont.**/
       auto &out_port( output[ "out" ] );
       /** start index of text **/
