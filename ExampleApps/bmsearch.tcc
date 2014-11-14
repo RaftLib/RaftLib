@@ -44,7 +44,7 @@ public:
       assert( searchterm.length() > 0 ); 
       input.addPort< char  >( "in"  );
       output.addPort< hit_t   >( "out" );
-      bad_char( searchterm, &shift_table );
+      bad_char( searchterm, 256, &shift_table );
       assert( shift_table != nullptr );
    }
 
@@ -73,10 +73,21 @@ public:
       std::int64_t r_index( m - 1 );
       while( r_index <= n - 1 )
       {
-         std::int64_t index
+         std::int64_t k( 0 );
+         while( k <= m-1 && pat[ m - 1 - k ] == buff_ptr[ r_index - k ] )
+         {
+            k++;
+         }
+         if( k == m )
+         {
+            out_port.push< hit_t >( r_index - m + 1 + index );
+            r_index++; 
+         }
+         else
+         {
+            r_index = r_index + shift_table[ (std::size_t) buff_ptr[ r_index ] ];
+         }
       }
-
-      
       return( raft::stop );
    }
    
@@ -90,16 +101,16 @@ private:
                          const std::size_t   alphabet_size,
                          std::int64_t      **shift_table )
    {
-      assert( patter.size() > 0 );
+      assert( pattern.size() > 0 );
+      const auto m( pattern.size() );
       *shift_table = new std::int64_t [ alphabet_size ];
       for( std::int64_t i( 0 ); i < alphabet_size; i++ )
       {
          (*shift_table)[ i ] = m;
       }
-      for( std::int64_t j( 0 ); j < pattern.size() - 1; j++ )
+      for( std::int64_t j( 0 ); j < m - 1; j++ )
       {
-         (*shift_table)[ (std::size_t) pattern[ j ] ] = 
-            pattern.size() - 1 - j;
+         (*shift_table)[ (std::size_t) pattern[ j ] ] = ( m - 1 - j );
       }
    }
 };
