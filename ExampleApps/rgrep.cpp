@@ -55,16 +55,16 @@ main( int argc, char **argv )
    }
 
    char *buffer = nullptr;
-   if( posix_memalign( (void**)&buffer, 32, st.st_size ) != 0 )
-   {
-      perror( "Failed to allocate aligned memory\n" );
-      exit( EXIT_FAILURE );
-   }
+   //if( posix_memalign( (void**)&buffer, 32, st.st_size ) != 0 )
+   //{
+   //   perror( "Failed to allocate aligned memory\n" );
+   //   exit( EXIT_FAILURE );
+   //}
 
    buffer = (char*) mmap( buffer,
          st.st_size,
          PROT_READ,
-         ( MAP_SHARED ),
+         ( MAP_PRIVATE ),
          fd,
          0 );
    if( buffer == MAP_FAILED )

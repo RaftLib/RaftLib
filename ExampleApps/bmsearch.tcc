@@ -36,21 +36,13 @@ public:
                                             pat( searchterm ),
                                             m( searchterm.length() )
    {
-      /**
-       * there's an infinite loop with very large files,
-       * probably an overflow in the run with the s,n or m
-       * fix in the morning 
-       */
       assert( searchterm.length() > 0 ); 
       input.addPort< char  >( "in"  );
       output.addPort< hit_t   >( "out" );
-      bad_char( searchterm, 256, &shift_table );
-      assert( shift_table != nullptr );
    }
 
    virtual ~search()
    {
-      delete[]( shift_table );
    }
 
    virtual raft::kstatus run() 
@@ -63,54 +55,63 @@ public:
       }
       auto everything( in_port.peek_range< char >( n ) );
       /** in this case, we know the buffer is contiguous **/
-      char * const buff_ptr( (char*)&( everything[ 0 ] ) );
+      unsigned char *buff_ptr( (unsigned char *)&( everything[ 0 ] ) );
       /** ref to output port so we don't have to look it up cont.**/
       auto &out_port( output[ "out" ] );
       /** start index of text **/
       const auto index( everything.getindex() );
-      /** rightmost index of pattern **/
-      std::int64_t r_index( m - 1 );
-      while( r_index <= n - 1 )
-      {
-         std::int64_t k( 0 );
-         while( k <= m-1 && pat[ m - 1 - k ] == buff_ptr[ r_index - k ] )
-         {
-            k++;
-         }
-         if( k == m )
-         {
-            out_port.push< hit_t >( r_index - m + 1 + index );
-            r_index++; 
-         }
-         else
-         {
-            r_index = r_index + shift_table[ (std::size_t) buff_ptr[ r_index ] ];
-         }
-      }
+      boyermoore_horspool( buff_ptr, 
+                           n, 
+                           (unsigned char*) pat.c_str(),
+                           m,
+                           index,
+                           out_port );
       return( raft::stop );
    }
    
 private:
-   std::int64_t               *shift_table = nullptr ;
    const std::string           pat;
-   const std::int64_t          m           = -1;
-   
-   
-   static void bad_char( const std::string  &pattern,
-                         const std::size_t   alphabet_size,
-                         std::int64_t      **shift_table )
-   {
-      assert( pattern.size() > 0 );
-      const auto m( pattern.size() );
-      *shift_table = new std::int64_t [ alphabet_size ];
-      for( std::int64_t i( 0 ); i < alphabet_size; i++ )
-      {
-         (*shift_table)[ i ] = m;
-      }
-      for( std::int64_t j( 0 ); j < m - 1; j++ )
-      {
-         (*shift_table)[ (std::size_t) pattern[ j ] ] = ( m - 1 - j );
-      }
-   }
+   const std::size_t          m = 0;
+
+   static
+   void boyermoore_horspool( const unsigned char * N,   
+                             std::size_t n,  
+                             const unsigned char * M,    
+                             const std::size_t m,
+                             const std::size_t index,
+                             FIFO   &port )  
+   {  
+       const unsigned char * const lb( N + n - 1 );
+       std::size_t scan( 0 );  
+       size_t bad_char_skip[ UCHAR_MAX + 1 ] __attribute__ ((aligned (16))) ;  
+     
+       if( m <= 0 || ! N || ! M || m > n )  
+       {
+         return; 
+       }
+       for(scan = 0; scan <= UCHAR_MAX; scan++ )
+       {
+         bad_char_skip[scan] = m;  
+       }
+       const std::size_t last( m - 1 );  
+       for (scan = 0; scan < last; scan++ ) 
+       {
+         bad_char_skip[ M[scan] ] = last - scan;  
+       }
+       while( n >= m )  
+       {  
+           for(scan = last; N[scan] == M[scan]; scan = scan - 1)  
+           {  
+               if (scan == 0)   
+               {  
+                  port.push< hit_t >( std::distance( N, lb ) + index );
+                  break;
+               }  
+           }  
+           const auto skip_val( bad_char_skip[ N[ last ] ] );
+           n -= skip_val;  
+           N += skip_val;
+       }  
+   }  
 };
 #endif /* END _BMSEARCH_TCC_ */
