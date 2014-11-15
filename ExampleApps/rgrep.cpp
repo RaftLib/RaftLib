@@ -141,10 +141,7 @@ main( int argc, char **argv )
    raft::map.exe();
 
    //std::ofstream ofs("/dev/null");
-   if( total_hits.size() > 0 )
-   { 
-      std::cout << "matches: " << "\n";
-   }
+   std::cout << "Hits: " << total_hits.size() << "\n";
    for( raft::hit_t &val : total_hits )
    {
       std::cout << val << "\n"; 

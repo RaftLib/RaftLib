@@ -96,7 +96,7 @@ private:
        const std::size_t last( m - 1 );  
        for (scan = 0; scan < last; scan++ ) 
        {
-         bad_char_skip[ M[scan] ] = last - scan;  
+         bad_char_skip[ M[ scan ] ] = last - scan; 
        }
        while( n >= m )  
        {  
@@ -104,11 +104,11 @@ private:
            {  
                if (scan == 0)   
                {  
-                  port.push< hit_t >( std::distance( N, lb ) + index );
+                  port.push< hit_t >( lb - N + index);
                   break;
-               }  
+               }
            }  
-           const auto skip_val( bad_char_skip[ N[ last ] ] );
+           const auto skip_val( bad_char_skip[ N[ scan ] ] );
            n -= skip_val;  
            N += skip_val;
        }  
