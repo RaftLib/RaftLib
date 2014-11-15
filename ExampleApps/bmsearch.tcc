@@ -24,6 +24,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cmath>
+#include <limits.h>
 
 #include "searchdefs.hpp"
 #include <cassert>
