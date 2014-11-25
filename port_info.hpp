@@ -136,8 +136,10 @@ struct PortInfo
 
    raft::kernel     *my_kernel       = nullptr;
    std::string       my_name         = "";
+   
    raft::kernel     *other_kernel    = nullptr;
    std::string       other_name      = "";
+   bool              use_my_allocator= false;
    bool              out_of_order    = false;
    void             *existing_buffer = nullptr;
    std::size_t       nitems          = 0;
