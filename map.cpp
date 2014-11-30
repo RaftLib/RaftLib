@@ -32,7 +32,7 @@
 #include "map.hpp"
 #include "graphtools.hpp"
 
-Map::Map()
+Map::Map() : MapBase()
 {
   
 }
@@ -60,29 +60,6 @@ Map::checkEdges( std::set< raft::kernel* > &source_k )
    return;
 }
 
-void
-Map::join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
-           raft::kernel &b, const std::string name_b, PortInfo &b_info )
-{
-   if( a_info.type != b_info.type )
-   {
-      std::stringstream ss;
-      int status;
-      ss << "When attempting to join ports (" << 
-         abi::__cxa_demangle( typeid( a ).name(), 0, 0, &status ) << "[" << 
-         name_a << "] -> " << 
-         abi::__cxa_demangle( typeid( b ).name(), 0, 0, &status ) << "[" << 
-         name_b << "] have conflicting types.  " << 
-         abi::__cxa_demangle( a_info.type.name(), 0, 0, &status ) << 
-         " and " << abi::__cxa_demangle( b_info.type.name(), 0, 0, &status ) << "\n";
-      throw PortTypeMismatchException( ss.str() );
-   }
-
-   a_info.other_kernel = &b;
-   a_info.other_name   = name_b;
-   b_info.other_kernel = &a;
-   b_info.other_name   = name_a;
-}
 
 void
 Map::printEdges( std::set< raft::kernel* > &source_k )

@@ -1,7 +1,7 @@
 /**
- * poolschedule.hpp - 
+ * typecheck.hpp - 
  * @author: Jonathan Beard
- * @version: Thu Sep 11 15:49:57 2014
+ * @version: Mon Nov 24 19:44:18 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,37 +17,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _POOLSSCHEDULE_HPP_
-#define _POOLSSCHEDULE_HPP_  1
-#include <vector>
-#include <thread>
-#include "runcontainer.hpp"
+#ifndef _TYPECHECK_HPP_
+#define _TYPECHECK_HPP_  1
+#include <cstddef>
 
-class Map;
-namespace raft{
-   class kernel;
-}
-
-class pool_schedule : public Schedule
-{
+class typecheck {
 public:
-   pool_schedule( Map &map );
-
-   virtual ~pool_schedule();
-
-   virtual void start(); 
    
-protected:
+   virtual bool 
+   is_compatible( const typecheck &other ) = 0;
    
-   struct thread_info_t
-   {
-      std::thread *th       = nullptr;
-      runcontainer container;
-      bool         finished = false;
-   };
+   virtual std::size_t 
+   type_size() = 0;
 
-   virtual bool scheduleKernel( raft::kernel *kernel );
-
-   std::vector< thread_info_t > thread_pool;
 };
-#endif /* END _POOLSSCHEDULE_HPP_ */
+#endif /* END _TYPECHECK_HPP_ */

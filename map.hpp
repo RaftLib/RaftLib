@@ -33,34 +33,9 @@
 #include "allocate.hpp"
 #include "dynalloc.hpp"
 #include "stdalloc.hpp"
+#include "mapbase.hpp"
 
-/**
- * kernel_pair_t - struct to be returned by map link functions,
- * in order to allow inline "new" construction of kernels that
- * might be re-used in multiple instances.
- */
-struct kernel_pair_t
-{
-   kernel_pair_t( raft::kernel &a, raft::kernel &b ) : src( a ),
-                                           dst( b )
-   {
-   }
-   raft::kernel &src;
-   raft::kernel &dst;
-};
-
-
-/**
- * spec is used when specifying the order of items within the queue,
- * by default in order is specified, in the future out wil be fully
- * implemented and will allow quite a few nice optimizations.
- */
-namespace order
-{
-   enum spec  { in, out };
-}
-
-class Map
+class Map : public MapBase
 {
 public:
    /** 
@@ -74,245 +49,6 @@ public:
    virtual ~Map();
    
 
-   /** 
-    * link - this comment goes for the next 4 types of link functions,
-    * which basically do the exact same thing.  The template function
-    * takes a single param order::spec which is exactly as the name
-    * implies, the order of the queue linking the two kernels.  The
-    * verious functions are needed to specify different ordering types
-    * each of these will be commented seperately below.  This function
-    * assumes that Kenrel a has only a single output and raft::kernel b has
-    * only a single input otherwise an exception will be thrown.
-    * @param   a - raft::kernel*, src kernel
-    * @param   b - raft::kernel*, dst kernel
-    * @throws  AmbiguousPortAssignmentException - thrown if either src or dst have more than 
-    *          a single port to link.
-    * @return  kernel_pair_t - references to src, dst kernels.
-    */
-   template < order::spec t = order::in >
-      kernel_pair_t link( raft::kernel *a, raft::kernel *b )
-   {
-      /** assume each only has a single input / output **/
-      switch( t )
-      {
-         case( order::in ):
-         {
-            if( ! a->input.hasPorts() )
-            {
-               source_kernels.insert( a );   
-            }
-            all_kernels.insert( a );
-            all_kernels.insert( b );
-            PortInfo *port_info_a;
-            try{ 
-               port_info_a =  &(a->output.getPortInfo());
-            }
-            catch( PortNotFoundException &ex )
-            {
-               int status( 0 );
-               std::stringstream ss;
-               ss << 
-                  "Source port from kernel " << 
-                  abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) <<
-                  "has more than a single port.";
-               
-               throw AmbiguousPortAssignmentException( ss.str() );
-            }
-            PortInfo *port_info_b;
-            try{
-               port_info_b = &(b->input.getPortInfo());
-            }
-            catch( PortNotFoundException &ex )
-            {
-               int status( 0 );
-               std::stringstream ss;
-               ss << "Destination port from kernel " << 
-                  abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) <<
-                  "has more than a single port.";
-               throw AmbiguousPortAssignmentException( ss.str() );
-            }
-            
-            join( *a, port_info_a->my_name, *port_info_a, 
-                  *b, port_info_b->my_name, *port_info_b );
-            
-         }
-         break;
-         case( order::out ):
-         {
-            
-         }
-         break;
-      }
-      return( kernel_pair_t( *a, *b ) );
-   }
-   
-   /** 
-    * link - same as function above save for the following differences:
-    * kernel a is assumed to have multiple ports and the one we wish
-    * to link with raft::kernel b is a_port.  raft::kernel b is assumed to have a
-    * single input port to connect otherwise an exception is thrown.
-    * @param   a - raft::kernel *a, can have multiple ports
-    * @param   a_port - port within raft::kernel a to link
-    * @param   b - raft::kernel *b, assumed to have only single input.
-    * @throws  AmbiguousPortAssignmentException - thrown if raft::kernel b has more than
-    *          a single input port.
-    * @throws  PortNotFoundException - thrown if raft::kernel a has no port named
-    *          a_port.
-    * @return  kernel_pair_t - references to src, dst kernels.
-    */
-   template < order::spec t = order::in > 
-      kernel_pair_t link( raft::kernel *a, const std::string  a_port, raft::kernel *b )
-   {
-      switch( t )
-      {
-         case( order::in ):
-         {
-            if( ! a->input.hasPorts() )
-            {
-               source_kernels.insert( a );   
-            }
-            all_kernels.insert( a );
-            all_kernels.insert( b );
-            PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
-            
-            PortInfo *port_info_b;
-            try{
-               port_info_b = &(b->input.getPortInfo());
-            }
-            catch( PortNotFoundException &ex ) 
-            {
-               int status( 0 );
-               std::stringstream ss;
-               ss << "Destination port from kernel " << 
-                  abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) <<
-                  "has more than a single port.";
-               throw AmbiguousPortAssignmentException( ss.str() );
-            }
-            join( *a, a_port , port_info_a, 
-                  *b, port_info_b->my_name, *port_info_b );
-
-         }
-         break;
-         case( order::out ):
-         {
-            assert( false );
-         }
-         break;
-      }
-      return( kernel_pair_t( *a, *b ) );
-   }
-  
-   /**
-    * link - same as above save for the following differences:
-    * raft::kernel a is assumed to have a single output port.  raft::kernel
-    * b is assumed to have more than one input port, within one
-    * matching the port b_port.
-    * @param   a - raft::kernel*, with more a single output port
-    * @param   b - raft::kernel*, with input port named b_port
-    * @param   b_port - const std::string, input port name.
-    * @throws  AmbiguousPortAssignmentException - exception thrown 
-    *          if raft::kernel a has more than a single output port
-    * @throws  PortNotFoundException - exception thrown if raft::kernel b
-    *          has no input port named b_port
-    * @return  kernel_pair_t - references to src, dst kernels.
-    */
-   template < order::spec t = order::in >
-      kernel_pair_t link( raft::kernel *a, raft::kernel *b, const std::string b_port )
-   {
-      switch( t )
-      {
-         case( order::in ):
-         {
-            if( ! a->input.hasPorts() )
-            {
-               source_kernels.insert( a );   
-            }
-            all_kernels.insert( a );
-            all_kernels.insert( b );
-            PortInfo *port_info_a;
-            try{
-               port_info_a = &(a->output.getPortInfo() );
-            }
-            catch( PortNotFoundException &ex ) 
-            {
-               std::stringstream ss;
-               int status( 0 );
-               ss << "Source port from kernel " << 
-                  abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) <<
-                  "has more than a single port.";
-               throw AmbiguousPortAssignmentException( ss.str() );
-            }
-            
-            PortInfo &port_info_b( b->input.getPortInfoFor( b_port) );
-            
-            join( *a, port_info_a->my_name, *port_info_a, 
-                  *b, b_port, port_info_b );
-         }
-         break;
-         case( order::out ):
-         {
-            assert( false );
-         }
-         break;
-      }
-      return( kernel_pair_t( *a, *b ) );
-   }
-   
-   /**
-    * link - same as above save for the following differences:
-    * raft::kernel a is assumed to have an output port a_port and 
-    * raft::kernel b is assumed to have an input port b_port.
-    * @param   a - raft::kernel*, with more a single output port
-    * @param   a_port - const std::string, output port name
-    * @param   b - raft::kernel*, with input port named b_port
-    * @param   b_port - const std::string, input port name.
-    * @throws  PortNotFoundException - exception thrown if either kernel
-    *          is missing port a_port or b_port.
-    * @return  kernel_pair_t - references to src, dst kernels.
-    */
-   template < order::spec t = order::in >
-      kernel_pair_t link( raft::kernel *a, const std::string a_port, 
-                          raft::kernel *b, const std::string b_port )
-   {
-      switch( t )
-      {
-         case( order::in ):
-         {
-            if( ! a->input.hasPorts() )
-            {
-               source_kernels.insert( a );   
-            }
-            all_kernels.insert( a );
-            all_kernels.insert( b );
-            auto port_info_a( a->output.getPortInfoFor( a_port ) );
-            auto port_info_b( b->input.getPortInfoFor( b_port) );
-            
-            join( *a, a_port, port_info_a, 
-                  *b, b_port, port_info_b );
-         }
-         break;
-         case( order::out ):
-         {
-            assert( false );
-         }
-         break;
-      }
-      return( kernel_pair_t( *a, *b ) );
-   }
-
-   /**
-    * exe - template function that which takes two template parameters,
-    * scheduler and allocator.  Currently the default is simple_schedule
-    * and allocator is stdalloc.  The first thing this function does is 
-    * check each edge within the streaming graph to ensure that all 
-    * edges are connected.  If any unconnected edges have been found
-    * then an exception is thrown.  If all edges are connected then the 
-    * allocator and scheduler are called in turn based on the template 
-    * parameters.
-    * @throws PortDoubleInitializeException - thrown if an edge is double
-    *         allocated for some reason.
-    * @throws PortException - thrown if an unconnected edge is found.
-    */ 
    template< class scheduler = simple_schedule, class allocator = dynalloc > 
       void exe()
    {
@@ -342,7 +78,7 @@ public:
    }
 
 
-private:
+protected:
   
    /**
     * checkEdges - runs a breadth first search through the graph
@@ -351,33 +87,16 @@ private:
     * @throws PortException - thrown if an unconnected edge is found.
     */
    void checkEdges( std::set< raft::kernel* > &source_k );
-
+   
    /**
-    * join - helper method joins the two ports given the correct 
-    * information.  Essentially the correct information for the 
-    * PortInfo object is set.  Type is also checked using the 
-    * typeid information.  If the types aren't the same then an
-    * exception is thrown.
-    * @param a - raft::kernel&
-    * @param name_a - name for the port on kernel a
-    * @param a_info - PortInfo struct for kernel a
-    * @param b - raft::kernel&
-    * @param name_b - name for port on kernel b
-    * @param b_info - PortInfo struct for kernel b
-    * @throws PortTypeMismatchException
+    * printEdges - print a nice pretty picture using graphviz
+    * of the current layout, future versions will pop up a 
+    * window and display the topolgoy as a 3-d graph, but we'll
+    * save that till everything is relatively stable.
+    * @param source_k, &std::set< raft::kernel* >
     */
-   void join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
-              raft::kernel &b, const std::string name_b, PortInfo &b_info );
-   
-   
    void printEdges( std::set< raft::kernel* > &source_k );
 
-   /** need to keep source kernels **/
-   std::set< raft::kernel* > source_kernels;
-   
-   /** and keep a list of all kernels **/
-   std::set< raft::kernel* > all_kernels; 
-   
 
    friend class Schedule;
    friend class Allocate;

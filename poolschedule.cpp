@@ -26,9 +26,11 @@
 #include "poolschedule.hpp"
 #include "rafttypes.hpp"
 
-pool_schedule::pool_schedule( Map &map ) : Schedule( map )
+pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
+                    thread_pool( std::thread::hardware_concurrency() )
 {
    /** nothing to do here **/
+   
 }
 
 
@@ -53,43 +55,10 @@ pool_schedule::scheduleKernel( raft::kernel *kernel )
 void
 pool_schedule::start()
 {
-   struct thread_info_t
-   {
-      std::thread *th      = nullptr;
-      bool        finished = false;
-   };
 
-   std::vector< thread_info_t > thread_map( kernel_map.size() );
    
-   for( std::size_t index( 0 ); index < kernel_map.size(); index++ )
-   {
-      auto bound_func = [&]( raft::kernel *kernel, bool &finished ){
-         auto sig_status( raft::proceed );
-         while( sig_status == raft::proceed )
-         {
-            if( kernelHasInputData( kernel ) )
-            {
-               sig_status = kernel->run();
-            }
-            else if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
-            {
-               sig_status = raft::stop;
-            }
-            else
-            {
-               std::this_thread::yield();
-            }
-         }
-         /** invalidate output queues **/
-         invalidateOutputPorts( kernel );
-         finished = true;
-      };
-      thread_map[ index ].th = 
-         new std::thread( bound_func                               /* kernel loop */, 
-                          kernel_map[ index ]                      /* kernel ptr  */,
-                          std::ref( thread_map[ index ].finished ) /* finished ref */);
-   }
-
+    
+   
    bool keep_going( true );
    while( keep_going )
    {
@@ -111,4 +80,5 @@ pool_schedule::start()
          }
       }
    }
+   return;
 }

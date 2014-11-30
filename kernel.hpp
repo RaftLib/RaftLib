@@ -26,7 +26,7 @@
 #include "signalvars.hpp"
 #include "rafttypes.hpp"
 
-class Map;
+class MapBase;
 class Schedule;
 
 namespace raft {
@@ -84,7 +84,7 @@ protected:
    Port               output = { this };
  
 
-   friend class ::Map;
+   friend class ::MapBase;
    friend class ::Schedule;
    friend void  GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                                  edge_func fun,

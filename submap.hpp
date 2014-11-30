@@ -1,7 +1,11 @@
 /**
- * poolschedule.hpp - 
+ * submap.hpp - Defines an interface to create sub-mappings
+ * which are basically maps that are allowed to have unconnected
+ * inputs and/or outputs that will be connected within a main
+ * mapping.  
+ *
  * @author: Jonathan Beard
- * @version: Thu Sep 11 15:49:57 2014
+ * @version: Sun Nov 30 06:12:23 2014
  * 
  * Copyright 2014 Jonathan Beard
  * 
@@ -17,37 +21,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _POOLSSCHEDULE_HPP_
-#define _POOLSSCHEDULE_HPP_  1
-#include <vector>
-#include <thread>
-#include "runcontainer.hpp"
+#ifndef _SUBMAP_HPP_
+#define _SUBMAP_HPP_  1
+#include "mapbase.hpp"
 
 class Map;
-namespace raft{
-   class kernel;
-}
 
-class pool_schedule : public Schedule
+class SubMap : public MapBase
 {
 public:
-   pool_schedule( Map &map );
-
-   virtual ~pool_schedule();
-
-   virtual void start(); 
-   
+   SubMap();
+   virtual ~SubMap();
 protected:
-   
-   struct thread_info_t
-   {
-      std::thread *th       = nullptr;
-      runcontainer container;
-      bool         finished = false;
-   };
-
-   virtual bool scheduleKernel( raft::kernel *kernel );
-
-   std::vector< thread_info_t > thread_pool;
+   friend class Map;
 };
-#endif /* END _POOLSSCHEDULE_HPP_ */
+#endif /* END _SUBMAP_HPP_ */

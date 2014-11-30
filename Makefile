@@ -15,13 +15,13 @@ endif
 
 #TEST = -DUNITTEST=1
 
-CFLAGS   =  -Ofast -mtune=native -Wall -std=c99 $(TEST)
-CXXFLAGS =  -Ofast -mtune=native  -Wall -std=c++11  -DRDTSCP=1  $(TEST) $(ICC)
+CFLAGS   =  -O0 -g -Wall -std=c99 $(TEST)
+CXXFLAGS =  -O0 -g  -Wall -std=c++11  -DRDTSCP=1  $(TEST) $(ICC)
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
                    simpleschedule stdalloc portiterator dynalloc \
-                   roundrobin kernel
+                   roundrobin kernel mapbase submap
 
 COBJS   = $(RBCOBJS)
 CXXOBJS = $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)

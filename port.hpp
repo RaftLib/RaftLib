@@ -39,6 +39,10 @@
 #include "portmap_t.hpp"
 #include "portiterator.hpp"
 
+/** needed for friending below **/
+class MapBase;
+
+/** need to pre-declare this **/
 namespace raft{
    class kernel;
 }
@@ -95,6 +99,12 @@ public:
       return( ret_val.second );
    }
 
+   /** 
+    * addPorts - add ports for an existing buffer, basically
+    * allocate buffers in place.  These also won't be able
+    * to be resized.  
+    * @param n_ports - const std::size_t 
+    */
    template < class T >
    bool addPorts( const std::size_t n_ports = 0 )
    {
@@ -146,11 +156,24 @@ public:
     */
    bool hasPorts();
   
+   /**
+    * begin - get the beginning port.
+    * @return PortIterator
+    */
    PortIterator begin();
 
+   /**
+    * end - get the end port 
+    * @return PortIterator
+    */
    PortIterator end();
    
+   /**
+    * count - get the total number of fifos within this port container
+    * @return std::size_t
+    */
    std::size_t count();
+
 protected:
    /**
     * initializeConstMap - hack to get around the inability to otherwise
@@ -195,19 +218,33 @@ protected:
     * @return  PortInfo&
     */
    PortInfo& getPortInfoFor( const std::string port_name );
-  
+ 
+   /**
+    * portmap - container struct with all ports.  The 
+    * mutex should be locked before accessing this structure
+    */
    portmap_t   portmap;
 
    /** 
     * parent kernel that owns this port 
     */
    raft::kernel *    kernel            = nullptr;
-   
+    
+   /**
+    * ptr used for in-place allocations, will
+    * not be deleted by the map, also should not
+    * be modified by the map either.
+    */
    void * const      alloc_ptr         = nullptr;
+   
+   /**
+    * alloc_ptr_length - length of alloc_ptr in 
+    * bytes.
+    */
    const std::size_t alloc_ptr_length  = 0;
    
    /** we need some friends **/
-   friend class Map;
+   friend class MapBase;
    friend void GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                                 edge_func fun,
                                 bool connection_error );
