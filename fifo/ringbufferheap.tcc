@@ -53,7 +53,7 @@ public:
 
       const auto   wpt( Pointer::val( buff_ptr->write_pt ) ), 
                    rpt( Pointer::val( buff_ptr->read_pt  ) );
-      if( __builtin_expect( wpt == rpt, 0 ) )
+      if(  wpt == rpt )
       {
          if( wrap_read < wrap_write )
          {
@@ -76,7 +76,7 @@ public:
             return( 0 );
          }
       }
-      else if( __builtin_expect( rpt < wpt, 1 ) )
+      else if( rpt < wpt )
       {
          return( wpt - rpt );
       }
@@ -144,8 +144,7 @@ public:
     */
    virtual void send( const raft::signal signal = raft::none )
    {
-      __builtin_prefetch( dm.get() );
-      if( __builtin_expect( !(this)->allocate_called , 0 ) )
+      if( ! (this)->allocate_called  )
       {
          return;
       }
@@ -155,7 +154,7 @@ public:
       buff_ptr->signal[ write_index ] = signal;
       Pointer::inc( buff_ptr->write_pt );
       write_stats.count++;
-      if( __builtin_expect( signal == raft::eof, 0 ) )
+      if( signal == raft::eof )
       {
          /**
           * TODO, this is a quick hack, rework when proper signalling
@@ -216,7 +215,7 @@ public:
                {
                   break;
                }
-               else if( (this)->is_invalid() )
+               else if( (this)->is_invalid() && size() == 0 )
                {
                   dm.exitBuffer( dm::recycle );
                   return;
@@ -509,8 +508,9 @@ protected:
             {
                break;
             }
-            else if( (this)->is_invalid() )
-            {  
+            else if( (this)->is_invalid() && size() == 0 )
+            { 
+               fprintf( stderr, "Size: %zu\n", size() );
                throw ClosedPortAccessException( 
                   "Accessing closed port with pop call, exiting!!" );
             }
@@ -602,7 +602,7 @@ protected:
             { 
                break;
             }
-            else if( (this)->is_invalid() )
+            else if( (this)->is_invalid() && size() == 0 )
             {
                throw ClosedPortAccessException( 
                   "Accessing closed port with local_insert call, exiting!!" );

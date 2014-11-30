@@ -142,7 +142,6 @@ public:
          else
          {
             std::size_t ptr_val( (index + crp) % queue_size );
-            __builtin_prefetch( &queue[ ptr_val ], 0, 3 );
             return( queue[ ptr_val ] );
          }
       }

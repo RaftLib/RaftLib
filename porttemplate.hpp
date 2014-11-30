@@ -1,5 +1,11 @@
 /**
- * porttemplate.hpp - 
+ * porttemplate.hpp - This object is designed to be used in 
+ * conjunction with a SubMap object, essentially its just 
+ * a container to hold reference to the input and output
+ * ports to this sub-map so that the library doesn't have 
+ * to search the entire map when the SubMap object is 
+ * added to the main map.
+ *
  * @author: Jonathan Beard
  * @version: Sun Nov 30 10:09:25 2014
  * 
@@ -19,12 +25,17 @@
  */
 #ifndef _PORTTEMPLATE_HPP_
 #define _PORTTEMPLATE_HPP_  1
-#include "port_info_t.hpp"
+#include <map>
+#include "port_info.hpp"
 
 class PortTemplate
 {
 public:
+   PortTemplate();
 
+   virtual ~PortTemplate();
 
+protected:  
+   std::map< std::string, PortInfo& > map; 
 };
 #endif /* END _PORTTEMPLATE_HPP_ */

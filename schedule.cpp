@@ -43,12 +43,12 @@ bool
 Schedule::kernelHasInputData( raft::kernel *kernel )
 {
    auto &port_list( kernel->input );
-   if( port_list.count() == 0 )
+   if( ! port_list.hasPorts() )
    {
       /** only output ports, keep calling till exits **/
       return( true );
    }
-   for( auto &port : kernel->input )
+   for( auto &port : port_list )
    {
       if( port.size() )
       {
@@ -61,8 +61,14 @@ Schedule::kernelHasInputData( raft::kernel *kernel )
 bool
 Schedule::kernelHasNoInputPorts( raft::kernel *kernel )
 {
+   auto &port_list( kernel->input );
+   if( ! port_list.hasPorts() )
+   {
+      /** only output ports, keep calling till exits **/
+      return( false );
+   }
    /** assume data check is already complete **/
-   for( auto &port : kernel->input )
+   for( auto &port : port_list )
    {
       if( ! port.is_invalid() )
       {

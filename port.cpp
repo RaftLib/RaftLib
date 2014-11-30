@@ -30,11 +30,15 @@
 #include "port.hpp"
 #include "portexception.hpp"
 
-Port::Port( raft::kernel *k ) : kernel( k )
+Port::Port( raft::kernel *k ) : PortBase(),
+                                kernel( k )
 {
 }
 
-Port::Port( raft::kernel *k, void * const ptr, const std::size_t nbytes ) :
+Port::Port( raft::kernel *k, 
+            void * const ptr, 
+            const std::size_t nbytes ) :
+   PortBase(),
    kernel( k ),
    alloc_ptr( ptr ),
    alloc_ptr_length( nbytes )
@@ -43,7 +47,10 @@ Port::Port( raft::kernel *k, void * const ptr, const std::size_t nbytes ) :
 
 Port::~Port()
 {
-   /** the port map is allocated on the heap so the port_info destructor is called **/
+   /** 
+    * the port map is allocated on the heap so the 
+    * port_info destructor is called
+    */
 }
 
 const std::type_index&
@@ -63,7 +70,8 @@ Port::operator[]( const std::string port_name )
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
    {
-      throw PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
+      throw PortNotFoundException( 
+         "Port not found for name \"" + port_name + "\"" );
    }
    return( *((*ret_val).second.getFIFO())  );
 }

@@ -29,7 +29,7 @@
 #include <functional>
 #include <utility>
 
-
+#include "portbase.hpp"
 #include "graphtools.hpp"
 #include "ringbuffertypes.hpp"
 #include "fifo.hpp"
@@ -47,7 +47,7 @@ namespace raft{
    class kernel;
 }
 
-class Port
+class Port : public PortBase
 {
 public:
    /** 
@@ -146,7 +146,7 @@ public:
     * operator[] - input the port name and get a port
     * if it exists. 
     */
-   FIFO& operator[]( const std::string port_name );
+   virtual FIFO& operator[]( const std::string port_name );
 
 
    /**
@@ -154,19 +154,19 @@ public:
     * otherwise. 
     * @return   bool
     */
-   bool hasPorts();
+   virtual bool hasPorts();
   
    /**
     * begin - get the beginning port.
     * @return PortIterator
     */
-   PortIterator begin();
+   virtual PortIterator begin();
 
    /**
     * end - get the end port 
     * @return PortIterator
     */
-   PortIterator end();
+   virtual PortIterator end();
    
    /**
     * count - get the total number of fifos within this port container

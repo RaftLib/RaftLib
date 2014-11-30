@@ -59,7 +59,7 @@ simple_schedule::start()
    for( std::size_t index( 0 ); index < kernel_map.size(); index++ )
    {
       auto bound_func = [&]( raft::kernel *kernel, bool &finished ){
-         auto sig_status( raft::proceed );
+         volatile auto sig_status( raft::proceed );
          while( sig_status == raft::proceed )
          {
             if( kernelHasInputData( kernel ) )
