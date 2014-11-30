@@ -159,7 +159,6 @@ public:
     */
    auto get() noexcept -> Buffer::Data< T, B >*
    {
-      __builtin_prefetch( buffer ); 
       return( buffer );
    }
 
@@ -213,7 +212,7 @@ private:
       std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
    } __attribute__((aligned(64))) volatile thread_access[ 2 ];
    
-   void set_helper( dm::access_key key, const std::uint8_t val )
+   void set_helper( dm::access_key key, const int val )
    {
       if( (int) key <= (int) dm::push )
       {

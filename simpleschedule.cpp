@@ -58,7 +58,7 @@ simple_schedule::start()
    
    for( std::size_t index( 0 ); index < kernel_map.size(); index++ )
    {
-      auto bound_func = [&]( raft::kernel *kernel, bool &finished ){
+      auto bound_func = []( raft::kernel *kernel, bool &finished ){
          volatile auto sig_status( raft::proceed );
          while( sig_status == raft::proceed )
          {
@@ -66,14 +66,11 @@ simple_schedule::start()
             {
                sig_status = kernel->run();
             }
-            else if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
+            if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
             {
                sig_status = raft::stop;
             }
-            else
-            {
-               std::this_thread::yield();
-            }
+            std::this_thread::yield();
          }
          /** invalidate output queues **/
          invalidateOutputPorts( kernel );

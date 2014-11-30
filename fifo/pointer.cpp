@@ -53,8 +53,6 @@ Pointer::val( Pointer *ptr )
       std::uint64_t a;
       std::uint64_t b;
    }copy;
-   __builtin_prefetch( (void*)&(ptr->a), 0, 3 );
-   __builtin_prefetch( (void*)&(ptr->b), 0, 3 );
    do{
       copy.a = ptr->a;
       copy.b = ptr->b;
@@ -67,7 +65,7 @@ Pointer::inc( Pointer *ptr )
 {
    ptr->a = ( ptr->a + 1 ) % ptr->max_cap;
    ptr->b = ( ptr->b + 1 ) % ptr->max_cap;
-   if( __builtin_expect(  ptr->b == 0, 0 ) )
+   if( ptr->b == 0 )
    {
       ptr->wrap_a++;
       ptr->wrap_b++;

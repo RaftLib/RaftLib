@@ -13,7 +13,7 @@ STATIC = -static -static-libgcc -static-libstdc++
 PTHREAD = -lpthread  
 endif
 
-#TEST = -DUNITTEST=1
+TEST = -DUNITTEST=1
 
 CFLAGS   =  -O0 -g -Wall -std=c99 $(TEST)
 CXXFLAGS =  -O0 -g  -Wall -std=c++11  -DRDTSCP=1  $(TEST) $(ICC)

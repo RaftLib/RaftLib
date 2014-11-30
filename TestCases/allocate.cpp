@@ -9,7 +9,7 @@ template < typename T > class Generate : public raft::kernel
 {
 public:
    Generate( std::int64_t count = 1000 ) : raft::kernel(),
-                                           count( count )
+                                         count( count )
    {
       output.addPort< T >( "number_stream" );
    }
@@ -53,7 +53,10 @@ public:
       raft::signal  sig_a( raft::none  ), sig_b( raft::none );
       input[ "input_a" ].pop( a, &sig_a );
       input[ "input_b" ].pop( b, &sig_b );
-      assert( sig_a == sig_b );
+      if( sig_a != sig_b )
+      {
+         std::cerr << sig_a << " - " << sig_b << "\n";
+      }
       C c( a + b );
       output[ "sum" ].push( c , sig_a );
       if( sig_b == raft::eof )
@@ -78,7 +81,7 @@ public:
       T data;
       raft::signal  signal( raft::none );
       input[ "in" ].pop( data, &signal );
-      fprintf( stderr, "%" PRIu64 "\n", data );
+      fprintf( stdout , "%" PRIu64 "\n", data );
       if( signal == raft::eof )
       {
          return( raft::stop );
@@ -90,12 +93,17 @@ public:
 int
 main( int argc, char **argv )
 {
+   int count( 1000 );
+   if( argc == 2 )
+   {
+      count = atoi( argv[ 1 ] );
+   }
    using namespace raft;
    Map map;
-   auto linked_kernels( map.link( new Generate< std::int64_t >(),
+   auto linked_kernels( map.link( new Generate< std::int64_t >( count ),
                                   new Sum< std::int64_t,std::int64_t, std::int64_t >(),
                                   "input_a" ) );
-   map.link( new Generate< std::int64_t >(), &( linked_kernels.dst ), "input_b" );
+   map.link( new Generate< std::int64_t >( count ), &( linked_kernels.dst ), "input_b" );
    map.link( &( linked_kernels.dst ), new Print< std::int64_t >() );
    map.exe();
    return( EXIT_SUCCESS );

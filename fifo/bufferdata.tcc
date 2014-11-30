@@ -130,7 +130,7 @@ struct Signal
 
    raft::signal sig;
    std::size_t  index = 0;
-} __attribute__((aligned(16)));
+};
 
 
 /**

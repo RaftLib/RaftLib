@@ -132,6 +132,7 @@ public:
    virtual float get_frac_write_blocked()
    {
       const auto copy( (this)->write_stats );
+      (this)->write_stats.all = 0;
       if( copy.blocked == 0 || copy.count == 0 )
       {
          return( 0.0 );

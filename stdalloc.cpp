@@ -49,14 +49,12 @@ stdalloc::run()
       /** check and see if a has a defined allocation **/
       if( a.existing_buffer != nullptr )
       {
-         fprintf( stderr, "in-place stdalloc called\n" );
          fifo = test_func( a.nitems, 
                            a.start_index, 
                            a.existing_buffer );     
       }
       else
       {
-         fprintf( stderr, "non-place stdalloc called\n" );
          fifo = test_func( 64 /** size **/, 
                            16 /** align **/,
                            nullptr /* data struct **/);

@@ -537,6 +537,7 @@ public:
    virtual float get_frac_write_blocked() = 0;
 
    void invalidate();
+   
    bool is_invalid();
 protected:
    /** 

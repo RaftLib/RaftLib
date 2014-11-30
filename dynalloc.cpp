@@ -75,7 +75,7 @@ dynalloc::run()
       }
       else
       {
-         fifo = test_func( 16 /* items */, 
+         fifo = test_func( 4  /* items */, 
                            16 /* align */, 
                            (void*)NULL );
       }
@@ -94,16 +94,16 @@ dynalloc::run()
     */
    auto mon_func = [&]( PortInfo &a, PortInfo &b ) -> void
    {
-      const float ratio( .5 );
+      const float ratio( .75 );
       const auto hash_val( dynalloc::hash( a, b ) );
       /** TODO, the values might wrap if no monitoring on **/
       const auto realized_ratio( a.getFIFO()->get_frac_write_blocked() );
       if( realized_ratio >= ratio )
       {
          const auto curr_count( size_map[ hash_val ]++ );
-         if( curr_count  == 2 )
+         if( curr_count  == 1 )
          {
-#ifdef UNITTEST
+#if (UNITTEST == 1)
             fprintf( stderr, "RESIZECALLED\n" );
 #endif 
             /** get initializer function **/

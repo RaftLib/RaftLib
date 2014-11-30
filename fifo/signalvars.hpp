@@ -22,7 +22,7 @@
 #include <cstdint>
 
 namespace raft{
-enum signal : std::int8_t {
+enum signal : std::int64_t {
    none = 0,
    eof,
    quit,

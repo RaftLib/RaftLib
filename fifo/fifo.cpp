@@ -41,6 +41,7 @@ FIFO::get_zero_write_stats( Blocked &copy )
 void
 FIFO::invalidate()
 {
+   while( (volatile std::size_t) size() > 0  /** spin **/ );
    valid = false;
 }
 

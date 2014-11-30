@@ -149,10 +149,9 @@ public:
          return;
       }
       /** should be the end of the write, regardless of which allocate called **/
-      auto * const buff_ptr( dm.get() ); 
+      auto *buff_ptr( dm.get() ); 
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       buff_ptr->signal[ write_index ] = signal;
-      Pointer::inc( buff_ptr->write_pt );
       write_stats.count++;
       if( signal == raft::eof )
       {
@@ -163,6 +162,7 @@ public:
          (this)->write_finished = true;
       }
       (this)->allocate_called = false;
+      Pointer::inc( buff_ptr->write_pt );
       dm.exitBuffer( dm::allocate );
    }
    
@@ -605,7 +605,7 @@ protected:
             else if( (this)->is_invalid() && size() == 0 )
             {
                throw ClosedPortAccessException( 
-                  "Accessing closed port with local_insert call, exiting!!" );
+                  "Accessing closed port with local_peek call, exiting!!" );
             }
          }
          dm.exitBuffer( dm::peek );
@@ -653,7 +653,7 @@ protected:
             else if( (this)->is_invalid() )
             {
                throw ClosedPortAccessException( 
-                  "Accessing closed port with local_insert call, exiting!!" );
+                  "Accessing closed port with local_peek_range call, exiting!!" );
             }
          }
          dm.exitBuffer( dm::peek );

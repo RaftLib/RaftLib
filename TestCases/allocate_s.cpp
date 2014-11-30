@@ -59,12 +59,17 @@ public:
 int
 main( int argc, char **argv )
 {
+   int count( 1000 );
+   if( argc == 2 )
+   {
+      count = atoi( argv[ 1 ] );
+   }
    using namespace raft;
    Map map;
-   auto linked_kernels( map.link( new Generate< std::int64_t >(),
+   auto linked_kernels( map.link( new Generate< std::int64_t >( count ),
                                   new sum< std::int64_t,std::int64_t, std::int64_t >(),
                                   "input_a" ) );
-   map.link( new Generate< std::int64_t >(), &( linked_kernels.dst ), "input_b" );
+   map.link( new Generate< std::int64_t >( count ), &( linked_kernels.dst ), "input_b" );
    map.link( &( linked_kernels.dst ), 
       new print< std::int64_t ,'\n' >() );
    map.exe();
