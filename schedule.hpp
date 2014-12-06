@@ -54,7 +54,17 @@ protected:
     */
    virtual bool scheduleKernel( raft::kernel *kernel );
 
+   /**
+    * invalidateOutputPorts - send invalidation signal via
+    * each output port of param kernel.  This function calls
+    * the FIFO specific implementation of invalidate.
+    * @param   kernel - raft::kernel*
+    */
    static void invalidateOutputPorts( raft::kernel *kernel );
+   
+   /** 
+    * kernelHasInputData -
+    */
    static bool kernelHasInputData( raft::kernel *kernel );
    static bool kernelHasNoInputPorts( raft::kernel *kernel );
 private:
