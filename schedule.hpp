@@ -39,6 +39,11 @@ public:
     */
    virtual void start() = 0;
 
+  
+   /** 
+    * init - call to pre-process all kernels, this function
+    * is called by the map object
+    */
    virtual void init();
 protected:
    
@@ -63,10 +68,25 @@ protected:
    static void invalidateOutputPorts( raft::kernel *kernel );
    
    /** 
-    * kernelHasInputData -
+    * kernelHasInputData - check each input port for available
+    * data, returns true if any of the input ports has available
+    * data.
+    * @param kernel - raft::kernel
+    * @return bool  - true if input data available.
     */
    static bool kernelHasInputData( raft::kernel *kernel );
+   
+   /**
+    * kernelHasNoInputPorts - pretty much exactly like the 
+    * function name says, if the param kernel has no valid
+    * input ports (this function assumes that kernelHasInputData()
+    * has been called and returns false before this function 
+    * is called) then it returns true.
+    * @param   kernel - raft::kernel*
+    * @return  bool   - true if no valid input ports avail
+    */
    static bool kernelHasNoInputPorts( raft::kernel *kernel );
+
 private:
    Map &map_ref;
 };

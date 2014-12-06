@@ -1,7 +1,6 @@
 #include <raft>
 #include <cstdint>
 #include <iostream>
-#include "print.tcc"
 
 template < typename T > class Generate : public raft::kernel
 {
