@@ -113,3 +113,4 @@ Map::printEdges( std::set< raft::kernel* > &source_k )
    pclose( pipe );
    free( buffer );
 }
+

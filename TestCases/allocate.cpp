@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <raft>
+#include <raftio>
 
 
 template < typename T > class Generate : public raft::kernel
@@ -68,27 +69,6 @@ public:
 
 };
 
-template< typename T > class Print : public raft::kernel
-{
-public:
-   Print() : raft::kernel()
-   {
-      input.addPort< T >( "in" );
-   }
-
-   virtual raft::kstatus run()
-   {
-      T data;
-      raft::signal  signal( raft::none );
-      input[ "in" ].pop( data, &signal );
-      fprintf( stdout , "%" PRIu64 "\n", data );
-      if( signal == raft::eof )
-      {
-         return( raft::stop );
-      }
-      return( raft::proceed );
-   }
-};
 
 int
 main( int argc, char **argv )
@@ -99,12 +79,12 @@ main( int argc, char **argv )
       count = atoi( argv[ 1 ] );
    }
    using namespace raft;
-   Map map;
+   //Map map;
    auto linked_kernels( map.link( new Generate< std::int64_t >( count ),
                                   new Sum< std::int64_t,std::int64_t, std::int64_t >(),
                                   "input_a" ) );
    map.link( new Generate< std::int64_t >( count ), &( linked_kernels.dst ), "input_b" );
-   map.link( &( linked_kernels.dst ), new Print< std::int64_t >() );
+   map.link( &( linked_kernels.dst ), new print< std::int64_t, '\n' >() );
    map.exe();
    return( EXIT_SUCCESS );
 }

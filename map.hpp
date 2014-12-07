@@ -101,4 +101,5 @@ protected:
    friend class Schedule;
    friend class Allocate;
 };
+
 #endif /* END _MAP_HPP_ */

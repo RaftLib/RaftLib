@@ -22,11 +22,16 @@
 #include <cstdint>
 
 namespace raft{
-enum signal : std::int64_t {
+/** 
+ * far more signals than we'll probably need (32-bits that is), but
+ * I figure why not reserve the space now.  < 0xffff = system signals,
+ * the rest are user space.
+ */
+enum signal : std::uint32_t {
    none = 0,
-   eof,
    quit,
-   term
+   term,
+   eof = 0xffff
 };
 }
 #endif /* END _SIGNALVARS_HPP_ */

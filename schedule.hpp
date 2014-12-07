@@ -20,6 +20,8 @@
 #ifndef _SCHEDULE_HPP_
 #define _SCHEDULE_HPP_  1
 
+#include "systemsignalhandler.hpp"
+
 namespace raft {
    class kernel;
 }
@@ -47,6 +49,14 @@ public:
    virtual void init();
 protected:
    
+   /**
+    * term_handler - static term handler function, 
+    * passes term signal through from the currently
+    * scheduled kernel to all the subsequent kenrels
+    */
+   static void term_handler( const raft::signal signal,
+                             raft::kernel      *kernel,
+                             void              *data );
    
    /**
     * scheduleKernel - adds the kernel "kernel" to the
@@ -86,6 +96,11 @@ protected:
     * @return  bool   - true if no valid input ports avail
     */
    static bool kernelHasNoInputPorts( raft::kernel *kernel );
+
+   /**
+    * signal handlers
+    */
+   SystemSignalHandler handlers;
 
 private:
    Map &map_ref;

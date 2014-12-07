@@ -23,6 +23,15 @@ Schedule::init()
    }
 }
 
+
+void
+Schedule::term_handler( const raft::signal signal,
+                        raft::kernel      *kernel,
+                        void              *data )
+{
+   /** FIXME **/
+}
+
 bool
 Schedule::scheduleKernel( raft::kernel *kernel )
 {
