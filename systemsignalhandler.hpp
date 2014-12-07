@@ -67,11 +67,13 @@ public:
     * an exception is thrown if the signal doesn't have a 
     * handler and a sigterm is passed throughout the system.
     * @param   signal - const raft::signal
+    * @param   fifo   - FIFO& current port that called the signal
     * @param   kernel - raft::kernel*, currently called kernel
     * @param   data   - void*
     * @throws  NoSignalHandlerFoundException
     */
    void callHandler( const raft::signal signal,
+                     FIFO               &fifo,
                      raft::kernel       *kernel,
                      void *data );
 

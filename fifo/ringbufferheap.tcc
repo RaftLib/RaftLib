@@ -267,6 +267,38 @@ public:
    }
 
 protected:
+   
+   /**
+    * signal_peek - return signal at head of 
+    * queue and nothing else
+    * @return raft::signal
+    */
+   virtual raft::signal signal_peek()
+   {
+      /** 
+       * NOTE: normally I'd say we need exclusion here too,
+       * however, since this is a copy and we want this to
+       * be quick since it'll be used quite often in tight
+       * loops I think we'll be okay with getting the current
+       * pointer to the head of the queue and returning the
+       * value.  Logically copying the queue shouldn't effect
+       * this value since the elements all remain in their 
+       * location relative to the start of the queue.
+       */
+      auto * const buff_ptr( dm.get() );
+      const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
+      return( buff_ptr->signal[ read_index ] /* make copy */ ); 
+   }
+   /**
+    * signal_pop - special function fo rthe scheduler to 
+    * pop the current signal and associated item.
+    */
+   virtual void signal_pop()
+   {
+      
+      local_pop
+   }
+
    /**
     * local_allocate - get a reference to an object of type T at the 
     * end of the queue.  Should be released to the queue using
@@ -491,14 +523,14 @@ protected:
    
    /**
     * local_pop - read one item from the ring buffer,
-    * will block till there is data to be read
+    * will block till there is data to be read.  If
+    * ptr == nullptr then the item is just thrown away.
     * @return  T, item read.  It is removed from the
     *          q as soon as it is read
     */
    virtual void 
    local_pop( void *ptr, raft::signal *signal )
    {
-      assert( ptr != nullptr );
       for(;;)
       {
          dm.enterBuffer( dm::pop );
@@ -537,11 +569,15 @@ protected:
       {
          *signal = buff_ptr->signal[ read_index ];
       }
-      /** gotta dereference pointer and copy **/
-      T *item( reinterpret_cast< T* >( ptr ) );
-      *item = buff_ptr->store[ read_index ];
+      if( ptr != nullptr )
+      {
+         /** gotta dereference pointer and copy **/
+         T *item( reinterpret_cast< T* >( ptr ) );
+         *item = buff_ptr->store[ read_index ];
+         /** only increment here b/c we're actually reading an item **/
+         read_stats.count++;
+      }
       Pointer::inc( buff_ptr->read_pt );
-      read_stats.count++;
       dm.exitBuffer( dm::pop );
    }
    

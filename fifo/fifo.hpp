@@ -33,6 +33,7 @@
 #include "blocked.hpp"
 #include "signalvars.hpp"
 
+class Schedule;
 
 
 class FIFO
@@ -540,6 +541,20 @@ public:
    
    bool is_invalid();
 protected:
+   /**
+    * signal_peek - special function for the scheduler
+    * to peek at a signal on the head of the queue.
+    * @return raft::signal
+    */
+   virtual raft::signal signal_peek() = 0;
+   /**
+    * signal_pop - special function fo rthe scheduler to 
+    * pop the current signal and associated item.
+    */
+   virtual void signal_pop() = 0;
+
+   friend class Schedule;
+
    /** 
     * local_allocate - in order to get this whole thing
     * to work with multiple "ports" contained within the

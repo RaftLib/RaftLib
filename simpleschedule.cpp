@@ -61,11 +61,23 @@ simple_schedule::start()
       auto bound_func = []( raft::kernel * const kernel, 
                             volatile bool &finished )
       {
-         volatile auto sig_status( raft::proceed );
+         auto sig_status( raft::proceed );
          while( sig_status == raft::proceed )
          {
             if( kernelHasInputData( kernel ) )
             {
+               /**
+                * NOTE: Okay, there's some data, don't know if its
+                * is a system signal or user data, so lets check
+                * the system signal first.  Right now the assumption
+                * is that the system signals are divided into two
+                * categories, one where they effect the input queues
+                * to this kernel (e.g., invalidate them) and two 
+                * where they are terminal and cause the shutdown of 
+                * the entire application, in this case the follow
+                * on kernel->run() will never get executed.
+                */
+               checkSystemSignal( kernel, nullptr );
                sig_status = kernel->run();
             }
             else if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
@@ -75,7 +87,6 @@ simple_schedule::start()
             std::this_thread::yield();
          }
          /** invalidate output queues **/
-         invalidateOutputPorts( kernel );
          finished = true;
       };
       thread_map[ index ].th = 

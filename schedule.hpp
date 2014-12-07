@@ -19,7 +19,7 @@
  */
 #ifndef _SCHEDULE_HPP_
 #define _SCHEDULE_HPP_  1
-
+#include "signalvars.hpp"
 #include "systemsignalhandler.hpp"
 
 namespace raft {
@@ -48,15 +48,40 @@ public:
     */
    virtual void init();
 protected:
-   
+  
    /**
-    * term_handler - static term handler function, 
+    * checkSystemSignal - check the incomming streams for
+    * the param kernel for any system signals, if there 
+    * is one then consume the signal and perform the 
+    * appropriate action.
+    * @param kernel - raft::kernel
+    * @param data   - void*, use this if any further info
+    *  is needed in future implementations of handlers
+    */
+   void checkSystemSignal( raft::kernel * const kernel, void *data )
+   {
+      auto &input_ports( kernel->input );
+      for( auto &port : input_ports )
+      {
+         const auto curr_signal( port.signal_peek() );
+         if( curr_signal < raft::MAX_SYSTEM_SIGNAL )
+         {
+            handlers.callHandler( curr_signal,
+                                  port,
+                                  kernel,
+                                  data );
+         }
+      }
+   }
+
+   /**
+    * termHandler - static term handler function, 
     * passes term signal through from the currently
     * scheduled kernel to all the subsequent kenrels
     */
-   static void term_handler( const raft::signal signal,
-                             raft::kernel      *kernel,
-                             void              *data );
+   static void termHandler( const raft::signal signal,
+                            raft::kernel      *kernel,
+                            void              *data );
    
    /**
     * scheduleKernel - adds the kernel "kernel" to the
@@ -75,7 +100,7 @@ protected:
     * the FIFO specific implementation of invalidate.
     * @param   kernel - raft::kernel*
     */
-   static void invalidateOutputPorts( raft::kernel *kernel );
+  // static void invalidateOutputPorts( raft::kernel *kernel );
    
    /** 
     * kernelHasInputData - check each input port for available
@@ -92,7 +117,7 @@ protected:
     * input ports (this function assumes that kernelHasInputData()
     * has been called and returns false before this function 
     * is called) then it returns true.
-    * @param   kernel - raft::kernel*
+    * @params   kernel - raft::kernel*
     * @return  bool   - true if no valid input ports avail
     */
    static bool kernelHasNoInputPorts( raft::kernel *kernel );
@@ -100,7 +125,7 @@ protected:
    /**
     * signal handlers
     */
-   SystemSignalHandler handlers;
+   SystemSignfalHandler handlers;
 
 private:
    Map &map_ref;

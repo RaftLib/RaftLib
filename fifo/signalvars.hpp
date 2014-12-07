@@ -27,11 +27,14 @@ namespace raft{
  * I figure why not reserve the space now.  < 0xffff = system signals,
  * the rest are user space.
  */
+
+static const std::uint32_t MAX_SYSTEM_SIGNAL( 0xfff );
+
 enum signal : std::uint32_t {
    none = 0,
    quit,
    term,
-   eof = 0xffff
+   eof = MAX_SYSTEM_SIGNAL
 };
 }
 #endif /* END _SIGNALVARS_HPP_ */
