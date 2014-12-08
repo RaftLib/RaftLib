@@ -553,6 +553,8 @@ protected:
     */
    virtual void signal_pop() = 0;
 
+   virtual void inline_signal_send( const raft::signal sig ) = 0;
+   
    friend class Schedule;
 
    /** 

@@ -58,21 +58,7 @@ protected:
     * @param data   - void*, use this if any further info
     *  is needed in future implementations of handlers
     */
-   void checkSystemSignal( raft::kernel * const kernel, void *data )
-   {
-      auto &input_ports( kernel->input );
-      for( auto &port : input_ports )
-      {
-         const auto curr_signal( port.signal_peek() );
-         if( curr_signal < raft::MAX_SYSTEM_SIGNAL )
-         {
-            handlers.callHandler( curr_signal,
-                                  port,
-                                  kernel,
-                                  data );
-         }
-      }
-   }
+   void checkSystemSignal( raft::kernel * const kernel, void *data );
 
    /**
     * termHandler - static term handler function, 
@@ -94,14 +80,8 @@ protected:
     */
    virtual bool scheduleKernel( raft::kernel *kernel );
 
-   /**
-    * invalidateOutputPorts - send invalidation signal via
-    * each output port of param kernel.  This function calls
-    * the FIFO specific implementation of invalidate.
-    * @param   kernel - raft::kernel*
-    */
-  // static void invalidateOutputPorts( raft::kernel *kernel );
-   
+   static void sendEndOfData( raft::kernel *kernel,
+                              void *data );
    /** 
     * kernelHasInputData - check each input port for available
     * data, returns true if any of the input ports has available

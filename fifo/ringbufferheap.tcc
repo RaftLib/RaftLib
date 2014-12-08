@@ -295,8 +295,7 @@ protected:
     */
    virtual void signal_pop()
    {
-      
-      local_pop
+      local_pop( nullptr, nullptr );
    }
 
    /**

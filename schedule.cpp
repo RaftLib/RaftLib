@@ -25,11 +25,28 @@ Schedule::init()
 
 
 void
-Schedule::term_handler( const raft::signal signal,
-                        raft::kernel      *kernel,
-                        void              *data )
+Schedule::termHandler( const raft::signal signal,
+                       raft::kernel      *kernel,
+                       void              *data )
 {
-   /** FIXME **/
+   
+}
+
+void 
+Schedule::checkSystemSignal( raft::kernel * const kernel, void *data )
+{
+   auto &input_ports( kernel->input );
+   for( auto &port : input_ports )
+   {
+      const auto curr_signal( port.signal_peek() );
+      if( curr_signal < raft::MAX_SYSTEM_SIGNAL )
+      {
+         handlers.callHandler( curr_signal,
+                               port,
+                               kernel,
+                               data );
+      }
+   }
 }
 
 bool
@@ -38,15 +55,17 @@ Schedule::scheduleKernel( raft::kernel *kernel )
    /** does nothing **/
    return( false );
 }
-
-void
-Schedule::invalidateOutputPorts( raft::kernel *kernel )
+void 
+Schedule::sendEndOfData( raft::kernel *kernel,
+                         void         *data )
 {
-   for( auto &port : kernel->output )
+   auto &output_ports( kernel->output );
+   for( auto port : output_ports )
    {
-      port.invalidate();
+      port.inline_signal_send( raft::quit ); 
    }
 }
+
 
 bool
 Schedule::kernelHasInputData( raft::kernel *kernel )

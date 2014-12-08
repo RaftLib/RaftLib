@@ -84,6 +84,7 @@ simple_schedule::start()
             {
                sig_status = raft::stop;
             }
+            sendEndOfData( kernel, nullptr );
             std::this_thread::yield();
          }
          /** invalidate output queues **/
