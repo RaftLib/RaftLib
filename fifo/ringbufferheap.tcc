@@ -48,14 +48,16 @@ public:
    virtual std::size_t   size()
    {
       auto * const buff_ptr( dm.get() );
+TOP:      
       const auto   wrap_write( Pointer::wrapIndicator( buff_ptr->write_pt  ) ),
                    wrap_read(  Pointer::wrapIndicator( buff_ptr->read_pt   ) );
 
       const auto   wpt( Pointer::val( buff_ptr->write_pt ) ), 
                    rpt( Pointer::val( buff_ptr->read_pt  ) );
-      if(  wpt == rpt )
+      if( __builtin_expect( (wpt == rpt), 0 ) )
       {
-         if( wrap_read < wrap_write )
+         /** expect most of the time to be full **/
+         if( __builtin_expect( (wrap_read < wrap_write), 1 ) )
          {
             return( buff_ptr->max_cap );
          }
@@ -69,7 +71,9 @@ public:
              * this is in fact the best of all possible returns (see Leibniz or Candide 
              * for further info).
              */
-            return( buff_ptr->max_cap  );
+            //std::this_thread::yield();
+            __builtin_prefetch( buff_ptr, 0, 3 );
+            goto TOP;
          }
          else
          {

@@ -89,7 +89,9 @@ private:
    /**
     * size of wrap pointer might become an issue
     * if GHz increase drastically or if this runs
-    * for a really really long time.
+    * for a really really long time....@ 10GHz and
+    * assuming 1 wrap per cycle that works out to 
+    * around 54 years, @ 2GHz we have ~250 years.
     * TODO, get these set correctly if we do eventually
     * wrap an unsigned 64 int.
     */

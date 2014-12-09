@@ -5,8 +5,10 @@ ifneq ($(shell uname -s), Darwin)
 RT = -lrt
 endif
 
-CFLAGS   = -O0 -g -Wall -std=c99
-CXXFLAGS = -O0 -g  -Wall -std=c++11 -DRDTSCP=1 -DUNITTEST=1
+#TEST = -O0 -g -DUNITTEST=1
+
+CFLAGS   = -O3 -mtune=native  -Wall -std=c99 $(TEST)
+CXXFLAGS = -O3 -mtune=native  -Wall -std=c++11 -DRDTSCP=1  $(TEST)
 LDLIBS  = -lstdc++ -lraft $(RT)
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \

@@ -1,4 +1,4 @@
-/**
+/*
  * pointer.cpp - 
  * @author: Jonathan Beard
  * @version: Thu May 15 09:58:51 2014

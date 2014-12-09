@@ -54,10 +54,7 @@ public:
       raft::signal  sig_a( raft::none  ), sig_b( raft::none );
       input[ "input_a" ].pop( a, &sig_a );
       input[ "input_b" ].pop( b, &sig_b );
-      if( sig_a != sig_b )
-      {
-         std::cerr << sig_a << " - " << sig_b << "\n";
-      }
+      assert( sig_a == sig_b );
       C c( a + b );
       output[ "sum" ].push( c , sig_a );
       if( sig_b == raft::eof )
@@ -79,7 +76,6 @@ main( int argc, char **argv )
       count = atoi( argv[ 1 ] );
    }
    using namespace raft;
-   //Map map;
    auto linked_kernels( map.link( new Generate< std::int64_t >( count ),
                                   new Sum< std::int64_t,std::int64_t, std::int64_t >(),
                                   "input_a" ) );
