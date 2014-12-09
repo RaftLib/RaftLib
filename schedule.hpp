@@ -21,6 +21,7 @@
 #define _SCHEDULE_HPP_  1
 #include "signalvars.hpp"
 #include "systemsignalhandler.hpp"
+#include "rafttypes.hpp"
 
 namespace raft {
    class kernel;
@@ -57,10 +58,11 @@ protected:
     * @param kernel - raft::kernel
     * @param data   - void*, use this if any further info
     *  is needed in future implementations of handlers
+    * @return  raft::kstatus, proceed unless a stop signal is received
     */
-   static void checkSystemSignal( raft::kernel * const kernel, 
-                                  void *data,
-                                  SystemSignalHandler &handlers );
+   static raft::kstatus checkSystemSignal( raft::kernel * const kernel, 
+                                           void *data,
+                                           SystemSignalHandler &handlers );
 
    /**
     * quiteHandler - performs the actions needed when
@@ -71,10 +73,10 @@ protected:
     * @param signal - raft::signal
     * @param data   - void*, vain attempt to future proof
     */
-   static void quitHandler( FIFO              &fifo,
-                            raft::kernel      *kernel,
-                            const raft::signal signal,
-                            void              *data );
+   static raft::kstatus quitHandler( FIFO              &fifo,
+                                     raft::kernel      *kernel,
+                                     const raft::signal signal,
+                                     void              *data );
    
    /**
     * scheduleKernel - adds the kernel "kernel" to the

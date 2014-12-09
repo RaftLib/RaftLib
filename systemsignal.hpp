@@ -23,6 +23,7 @@
 #define _SYSTEMSIGNAL_HPP_  1
 
 #include "signalvars.hpp"
+#include "rafttypes.hpp"
 
 namespace raft
 {
@@ -41,9 +42,9 @@ class FIFO;
  * @param signal - const raft::signal - curr signal thrown
  * @param data   - void ptr
  */
-using sighandler = void (*)( FIFO               &fifo,
-                             raft::kernel       *kernel, 
-                             const raft::signal  signal,
-                             void               *data ); 
+using sighandler = raft::kstatus (*)( FIFO               &fifo,
+                                      raft::kernel       *kernel, 
+                                      const raft::signal  signal,
+                                      void               *data ); 
 
 #endif /* END _SYSTEMSIGNAL_HPP_ */

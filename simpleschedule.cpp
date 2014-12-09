@@ -64,6 +64,10 @@ simple_schedule::start()
          auto sig_status( raft::proceed );
          while( sig_status == raft::proceed )
          {
+            if( checkSystemSignal( kernel, nullptr, handlers ) == raft::stop )
+            {
+               goto STOP;
+            }
             if( __builtin_expect( kernelHasInputData( kernel ), 1 ) )
             {
                /**
@@ -77,12 +81,16 @@ simple_schedule::start()
                 * the entire application, in this case the follow
                 * on kernel->run() will never get executed.
                 */
-               checkSystemSignal( kernel, nullptr, handlers );
                sig_status = kernel->run();
+               if( __builtin_expect( sig_status != raft::proceed , 0 ) )
+               {
+                  goto STOP;
+               }
                std::this_thread::yield();
             }
             else if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
             {
+STOP:
                sig_status = raft::stop;
                sendEndOfData( kernel, nullptr );
             }

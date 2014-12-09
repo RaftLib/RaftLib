@@ -70,12 +70,13 @@ public:
     * @param   fifo   - FIFO& current port that called the signal
     * @param   kernel - raft::kernel*, currently called kernel
     * @param   data   - void*
+    * @returns raft::kstatus - returns whatever the handler says otherwise proceed
     * @throws  NoSignalHandlerFoundException
     */
-   void callHandler( const raft::signal signal,
-                     FIFO               &fifo,
-                     raft::kernel       *kernel,
-                     void *data );
+   raft::kstatus callHandler( const raft::signal signal,
+                              FIFO               &fifo,
+                              raft::kernel       *kernel,
+                              void *data );
 
 private:
    std::map< raft::signal, 

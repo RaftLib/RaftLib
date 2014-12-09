@@ -19,6 +19,7 @@
  */
 #include "systemsignalhandler.hpp"
 #include "fifo.hpp"
+#include "rafttypes.hpp"
 
 NoSignalHandlerFoundException::NoSignalHandlerFoundException( 
    const std::string message )
@@ -39,7 +40,7 @@ SystemSignalHandler::addHandler( const raft::signal signal,
    handlers[ signal ] = handler;
 }
 
-void
+raft::kstatus
 SystemSignalHandler::callHandler( const raft::signal signal,
                                   FIFO               &fifo,
                                   raft::kernel       *kernel,
@@ -53,9 +54,10 @@ SystemSignalHandler::callHandler( const raft::signal signal,
    }
    else
    {
+      return( 
       (*ret_func).second( fifo,
                           kernel,                         
                           signal, 
-                          data ); 
+                          data ) ); 
    }
 }

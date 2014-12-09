@@ -25,7 +25,7 @@ Schedule::init()
 }
 
 
-void
+raft::kstatus
 Schedule::quitHandler( FIFO              &fifo, 
                        raft::kernel      *kernel,
                        const raft::signal signal,
@@ -36,28 +36,44 @@ Schedule::quitHandler( FIFO              &fifo,
     * currently, however that may change in the futre
     * with more features and systems added.
     */
-   fifo.invalidate();   
+   fifo.invalidate();  
+   return( raft::stop );
 }
 
-void 
+raft::kstatus
 Schedule::checkSystemSignal( raft::kernel * const kernel, 
                              void *data,
                              SystemSignalHandler &handlers )
 {
    auto &input_ports( kernel->input );
+   raft::kstatus ret_signal( raft::proceed );
    for( auto &port : input_ports )
    {
+      if( port.size() == 0 )
+      {
+         continue;
+      }
       const auto curr_signal( port.signal_peek() );
       if( __builtin_expect(
          ( curr_signal > 0 && curr_signal < raft::MAX_SYSTEM_SIGNAL ),
          0 ))
       {
-         handlers.callHandler( curr_signal,
+         port.signal_pop();
+         /**
+          * TODO, right now there is special behavior for term signal only, 
+          * what should we do with others?  Need to decide that.
+          */
+         
+         if( handlers.callHandler( curr_signal,
                                port,
                                kernel,
-                               data );
+                               data ) == raft::stop )
+         {
+            ret_signal = raft::stop;
+         }
       }
    }
+   return( ret_signal );
 }
 
 bool
