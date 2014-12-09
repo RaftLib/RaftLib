@@ -58,13 +58,13 @@ simple_schedule::start()
    
    for( std::size_t index( 0 ); index < kernel_map.size(); index++ )
    {
-      auto bound_func = []( raft::kernel * const kernel, 
-                            volatile bool &finished )
+      auto bound_func = [&]( raft::kernel * const kernel, 
+                             volatile bool &finished )
       {
          auto sig_status( raft::proceed );
          while( sig_status == raft::proceed )
          {
-            if( kernelHasInputData( kernel ) )
+            if( __builtin_expect( kernelHasInputData( kernel ), 1 ) )
             {
                /**
                 * NOTE: Okay, there's some data, don't know if its
@@ -77,15 +77,15 @@ simple_schedule::start()
                 * the entire application, in this case the follow
                 * on kernel->run() will never get executed.
                 */
-               checkSystemSignal( kernel, nullptr );
+               checkSystemSignal( kernel, nullptr, handlers );
                sig_status = kernel->run();
+               std::this_thread::yield();
             }
             else if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
             {
                sig_status = raft::stop;
+               sendEndOfData( kernel, nullptr );
             }
-            sendEndOfData( kernel, nullptr );
-            std::this_thread::yield();
          }
          /** invalidate output queues **/
          finished = true;

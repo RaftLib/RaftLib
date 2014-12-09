@@ -22,22 +22,28 @@
 #ifndef _SYSTEMSIGNAL_HPP_
 #define _SYSTEMSIGNAL_HPP_  1
 
+#include "signalvars.hpp"
+
 namespace raft
 {
    class kernel;
 }
+
+class FIFO;
 
 /**
  * sighandler - takes a kernel pointer and a data struct that is
  * reserved for whatever future use we or whomever thinks of.  It
  * can always be void, but whatever signal handler you add, it must
  * be able to take the input.
- * @param kernel - raft::kernel*
+ * @param port   - FIFO&, fifo that sent the signal 
+ * @param kernel - raft::kernel* - kernel that fifo goes to 
  * @param signal - const raft::signal - curr signal thrown
  * @param data   - void ptr
  */
-using sighandler = void (*)( const raft::signal  signal,
+using sighandler = void (*)( FIFO               &fifo,
                              raft::kernel       *kernel, 
+                             const raft::signal  signal,
                              void               *data ); 
 
 #endif /* END _SYSTEMSIGNAL_HPP_ */

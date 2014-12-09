@@ -18,8 +18,10 @@
  * limitations under the License.
  */
 #include "systemsignalhandler.hpp"
+#include "fifo.hpp"
 
-NoSignalHandlerFoundException::NoSignalHandlerFoundException( const std::string message )
+NoSignalHandlerFoundException::NoSignalHandlerFoundException( 
+   const std::string message )
 {
    (this)->message = message;
 }
@@ -38,7 +40,8 @@ SystemSignalHandler::addHandler( const raft::signal signal,
 }
 
 void
-SystemSignalHandler::callHandler( const raft::signal signal, 
+SystemSignalHandler::callHandler( const raft::signal signal,
+                                  FIFO               &fifo,
                                   raft::kernel       *kernel,
                                   void *data )
 {
@@ -50,6 +53,9 @@ SystemSignalHandler::callHandler( const raft::signal signal,
    }
    else
    {
-      (*ret_func).second( signal, kernel, data ); 
+      (*ret_func).second( fifo,
+                          kernel,                         
+                          signal, 
+                          data ); 
    }
 }

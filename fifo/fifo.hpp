@@ -553,6 +553,14 @@ protected:
     */
    virtual void signal_pop() = 0;
 
+   /**
+    * inline_signal_send - pretty much exactly like 
+    * it sounds, the implementations of this function
+    * must pass a signal inline with the data stream 
+    * so that this signal is received immediately
+    * after the data element sent before it.
+    * @param sig - raft::signal, signal to be sent
+    */
    virtual void inline_signal_send( const raft::signal sig ) = 0;
    
    friend class Schedule;

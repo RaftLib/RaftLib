@@ -58,15 +58,22 @@ protected:
     * @param data   - void*, use this if any further info
     *  is needed in future implementations of handlers
     */
-   void checkSystemSignal( raft::kernel * const kernel, void *data );
+   static void checkSystemSignal( raft::kernel * const kernel, 
+                                  void *data,
+                                  SystemSignalHandler &handlers );
 
    /**
-    * termHandler - static term handler function, 
-    * passes term signal through from the currently
-    * scheduled kernel to all the subsequent kenrels
+    * quiteHandler - performs the actions needed when
+    * a port sends a quite signal (normal termination),
+    * this is most likely due to the end of data.
+    * @param fifo - FIFO& that sent the signal
+    * @param kernel - raft::kernel*
+    * @param signal - raft::signal
+    * @param data   - void*, vain attempt to future proof
     */
-   static void termHandler( const raft::signal signal,
+   static void quitHandler( FIFO              &fifo,
                             raft::kernel      *kernel,
+                            const raft::signal signal,
                             void              *data );
    
    /**
@@ -80,6 +87,14 @@ protected:
     */
    virtual bool scheduleKernel( raft::kernel *kernel );
 
+   /**
+    * sendQuit - this is the normal termination of a raft
+    * kernel, the most likely cause of it being triggered
+    * is the end of data which cascades throughout the 
+    * streaming graph.
+    * @param   kernel - raft::kernel* current kernel
+    * @param   data   - void*, vain attempt to future proof
+    */
    static void sendEndOfData( raft::kernel *kernel,
                               void *data );
    /** 
@@ -105,7 +120,7 @@ protected:
    /**
     * signal handlers
     */
-   SystemSignfalHandler handlers;
+   SystemSignalHandler handlers;
 
 private:
    Map &map_ref;

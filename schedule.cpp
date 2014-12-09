@@ -7,6 +7,7 @@
 
 Schedule::Schedule( Map &map ) : map_ref( map )
 {
+   handlers.addHandler( raft::quit, Schedule::quitHandler ); 
 }
 
 Schedule::~Schedule()
@@ -25,21 +26,31 @@ Schedule::init()
 
 
 void
-Schedule::termHandler( const raft::signal signal,
+Schedule::quitHandler( FIFO              &fifo, 
                        raft::kernel      *kernel,
+                       const raft::signal signal,
                        void              *data )
 {
-   
+   /**
+    * NOTE: This should be the only action needed
+    * currently, however that may change in the futre
+    * with more features and systems added.
+    */
+   fifo.invalidate();   
 }
 
 void 
-Schedule::checkSystemSignal( raft::kernel * const kernel, void *data )
+Schedule::checkSystemSignal( raft::kernel * const kernel, 
+                             void *data,
+                             SystemSignalHandler &handlers )
 {
    auto &input_ports( kernel->input );
    for( auto &port : input_ports )
    {
       const auto curr_signal( port.signal_peek() );
-      if( curr_signal < raft::MAX_SYSTEM_SIGNAL )
+      if( __builtin_expect(
+         ( curr_signal > 0 && curr_signal < raft::MAX_SYSTEM_SIGNAL ),
+         0 ))
       {
          handlers.callHandler( curr_signal,
                                port,
@@ -55,12 +66,13 @@ Schedule::scheduleKernel( raft::kernel *kernel )
    /** does nothing **/
    return( false );
 }
+
 void 
 Schedule::sendEndOfData( raft::kernel *kernel,
                          void         *data )
 {
    auto &output_ports( kernel->output );
-   for( auto port : output_ports )
+   for( auto &port : output_ports )
    {
       port.inline_signal_send( raft::quit ); 
    }

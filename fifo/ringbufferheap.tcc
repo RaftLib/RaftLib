@@ -298,6 +298,11 @@ protected:
       local_pop( nullptr, nullptr );
    }
 
+   virtual void inline_signal_send( const raft::signal sig )
+   {
+      local_push( nullptr, sig ); 
+   }
+
    /**
     * local_allocate - get a reference to an object of type T at the 
     * end of the queue.  Should be released to the queue using
@@ -394,13 +399,16 @@ protected:
    /**
     * local_push - implements the pure virtual function from the 
     * FIFO interface.  Takes a void ptr as the object which is
-    * cast into the correct form and an raft::signal signal.
+    * cast into the correct form and an raft::signal signal. If
+    * the ptr is null, then the signal is pushed and the item 
+    * is junk.  This is an internal method so the only case where
+    * ptr should be null is in the case of a system signal being
+    * sent.
     * @param   item, void ptr
     * @param   signal, const raft::signal&
     */
    virtual void  local_push( void *ptr, const raft::signal &signal )
    {
-      assert( ptr != nullptr );
       for(;;)
       {
          dm.enterBuffer( dm::push );
@@ -429,12 +437,15 @@ protected:
       }
       auto * const buff_ptr( dm.get() );
 	   const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
-      T *item( reinterpret_cast< T* >( ptr ) );
-	   buff_ptr->store[ write_index ]          = *item;
-	   buff_ptr->signal[ write_index ]         = signal;
+      if( ptr != nullptr )
+      {
+         T *item( reinterpret_cast< T* >( ptr ) );
+	      buff_ptr->store[ write_index ]          = *item;
+	      write_stats.count++;
+	   } 
+      buff_ptr->signal[ write_index ]         = signal;
 	   Pointer::inc( buff_ptr->write_pt );
-	   write_stats.count++;
-      if( signal == raft::eof )
+      if( signal == raft::quit )
       {
          (this)->write_finished = true;
       }
