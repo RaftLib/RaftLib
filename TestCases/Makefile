@@ -5,7 +5,7 @@ ifneq ($(shell uname -s), Darwin)
 RT = -lrt
 endif
 
-#TEST = -O0 -g -DUNITTEST=1
+TEST = -O0 -g -DUNITTEST=1
 
 CFLAGS   = -O3 -mtune=native  -Wall -std=c99 $(TEST)
 CXXFLAGS = -O3 -mtune=native  -Wall -std=c++11 -DRDTSCP=1  $(TEST)
