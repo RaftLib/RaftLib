@@ -21,17 +21,76 @@
 #define _PRINT_TCC_  1
 
 #include <functional>
+#include <ostream>
 #include <iostream>
 #include <raft>
 #include <cstdlib>
 
 namespace raft{
-template< typename T, char delim = '\0' > class print : public raft::kernel
+
+class printbase
+{
+protected:
+   std::ostream *ofs = nullptr;
+};
+
+
+template< typename T > class printabstract : public raft::kernel, 
+                                             public raft::printbase
 {
 public:
-   print( ) : raft::kernel()
+   printabstract( ) : raft::kernel(),
+                      raft::printbase()
    {
       input.addPort< T >( "in" );
+      ofs = &(std::cout);
+   }
+   
+   printabstract( std::ostream &stream ) : raft::kernel(),
+                                           raft::printbase()
+   {
+      input.addPort< T >( "in" );
+      ofs = &stream;
+   }
+};
+
+template< typename T, char delim = '\0' > class print : public printabstract< T >
+{
+public:
+   print( ) : printabstract< T >()
+   {
+   }
+   
+   print( std::ostream &stream ) : printabstract< T >( stream )
+   {
+   }
+
+   /** 
+    * run - implemented to take a single 
+    * input port, pop the itam and print it.
+    * the output isn't yet synchronized so if
+    * multiple things are printing to std::cout
+    * then there might be issues, otherwise
+    * this works well for debugging and basic 
+    * output.
+    * @return raft::kstatus
+    */
+   virtual raft::kstatus run()
+   {
+      auto data( (this)->input[ "in" ].template pop_s< T >() );
+      *((this)->ofs) << (*data) << delim;
+      return( raft::proceed );
+   }
+};
+template< typename T > class print< T, '\0' > : public printabstract< T >
+{
+public:
+   print( ) : printabstract< T >()
+   {
+   }
+   
+   print( std::ostream &stream ) : printabstract< T >( stream )
+   {
    }
 
    /** 
@@ -47,16 +106,10 @@ public:
    virtual raft::kstatus run()
    {
       auto data( input[ "in" ].template pop_s< T >() );
-      if( delim != '\0' )
-      {
-         std::cout << (*data) << delim;
-      }
-      else
-      {
-         std::cout << (*data);
-      }
+      (*ofs) << (*data);
       return( raft::proceed );
    }
 };
+
 } /* end namespace raft */
 #endif /* END _PRINT_TCC_ */

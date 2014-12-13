@@ -90,7 +90,7 @@ Schedule::sendEndOfData( raft::kernel *kernel,
    auto &output_ports( kernel->output );
    for( auto &port : output_ports )
    {
-      port.inline_signal_send( raft::quit ); 
+      port.inline_signal_send( raft::quit );
    }
 }
 

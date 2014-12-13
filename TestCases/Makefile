@@ -6,9 +6,11 @@ RT = -lrt
 endif
 
 TEST = -O0 -g -DUNITTEST=1
+RELEASE = -O3 -mtune=native 
 
-CFLAGS   = -O3 -mtune=native  -Wall -std=c99 $(TEST)
-CXXFLAGS = -O3 -mtune=native  -Wall -std=c++11 -DRDTSCP=1  $(TEST)
+BUILD = $(TEST)
+CFLAGS   =  $(BUILD) -Wall -std=c99 
+CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1  
 LDLIBS  = -lstdc++ -lraft $(RT)
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \

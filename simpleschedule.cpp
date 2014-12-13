@@ -64,11 +64,14 @@ simple_schedule::start()
          auto sig_status( raft::proceed );
          while( sig_status == raft::proceed )
          {
-            if( checkSystemSignal( kernel, nullptr, handlers ) == raft::stop )
+            if( 
+               __builtin_expect( 
+                  checkSystemSignal( kernel, nullptr, handlers ) == raft::stop, 
+                  0 ) )
             {
-               goto STOP;
+               sig_status = raft::stop;
             }
-            if( __builtin_expect( kernelHasInputData( kernel ), 1 ) )
+            else if( __builtin_expect( kernelHasInputData( kernel ), 1 ) )
             {
                /**
                 * NOTE: Okay, there's some data, don't know if its
@@ -82,20 +85,14 @@ simple_schedule::start()
                 * on kernel->run() will never get executed.
                 */
                sig_status = kernel->run();
-               if( __builtin_expect( sig_status != raft::proceed , 0 ) )
-               {
-                  goto STOP;
-               }
-               std::this_thread::yield();
             }
             else if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
             {
-STOP:
                sig_status = raft::stop;
-               sendEndOfData( kernel, nullptr );
             }
          }
          /** invalidate output queues **/
+         sendEndOfData( kernel, nullptr );
          finished = true;
       };
       thread_map[ index ].th = 

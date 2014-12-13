@@ -49,7 +49,7 @@ public:
    virtual ~Map();
    
 
-   template< class scheduler = simple_schedule, class allocator = stdalloc > 
+   template< class scheduler = simple_schedule, class allocator = dynalloc > 
       void exe()
    {
       checkEdges( source_kernels );

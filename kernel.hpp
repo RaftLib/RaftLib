@@ -89,6 +89,13 @@ protected:
    friend void  GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                                  edge_func fun,
                                  bool connection_error );
+   
+   /**
+    * NOTE: doesn't need to be atomic since only one thread
+    * will have responsibility to to create new compute 
+    * kernels.
+    */
+   static std::size_t kernel_id;
 };
 } /** end namespace raft */
 #endif /* END _KERNEL_HPP_ */
