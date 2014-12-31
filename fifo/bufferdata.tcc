@@ -132,6 +132,11 @@ struct Signal
    std::size_t  index = 0;
 };
 
+class SystemSignal{
+public:
+   SystemSignal          = delete;
+   virtual ~SystemSignal = delete;
+};
 
 /**
  * DataBase - not quite the best name since we 
@@ -178,6 +183,34 @@ template < class T > struct DataBase
    std::size_t             length_store;
    std::size_t             length_signal;
    bool                    external_alloc = false;
+};
+
+
+template struct DataBase< SystemSignal >
+{
+   DataBase( const size_t max_cap ) : read_pt ( nullptr ),
+                                      write_pt( nullptr ),
+                                      max_cap ( max_cap ),
+                                      signal  ( nullptr )
+   {
+
+      length_signal  = ( sizeof( Signal ) * max_cap );
+   }
+
+   Pointer                 *read_pt  = nullptr;
+   Pointer                 *write_pt = nullptr;
+   const size_t             max_cap;
+   /** 
+    * allocating these as structs gives a bit
+    * more flexibility later in what to pass
+    * along with the queue.  It'll be more 
+    * efficient copy wise to pass extra items
+    * in the signal, but conceivably there could
+    * be a case for adding items in the store
+    * as well.
+    */
+   Signal                  *signal;
+   std::size_t             length_signal;
 };
 
 template < class T, 
