@@ -1,7 +1,7 @@
 RINGBUFFERDIR = ./fifo/ 
 
 RBCFILES   = getrandom 
-RBCXXFILES = pointer shm Clock procwait resolution fifo 
+RBCXXFILES = pointer shm Clock procwait resolution fifo signal 
 
 
 RBCOBJS		= $(addprefix ./fifo/, $(RBCFILES))

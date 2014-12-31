@@ -32,110 +32,22 @@
 #include "pointer.hpp"
 #include "ringbuffertypes.hpp"
 
+#include "signal.hpp"
 
 namespace Buffer
 {
 
+
 /** 
- * TODO, re-add this when you have time,
- * the equals operator
+ * SystemSignal - dummy class to enable re-use of the
+ * DataBase style struct below within the FIFO as a
+ * system signalling queue parallel with the user-space
+ * signaling queue.
  */
-/**
- * Element - simple struct that wraps each
- * data element.  This makes modifying the 
- * structure much easier in the future.
- */
-//template < class X > struct Element
-//{
-//   /** default constructor **/
-//   Element()
-//   {
-//   }
-//   /**
-//    * Element - copy constructor, the type
-//    * X must have a defined assignment operator.
-//    * This is simple for primitive types, but
-//    * probably must be defined for objects,
-//    * structs and more complex types.
-//    */
-//   Element( const Element< X > &other )
-//   {
-//      (this)->item   = other.item;
-//   }
-//
-//   Element< X >& operator = ( X &other )
-//   {
-//      //TODO, stream copy goes here
-//      item = other;
-//      return( (*this) );
-//   }
-//
-//   X
-//
-//   X item;
-//};
-
-/**
- * Signal - just like the Element struct,
- * the signal is wrapped as well.
- */
-struct Signal
-{
-   Signal() : sig( raft::none )
-   {
-   }
-
-   Signal( const Signal &other )
-   {
-      (this)->sig = other.sig;
-   }
-
-   /**
-    * operator =, enable taking a signal rhs
-    * and assign it to a Signal struct type,
-    * makes programming a bit easier, especially
-    * if we change names of internal members
-    */
-   Signal& operator = ( raft::signal signal )
-   {
-      (this)->sig = signal;
-      return( (*this) );
-   }
-   
-   /**
-    * operator =, enable taking a signal rhs
-    * and assign it to a Signal struct type,
-    * makes programming a bit easier, especially
-    * if we change names of internal members
-    */
-   Signal& operator = ( raft::signal &signal )
-   {
-      (this)->sig = signal;
-      return( (*this) );
-   }
-   
-   /** 
-    * allow casting struct back to simple
-    * signal type
-    */
-   operator raft::signal()
-   {
-      return( (this)->sig );
-   }
-   
-   auto getindex() -> std::size_t
-   {
-      return( index );
-   }
-
-   raft::signal sig;
-   std::size_t  index = 0;
-};
-
 class SystemSignal{
 public:
-   SystemSignal          = delete;
-   virtual ~SystemSignal = delete;
+   SystemSignal()          = delete;
+   virtual ~SystemSignal() = delete;
 };
 
 /**
@@ -145,14 +57,10 @@ public:
  */
 template < class T > struct DataBase 
 {
-   DataBase( const size_t max_cap ) : read_pt ( nullptr ),
-                                      write_pt( nullptr ),
-                                      max_cap ( max_cap ),
-                                      store   ( nullptr ),
-                                      signal  ( nullptr )
+   DataBase( const size_t max_cap ) : max_cap ( max_cap )
    {
 
-      length_store   = ( sizeof( T  ) * max_cap ); 
+      length_store   = ( sizeof( T  )     * max_cap ); 
       length_signal  = ( sizeof( Signal ) * max_cap );
    }
 
@@ -166,9 +74,10 @@ template < class T > struct DataBase
     */
    virtual void copyFrom( DataBase< T > *other ) = 0;
 
-   Pointer                 *read_pt;
-   Pointer                 *write_pt;
+   Pointer                 *read_pt   = nullptr;
+   Pointer                 *write_pt  = nullptr;
    const size_t             max_cap;
+
    /** 
     * allocating these as structs gives a bit
     * more flexibility later in what to pass
@@ -178,39 +87,33 @@ template < class T > struct DataBase
     * be a case for adding items in the store
     * as well.
     */
-   T                       *store;
-   Signal                  *signal;
+   T                       *store         = nullptr;
+   Signal                  *signal        = nullptr;
+   bool                    external_alloc = false;
+   
    std::size_t             length_store;
    std::size_t             length_signal;
-   bool                    external_alloc = false;
 };
 
 
-template struct DataBase< SystemSignal >
+template <> struct DataBase< SystemSignal >
 {
-   DataBase( const size_t max_cap ) : read_pt ( nullptr ),
-                                      write_pt( nullptr ),
-                                      max_cap ( max_cap ),
-                                      signal  ( nullptr )
+   DataBase( const size_t signalQueueSize ) : signalQueueSize ( signalQueueSize )
    {
 
-      length_signal  = ( sizeof( Signal ) * max_cap );
+      length_signal  = ( sizeof( Signal ) * signalQueueSize );
    }
 
    Pointer                 *read_pt  = nullptr;
    Pointer                 *write_pt = nullptr;
-   const size_t             max_cap;
+   const size_t             signalQueueSize;
+   Signal                  *signal  = nullptr;
    /** 
-    * allocating these as structs gives a bit
-    * more flexibility later in what to pass
-    * along with the queue.  It'll be more 
-    * efficient copy wise to pass extra items
-    * in the signal, but conceivably there could
-    * be a case for adding items in the store
-    * as well.
+    * the name of this variable might be a big counterintuitive, 
+    * will refactor later.  It is the length of the signal queue
+    * in bytes.
     */
-   Signal                  *signal;
-   std::size_t             length_signal;
+   std::size_t              length_signal;
 };
 
 template < class T, 
@@ -234,18 +137,8 @@ template < class T,
       /** set index to be start_position **/
       (this)->signal[ 0 ].index  = start_position; 
       /** allocate read and write pointers **/
-      /** TODO, see if there are optimizations to be made with sizing and alignment **/
       (this)->read_pt   = new Pointer( max_cap );
       (this)->write_pt  = new Pointer( max_cap, 1 ); 
-      
-      /** get trace of ptr vars **/
-      //const auto rdptr( Pointer::val( this->read_pt ) );
-      //const auto wptr ( Pointer::val( this->write_pt ) );
-      //const auto wrap_r( Pointer::wrapIndicator( this->read_pt  ) );
-      //const auto wrap_w( Pointer::wrapIndicator( this->write_pt ) );
-
-      //std::cerr << rdptr << "," << wptr << "," << wrap_r << "," << wrap_w << "," <<
-      //   max_cap << "\n";
       
       (this)->external_alloc = true;
    }
