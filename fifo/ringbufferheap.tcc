@@ -738,6 +738,9 @@ protected:
     * lock free buffer resizing and re-alignment.
     */
    DataManager< T, type >       dm;
+   
+   
+   
    /**
     * these two should go inside the buffer, they'll
     * be accessed via the monitoring system.

@@ -68,4 +68,4 @@ uninstall:
 
 .PHONY: clean
 clean:
-	rm -rf libraft.a $(OBJS)
+	rm -rf libraft.a $(OBJS) intelremotemonfifo.*

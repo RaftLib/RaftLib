@@ -106,8 +106,10 @@ template <> struct DataBase< SystemSignal >
 
    Pointer                 *read_pt  = nullptr;
    Pointer                 *write_pt = nullptr;
+   Signal                  *signal   = nullptr;
+
+   /** number of signals allowed in queue before blocking **/
    const size_t             signalQueueSize;
-   Signal                  *signal  = nullptr;
    /** 
     * the name of this variable might be a big counterintuitive, 
     * will refactor later.  It is the length of the signal queue
@@ -115,6 +117,8 @@ template <> struct DataBase< SystemSignal >
     */
    std::size_t              length_signal;
 };
+
+
 
 template < class T, 
            Type::RingBufferType B = Type::Heap, 

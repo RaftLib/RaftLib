@@ -1,5 +1,7 @@
 /**
- * fifoabstract.tcc - 
+ * fifoabstract.tcc - encapsulate some of the common components
+ * of a FIFO implementation.  
+ *
  * @author: Jonathan Beard
  * @version: Sun Sep  7 20:36:12 2014
  * 

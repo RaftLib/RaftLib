@@ -47,7 +47,12 @@
 
 extern Clock *system_clock;
 
-
+/**
+ * RingBuffer, default type is a heap.  This version
+ * has no "monitor" thread, but does have the ability
+ * to query queue size which can be quite useful for 
+ * some monitoring tasks. 
+ */
 template < class T, 
            Type::RingBufferType type = Type::Heap, 
            bool monitor = false >  class RingBuffer : 
@@ -63,6 +68,7 @@ public:
       RingBufferBase< T, type >()
    {
       (this)->dm.set( new Buffer::Data<T, type >( n, align ) );
+      
    }
    
    /**
@@ -141,6 +147,11 @@ public:
    }
 };
 
+
+/**
+ * RingBufferBaseMonitor - encapsulates logic for a queue with
+ * monitoring enabled.
+ */
 template< class T, 
           Type::RingBufferType type > class RingBufferBaseMonitor : 
             public RingBufferBase< T, type >
