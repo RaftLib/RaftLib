@@ -92,25 +92,6 @@ TOP:
    }
 
    
-   /**
-    * get_signal - returns a reference to the signal mask for this
-    * queue. TODO this function won't necessarily work as advertised
-    * as it needs its own FIFO to deliver signals properly.
-    * @return raft::signal&
-    */
-   virtual raft::signal get_signal()
-   {
-#if 0      
-      /** FIXME, reimplement this function **/
-#endif
-      return( raft::none );
-   }
-  
-   virtual bool  send_signal( const raft::signal &signal )
-   {
-      //TODO, fixme
-      return( true );
-   }
 
    /**
     * space_avail - returns the amount of space currently

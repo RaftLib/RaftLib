@@ -34,57 +34,13 @@
 
 #include "signal.hpp"
 
+#include "database.tcc"
+
 namespace Buffer
 {
 
-/**
- * DataBase - not quite the best name since we 
- * conjure up a relational database, but it is
- * literally the base for the Data structs below.
- */
-template < class T > struct DataBase 
-{
-   DataBase( const size_t max_cap ) : max_cap ( max_cap )
-   {
 
-      length_store   = ( sizeof( T  )     * max_cap ); 
-      length_signal  = ( sizeof( Signal ) * max_cap );
-   }
-
-   /** 
-    * copyFrom - implement in all sub-structs to 
-    * copy the buffer.  Might need to reinterpret
-    * cast the other object or other type of cast
-    * in order to get all the data members you wish
-    * to copy.
-    * @param   other - struct to be copied
-    */
-   virtual void copyFrom( DataBase< T > *other ) = 0;
-
-   Pointer                 *read_pt   = nullptr;
-   Pointer                 *write_pt  = nullptr;
-   const size_t             max_cap;
-
-   /** 
-    * allocating these as structs gives a bit
-    * more flexibility later in what to pass
-    * along with the queue.  It'll be more 
-    * efficient copy wise to pass extra items
-    * in the signal, but conceivably there could
-    * be a case for adding items in the store
-    * as well.
-    */
-   T                       *store         = nullptr;
-   Signal                  *signal        = nullptr;
-   bool                    external_alloc = false;
-   
-   std::size_t             length_store;
-   std::size_t             length_signal;
-};
-
-
-
-
+/** buffer structure for "heap" storage class **/
 template < class T, 
            Type::RingBufferType B = Type::Heap, 
            std::size_t SIZE = 0 > struct Data : public DataBase< T >
@@ -189,8 +145,10 @@ template < class T > struct Data< T, Type::SharedMemory > :
     * if performance wise that might be a good idea, also decide how best to 
     * align data elements.
     * @param   max_cap, size_t with number of items to allocate queue for
-    * @param   shm_key, const std::string key for opening the SHM, must be same for both ends of the queue
-    * @param   dir,     Direction enum for letting this queue know which side we're allocating
+    * @param   shm_key, const std::string key for opening the SHM, 
+                        must be same for both ends of the queue
+    * @param   dir,     Direction enum for letting this queue know 
+                        which side we're allocating
     * @param   alignment, size_t with alignment NOTE: haven't implemented yet
     */
    Data( size_t max_cap, 
@@ -251,7 +209,7 @@ template < class T > struct Data< T, Type::SharedMemory > :
             auto retry_func = [&]( void **ptr, const char *str )
             {
                std::string error_copy;
-               int timeout( 1000 );
+               std::int32_t timeout( 1000 );
                while( timeout-- )
                {
                   try
@@ -336,8 +294,8 @@ template < class T > struct Data< T, Type::SharedMemory > :
    }
    struct Cookie
    {
-      int32_t producer;
-      int32_t consumer;;
+      std::int32_t producer;
+      std::int32_t consumer;;
    };
 
    volatile Cookie         *cookie;
