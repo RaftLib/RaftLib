@@ -38,6 +38,12 @@ template < class... PORTS >
 public:
    typedef std::function< raft::kstatus ( Port &input, 
                                           Port &output ) > lambdafunc_t;
+   /**
+    * constructor - 
+    * @param   inputs - const std::size_t number of inputs to the kernel
+    * @param   outputs - const std::size_t number of outputs to the kernel
+    * @param   func - static or lambda function to execute.
+    */
    lambdak( const std::size_t inputs, 
             const std::size_t outputs, 
             lambdafunc_t  func ) :   raft::kernel(),
@@ -46,14 +52,9 @@ public:
       add_ports< PORTS... >( inputs, outputs );
    }
 
-   //lambdak( const std::size_t inputs, 
-   //         const std::size_t outputs, 
-   //         const lambdafunc_t  &&func ) : raft::kernel(),
-   //                                        run_func( func )
-   //{
-   //   add_ports< PORTS... >( inputs, outputs );
-   //}
-
+   /**
+    * run - implement the run function for this kernel, 
+    */
    virtual raft::kstatus run()
    {
       return( run_func( input  /** input ports **/, 
