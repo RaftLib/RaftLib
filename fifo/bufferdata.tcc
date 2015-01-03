@@ -37,19 +37,6 @@
 namespace Buffer
 {
 
-
-/** 
- * SystemSignal - dummy class to enable re-use of the
- * DataBase style struct below within the FIFO as a
- * system signalling queue parallel with the user-space
- * signaling queue.
- */
-class SystemSignal{
-public:
-   SystemSignal()          = delete;
-   virtual ~SystemSignal() = delete;
-};
-
 /**
  * DataBase - not quite the best name since we 
  * conjure up a relational database, but it is
@@ -95,28 +82,6 @@ template < class T > struct DataBase
    std::size_t             length_signal;
 };
 
-
-template <> struct DataBase< SystemSignal >
-{
-   DataBase( const size_t signalQueueSize ) : signalQueueSize ( signalQueueSize )
-   {
-
-      length_signal  = ( sizeof( Signal ) * signalQueueSize );
-   }
-
-   Pointer                 *read_pt  = nullptr;
-   Pointer                 *write_pt = nullptr;
-   Signal                  *signal   = nullptr;
-
-   /** number of signals allowed in queue before blocking **/
-   const size_t             signalQueueSize;
-   /** 
-    * the name of this variable might be a big counterintuitive, 
-    * will refactor later.  It is the length of the signal queue
-    * in bytes.
-    */
-   std::size_t              length_signal;
-};
 
 
 
