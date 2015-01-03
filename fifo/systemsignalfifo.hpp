@@ -24,17 +24,29 @@
 
 class Schedule;
 
-class SystemSignalFifo
+class SystemSignalFIFO
 {
 protected:
 
    /**  
     * send_system_signal - send a signal that isn't aligned with the 
-    * data.  This
+    * data.
+    * @signal - const raft::signal
+    */
    virtual void send_system_signal( const raft::signal &&signal ) = 0;
 
+   /**
+    * system_signal_avail - returns true if a system signal
+    * is available, false otherwise.
+    * @return - bool
+    */
    virtual bool system_signal_avail() = 0;
 
+   /**
+    * get_system_signal - returns the current 
+    * signal, pops it from the FIFO afterwards
+    * @return raft::signal
+    */
    virtual raft::signal get_system_signal() = 0;
 
 };
