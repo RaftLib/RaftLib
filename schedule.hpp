@@ -78,6 +78,8 @@ protected:
                                      const raft::signal signal,
                                      void              *data );
    
+   
+   static void invalidateOutputPorts( raft::kernel *kernel );
    /**
     * scheduleKernel - adds the kernel "kernel" to the
     * schedule, ensures that it is run.  Other than
@@ -89,16 +91,6 @@ protected:
     */
    virtual bool scheduleKernel( raft::kernel *kernel );
 
-   /**
-    * sendQuit - this is the normal termination of a raft
-    * kernel, the most likely cause of it being triggered
-    * is the end of data which cascades throughout the 
-    * streaming graph.
-    * @param   kernel - raft::kernel* current kernel
-    * @param   data   - void*, vain attempt to future proof
-    */
-   static void sendEndOfData( raft::kernel *kernel,
-                              void *data );
    /** 
     * kernelHasInputData - check each input port for available
     * data, returns true if any of the input ports has available

@@ -40,6 +40,5 @@ protected:
    /** TODO, package this as as struct **/
    volatile bool            allocate_called = false;
    std::size_t              n_allocated     = 1;
-
 };
 #endif /* END _FIFOABSTRACT_TCC_ */

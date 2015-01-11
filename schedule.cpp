@@ -40,6 +40,18 @@ Schedule::quitHandler( FIFO              &fifo,
    return( raft::stop );
 }
 
+void 
+Schedule::invalidateOutputPorts( raft::kernel *kernel )
+{
+   
+   auto &output_ports( kernel->output );
+   for( auto &port : output_ports )
+   {  
+      port.invalidate();
+   }
+   return;
+}
+
 raft::kstatus
 Schedule::checkSystemSignal( raft::kernel * const kernel, 
                              void *data,
@@ -81,17 +93,6 @@ Schedule::scheduleKernel( raft::kernel *kernel )
 {
    /** does nothing **/
    return( false );
-}
-
-void 
-Schedule::sendEndOfData( raft::kernel *kernel,
-                         void         *data )
-{
-   auto &output_ports( kernel->output );
-   for( auto &port : output_ports )
-   {
-      port.inline_signal_send( raft::quit );
-   }
 }
 
 

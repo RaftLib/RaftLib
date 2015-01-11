@@ -1,9 +1,9 @@
 /**
- * fifo.cpp - 
+ * signaldata.cpp - 
  * @author: Jonathan Beard
- * @version: Thu Sep  4 12:59:45 2014
+ * @version: Sat Jan 10 20:29:38 2015
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2015 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,35 +17,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "fifo.hpp"
+#include "signaldata.hpp"
 
-FIFO::FIFO()
+raft::signal
+SignalData::get_signal()
 {
 
 }
 
 void
-FIFO::get_zero_read_stats( Blocked &copy )
+SignalData::set_signal( const raft::signal signal )
 {
-   /** default version does nothing at all **/
-   return;
-}
-
-void
-FIFO::get_zero_write_stats( Blocked &copy )
-{
-   /** default version does nothing at all **/
-   return;
-}
-
-void
-FIFO::invalidate()
-{
-   valid = false;
-}
-
-bool
-FIFO::is_invalid()
-{
-   return( ! valid );
+   
 }

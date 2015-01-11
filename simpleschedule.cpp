@@ -62,32 +62,9 @@ simple_schedule::start()
                              volatile bool &finished )
       {
          auto sig_status( raft::proceed );
-         /**
-          * NOTE: Okay, there's some data, don't know if its
-          * is a system signal or user data, so lets check
-          * the system signal first.  Right now the assumption
-          * is that the system signals are divided into two
-          * categories, one where they effect the input queues
-          * to this kernel (e.g., invalidate them) and two 
-          * where they are terminal and cause the shutdown of 
-          * the entire application, in this case the follow
-          * on kernel->run() will never get executed.
-          */
          while( sig_status == raft::proceed )
          {
-            /**
-             * FIXME: This is a bug, a bad one.  The signal
-             * could arrive after this call but before the run,
-             * leaving the kernel to pick up useless data..
-             */
-            if( 
-               __builtin_expect( 
-                  checkSystemSignal( kernel, nullptr, handlers ) == raft::stop, 
-                  0 ) )
-            {
-               sig_status = raft::stop;
-            }
-            else if( __builtin_expect( kernelHasInputData( kernel ), 1 ) )
+            if( kernelHasInputData( kernel ) )
             {
                sig_status = kernel->run();
             }
@@ -97,7 +74,7 @@ simple_schedule::start()
             }
          }
          /** invalidate output queues **/
-         sendEndOfData( kernel, nullptr );
+         invalidateOutputPorts( kernel );
          finished = true;
       };
       thread_map[ index ].th = 

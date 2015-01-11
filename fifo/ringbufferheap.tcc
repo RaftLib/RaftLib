@@ -681,7 +681,7 @@ protected:
             { 
                break;
             }
-            else if( (this)->is_invalid() )
+            else if( (this)->is_invalid() && size() == 0 )
             {
                throw ClosedPortAccessException( 
                   "Accessing closed port with local_peek_range call, exiting!!" );
