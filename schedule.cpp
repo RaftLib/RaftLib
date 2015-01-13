@@ -131,3 +131,23 @@ Schedule::kernelHasNoInputPorts( raft::kernel *kernel )
    }
    return( true );
 }
+void 
+Schedule::kernelRun( raft::kernel * const kernel,
+                      volatile bool       &finished )
+{
+   auto sig_status( raft::proceed );
+   while( sig_status == raft::proceed )
+   {
+      if( kernelHasInputData( kernel ) )
+      {
+         sig_status = kernel->run();
+      }
+      else if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
+      {
+         sig_status = raft::stop;
+      }
+   }
+   /** invalidate output queues **/
+   invalidateOutputPorts( kernel );
+   finished = true;
+}

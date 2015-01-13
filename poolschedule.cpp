@@ -56,29 +56,4 @@ void
 pool_schedule::start()
 {
 
-   
-    
-   
-   bool keep_going( true );
-   while( keep_going )
-   {
-      keep_going = false;
-      for( auto  &t_info : thread_map )
-      {
-         if( t_info.th != nullptr )
-         {
-            if( t_info.finished )
-            {
-               t_info.th->join();
-               delete( t_info.th );
-               t_info.th = nullptr;
-            }
-            else /* ! finished */
-            {
-               keep_going =  true;
-            }
-         }
-      }
-   }
-   return;
 }

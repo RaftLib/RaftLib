@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 #include <cassert>
+#include <thread>
+#include <mutex>
 
 #include "runcontainer.hpp"
 #include "kernel.hpp"
@@ -35,31 +37,8 @@ runcontainer::addKernel( raft::kernel *kernel )
 void
 runcontainer::start()
 {
-
+   thread_work.mutex.lock();
+   
+   thread_work.mutex.unlock();
    return;
 }
-
-#if 0
-
-
-         auto sig_status( raft::proceed );
-         while( sig_status == raft::proceed )
-         {
-            if( kernelHasInputData( kernel ) )
-            {
-               sig_status = kernel->run();
-            }
-            else if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
-            {
-               sig_status = raft::stop;
-            }
-            else
-            {
-               std::this_thread::yield();
-            }
-         }
-         /** invalidate output queues **/
-         invalidateOutputPorts( kernel );
-         finished = true;
-
-#endif

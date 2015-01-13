@@ -111,6 +111,9 @@ protected:
     */
    static bool kernelHasNoInputPorts( raft::kernel *kernel );
 
+   static void kernelRun( raft::kernel * const kernel,
+                          volatile bool       &finished );
+
    /**
     * signal handlers
     */
