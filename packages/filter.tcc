@@ -1,5 +1,6 @@
 /**
- * filter.tcc - 
+ * filter.tcc - A one dimensional filter library, eventually it'll
+ * be expanded to cover n-dimensions but for now this is what I needed
  * @author: Jonathan Beard
  * @version: Mon Jan 12 10:12:30 2015
  * 
@@ -22,43 +23,98 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstdlib>
+#include <vector>
+#include <array>
+#include <cmath>
+#include <exception>
 
-enum FilterType { Gaussian, LaplacianGaussianFilter };
+enum FilterType { Gaussian, LaplacianGaussian };
 
 
 template < typename D, 
-           std::uint16_t RADIUS > filterbase
+           std::uint16_t RADIUS > class filterbase
 {
 public:
-   filterbase() = default;
-   virtual ~filterbase() = default;
+   filterbase()
+   {
 
+   }
+   virtual ~filterbase()
+   {
+   
+   }
+
+   /**
+    * apply - apply the filter to data in container c, output
+    * the information to the vector output.  The filter will not
+    * pad the first and last elements so the output values will 
+    * naturally start at index RADIUS with respect to the input
+    * array c.
+    * @param   c - type C
+    * @param   output - std::vector< D >
+    */
    template< class C > 
       void apply( C c, std::vector< D > &output )
    {
       /** assume c is a container **/
       if( c.size() < ( RADIUS * 2 ) + 1 )
       {
-         throw Exception( "sizes don't match!\n" );
+         /** TODO, replace with raft::exception once you write it **/
+         std::cerr << "size of 'c' must be at least the size of the filter.\n";
+         exit( 0 );
       }
       /** else apply filter **/
+      for( auto it_center( c.begin() + RADIUS ); 
+            it_center != ( c.end() - RADIUS ); ++it_center )
+      {
+         std::int32_t index( 0 );
+         D value( (D) 0 );
+         for( auto it( it_center - RADIUS ); 
+               it != (it_center + (RADIUS * 2 + 1) ); ++it, index++ )
+         {
+               value += ((*it) * arr[ index ]);
+         }
+         output.push_back( value );
+      }
+   }
+   
+   void standardize()
+   {
+      D total( (D) 0 );
+      for( const auto val : arr )
+      {
+         total += arr;
+      }
+      for( auto &val : arr )
+      {
+         val = val - arr;
+      }
    }
 
+
+
 protected:
+
+
+   /** stores the actual filter **/
    std::array< D, (RADIUS * 2) + 1 > arr;
 };
 
 
 template < typename D, 
            std::uint16_t RADIUS, 
-           FilterType TYPE > filter;
+           FilterType TYPE > class filter;
 
-template < typename D, std::uint16_t RADIUS > filter< D, 
-                                                      RADIUS, 
-                                                      Gaussian >
+
+/** filter with standard deviation of 1/2, TODO, make computable **/
+template < typename D, 
+           std::uint16_t RADIUS > class filter< D, 
+                                                RADIUS, 
+                                                Gaussian > : public filterbase< D, 
+                                                                                RADIUS >
 {
 public:
-   filter()
+   filter() : filterbase< D, RADIUS >()
    {
       /** filter function **/
       std::int32_t x( - RADIUS );
@@ -71,15 +127,42 @@ public:
          x++;
       } );
       /** encode filter **/
-      std::for_each( arr.begin(), arr.end(), filter_func );
+      std::for_each( (this)->arr.begin(), (this)->arr.end(), filter_func );
    }
    
    virtual ~filter()
    {
 
    }
+};
 
-private:
-   D arr[ (2 * RADIUS) + 1 ];
+template < typename D, 
+           std::uint16_t RADIUS > class filter< D, 
+                                                RADIUS, 
+                                                LaplacianGaussian > : 
+                                                   public filterbase< D, 
+                                                                      RADIUS >
+{
+public:
+   filter() : filterbase< D, RADIUS >()
+   {
+      /** filter function **/
+      std::int32_t x( - RADIUS );
+      auto filter_func( [&]( D &val ) -> void
+      {
+         const double half_x_squared( (double)(-(x*x)) / 2.0 );
+         const double numerator( std::exp( half_x_squared ) );
+         const double denominator( 2.506628274631000502415765 );
+         val = ( numerator / denominator );
+         x++;
+      } );
+      /** encode filter **/
+      std::for_each( (this)->arr.begin(), (this)->arr.end(), filter_func );
+   }
+   
+   virtual ~filter()
+   {
+
+   }
 };
 #endif /* END _FILTER_TCC_ */
