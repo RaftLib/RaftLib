@@ -16,7 +16,7 @@ endif
 TEST = -O0 -g -DUNITTEST=1
 RELEASE = -O3 -mtune=native
 
-BUILD = $(TEST)
+BUILD = $(RELEASE)
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11  -DRDTSCP=1
@@ -50,6 +50,7 @@ install:
 	cp *.tcc $(PREFIX)/include/raft_dir/
 	cp ./fifo/*.hpp $(PREFIX)/include/raft_dir/
 	cp ./fifo/*.tcc $(PREFIX)/include/raft_dir/
+	cp ./packages/* $(PREFIX)/include/raft_dir/
 	cp raft $(PREFIX)/include/
 	cp raftio $(PREFIX)/include/
 	echo "Install complete!"

@@ -1,0 +1,3 @@
+/** streaming stat stuffs for raft **/
+
+#include "./raft_dir/streamingstat.tcc"
