@@ -190,7 +190,7 @@ protected:
       
       pi.const_map[ Type::Heap ]->insert(
          std::make_pair( false /** no instrumentation **/,
-                         RingBuffer< T, Type::Heap, true >::make_new_fifo ) );
+                         RingBuffer< T, Type::Heap, false >::make_new_fifo ) );
       pi.const_map[ Type::Heap ]->insert(
          std::make_pair( true /** yes instrumentation **/,
                          RingBuffer< T, Type::Heap, true >::make_new_fifo ) );

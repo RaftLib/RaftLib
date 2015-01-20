@@ -110,34 +110,6 @@ public:
       return( raft::proceed );
    }
 };
-template< typename T > class print< T, '\0' > : public printabstract< T >
-{
-public:
-   print( ) : printabstract< T >()
-   {
-   }
-   
-   print( std::ostream &stream ) : printabstract< T >( stream )
-   {
-   }
-
-   /** 
-    * run - implemented to take a single 
-    * input port, pop the itam and print it.
-    * the output isn't yet synchronized so if
-    * multiple things are printing to std::cout
-    * then there might be issues, otherwise
-    * this works well for debugging and basic 
-    * output.
-    * @return raft::kstatus
-    */
-   virtual raft::kstatus run()
-   {
-      auto data( (this)->input[ "in" ].template pop_s< T >() );
-      *ofs) << (*data);
-      return( raft::proceed );
-   }
-};
 
 } /* end namespace raft */
 #endif /* END _PRINT_TCC_ */
