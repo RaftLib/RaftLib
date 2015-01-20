@@ -1,9 +1,9 @@
 /**
- * runcontainer.cpp - 
+ * kernelcontainer.hpp - 
  * @author: Jonathan Beard
- * @version: Wed Nov 26 08:28:49 2014
+ * @version: Wed Jan 14 08:12:47 2015
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2015 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <cassert>
-#include <thread>
+#ifndef _KERNELCONTAINER_HPP_
+#define _KERNELCONTAINER_HPP_  1
 #include <mutex>
-
-#include "Schedule.hpp"
-#include "runcontainer.hpp"
+#include <vector>
 #include "kernel.hpp"
-
-void
-runcontainer::addKernel( raft::kernel *kernel )
+class KernelContainer
 {
-   assert( kernel != nullptr );
-   thread_work.mutex.lock();
-   thread_work.list.push_back( kernel );
-   thread_work.mutex.unlock();
-   return;
-}
 
-void
-runcontainer::start()
-{
-   return;
-}
+public:
+   KernelContainer();
+   virtual ~KernelContainer();
+
+   auto begin() -> decltype( list.begin() );
+   auto end() -> decltype( list.end() );
+   
+private:
+   std::mutex                   mutex;
+   std::vector< raft::kernel *> list;
+};
+#endif /* END _KERNELCONTAINER_HPP_ */

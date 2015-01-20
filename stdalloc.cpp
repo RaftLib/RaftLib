@@ -55,8 +55,8 @@ stdalloc::run()
       }
       else
       {
-         fifo = test_func( 64 /** size **/, 
-                           16 /** align **/,
+         fifo = test_func( 4 /** size **/, 
+                           32 /** align **/,
                            nullptr /* data struct **/);
       }
       assert( fifo != nullptr );

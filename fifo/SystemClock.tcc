@@ -21,6 +21,7 @@
 #define _SYSTEMCLOCK_HPP_  1
 #include <cstdint>
 #include <cstdlib>
+#include <errno.h>
 #include <functional>
 #include <cassert>
 #include <cstdint>

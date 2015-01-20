@@ -186,6 +186,9 @@ public:
    {
       (this)->term = true;
       monitor->join();
+      std::stringstream ss;
+
+      printQueueData( ss ); 
       delete( monitor );
       monitor = nullptr;
       delete( (this)->dm.get() );
@@ -202,14 +205,24 @@ public:
                         const std::size_t align,
                         volatile bool &exit_alloc )
    {
-      //TODO, implement this beast 
-      assert( false );
+      if( (this)->dm.is_resizeable() )
+      {
+         (this)->dm.resize( 
+            new Buffer::Data< T, type >( size, align ), exit_alloc );
+      }
+      /** else, not resizeable..just return **/
+      return;
    }
    
    virtual float get_frac_write_blocked()
    {
-      //TODO, implement me
-      assert( false );
+      const auto copy( (this)->write_stats );
+      (this)->write_stats.all = 0;
+      if( copy.blocked == 0 || copy.count == 0 )
+      {
+         return( 0.0 );
+      }
+      return( (float) copy.blocked / (float) copy.count );
    }
 protected:
    std::thread       *monitor;

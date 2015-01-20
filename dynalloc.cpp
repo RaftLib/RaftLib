@@ -26,6 +26,9 @@
 
 #include "graphtools.hpp"
 #include "dynalloc.hpp"
+#include "Clock.hpp"
+
+extern Clock *system_clock;
 
 dynalloc::dynalloc( Map &map, volatile bool &exit_alloc ) : 
    Allocate( map, exit_alloc )
@@ -82,6 +85,8 @@ dynalloc::run()
       assert( fifo != nullptr );
       (this)->initialize( &a, &b, fifo );
    };
+
+   /** BEGIN TEST DATA **/
    GraphTools::BFS( (this)->source_kernels,
                     alloc_func );
    
@@ -92,6 +97,7 @@ dynalloc::run()
     * make this a fixed quantity right now, if size > .75% at
     * montor interval three times or more then increase size.
     */
+
    auto mon_func = [&]( PortInfo &a, PortInfo &b ) -> void
    {
       const float ratio( .75 );
@@ -103,14 +109,12 @@ dynalloc::run()
          const auto curr_count( size_map[ hash_val ]++ );
          if( curr_count  == 1 )
          {
-#if (UNITTEST == 1)
-            fprintf( stderr, "RESIZECALLED\n" );
-#endif 
             /** get initializer function **/
             auto * const buff_ptr( a.getFIFO() );
             const auto cap( buff_ptr->capacity() );
             buff_ptr->resize( cap * 2, 16, exit_alloc );
             size_map[ hash_val ] = 0;
+            std::cout<< hash_val << "," << system_clock->getTime() << "," << cap << "\n";
          }
       }
       return;
