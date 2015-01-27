@@ -1,6 +1,7 @@
 #include <raft>
 #include <cstdint>
 #include <iostream>
+#include <raftio>
 
 template < typename T > class Generate : public raft::kernel
 {
@@ -33,10 +34,11 @@ main( int argc, char **argv )
    Map map;
    /** manually link split kernels **/
    auto kernels( 
-   map.link( new Generate< std::int64_t >(),
-             new split< std::int64_t >() ) );
+   map.link( kernel::make< Generate< std::int64_t > >(),
+             kernel::make< split< std::int64_t > >() ) );
    
-   map.link( &(kernels.dst), new Print< std::int64_t, '\n' >() );
+   map.link( &(kernels.dst), 
+             kernel::make< print< std::int64_t, '\n' > >() );
    map.exe();
    return( EXIT_FAILURE );
 }
