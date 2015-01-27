@@ -77,7 +77,13 @@ public:
          output.push_back( value );
       }
    }
-   
+  
+   /**
+    * standardize - subtract mean of filter from all elements, 
+    * future versions might add a bool to normalize variance
+    * to one as well, not always the desired behavior but sometimes
+    * it is useful.
+    */
    void standardize()
    {
       D total( (D) 0 );

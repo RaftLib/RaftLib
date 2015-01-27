@@ -38,16 +38,7 @@ public:
    virtual void start(); 
    
 protected:
-   
-   struct thread_info_t
-   {
-      std::thread *th       = nullptr;
-      runcontainer container;
-      bool         finished = false;
-   };
 
-   virtual bool scheduleKernel( raft::kernel *kernel );
-
-   std::vector< thread_info_t > thread_pool;
+   std::vector<
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */

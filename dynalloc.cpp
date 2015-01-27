@@ -114,7 +114,6 @@ dynalloc::run()
             const auto cap( buff_ptr->capacity() );
             buff_ptr->resize( cap * 2, 16, exit_alloc );
             size_map[ hash_val ] = 0;
-            std::cout<< hash_val << "," << system_clock->getTime() << "," << cap << "\n";
          }
       }
       return;

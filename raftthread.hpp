@@ -1,9 +1,9 @@
 /**
- * poolschedule.cpp - 
+ * raftthread.hpp - 
  * @author: Jonathan Beard
- * @version: Thu Sep 11 15:49:57 2014
+ * @version: Sat Jan 24 14:47:49 2015
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2015 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,34 +17,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <cassert>
-#include <functional>
-#include <iostream>
-
+#ifndef _RAFTTHREAD_HPP_
+#define _RAFTTHREAD_HPP_  1
+#include "thread_container.hpp"
 #include "kernel.hpp"
-#include "map.hpp"
-#include "poolschedule.hpp"
-#include "rafttypes.hpp"
 
-pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
-                    thread_pool( std::thread::hardware_concurrency() )
+class raft_thread
 {
-   /** start up N threads **/
-   
-}
+public:
+   raft_thread();
+   virtual ~raft_thread();
 
 
-pool_schedule::~pool_schedule()
-{
-}
+   void addKernel( raft::kernel *kernel );
 
-bool
-pool_schedule::scheduleKernel( raft::kernel *kernel )
-{
-}
+   static void run( raft_thread &thread );
 
-void
-pool_schedule::start()
-{
-   
-}
+private:
+   thread_container container;
+};
+#endif /* END _RAFTTHREAD_HPP_ */

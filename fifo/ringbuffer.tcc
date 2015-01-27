@@ -186,9 +186,6 @@ public:
    {
       (this)->term = true;
       monitor->join();
-      std::stringstream ss;
-
-      printQueueData( ss ); 
       delete( monitor );
       monitor = nullptr;
       delete( (this)->dm.get() );
