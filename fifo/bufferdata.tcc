@@ -82,6 +82,8 @@ template < class T,
          exit( EXIT_FAILURE );
       }
       
+      //posix_madvise( (this)->store, (this)->length_store,  POSIX_MADV_WILLNEED );
+
       errno = 0;
       (this)->signal = (Signal*)       calloc( (this)->max_cap,
                                                sizeof( Signal ) );

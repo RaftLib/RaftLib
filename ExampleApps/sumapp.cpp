@@ -9,9 +9,6 @@
 #include <type_traits>
 #include <utility>
 
-namespace raft{
-   Map map;
-}
 
 template < typename T > class generate : public raft::kernel
 {
@@ -85,13 +82,14 @@ public:
 int
 main( int argc, char **argv )
 {
+   using sumkernel = sum< std::int64_t,std::int64_t, std::int64_t >;
+   using rnd       = generate< std::int64_t >;
    using namespace raft;
    const std::size_t count( 100000 );
    auto linked_kernels( 
-      map.link( kernel::make< generate< std::int64_t > >( count ),
-                kernel::make< sum< std::int64_t,std::int64_t, std::int64_t > >(),
-                  "input_a" ) );
-   map.link( kernel::make< generate< std::int64_t > >( count ), 
+      map.link( kernel::make< rnd >( count ),
+                kernel::make< sumkernel >(), "input_a" ) );
+   map.link( kernel::make< rnd >( count ), 
              &( linked_kernels.dst ), 
                "input_b" );
    map.link( &( linked_kernels.dst ), 
@@ -99,3 +97,5 @@ main( int argc, char **argv )
    map.exe();
    return( EXIT_SUCCESS );
 }
+
+

@@ -10,7 +10,7 @@ CPPFLAGS = -I./ahocorasick/
 CFLAGS   = -Ofast -mtune=native -Wall -std=c99
 CXXFLAGS = -Ofast -mtune=native -Wall -std=c++11 -DRDTSCP=1
 LDFLAGS  = -L./ $(LINUXLDFLAGS)
-LDLIBS   = -lahocorasick -lraft $(LINUXLIBS)
+LDLIBS   = -lraft $(LINUXLIBS)
 
 EXE      = sumapp readtest singlequeue rgrep
 CPPFILES = rkverifymatch

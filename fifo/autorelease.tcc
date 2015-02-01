@@ -36,7 +36,8 @@ public:
 
    autorelease( const autorelease< T, type >  &other ) : 
       fifo( other.fifo ),
-      item( other.item )
+      item( other.item ),
+      signal( other.signal )
    {
       /**
        * NOTE: I hate doing this here, but can't quite get 
