@@ -33,12 +33,28 @@ public:
       input.addPort< T >(  "0" );
       output.addPort< T >( "0" );
    }
+   
+   reduce()
+   {
+      input.addPort< T >(  "0" );
+      output.addPort< T >( "0" );
+   }
 
    virtual ~reduce() = default;
 
    virtual rat::kstatus run()
    {
-      T &item( input[ "0" ].peek() ); 
+      auto &output_port( output[ "0" ] );
+      for( auto &port : input )
+      {
+         const auto s( port.size() );
+         auto range( s.peek_range< T >( s ) );
+         for( auto index( 0 ); index < s; index++ )
+         {
+            output.push< T >( range[ index ] );
+         }
+         port.recycle( s );
+      }
    }
 };
 
