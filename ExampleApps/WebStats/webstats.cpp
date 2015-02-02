@@ -24,10 +24,10 @@ main( int argc, char **argv )
       exit( EXIT_FAILURE );
    }
    /** parser kernel **/
-   auto parser = kernel::make< lambdak< webline > >( 0, 1, [&]( Port &input, 
+   auto parser = kernel::make< lambdak< webline > >( 0, 2, [&]( Port &input, 
                                                                 Port &output )
    {
-      if( stream.good() )
+      while( stream.good() )
       {
          webline     data_line;
          const auto  buff_length( 1000 );
@@ -45,21 +45,10 @@ main( int argc, char **argv )
 
          for( auto &port : output )
          {
-            if( stream.eof() )
-            {
-               port.push( data_line, raft::eof );
-            }
-            else
-            {
-               port.push( data_line );
-            }
+            port.push( data_line, (stream.eof() ? raft::eof : raft::none ) );
          }
-         return( raft::proceed );
       }
-      else
-      {
-         return( raft::stop );
-      }
+      return( raft::stop );
    } );
    
 
@@ -105,39 +94,61 @@ main( int argc, char **argv )
    auto between_pages = kernel::make< lambdak< webline > >( 1, 0, []( Port &input,
                                                                       Port &output )
    {
-      static std::map< std::uint64_t, 
-                       std::pair< std::time_t, std::time_t > > times;
+      struct data
+      {
+         data( const std::time_t time ) : prev( time ){ };
+         std::time_t   prev  = 0;
+         std::time_t   total = 0;
+         std::uint64_t N     = 0;
+
+         data& operator << ( const std::time_t t )
+         {
+            const auto diff( std::difftime( t, prev ) );
+            prev = t;
+            total += diff;
+            N++;
+            return( (*this) );
+         }
+      };
+      static std::map< std::uint64_t, data > times;
 
       auto item( input[ "0" ].pop_s< webline >() );
       auto iterator( times.find( (*item).user ) );
       if( iterator == times.end() )
       {
          times.insert( std::make_pair( (*item).user,
-                        std::make_pair( std::mktime( &(*item).caltime ), 0 ) ) ); 
+                       data(  std::mktime( &(*item).caltime ) ) )); 
                                         
       }
       else
       {
-         auto &total( (*iterator).second.second );
-         const auto start( (*iterator).second.first );
-         total += std::difftime( std::mktime( &(*item).caltime ), start ); 
+         (*iterator).second << std::mktime( &(*item).caltime );
       }
       if( item.sig() == raft::eof )
       {
-         std::ofstream ofs( "Q1.csv", std::ofstream::out );
+         std::ofstream ofs( "Q2.csv", std::ofstream::out );
          if( ! ofs.is_open() )
          {
             std::cerr << "Failed to open output file for q1!\n";
          }
-         ofs << (double) total / (double) times.size() << "\n";
+         double total( 0.0 );
+         for( auto &pair : times )
+         {
+            if( pair.second.N not_eq 0 )
+            {
+               total += ( (double) pair.second.total / (double) pair.second.N );
+            }
+         }
+         total /= times.size();
+         ofs << total << "\n"; 
          ofs.close();
          return( raft::stop );
       }
       return( raft::proceed );
    } );
 
-   map.link( parser, time_between );
-   
+   map.link( parser, "0", time_between );
+   map.link( parser, "1", between_pages );
    map.exe();
    /** close stream **/
    stream.close();
