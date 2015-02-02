@@ -14,7 +14,7 @@ PTHREAD = -lpthread
 endif
 
 TEST = -O0 -g -DUNITTEST=1
-RELEASE = -O3 -mtune=native
+RELEASE = -Ofast -mtune=native
 
 BUILD = $(RELEASE)
 
