@@ -102,6 +102,39 @@ main( int argc, char **argv )
    } );
 
    /** q2 **/
+   auto between_pages = kernel::make< lambdak< webline > >( 1, 0, []( Port &input,
+                                                                      Port &output )
+   {
+      static std::map< std::uint64_t, 
+                       std::pair< std::time_t, std::time_t > > times;
+
+      auto item( input[ "0" ].pop_s< webline >() );
+      auto iterator( times.find( (*item).user ) );
+      if( iterator == times.end() )
+      {
+         times.insert( std::make_pair( (*item).user,
+                        std::make_pair( std::mktime( &(*item).caltime ), 0 ) ) ); 
+                                        
+      }
+      else
+      {
+         auto &total( (*iterator).second.second );
+         const auto start( (*iterator).second.first );
+         total += std::difftime( std::mktime( &(*item).caltime ), start ); 
+      }
+      if( item.sig() == raft::eof )
+      {
+         std::ofstream ofs( "Q1.csv", std::ofstream::out );
+         if( ! ofs.is_open() )
+         {
+            std::cerr << "Failed to open output file for q1!\n";
+         }
+         ofs << (double) total / (double) times.size() << "\n";
+         ofs.close();
+         return( raft::stop );
+      }
+      return( raft::proceed );
+   } );
 
    map.link( parser, time_between );
    
