@@ -20,6 +20,7 @@
 #include <cassert>
 #include <functional>
 #include <iostream>
+#include <algorithm>
 
 #include "kernel.hpp"
 #include "map.hpp"
@@ -27,31 +28,54 @@
 #include "rafttypes.hpp"
 
 pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
-                    thread_pool( std::thread::hardware_concurrency() )
+                                     n_threads( std::thread::hardware_concurrency() ),
+                                     pool( n_threads ),
+                                     container( n_threads ),
+                                     status_flags( n_threads )
 {
-   /** start up N threads **/
-   const auto n_threads( std::thread::hardware_concurrency() );
    for( auto index( 0 ); index < n_threads; index++ )
    {
-      container.push_back( new KernelContainer() );
-      pool.push_back( new std::thread( poolschedule::poolrun, 
-                                       std::ref( (*container[ index ]) ),
-                                       std::ref( 
+      status_flags[index] = false;
+      container[index] = new KernelContainer();
+      pool[index] = new std::thread( poolschedule::poolrun,
+                                     std::ref( *container[index] ),
+                                     std::ref(  status_flags[index] ) );
    }
+   std::make_heap( container.first(), container.second(), min_kernel_heapify );
 }
 
 
 pool_schedule::~pool_schedule()
 {
+   for( auto *th : pool )
+   {
+      delete( th );
+   }
+   for( auto *kc : container )
+   {
+      delete( kc );
+   }
 }
 
 bool
 pool_schedule::scheduleKernel( raft::kernel *kernel )
 {
+   assert( kernel != nullptr );
+   kernel_map.push_back( kernel );
 }
 
 void
 pool_schedule::start()
 {
+   for( auto *kernel : kernel_maps )
+   {
+      /** add kernel **/
+      scheduling_heap.front().addKernel( kernel );
+      /** re-heapify **/
+      std::make_heap( scheduling_heap.first(), 
+                      scheduling_heap.second(), 
+                      min_kernel_heapify );
+
+   }
    
 }
