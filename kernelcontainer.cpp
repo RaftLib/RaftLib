@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 #include "kernelcontainer.hpp"
+#include "kerneliterator.hpp"
+#include <cassert>
 
 KernelContainer::KernelContainer()
 {
@@ -27,8 +29,48 @@ KernelContainer::~KernelContainer()
 {
 }
 
+void
+KernelContainer::addKernel( raft::kernel *kernel )
+{
+   assert( kernel != nullptr );
+   std::lock_guard< decltype( m_begin ) > lb( m_begin );
+   std::lock_guard< decltype( m_end ) >   le( m_end );
+   list.insert( kernel );
+}
+
+bool
+KernelContainer::removeKernel( raft::kernel *kernel )
+{
+   assert( kernel != nullptr );
+   /** get both locks **/
+   std::lock_guard< decltype( m_begin ) > lb( m_begin );
+   std::lock_guard< decltype( m_end ) >   le( m_end );
+   auto el( list.find( kernel ) );
+   if( el == list.end() )
+   {
+      return( false );
+   }
+   else
+   {
+      list.erase( el );
+      return( true );
+   }
+}
+
 auto
+KernelContainer::size() -> decltype( list.size() )
+{
+   return( list.size() );
+}
+
+KernelIterator
 KernelContainer::begin()
 {
-   mutex.lock
+   return( KernelIterator( (*this), true ) );
+}
+
+KernelIterator
+KernelContainer::end()
+{
+   return( KernelIterator( (*this), false ) );
 }

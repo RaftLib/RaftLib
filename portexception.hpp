@@ -65,4 +65,10 @@ class ClosedPortAccessException : public PortException
 public:
    ClosedPortAccessException( const std::string message );
 };
+
+class NoMoreDataException : public PortException
+{
+public:
+   NoMoreDataException( const std::string message );
+};
 #endif /* END _PORTEXCEPTION_HPP_ */

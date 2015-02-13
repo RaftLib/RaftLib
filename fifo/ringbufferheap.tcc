@@ -686,6 +686,12 @@ protected:
                throw ClosedPortAccessException( 
                   "Accessing closed port with local_peek_range call, exiting!!" );
             }
+            else if( (this)->is_invalid() && size() < n )
+            {
+               std::stringstream ss;
+               ss << "Too few items (" << size() << ") left on a closed port, kernel exiting!!";
+               throw NoMoreDataException( ss.str() );
+            }
          }
          dm.exitBuffer( dm::peek );
 #ifdef NICE      

@@ -30,7 +30,14 @@ pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
                     thread_pool( std::thread::hardware_concurrency() )
 {
    /** start up N threads **/
-   
+   const auto n_threads( std::thread::hardware_concurrency() );
+   for( auto index( 0 ); index < n_threads; index++ )
+   {
+      container.push_back( new KernelContainer() );
+      pool.push_back( new std::thread( poolschedule::poolrun, 
+                                       std::ref( (*container[ index ]) ),
+                                       std::ref( 
+   }
 }
 
 

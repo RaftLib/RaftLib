@@ -59,3 +59,8 @@ ClosedPortAccessException::ClosedPortAccessException(
    const std::string message ) : PortException( message )
 {
 }
+
+NoMoreDataException::NoMoreDataException(
+   const std::string message ) : PortException( message )
+{
+}

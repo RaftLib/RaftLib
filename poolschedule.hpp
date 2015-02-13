@@ -38,7 +38,10 @@ public:
    virtual void start(); 
    
 protected:
+   std::vector< std::thread* >     pool;
+   std::vector< KernelContainer* > contaner;
 
-   std::vector<
+private:
+   static void poolrun( KernelContainer &container, volatile bool &done );
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */

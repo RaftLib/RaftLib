@@ -25,6 +25,12 @@ public:
             std::cout << " " << range[ i ];
          }
       } 
+      catch( NoMoreDataException &ex )
+      {
+         std::cerr << ex.what() << "\n";
+         /** nothing bad, just no more data **/
+         return( raft::stop );
+      }
       catch( ClosedPortAccessException &ex )
       {
          /** nothing bad, just no more data **/
@@ -49,7 +55,7 @@ main( int argc, char **argv )
    int *arr = (int*) malloc( sizeof( int ) * COUNT );
    for( int i( 0 ); i < COUNT; i++ )
    {
-      arr[ i ] = i * 2;
+      arr[ i ] = i;
    }
 
 
