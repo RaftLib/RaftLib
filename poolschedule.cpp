@@ -79,3 +79,19 @@ pool_schedule::start()
    }
    
 }
+
+void 
+pool_schedule::poolrun( KernelContainer &container, volatile bool &sched_done )
+{
+  
+}
+
+/** static member functions **/
+bool
+pool_schedule::min_kernel_heapify( KernelContainer *a, KernelContainer *b )
+{
+   if( a->size() >= b->size() )
+   {
+      return( true );
+   }
+}
