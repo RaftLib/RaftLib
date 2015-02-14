@@ -44,16 +44,8 @@ protected:
    std::vector< bool >             status_flags;
 
    std::vector< raft::kernel* >    kernel_map;
-   std::vector< KernelContainer* > scheduling_heap;
 
 private:
    static void poolrun( KernelContainer &container, volatile bool &sched_done );
-   /** 
-    * min_kernel_heapify - returns true if container a is less than b
-    * @param a - KernelContainer*
-    * @param b - KernelContainer*
-    * @return bool, true if a is less
-    */
-   static bool min_kernel_heapify( KernelContainer *a, KernelContainer *b );
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */
