@@ -67,15 +67,14 @@ pool_schedule::scheduleKernel( raft::kernel *kernel )
 void
 pool_schedule::start()
 {
+   auto it( container.begin() );
    for( auto *kernel : kernel_maps )
    {
-      /** add kernel **/
-      scheduling_heap.front().addKernel( kernel );
-      /** re-heapify **/
-      std::make_heap( scheduling_heap.first(), 
-                      scheduling_heap.second(), 
-                      min_kernel_heapify );
-
+      (*it)->addKernel( kernel );
+      if( ++it == container.end() )
+      {
+         it = container.begin();
+      }
    }
    
 }
@@ -83,15 +82,18 @@ pool_schedule::start()
 void 
 pool_schedule::poolrun( KernelContainer &container, volatile bool &sched_done )
 {
-  
-}
-
-/** static member functions **/
-bool
-pool_schedule::min_kernel_heapify( KernelContainer *a, KernelContainer *b )
-{
-   if( a->size() >= b->size() )
+   while( ! sched_done )
    {
-      return( true );
+      for( auto &kernel : container )
+      {
+         bool done( false );
+         Schedule::runKernel( &kernel, done );
+         /** FIXME, finish this **/
+      }
+      if( ( (volatile) container.size() ) == 0 )
+      {
+         std::chrono::microseconds dura( 100 );
+         std::this_thread::sleep_for( dura );
+      }
    }
 }
