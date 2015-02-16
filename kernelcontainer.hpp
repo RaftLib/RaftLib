@@ -22,16 +22,20 @@
 #ifndef _KERNELCONTAINER_HPP_
 #define _KERNELCONTAINER_HPP_  1
 #include <mutex>
-#include <vector>
+#include <set>
 #include <cstddef>
 #include "kernel.hpp"
-
-class KernelIterator;
+#include "kerneliterator.tcc"
 
 class KernelContainer
 {
 private:
    std::set< raft::kernel * > list;
+   
+   std::mutex                   m_begin;
+   std::mutex                   m_end;
+   friend class KernelIterator< decltype( list.begin() ) >;
+
 public:
    /**
     * Contstructor for a container for raft::kernel objects
@@ -68,19 +72,15 @@ public:
     * Iterator is thread safe!
     * @return KernelIterator
     */
-   KernelIterator begin();
+   auto begin() -> KernelIterator< decltype( list.begin() ) >;
    /** 
-    * KernelIterator - returns an iterator to one past the last 
+    * end - returns an iterator to one past the last 
     * kernel in the list, this cannot be relied upon to be the
     * last element since the iterator does not define a -- operator,
     * so really it can just be used for detecting when all the kernels
     * have been iterated through.
     * @return KernelIterator
     */
-   KernelIterator end();
-private:
-   std::mutex                   m_begin;
-   std::mutex                   m_end;
-   friend class KernelIterator;
+   auto end() -> KernelIterator< decltype( list.end() ) >;
 };
 #endif /* END _KERNELCONTAINER_HPP_ */

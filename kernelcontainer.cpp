@@ -18,7 +18,6 @@
  * limitations under the License.
  */
 #include "kernelcontainer.hpp"
-#include "kerneliterator.hpp"
 #include <cassert>
 
 KernelContainer::KernelContainer()
@@ -63,14 +62,14 @@ KernelContainer::size() -> decltype( list.size() )
    return( list.size() );
 }
 
-KernelIterator
-KernelContainer::begin()
+auto
+KernelContainer::begin() -> KernelIterator< decltype( list.begin() ) >
 {
-   return( KernelIterator( (*this), true ) );
+   return( KernelIterator< decltype( list.begin() ) >( list.begin(), m_begin ) );
 }
 
-KernelIterator
-KernelContainer::end()
+auto
+KernelContainer::end() -> KernelIterator< decltype( list.end() ) >
 {
-   return( KernelIterator( (*this), false ) );
+   return( KernelIterator< decltype( list.end() ) >( list.end(), m_end ) );
 }

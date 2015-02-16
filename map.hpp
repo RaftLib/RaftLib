@@ -34,6 +34,7 @@
 #include "dynalloc.hpp"
 #include "stdalloc.hpp"
 #include "mapbase.hpp"
+#include "poolschedule.hpp"
 
 class Map : public MapBase
 {
@@ -49,7 +50,7 @@ public:
    virtual ~Map();
    
 
-   template< class scheduler = simple_schedule, class allocator = dynalloc > 
+   template< class scheduler = pool_schedule, class allocator = dynalloc > 
       void exe()
    {
       checkEdges( source_kernels );

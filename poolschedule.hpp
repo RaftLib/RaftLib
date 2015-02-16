@@ -21,7 +21,8 @@
 #define _POOLSSCHEDULE_HPP_  1
 #include <vector>
 #include <thread>
-#include "runcontainer.hpp"
+#include "schedule.hpp"
+#include "kernelcontainer.hpp"
 
 class Map;
 namespace raft{
@@ -38,6 +39,8 @@ public:
    virtual void start(); 
    
 protected:
+   virtual bool scheduleKernel( raft::kernel *kernel );
+
    const decltype( std::thread::hardware_concurrency() )    n_threads;
    std::vector< std::thread* >     pool;
    std::vector< KernelContainer* > container;

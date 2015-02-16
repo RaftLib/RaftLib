@@ -21,6 +21,8 @@
 #include <functional>
 #include <iostream>
 #include <algorithm>
+#include <chrono>
+#include <thread>
 
 #include "kernel.hpp"
 #include "map.hpp"
@@ -37,11 +39,10 @@ pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
    {
       status_flags[index] = false;
       container[index] = new KernelContainer();
-      pool[index] = new std::thread( poolschedule::poolrun,
+      pool[index] = new std::thread( pool_schedule::poolrun,
                                      std::ref( *container[index] ),
                                      std::ref(  status_flags[index] ) );
    }
-   std::make_heap( container.first(), container.second(), min_kernel_heapify );
 }
 
 
@@ -62,13 +63,14 @@ pool_schedule::scheduleKernel( raft::kernel *kernel )
 {
    assert( kernel != nullptr );
    kernel_map.push_back( kernel );
+   return( true );
 }
 
 void
 pool_schedule::start()
 {
    auto it( container.begin() );
-   for( auto *kernel : kernel_maps )
+   for( auto *kernel : kernel_map )
    {
       (*it)->addKernel( kernel );
       if( ++it == container.end() )
@@ -76,7 +78,23 @@ pool_schedule::start()
          it = container.begin();
       }
    }
-   
+   auto is_done( []( std::vector< bool > &flags ) -> bool
+   {
+      for( const auto flag : flags )
+      {
+         if( flag )
+         {
+            return( false );
+         }
+      }
+      return( true );
+   } );
+
+   while( ! is_done( status_flags ) )
+   {
+      std::chrono::microseconds dura( 100 );
+      std::this_thread::sleep_for( dura );
+   }
 }
 
 void 
@@ -84,13 +102,21 @@ pool_schedule::poolrun( KernelContainer &container, volatile bool &sched_done )
 {
    while( ! sched_done )
    {
+      std::vector< raft::kernel* > unschedule_list;
       for( auto &kernel : container )
       {
          bool done( false );
-         Schedule::runKernel( &kernel, done );
-         /** FIXME, finish this **/
+         Schedule::kernelRun( &kernel, done );
+         if( done )
+         {
+            unschedule_list.push_back( &kernel );
+         }
       }
-      if( ( (volatile) container.size() ) == 0 )
+      for( raft::kernel *kernel : unschedule_list )
+      {
+         container.removeKernel( kernel );
+      }
+      if( container.size() == 0 )
       {
          std::chrono::microseconds dura( 100 );
          std::this_thread::sleep_for( dura );
