@@ -43,7 +43,7 @@ private:
    T iterator;   
    std::mutex &lock;
 public:
-   KernelIterator( T &iterator, std::mutex &lock ) : iterator( iterator ),
+   KernelIterator( T iterator, std::mutex &lock ) : iterator( iterator ),
                                                      lock( lock )
    {
       (this)->lock.lock(); 

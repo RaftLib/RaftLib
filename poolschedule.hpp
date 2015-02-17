@@ -1,5 +1,10 @@
 /**
- * poolschedule.hpp - 
+ * poolschedule.hpp - scheduler starts up the maximum number
+ * of threads supported in hardware for the currently executing
+ * node, then awaits kernels to be mapped to it by the mapper. 
+ * Once mapped, the scheduler continues to execute each kernel
+ * in a round-robin fashion until execution is complete.
+ *
  * @author: Jonathan Beard
  * @version: Thu Sep 11 15:49:57 2014
  * 
@@ -21,6 +26,7 @@
 #define _POOLSSCHEDULE_HPP_  1
 #include <vector>
 #include <thread>
+#include <cstdint>
 #include "schedule.hpp"
 #include "kernelcontainer.hpp"
 
@@ -29,26 +35,72 @@ namespace raft{
    class kernel;
 }
 
+
 class pool_schedule : public Schedule
 {
 public:
+   /**
+    * pool_schedule - constructor, takes a map object, 
+    * calling this will launch threads.  scheduler itself
+    * is also run as a thread.
+    * @param   map - Map&
+    */
    pool_schedule( Map &map );
 
+   /**
+    * destructor, deletes threads and cleans up container
+    * objects.
+    */
    virtual ~pool_schedule();
 
+   /**
+    * start - call to start executing map, at this point
+    * the mapper sould have checked the topology and 
+    * everything should be set up for running.
+    */
    virtual void start(); 
    
 protected:
+   /**
+    * scheduleKernel - override base class function in order
+    * to add kernels to the right place.
+    * @param kernel - raft::kernel*
+    * @return bool - always true
+    */
    virtual bool scheduleKernel( raft::kernel *kernel );
 
+   /**
+    * total # of hardware supported threads 
+    */
    const decltype( std::thread::hardware_concurrency() )    n_threads;
+   /**
+    * used as a thread pool
+    */
    std::vector< std::thread* >     pool;
+   /**
+    * container - holds all the kernels
+    */
    std::vector< KernelContainer* > container;
-   std::vector< bool >             status_flags;
+   /**
+    * used std::uint8_t b/c I don't want a bitset from std::vector, 
+    * status_flags used to tell the sub-schedulers when to quit.
+    */
+   std::vector< std::uint8_t >             status_flags;
 
+   /**
+    * stores all kernels that we're currently executing, migth
+    * be removed from KernelContainer objects, but they'll still
+    * be here.
+    */
    std::vector< raft::kernel* >    kernel_map;
 
 private:
-   static void poolrun( KernelContainer &container, volatile bool &sched_done );
+   /**
+    * poolrun- called by each thread within 
+    * the pool, essentially this function acts as a 
+    * mini-scheduler which runs all kernels in a given
+    * container.
+    */
+   static void poolrun( KernelContainer *container, volatile std::uint8_t &sched_done );
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */

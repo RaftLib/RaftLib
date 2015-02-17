@@ -39,9 +39,9 @@ pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
    {
       status_flags[index] = false;
       container[index] = new KernelContainer();
-      pool[index] = new std::thread( pool_schedule::poolrun,
-                                     std::ref( *container[index] ),
-                                     std::ref(  status_flags[index] ) );
+      pool[ index ] = new std::thread( poolrun,
+                                       container[ index ],
+                                       std::ref(  status_flags[index] ) );
    }
 }
 
@@ -78,11 +78,11 @@ pool_schedule::start()
          it = container.begin();
       }
    }
-   auto is_done( []( std::vector< bool > &flags ) -> bool
+   auto is_done( []( std::vector< KernelContainer* > &containers ) -> bool
    {
-      for( const auto flag : flags )
+      for( auto *c : containers )
       {
-         if( flag )
+         if( c->size() != 0 )
          {
             return( false );
          }
@@ -90,20 +90,29 @@ pool_schedule::start()
       return( true );
    } );
 
-   while( ! is_done( status_flags ) )
+   while( ! is_done( container ) )
    {
       std::chrono::microseconds dura( 100 );
       std::this_thread::sleep_for( dura );
    }
+   /** done **/
+   for( auto &flag : status_flags )
+   {
+      flag = 1;
+   }
+   for( std::thread *thr : pool )
+   {
+      thr->join();
+   }
 }
 
 void 
-pool_schedule::poolrun( KernelContainer &container, volatile bool &sched_done )
+pool_schedule::poolrun( KernelContainer *container, volatile std::uint8_t &sched_done )
 {
-   while( ! sched_done )
+   while( sched_done == 0 )
    {
       std::vector< raft::kernel* > unschedule_list;
-      for( auto &kernel : container )
+      for( auto &kernel : *container )
       {
          bool done( false );
          Schedule::kernelRun( &kernel, done );
@@ -114,9 +123,9 @@ pool_schedule::poolrun( KernelContainer &container, volatile bool &sched_done )
       }
       for( raft::kernel *kernel : unschedule_list )
       {
-         container.removeKernel( kernel );
+         container->removeKernel( kernel );
       }
-      if( container.size() == 0 )
+      if( container->size() == 0 )
       {
          std::chrono::microseconds dura( 100 );
          std::this_thread::sleep_for( dura );
