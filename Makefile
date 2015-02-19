@@ -13,10 +13,10 @@ STATIC = -static -static-libgcc -static-libstdc++
 PTHREAD = -lpthread  
 endif
 
-TEST = -O0 -g
+TEST = -O0 -g 
 RELEASE = -Ofast -mtune=native
 
-BUILD = $(TEST)
+BUILD = $(TEST) 
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11  -DRDTSCP=1

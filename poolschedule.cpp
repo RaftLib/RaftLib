@@ -35,7 +35,7 @@ pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
                                      container( n_threads ),
                                      status_flags( n_threads )
 {
-   for( auto index( 0 ); index < n_threads; index++ )
+   for( std::int64_t index( 0 ); index < n_threads; index++ )
    {
       status_flags[index] = false;
       container[index] = new KernelContainer();

@@ -2,16 +2,17 @@ CC  ?= gcc
 CXX ?= g++
 
 ifneq ($(shell uname -s), Darwin)
-RT = -lrt
+STATIC = -static -static-libgcc -static-libstdc++
+RT =  -lrt -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 endif
 
 TEST = -O0 -g -DUNITTEST=1
 RELEASE = -O3 -mtune=native 
 
-BUILD = $(RELEASE)
+BUILD = $(TEST)
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1  
-LDLIBS  = -lstdc++ -lraft $(RT)
+LDLIBS  = $(STATIC)  -lstdc++ -lraft $(RT)
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
       join lambdatest allocate_s foreach peekrange
