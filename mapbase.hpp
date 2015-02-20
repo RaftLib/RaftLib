@@ -174,31 +174,31 @@ public:
    template < order::spec t = order::in > 
       kernel_pair_t link( raft::kernel *a, const std::string  a_port, raft::kernel *b )
    {
+      if( ! a->input.hasPorts() )
+      {
+         source_kernels.insert( a );   
+      }
+      all_kernels.insert( a );
+      all_kernels.insert( b );
+      PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
+      
+      PortInfo *port_info_b;
+      try{
+         port_info_b = &(b->input.getPortInfo());
+      }
+      catch( PortNotFoundException &ex ) 
+      {
+         int status( 0 );
+         std::stringstream ss;
+         ss << "Destination port from kernel " << 
+            abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) <<
+            "has more than a single port.";
+         throw AmbiguousPortAssignmentException( ss.str() );
+      }
+      join( *a, a_port , port_info_a, 
+            *b, port_info_b->my_name, *port_info_b );
       switch( t )
       {
-         if( ! a->input.hasPorts() )
-         {
-            source_kernels.insert( a );   
-         }
-         all_kernels.insert( a );
-         all_kernels.insert( b );
-         PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
-         
-         PortInfo *port_info_b;
-         try{
-            port_info_b = &(b->input.getPortInfo());
-         }
-         catch( PortNotFoundException &ex ) 
-         {
-            int status( 0 );
-            std::stringstream ss;
-            ss << "Destination port from kernel " << 
-               abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) <<
-               "has more than a single port.";
-            throw AmbiguousPortAssignmentException( ss.str() );
-         }
-         join( *a, a_port , port_info_a, 
-               *b, port_info_b->my_name, *port_info_b );
          case( order::in ):
          {
             port_info_a.out_of_order   = false;
@@ -214,7 +214,8 @@ public:
       }
       return( kernel_pair_t( *a, *b ) );
    }
-  
+
+
    /**
     * link - same as above save for the following differences:
     * raft::kernel a is assumed to have a single output port.  raft::kernel
@@ -232,39 +233,42 @@ public:
    template < order::spec t = order::in >
       kernel_pair_t link( raft::kernel *a, raft::kernel *b, const std::string b_port )
    {
+      if( ! a->input.hasPorts() )
+      {
+         source_kernels.insert( a );   
+      }
+      all_kernels.insert( a );
+      all_kernels.insert( b );
+      PortInfo *port_info_a;
+      try{
+         port_info_a = &(a->output.getPortInfo() );
+      }
+      catch( PortNotFoundException &ex ) 
+      {
+         std::stringstream ss;
+         int status( 0 );
+         ss << "Source port from kernel " << 
+            abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) <<
+            "has more than a single port.";
+         throw AmbiguousPortAssignmentException( ss.str() );
+      }
+      
+      PortInfo &port_info_b( b->input.getPortInfoFor( b_port) );
+      
+      join( *a, port_info_a->my_name, *port_info_a, 
+            *b, b_port, port_info_b );
       switch( t )
       {
          case( order::in ):
          {
-            if( ! a->input.hasPorts() )
-            {
-               source_kernels.insert( a );   
-            }
-            all_kernels.insert( a );
-            all_kernels.insert( b );
-            PortInfo *port_info_a;
-            try{
-               port_info_a = &(a->output.getPortInfo() );
-            }
-            catch( PortNotFoundException &ex ) 
-            {
-               std::stringstream ss;
-               int status( 0 );
-               ss << "Source port from kernel " << 
-                  abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) <<
-                  "has more than a single port.";
-               throw AmbiguousPortAssignmentException( ss.str() );
-            }
-            
-            PortInfo &port_info_b( b->input.getPortInfoFor( b_port) );
-            
-            join( *a, port_info_a->my_name, *port_info_a, 
-                  *b, b_port, port_info_b );
+            port_info_a->out_of_order   = false;
+            port_info_b.out_of_order    = false;
          }
          break;
          case( order::out ):
          {
-            assert( false );
+            port_info_a->out_of_order   = true;
+            port_info_b.out_of_order    = true;
          }
          break;
       }
@@ -298,7 +302,7 @@ public:
       
       join( *a, a_port, port_info_a, 
             *b, b_port, port_info_b );
-      witch( t )
+      switch( t )
       {
          case( order::in ):
          {

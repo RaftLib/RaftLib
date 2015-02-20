@@ -23,11 +23,6 @@ public:
    }
 };
 
-namespace raft
-{
-   Map map;
-}
-
 int
 main( int argc, char **argv )
 {
@@ -43,6 +38,7 @@ main( int argc, char **argv )
       raft::kernel::make< print< int > >() );
 
    raft::map.exe();
-
+   
+   free( arr );
    return( EXIT_SUCCESS );
 }
