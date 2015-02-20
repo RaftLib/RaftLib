@@ -6,14 +6,12 @@ LINUXLIBS 	 = -lrt -lpthread
 LINUXLDFLAGS = -static -static-libgcc -static-libstdc++ 
 endif
 
-CPPFLAGS = -I./ahocorasick/
 CFLAGS   = -Ofast -mtune=native -Wall -std=c99
 CXXFLAGS = -Ofast -mtune=native -Wall -std=c++11 -DRDTSCP=1
 LDFLAGS  = -L./ $(LINUXLDFLAGS)
 LDLIBS   = -lraft $(LINUXLIBS)
 
-EXE      = sumapp readtest singlequeue rgrep
-CPPFILES = rkverifymatch
+EXE      = sumapp readtest singlequeue
 OBJS     = $(addsuffix .o, $(CPPFILES)) $(addsuffix .o, $(EXE))
 
 all: $(EXE)
@@ -21,9 +19,6 @@ all: $(EXE)
 sumapp: sumapp.o
 readtest: readtest.o
 singlequeue: singlequeue.o
-rgrep: rgrep.o rkverifymatch.o
-	$(CXX) $(CXXFLAGS) $(LDFLAGS)  $^ -o $@ $(LDLIBS)
-rkverifymatch.o: rkverifymatch.cpp
 
 .PHONY: clean
 clean:
