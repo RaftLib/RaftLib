@@ -70,9 +70,9 @@ public:
     * allocated by copy constructor for T.
     */
    template < class T /* other kernel */ >
-      static kernel* clone( T &other )
+      static kernel* clone( T *other )
       {
-         return( new T( other ) );
+         return( new T( *other ) );
       }
 
 protected:
