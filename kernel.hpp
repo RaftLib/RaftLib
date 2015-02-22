@@ -29,6 +29,21 @@
 class MapBase;
 class Schedule;
 
+#ifndef CLONE
+namespace raft
+{
+   class kernel;
+}
+
+#define CLONE() \
+virtual raft::kernel* clone()\
+{\
+   return( new typename std::remove_reference< decltype( *this ) >::type( ( *(\
+   (typename std::decay< decltype( *this ) >::type * ) \
+   this ) ) ) );\
+}
+#endif
+
 namespace raft {
 class kernel
 {
@@ -69,11 +84,12 @@ public:
     * @return  kernel*   - takes base type, however is same as 
     * allocated by copy constructor for T.
     */
-   template < class T /* other kernel */ >
-      static kernel* clone( T *other )
-      {
-         return( new T( *other ) );
-      }
+   virtual raft::kernel* clone()\
+   {
+      //FIXME, needs to throw an exception
+      assert( false );
+      return( nullptr );
+   }
 
 protected:
    /**

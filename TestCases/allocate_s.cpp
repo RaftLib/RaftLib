@@ -14,6 +14,14 @@ public:
       output.addPort< T >( "number_stream" );
    }
 
+   Generate( const Generate< T > &other ) : raft::kernel(),
+                                            count( other.count )
+   {
+      output.addPort< T >( "number_stream" );
+   }
+
+   CLONE();
+
    virtual raft::kstatus run()
    {
       if( count-- > 1 )
@@ -64,10 +72,12 @@ main( int argc, char **argv )
    {
       count = atoi( argv[ 1 ] );
    }
-   auto linked_kernels( raft::map.link( new Generate< std::int64_t >( count ),
+   auto gen( raft::kernel::make< Generate< std::int64_t > >( count ) );
+   
+   auto linked_kernels( raft::map.link( gen->clone(),
                                         new sum< std::int64_t,std::int64_t, std::int64_t >(),
                                         "input_a" ) );
-   raft::map.link( new Generate< std::int64_t >( count ), &( linked_kernels.dst ), "input_b" );
+   raft::map.link( gen->clone() , &( linked_kernels.dst ), "input_b" );
    raft::map.link( &( linked_kernels.dst ), 
                    new raft::print< std::int64_t ,'\n' >() );
    raft::map.exe();
