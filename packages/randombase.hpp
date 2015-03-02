@@ -19,6 +19,7 @@
  */
 #ifndef _RANDOMBASE_HPP_
 #define _RANDOMBASE_HPP_  1
+#include <cstdint>
 #include <gsl/gsl_rng.h>
 
 namespace raft{
