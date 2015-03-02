@@ -4,8 +4,9 @@ CXX   ?= g++
 PREFIX = /usr/local
 
 include fifo/buffer.makefile
+include packages/packages.makefile
 
-DIRINCS = $(RINGBUFFERDIR) ./
+DIRINCS = $(PACKAGESDIR) $(RINGBUFFERDIR) ./
 
 ifneq ($(shell uname -s), Darwin)
 RT = -lrt
@@ -29,7 +30,7 @@ RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
                    poolschedule
 
 COBJS   = $(RBCOBJS)
-CXXOBJS = $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)
+CXXOBJS = $(PACKAGEOBJS) $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)
 
 CFILES = $(addsuffix .c, $(COBJS) )
 CXXFILES = $(addsuffix .cpp, $(CXXOBJS) )
