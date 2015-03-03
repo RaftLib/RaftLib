@@ -115,7 +115,7 @@ public:
     */
    randombase( const raft::rndgenerator gen );
 
-private:
+protected:
    /**
     * sample_system_rng - returns system provided uint64_t from 
     * /dev/random.

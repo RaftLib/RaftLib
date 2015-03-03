@@ -84,7 +84,7 @@ public:
     * @return  kernel*   - takes base type, however is same as 
     * allocated by copy constructor for T.
     */
-   virtual raft::kernel* clone()\
+   virtual raft::kernel* clone()
    {
       //FIXME, needs to throw an exception
       assert( false );
