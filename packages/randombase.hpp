@@ -25,6 +25,7 @@
 namespace raft{
 
 enum rndgenerator { 
+sequential,
 borosh13,
 coveyou,
 cmrg,
@@ -103,7 +104,7 @@ public:
     * @param   gen  - raft::rndgenerator
     * @param   seed - const std::uint64_t
     */
-   randombase( const raft::rndgenerator gen, const uint64_t seed );
+   randombase( const raft::rndgenerator gen, const std::uint64_t seed );
    /**
     * randombase - initialize random number generator, uses
     * system entropy for a more random seed to the random number

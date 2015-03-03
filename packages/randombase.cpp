@@ -29,9 +29,9 @@
 using namespace raft;
 
 
-const std::map< rndgenerator, gsl_rng_type >
+const std::map< rndgenerator, const gsl_rng_type* >
    ptrmap = 
-{
+{  
    {borosh13, gsl_rng_borosh13},
    {coveyou, gsl_rng_coveyou},
    {cmrg, gsl_rng_cmrg},

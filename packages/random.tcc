@@ -23,9 +23,46 @@
 #define _RANDOM_TCC_  1
 
 #include <raft>
+namespace raft{
 
+template < class RNDTYPE > class random : public randombase
+{
+   /**
+    * random - initialize random number generator, provide
+    * a seed.  useful for debugging, however for a more random
+    * source it is advisable to use the non-seeded version which
+    * uses system entropy.  The first parameter is the random 
+    * number generator.  For the moment these are entirely 
+    * sourced from GNU GSL so feel free to consult their docs
+    * here (http://goo.gl/tfElhG).  
+    * @param   gen  - raft::rndgenerator
+    * @param   seed - const std::uint64_t
+    */
+   random( const raft::rndgenerator gen, 
+           const std::uint64_t seed )
+   {
 
+   }
 
+   /**
+    * random - initialize random number generator, uses
+    * system entropy for a more random seed to the random number
+    * generator.  The first parameter is the random number 
+    * generator.  For the moment these are entirely sourced 
+    * from GNU GSL so feel free to consult their docs
+    * here (http://goo.gl/tfElhG).  
+    */
+   random( const raft::rndgenerator gen )
+   {
+
+   }
+
+   virtual ~random()
+   {
+
+   }
+};
 
 }
+
 #endif /* END _RANDOM_TCC_ */
