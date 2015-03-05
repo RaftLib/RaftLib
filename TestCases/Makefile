@@ -12,10 +12,11 @@ RELEASE = -O3 -mtune=native
 BUILD = $(TEST)
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1  
-LDLIBS  = $(STATIC)  -lstdc++ -lraft $(RT)
+LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl $(RT) 
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
-      join lambdatest allocate_s foreach peekrange
+      join lambdatest allocate_s foreach peekrange gamma uniform \
+      gaussian exponential
 
 OBS = $(addsuffix .o, $(EXE))
 
@@ -31,7 +32,10 @@ lambdatest: lambdatest.o
 allocate_s: allocate_s.o
 foreach: foreach.o
 peekrange: peekrange.o
-random: random.o
+gamma: gamma.cpp
+uniform: uniform.cpp
+gaussian: gaussian.cpp
+exponential: exponential.cpp
 
 .PHONY: clean
 clean:

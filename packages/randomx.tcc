@@ -25,10 +25,14 @@
 #include <raft>
 namespace raft{
 
-enum rndtype { exponential, gaussian, uniform }; 
+enum rndtype { 
+   exponential, 
+   gaussian, 
+   uniform,
+   gammadist /** intel math.h header has a term gamma, could conflict **/ }; 
 
-template < raft::rndtype RNDTYPE, class T > class randomx : public raft::randombase, 
-                                                            public raft::parallel_k
+template < class T > class randomx : public raft::randombase, 
+                                     public raft::parallel_k
 {
 public:
    /**
@@ -43,11 +47,14 @@ public:
     * @param   gen  - raft::rndgenerator
     * @param   seed - const std::uint64_t
     */
-   randomx( const std::uintmax_t     count,
+   randomx( const std::size_t        count,
             const raft::rndgenerator gen, 
-            const std::uint64_t      seed ) : randombase( gen, seed )
+            const std::uint64_t      seed ) : randombase( gen, seed ),
+                                              count( count )
    {
+      addPortTo< T >( output );
    }
+
 
    /**
     * randomx - initialize random number generator, uses
@@ -57,10 +64,11 @@ public:
     * from GNU GSL so feel free to consult their docs
     * here (http://goo.gl/tfElhG).  
     */
-   randomx( const std::uintmax_t count,
-            const raft::rndgenerator gen ) : randombase( gen )
+   randomx( const std::size_t        count,
+            const raft::rndgenerator gen ) : randombase( gen ),
+                                             count( count )
    {
-
+      addPortTo< T >( output );
    }
 
    virtual ~randomx()
@@ -101,7 +109,7 @@ protected:
       addPortTo< T >( output );
    }
 private: 
-   std::uintmax_t count;
+   std::size_t count = 0;
 };
 
 }

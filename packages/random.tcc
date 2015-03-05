@@ -1,6 +1,11 @@
 /**
  * random.tcc - various specializations for random number distributions,
- * these draw heavily on the GNU GSL random number library
+ * these draw heavily on the GNU GSL random number library.  Eventually
+ * we'll migrate away from the GNU GSL to eliminate the library dependency,
+ * however at the moment there's no point in re-engineering something
+ * that isn't broken and readily available.  The important thing
+ * is that the user interface doesn't rely on GNU GSL specific variables
+ * so that we can swap out at some future point.
  *
  * @author: Jonathan Beard
  * @version: Tue Mar  3 11:52:12 2015
@@ -35,29 +40,133 @@
 namespace raft
 {
 
-template< raft::rndtype RNDTYPE, class T > class random;
-
-template< class T > class random : public raft::randomx< raft::exponential, T >
+/** UNIFORM **/
+template< class T, rndtype type = raft::uniform > class random_variate : 
+   public raft::randomx< T >
 {
 public:
-   random( const double mean,
-           const std::uintmax_t count,
-           const raft::rndgenerator gen,
-           const std::uint64_t seed ) : randomx( count, gen, seed ),
+   /**
+    * random_variate - constructor for uniform distribution
+    * @param gen - raft::rndgenerator type
+    * @param seed - const std::uint64_t user provided seed
+    */
+   random_variate( const T min,
+                   const T max,
+                   const std::uintmax_t count,
+                   const std::uint64_t seed, 
+                   const raft::rndgenerator gen = raft::mt19937
+                                    ) : randomx< T >( count, gen, seed ),
+                                        min( min ),
+                                        diff( max - min )
+   {
+      assert( max > min );
+   }
+
+   /**
+    * random_variate - constructor for uniform distribution
+    * @param   gen - raft::rndgenerator, generator type
+    */
+   random_variate( const T min,
+                   const T max,
+                   const std::uintmax_t count,
+                   const raft::rndgenerator gen = raft::mt19937 ) 
+                                          : randomx< T >( count, gen ),
+                                            min( min ),
+                                            diff( max - min )
+   {
+      
+   }
+
+   virtual ~random_variate()
+   {
+      /** nothing to do here **/
+   }
+
+
+protected:
+   virtual T draw()
+   {
+      const auto val( gsl_rng_uniform( (this)->rng ) );
+      if( almost_equal( val, 
+                        (std::remove_reference< decltype( val ) >::type )(0.0),
+                        2 ) )
+      {
+         return( (T) min );
+      }
+      else
+      {
+         return( (T)( min + (diff * val) ) );
+      }
+   }
+private:
+   const T min;
+   const T diff;
+
+   /**
+    * NOTE: used from example here: 
+    * http://en.cppreference.com/w/cpp/types/numeric_limits/epsilon,
+    * couldn't have written it better myself.
+    */
+   template<class D>
+   typename std::enable_if<!std::numeric_limits<D>::is_integer, bool>::type
+       almost_equal(const D x, const D y, const std::uint32_t ulp)
+   {
+       // the machine epsilon has to be scaled to the magnitude of the values used
+       // and multiplied by the desired precision in ULPs (units in the last place)
+       return std::abs(x-y) < std::numeric_limits<D>::epsilon() * std::abs(x+y) * ulp
+       // unless the result is subnormal
+              || std::abs(x-y) < std::numeric_limits<D>::min();
+   }
+
+};
+
+/** EXPONENTIAL GEN **/
+template< class T > class random_variate< T, raft::exponential >  : 
+   public raft::randomx< T >
+{
+public:
+   /**
+    * random_variate - instantiate a generator for a random number
+    * generator with an exponential distribution with the given
+    * mean.  The default generator is the Mersenne Twister.
+    * @param   mean - const double, mean of distribution
+    * @param   count - const std::uintmax_t, number of values to send
+    * @param   seed - const std::uint64_t user provided seed
+    * @param   gen - number generator, default: raft::mt19937
+    */
+   random_variate( const double mean,
+                   const std::uintmax_t count,
+                   const std::uint64_t seed, 
+                   const raft::rndgenerator gen = raft::mt19937 ) 
+                                      : randomx< T >( count, gen, seed ),
                                         mean( mean )
    {
    }
 
-   random( const double mean,
+   /**
+    * random_variate - instantiate a generator for a random number
+    * generator with an exponential distribution with the given
+    * mean.  The default generator is the Mersenne Twister.  This
+    * constructor uses the system /dev/random for a seed.  Be advised
+    * that this might be slightly slower to initialize depending on
+    * the amount of entropy in the system.
+    * @param   mean - const double, mean of distribution
+    * @param   count - const std::uintmax_t, number of values to send
+    * @param   seed - const std::uint64_t user provided seed
+    * @param   gen - number generator, default: raft::mt19937
+    */
+   random_variate( const double mean,
            const std::uintmax_t count,
-           const raft::rndgenerator gen ) : randomx( count, gen ),
+           const raft::rndgenerator gen = raft::mt19937 
+                                        ) : randomx< T >( count, gen ),
                                             mean( mean )
    {
    
    }
 
-   virtual ~random()
+   virtual ~random_variate()
    {
+      /** nothing to do here **/
    }
 
 
@@ -78,11 +187,12 @@ private:
    const double mean;
 };
 
-template< class T > class random : public raft::randomx< raft::gaussian, T >
+template< class T > class random_variate< T, raft::gaussian > : 
+   public raft::randomx< T >
 {
 public:
    /**
-    * random - constructor for normal distribution random number generator
+    * random_variate - constructor for normal distribution random number generator
     * which takes a mean and sigma.  This class uses the ziggurat method
     * which is one of the fastest methods of producing variates drawn from
     * a normal distribution.
@@ -91,18 +201,19 @@ public:
     * @param gen - random number generator type
     * @param seed - std::uint64_t user provided seed
     */
-   random( const double mean,
-           const double sigma,
-           const std::uintmax_t count,
-           const raft::rndgenerator gen,
-           const std::uint64_t seed ) : randomx( count, gen, seed ),
+   random_variate( const double mean,
+                   const double sigma,
+                   const std::uintmax_t count,
+                   const std::uint64_t seed, 
+                   const raft::rndgenerator gen = raft::mt19937
+           ) : randomx< T >( count, gen, seed ),
                                         mean( mean ),
                                         sigma( sigma )
    {
    }
 
    /**
-    * random - constructor for normal distribution random number generator
+    * random_variate - constructor for normal distribution random number generator
     * which takes a mean and sigma.  This class uses the ziggurat method
     * which is one of the fastest methods of producing variates drawn from
     * a normal distribution.
@@ -110,17 +221,18 @@ public:
     * @param   sigma - const double mean, standard deviation of distribution
     * @param   gen - raft::rndgenerator, type of random number generator
     */
-   random( const double mean,
-           const double sigma,
-           const std::uintmax_t count,
-           const raft::rndgenerator gen ) : randomx( count, gen ),
+   random_variate( const double mean,
+                   const double sigma,
+                   const std::uintmax_t count,
+                   const raft::rndgenerator gen = raft::mt19937
+           ) : randomx< T >( count, gen ),
                                             mean( mean ),
                                             sigma( sigma )
    {
    }
    
    /** destructor **/
-   virtual ~random()
+   virtual ~random_variate()
    {
    }
 
@@ -143,80 +255,71 @@ private:
    const double sigma;
 };
 
-/** UNIFORM **/
-template< class T > class random : public raft::randomx< raft::uniform, T >
+/** GAMMA DIST **/
+template< class T > class random_variate< T, raft::gammadist > : 
+   public raft::randomx< T >
 {
 public:
    /**
-    * random - constructor for uniform distribution
-    * @param gen - raft::rndgenerator type
-    * @param seed - const std::uint64_t user provided seed
+    * random_variate - constructor for gamma distribution random 
+    * number generaton which takes two shape parameters, alpha and
+    * beta.  Uses the Marsaglia-Tsang method via GNU GSL. 
+    * @param alpha - const std::double 
+    * @param beta - const std::double 
+    * @param gen - random number generator type
+    * @param seed - std::uint64_t user provided seed
     */
-   random( const T min,
-           const T max,
-           const std::uintmax_t count,
-           const raft::rndgenerator gen,
-           const std::uint64_t seed ) : randomx( count, gen, seed ),
-                                        min( min ),
-                                        diff( max - min )
+   random_variate( const double alpha,
+                   const double beta,
+                   const std::uintmax_t count,
+                   const std::uint64_t seed, 
+                   const raft::rndgenerator gen = raft::mt19937
+           ) : randomx< T >( count, gen, seed ),
+                                        alpha( alpha ),
+                                        beta( beta )
    {
-      assert( max > min );
    }
 
    /**
-    * random - constructor for uniform distribution
-    * @param   gen - raft::rndgenerator, generator type
+    * random_variate - constructor for gamma distribution random 
+    * number generaton which takes two shape parameters, alpha and
+    * beta.  Uses the Marsaglia-Tsang method via GNU GSL.  Seed
+    * drawn from /dev/random.
+    * @param alpha - const std::double 
+    * @param beta - const std::double 
+    * @param gen - random number generator type
     */
-   random( const T min,
-           const T max,
-           const std::uintmax_t count,
-           const raft::rndgenerator gen ) : randomx( count, gen ),
-                                            min( min ),
-                                            diff( max - min )
+   random_variate( const double alpha,
+                   const double beta,
+                   const std::uintmax_t count,
+                   const raft::rndgenerator gen = raft::mt19937
+           ) : randomx< T >( count, gen ),
+                                            alpha( alpha ),
+                                            beta( beta )
    {
-      
    }
-
-   virtual ~random()
+   
+   /** destructor **/
+   virtual ~random_variate()
    {
-      /** nothing to do here **/
    }
 
 
 protected:
+   /**
+    * draw - implements virtual function of randomx to return a normal
+    * variable of type T drawn from the normal distribution using the 
+    * gsl_ran_gaussian_ziggurat function cast to type (T) offset by 
+    * the specified mean.
+    * @return  T  - random var. drawn from normal distribution
+    */
    virtual T draw()
    {
-      const auto val( gsl_rng_uniform( (this)->rng ) );
-      if( almost_equal( val, 
-                        static_cast<  std::remove_reference< decltype( val ) > >(0.0),
-                        2 ) )
-      {
-         return( (T) min );
-      }
-      else
-      {
-         return( (T)( min + (diff * val) ) );
-      }
+      return( (T)(  gsl_ran_gamma( (this)->rng, alpha, beta ) ) );
    }
 private:
-   const T min;
-   const T diff;
-
-   /**
-    * NOTE: used from example here: http://en.cppreference.com/w/cpp/types/numeric_limits/epsilon,
-    * couldn't have written it better myself.
-    */
-   template<class D>
-   typename std::enable_if<!std::numeric_limits<D>::is_integer, bool>::type
-       almost_equal(const D x, const D y, const std::uint32_t ulp)
-   {
-       // the machine epsilon has to be scaled to the magnitude of the values used
-       // and multiplied by the desired precision in ULPs (units in the last place)
-       return std::abs(x-y) < std::numeric_limits<D>::epsilon() * std::abs(x+y) * ulp
-       // unless the result is subnormal
-              || std::abs(x-y) < std::numeric_limits<D>::min();
-   }
-
+   const double alpha;
+   const double beta;
 };
 
 }
