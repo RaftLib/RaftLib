@@ -1,0 +1,182 @@
+
+Begin optimization report for: main(int, char **)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at filter.tcc(138,7) inlined into main.cpp(14,34)
+<Peeled>
+LOOP END
+
+LOOP BEGIN at filter.tcc(138,7) inlined into main.cpp(14,34)
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 138 
+   remark #15477: vector loop cost: 59.500 
+   remark #15478: estimated potential speedup: 2.290 
+   remark #15479: lightweight vector operations: 17 
+   remark #15480: medium-overhead vector operations: 1 
+   remark #15481: heavy-overhead vector operations: 1 
+   remark #15482: vectorized math library calls: 1 
+   remark #15487: type converts: 1 
+   remark #15488: --- end vector loop cost summary ---
+LOOP END
+
+LOOP BEGIN at filter.tcc(138,7) inlined into main.cpp(14,34)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at filter.tcc(69,38) inlined into main.cpp(15,6)
+   remark #15523: loop was not vectorized: cannot compute loop iteration count before executing the loop.
+
+   LOOP BEGIN at filter.tcc(73,10) inlined into main.cpp(15,6)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+      remark #15346: vector dependence: assumed ANTI dependence between _value.22095 line 76 and _value.22095 line 76
+   LOOP END
+LOOP END
+
+LOOP BEGIN at main.cpp(17,24)
+   remark #15523: loop was not vectorized: cannot compute loop iteration count before executing the loop.
+LOOP END
+
+LOOP BEGIN at filter.tcc(178,7) inlined into main.cpp(23,46)
+<Peeled>
+LOOP END
+
+LOOP BEGIN at filter.tcc(178,7) inlined into main.cpp(23,46)
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 216 
+   remark #15477: vector loop cost: 101.500 
+   remark #15478: estimated potential speedup: 2.100 
+   remark #15479: lightweight vector operations: 41 
+   remark #15480: medium-overhead vector operations: 2 
+   remark #15482: vectorized math library calls: 1 
+   remark #15487: type converts: 2 
+   remark #15488: --- end vector loop cost summary ---
+LOOP END
+
+LOOP BEGIN at filter.tcc(178,7) inlined into main.cpp(23,46)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at filter.tcc(194,7) inlined into main.cpp(23,46)
+<Peeled>
+LOOP END
+
+LOOP BEGIN at filter.tcc(194,7) inlined into main.cpp(23,46)
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 5 
+   remark #15477: vector loop cost: 10.000 
+   remark #15478: estimated potential speedup: 1.940 
+   remark #15479: lightweight vector operations: 4 
+   remark #15480: medium-overhead vector operations: 1 
+   remark #15488: --- end vector loop cost summary ---
+LOOP END
+
+LOOP BEGIN at filter.tcc(194,7) inlined into main.cpp(23,46)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at filter.tcc(69,38) inlined into main.cpp(24,6)
+   remark #15523: loop was not vectorized: cannot compute loop iteration count before executing the loop.
+
+   LOOP BEGIN at filter.tcc(73,10) inlined into main.cpp(24,6)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+      remark #15346: vector dependence: assumed ANTI dependence between _value.22095 line 76 and _value.22095 line 76
+   LOOP END
+LOOP END
+
+
+Non-optimizable loops:
+
+
+LOOP BEGIN at main.cpp(26,24)
+   remark #15341: loop was not vectorized: nonstandard loop is not a vectorization candidate
+LOOP END
+===========================================================================
+
+Begin optimization report for: filterbase<double, (uint16_t)1U>::z_standardize(filterbase<double, (uint16_t)1U> *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at filter.tcc(91,7)
+<Peeled>
+LOOP END
+
+LOOP BEGIN at filter.tcc(91,7)
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 5 
+   remark #15477: vector loop cost: 20.000 
+   remark #15478: estimated potential speedup: 1.850 
+   remark #15479: lightweight vector operations: 4 
+   remark #15480: medium-overhead vector operations: 1 
+   remark #15488: --- end vector loop cost summary ---
+LOOP END
+
+LOOP BEGIN at filter.tcc(91,7)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at filter.tcc(97,7)
+<Peeled>
+LOOP END
+
+LOOP BEGIN at filter.tcc(97,7)
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 13 
+   remark #15477: vector loop cost: 48.000 
+   remark #15478: estimated potential speedup: 2.030 
+   remark #15479: lightweight vector operations: 11 
+   remark #15480: medium-overhead vector operations: 1 
+   remark #15488: --- end vector loop cost summary ---
+LOOP END
+
+LOOP BEGIN at filter.tcc(97,7)
+<Remainder>
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at filter.tcc(97,7)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at filter.tcc(104,7)
+<Peeled>
+LOOP END
+
+LOOP BEGIN at filter.tcc(104,7)
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 32 
+   remark #15477: vector loop cost: 74.000 
+   remark #15478: estimated potential speedup: 1.700 
+   remark #15479: lightweight vector operations: 6 
+   remark #15480: medium-overhead vector operations: 1 
+   remark #15488: --- end vector loop cost summary ---
+LOOP END
+
+LOOP BEGIN at filter.tcc(104,7)
+<Remainder>
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at filter.tcc(104,7)
+<Remainder>
+LOOP END
+===========================================================================

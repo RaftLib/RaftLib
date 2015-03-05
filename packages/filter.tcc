@@ -64,6 +64,12 @@ public:
          std::cerr << "size of 'c' must be at least the size of the filter.\n";
          exit( 0 );
       }
+      /** 
+       * TODO, clean up this code...this was the easy way to write it
+       * however the compiler isn't going to be able to vectorize this
+       * for the most part...the inner section should emit a series
+       * of dot-product instructions.
+       */
       /** else apply filter **/
       for( auto it_center( c.begin() + RADIUS ); 
             it_center != ( c.end() - RADIUS ); ++it_center )
@@ -173,17 +179,17 @@ public:
       const auto pi_sqr( std::sqrt( 2 * M_PI ) );
       const auto sigma5( std::pow( SIGMA, 5 ) );
       const auto sigma3( std::pow( SIGMA, 3 ) );
-      const auto twoSigma2( 2 * (SIGMA * SIGMA) );
+      const auto twoSigma2( 2 * std::pow( SIGMA, 2 ) );
       double total( 0.0 );
       for( auto &val : (this)->arr )
       {
-         const auto numerator(
-            std::pow( M_E, -( ( x * x ) / twoSigma2 ) ) 
+         const double numerator(
+            std::pow( M_E, -( std::pow( x, 2 ) / twoSigma2 ) ) 
          );
-         const auto a(
-               ( numerator * ( x * x )  ) / ( pi_sqr * sigma5 ) 
+         const double a(
+               ( numerator * std::pow( x, 2 )  ) / ( pi_sqr * sigma5 ) 
          );
-         const auto b(
+         const double b(
                numerator / ( pi_sqr * sigma3 ) 
          );
          val = a - b;
