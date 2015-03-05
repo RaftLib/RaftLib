@@ -43,13 +43,13 @@ public:
    
    double  mean()
    {
-      return( (double) T / (double) N );
+      return( (double) sum / (double) N );
    }
 
    double std()
    {
       const double a( (double) sum_square / (double) N );
-      const double b( (double) sum / (double) N )
+      const double b( (double) sum / (double) N );
       const double b_squared( b * b );
       return( std::sqrt( a - b_squared ) );
    }

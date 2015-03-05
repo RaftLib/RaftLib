@@ -27,6 +27,7 @@
 #include <array>
 #include <cmath>
 #include <exception>
+#include <raftstat>
 
 enum FilterType { Gaussian, LaplacianGaussian };
 
@@ -84,18 +85,28 @@ public:
     * to one as well, not always the desired behavior but sometimes
     * it is useful.
     */
-   void standardize()
+   virtual void z_standardize()
    {
       D total( (D) 0 );
       for( const auto val : arr )
       {
-         total += arr;
+         total += val;
       }
+      const auto mean( total / arr.size() );
+      double sumsq;
+      for( const auto val : arr )
+      {
+         const auto term( val - mean ); 
+         sumsq += (term * term);
+      }
+      const auto sd( std::sqrt( sumsq ) );
+
       for( auto &val : arr )
       {
-         val = val - arr;
+         val = ( val - mean ) / sd;
       }
    }
+
 
 
 
@@ -124,16 +135,14 @@ public:
    {
       /** filter function **/
       std::int32_t x( - RADIUS );
-      auto filter_func( [&]( D &val ) -> void
+      for( auto &val : (this)->arr )
       {
          const double half_x_squared( (double)(-(x*x)) / 2.0 );
          const double numerator( std::exp( half_x_squared ) );
          const double denominator( 2.506628274631000502415765 );
          val = ( numerator / denominator );
          x++;
-      } );
-      /** encode filter **/
-      std::for_each( (this)->arr.begin(), (this)->arr.end(), filter_func );
+      }
    }
    
    virtual ~filter()
@@ -142,7 +151,9 @@ public:
    }
 };
 
-template < typename D, 
+#define _USE_MATH_DEFINES
+
+template < typename D,
            std::uint16_t RADIUS > class filter< D, 
                                                 RADIUS, 
                                                 LaplacianGaussian > : 
@@ -150,20 +161,40 @@ template < typename D,
                                                                       RADIUS >
 {
 public:
-   filter() : filterbase< D, RADIUS >()
+   /**
+    * LaplacianGaussian filter, takes a single parameter
+    * which is the standard deviation of the underlying
+    * gaussian.
+    */
+   filter( const double SIGMA ) : filterbase< D, RADIUS >()
    {
       /** filter function **/
       std::int32_t x( - RADIUS );
-      auto filter_func( [&]( D &val ) -> void
+      const auto pi_sqr( std::sqrt( 2 * M_PI ) );
+      const auto sigma5( std::pow( SIGMA, 5 ) );
+      const auto sigma3( std::pow( SIGMA, 3 ) );
+      const auto twoSigma2( 2 * (SIGMA * SIGMA) );
+      double total( 0.0 );
+      for( auto &val : (this)->arr )
       {
-         const double half_x_squared( (double)(-(x*x)) / 2.0 );
-         const double numerator( std::exp( half_x_squared ) );
-         const double denominator( 2.506628274631000502415765 );
-         val = ( numerator / denominator );
+         const auto numerator(
+            std::pow( M_E, -( ( x * x ) / twoSigma2 ) ) 
+         );
+         const auto a(
+               ( numerator * ( x * x )  ) / ( pi_sqr * sigma5 ) 
+         );
+         const auto b(
+               numerator / ( pi_sqr * sigma3 ) 
+         );
+         val = a - b;
+         total += val;
          x++;
-      } );
-      /** encode filter **/
-      std::for_each( (this)->arr.begin(), (this)->arr.end(), filter_func );
+      }
+      const auto mean( total / (this)->arr.size() );
+      for( auto &val : (this)->arr )
+      {
+         val -= mean;
+      }
    }
    
    virtual ~filter()

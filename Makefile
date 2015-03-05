@@ -17,7 +17,7 @@ endif
 TEST = -O0 -g 
 RELEASE = -Ofast -mtune=native
 
-BUILD = $(TEST) 
+BUILD = $(RELEASE) 
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11  -DRDTSCP=1
@@ -56,6 +56,7 @@ install:
 	cp raft $(PREFIX)/include/
 	cp raftio $(PREFIX)/include/
 	cp raftrandom $(PREFIX)/include/
+	cp raftstat $(PREFIX)/include/
 	echo "Install complete!"
 
 uninstall:
