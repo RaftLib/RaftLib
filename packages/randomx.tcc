@@ -27,8 +27,8 @@ namespace raft{
 
 enum rndtype { exponential, gaussian, uniform }; 
 
-template < enum  RNDTYPE, class T > class randomx : public raft::randombase, 
-                                                    public raft::parallel_k
+template < raft::rndtype RNDTYPE, class T > class randomx : public raft::randombase, 
+                                                            public raft::parallel_k
 {
 public:
    /**

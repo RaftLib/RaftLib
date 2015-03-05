@@ -35,7 +35,7 @@
 namespace raft
 {
 
-template< enum RNDTYPE, class T > class random : public raft::randomx< RNDTYPE, T >;
+template< raft::rndtype RNDTYPE, class T > class random;
 
 template< class T > class random : public raft::randomx< raft::exponential, T >
 {

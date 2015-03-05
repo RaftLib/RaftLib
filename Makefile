@@ -55,6 +55,7 @@ install:
 	cp ./packages/* $(PREFIX)/include/raft_dir/
 	cp raft $(PREFIX)/include/
 	cp raftio $(PREFIX)/include/
+	cp raftrandom $(PREFIX)/include/
 	echo "Install complete!"
 
 uninstall:

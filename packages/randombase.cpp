@@ -29,7 +29,8 @@
 using namespace raft;
 
 
-const std::map< rndgenerator, const gsl_rng_type* >
+std::map< raft::rndgenerator, 
+                const gsl_rng_type* >
    ptrmap = 
 {  
    {borosh13, gsl_rng_borosh13},

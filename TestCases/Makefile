@@ -31,6 +31,7 @@ lambdatest: lambdatest.o
 allocate_s: allocate_s.o
 foreach: foreach.o
 peekrange: peekrange.o
+random: random.o
 
 .PHONY: clean
 clean:

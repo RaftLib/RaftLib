@@ -19,4 +19,21 @@
  */
 
  #include <raft>
+ #include <raftrandom>
+ #include <cstdint>
  #include <iostream>
+ #include <raftio>
+
+
+ int
+ main( int argc, char **argv )
+ {
+   using namespace raft;
+   auto rndgen( 
+      kernel::make< random< uniform, std::uint32_t > >( 
+         100, 200, 100, mt19937 ) );
+   auto pr( kernel::make< print< std::uint32_t, '\n' > >() );
+   map.link( rndgen, pr );
+   map.exe();
+   return( EXIT_SUCCESS );
+ }
