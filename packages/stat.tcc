@@ -223,5 +223,36 @@ public:
       }
       return;
    }
+
+   /**
+    * scale_to_range - scale a data set by a specific range
+    * @param c - Container&&, data set to scale
+    */
+   template < class Container, typename A, typename B >
+   static
+   void scale_to_range( Container &&c, const A a, const B b )
+   {
+      using c_type = typename std::remove_reference< decltype( (*c.begin()) )>::type;
+      c_type min( std::numeric_limits< c_type >::max() );
+      c_type max( std::numeric_limits< c_type >::min() );
+      for( const auto val : c )
+      {
+         if( val < min )
+         {
+            min = val;
+         }
+         if( val > max )
+         {
+            max = val;
+         }
+      }
+      const auto range( b - a );
+      const auto denominator( max - min );
+      for( auto &val : c )
+      {
+         val = ( ( range * ( val - min ) ) / denominator ) + a;
+      }
+      return;
+   }
 };
 #endif /* END _STAT_TCC_ */

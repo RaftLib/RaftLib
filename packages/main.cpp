@@ -16,7 +16,7 @@ main( int argc, char **argv )
       std::cout << val << " ";
    }
    std::cout << "\n";
-   stat::sigma_scale( data, 5.0 );
+   stat::scale_to_range( data, 5.23, 10 );
    for( const auto val : data )
    {
       std::cout << val << " ";
