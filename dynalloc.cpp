@@ -60,7 +60,7 @@ dynalloc::hash( PortInfo &a, PortInfo &b )
 void
 dynalloc::run()
 {
-   auto alloc_func = [&]( PortInfo &a, PortInfo &b )
+   auto alloc_func = [&]( PortInfo &a, PortInfo &b, void *data )
    {
       assert( a.type == b.type );
       /** assume everyone needs a heap for the moment to get working **/
@@ -98,7 +98,7 @@ dynalloc::run()
     * montor interval three times or more then increase size.
     */
 
-   auto mon_func = [&]( PortInfo &a, PortInfo &b ) -> void
+   auto mon_func = [&]( PortInfo &a, PortInfo &b, void *data ) -> void
    {
       const float ratio( .75 );
       const auto hash_val( dynalloc::hash( a, b ) );

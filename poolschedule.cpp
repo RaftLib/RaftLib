@@ -78,6 +78,7 @@ pool_schedule::start()
          it = container.begin();
       }
    }
+
    auto is_done( []( std::vector< KernelContainer* > &containers ) -> bool
    {
       for( auto *c : containers )
@@ -94,6 +95,7 @@ pool_schedule::start()
    {
       std::chrono::microseconds dura( 100 );
       std::this_thread::sleep_for( dura );
+      /** add re-partitioning code here **/
    }
    /** done **/
    for( auto &flag : status_flags )

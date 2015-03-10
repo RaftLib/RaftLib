@@ -40,9 +40,7 @@ template < class T, Type::RingBufferType type >
 public:
 DepartureRateSampleType() : RateSampleType< T, type >(),
                             blocked( false ),
-                            finished( false ),
-                            window( 16 ),
-                            filtered( 12 )
+                            finished( false )
 {
 }
 
@@ -75,11 +73,6 @@ accept( volatile bool &converged )
    if( converged &&  ! (this)->blocked && ! (this)->finished )
    {
       (this)->real += (this)->temp;
-      if( window.size() == 16 )
-      {
-         window.pop();
-      }
-      window.push( (this)->temp.items_copied );
 
 #ifdef _EXP_      
       if( item_index < 100000 )

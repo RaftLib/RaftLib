@@ -35,6 +35,7 @@
 void
 GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                  edge_func func,
+                 void      *data,
                  bool      connected_error )
 {
    std::set< raft::kernel* > visited_set;
@@ -63,7 +64,7 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
          {
             PortInfo &dst( 
                source.other_kernel->input.getPortInfoFor( source.other_name ) );
-            func( source, dst );
+            func( source, dst, data );
          }
          else
          if( connected_error )

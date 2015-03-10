@@ -19,5 +19,13 @@
  */
 #ifndef _PARTITION_HPP_
 #define _PARTITION_HPP_  1
+class Partition
+{
+public:
+   class Partition() = delete;
 
+   static 
+   void
+   noWeight( 
+};
 #endif /* END _PARTITION_HPP_ */

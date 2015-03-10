@@ -39,7 +39,7 @@ OBJS = $(addsuffix .o, $(COBJS) ) $(addsuffix .o, $(CXXOBJS) )
 
 
 INCS = $(addprefix -I, $(DIRINCS))
-LIBS = $(RT) $(PTHREAD) $(PACKAGELIBS) 
+LIBS = $(RT) $(PTHREAD) $(PACKAGELIBS) -lscotch -lscotcherr 
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(OBJS)

@@ -55,7 +55,8 @@ Map::checkEdges( std::set< raft::kernel* > &source_k )
     * errors.
     */
    GraphTools::BFS( source_k, 
-                    []( const PortInfo &a, const PortInfo &b ){ return; },
+                    []( const PortInfo &a, const PortInfo &b, void *data ){ return; },
+                    nullptr,
                     true );
    return;
 }
@@ -72,7 +73,7 @@ Map::printEdges( std::set< raft::kernel* > &source_k )
    gviz_output << "digraph G{\n";
    gviz_output << "size=\"10,10\";\n";
    GraphTools::BFS( source_k,
-                    [&]( const PortInfo &a, const PortInfo &b )
+                    [&]( const PortInfo &a, const PortInfo &b, void *data )
                     {
                         int status( 0 );
                         const std::string name_a( abi::__cxa_demangle( typeid( *(a.my_kernel) ).name(), 0, 0, &status ) );
@@ -92,6 +93,7 @@ Map::printEdges( std::set< raft::kernel* > &source_k )
                            a.my_name << " to " << a.other_name << "\" ]";
                         gviz_edge_map.push_back( ss.str() );
                     },
+                    nullptr,
                     false );
    for( auto it( gviz_node_map.begin() ); it != gviz_node_map.end(); ++it )
    {
