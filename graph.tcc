@@ -26,6 +26,7 @@
 #include <set>
 #include <utility>
 
+
 namespace raft
 {
 template< typename T > struct ScotchTables
@@ -52,9 +53,11 @@ template < typename EDGETYPE, typename WEIGHT > class graph;
 template <> class graph< std::int32_t, std::int32_t >
 {
 public:
-
+   
+   /** don't need anything special **/
    graph()  = default;
 
+   /** destructor **/
    ~graph()
    {
       for( auto &pair : edgelist )
@@ -63,6 +66,16 @@ public:
       }
    }
 
+   /**
+    * addEdge - add an edge for each "edge" in the actual 
+    * graph, pretty self explanatory.  Weights are whatever
+    * you want them to be.  The function will add a back
+    * edge to the underlying graph to be compatible with
+    * the Scotch partitioning framework.
+    * @param   src - const std::int32_t, source
+    * @param   dst - const std;:int32_t, destination
+    * @param   weight - const std::int32_t weight
+    */
    void addEdge( const std::int32_t src,
                  const std::int32_t dst,
                  const std::int32_t weight )
@@ -75,6 +88,13 @@ public:
    }
 
 
+   /**
+    * getScotchTables() - call once you are completely done
+    * adding edges to the graph, formats the returned arrays
+    * accodingly.  The returned object will release the memory
+    * allocated once it leaves the current frame.
+    * @return ScotchTables< std::int32_t >
+    */
    ScotchTables< std::int32_t >
    getScotchTables()
    {
@@ -119,8 +139,17 @@ public:
 
 
 private:
+   /**
+    * wt - struct to hold the destination of each edge,
+    * and the weight associated with the src-dst combination
+    */
    struct wt
    {
+      /**
+       * wt - constructor
+       * @param   dst - const std::int32_t, destination of appropriate source vertex
+       * @param   weight - const std::int32_t, weight associated with this edge (arc)
+       */
       wt( const std::int32_t dst,
           const std::int32_t weight ) : dst( dst ),
                                         weight( weight )
@@ -128,20 +157,26 @@ private:
          /** nothing to do here **/
       }
 
+      /** copy constructor **/
       wt( const wt &other ) : dst( other.dst ),
                               weight( other.weight )
       {
       }
 
+      /** needed for find operation **/
       bool operator == ( const wt &other )
       {
          return( dst == other.dst );
       }
 
-      std::int32_t dst    = 0;
-      std::int32_t weight = 0;
+      const std::int32_t dst;
+      const std::int32_t weight;
    };
-   
+  
+   /**
+    * __addEdge - helper method for same named
+    * function above, see its documentation.
+    */
    void __addEdge( const std::int32_t src,
                    const std::int32_t dst,
                    const std::int32_t weight )
@@ -177,11 +212,15 @@ private:
       }
       return;
    }
-
+   /** edge adjacency list **/
    std::map< std::int32_t, std::vector< wt >* > edgelist; 
+   /** 
+    * simplifies counting the number of vertices.
+    * TODO, recode with counter...if this gets large
+    * it could get really really large
+    */
    std::set< std::int32_t >                     vertex_hash;
 };
 
-} /** end namespace raft **/
 
 #endif /* END _GRAPH_TCC_ */
