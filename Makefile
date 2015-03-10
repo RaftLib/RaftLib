@@ -1,7 +1,7 @@
 CC    ?= gcc
 CXX   ?= g++
 
-PREFIX = /usr/local
+PREFIX ?= /usr/local
 
 include fifo/buffer.makefile
 include packages/packages.makefile
@@ -64,7 +64,10 @@ uninstall:
 	rm -rf $(PREFIX)/include/raft_dir
 	rm -rf $(PREFIX)/include/raft
 	rm -rf $(PREFIX)/include/raftio
+	rm -rf $(PREFIX)/include/raftrandom
+	rm -rf $(PREFIX)/include/raftstat
 	echo "Uninstalled!"
+
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCS) -o $@ $<
 
