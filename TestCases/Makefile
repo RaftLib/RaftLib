@@ -11,7 +11,7 @@ RELEASE = -O3 -mtune=native
 
 BUILD = $(TEST)
 CFLAGS   =  $(BUILD) -Wall -std=c99 
-CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1  
+CXXFLAGS =  $(BUILD) -Wall -fpermissive -std=c++11 -DRDTSCP=1  
 LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl $(RT) 
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \

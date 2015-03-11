@@ -94,7 +94,8 @@ public:
     * only a single input otherwise an exception will be thrown.
     * @param   a - raft::kernel*, src kernel
     * @param   b - raft::kernel*, dst kernel
-    * @throws  AmbiguousPortAssignmentException - thrown if either src or dst have more than 
+    * @throws  AmbiguousPortAssignmentException - thrown if either src or 
+    *          dst have more than 
     *          a single port to link.
     * @return  kernel_pair_t - references to src, dst kernels.
     */

@@ -88,9 +88,10 @@ protected:
    std::vector< std::uint8_t >             status_flags;
 
    /**
-    * stores all kernels that we're currently executing, migth
+    * stores all kernels that we're currently executing, might
     * be removed from KernelContainer objects, but they'll still
-    * be here.
+    * be here. TODO, double check to make sure we're deleting
+    * and removing these once everything is done.
     */
    std::vector< raft::kernel* >    kernel_map;
 
@@ -101,6 +102,7 @@ private:
     * mini-scheduler which runs all kernels in a given
     * container.
     */
-   static void poolrun( KernelContainer *container, volatile std::uint8_t &sched_done );
+   static void poolrun( KernelContainer *container, 
+                        volatile std::uint8_t &sched_done );
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */

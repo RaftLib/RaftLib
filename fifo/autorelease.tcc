@@ -1,5 +1,11 @@
 /**
- * autorelease.tcc - 
+ * autorelease.tcc - objects that are created with the express 
+ * purpose of handling the release and pushing of data to the
+ * consumer kernel without the user having to take any action.
+ * Each object is designed to handle pointers or references
+ * instead of actual data by copy so that the overhead is 
+ * minimal and actual actions are handled by the constructor
+ * or destructor.
  * @author: Jonathan Beard
  * @version: Fri Jan  2 19:29:36 2015
  * 
@@ -30,10 +36,14 @@ enum autotype { allocatetype,
 template< class T, autotype type = poptype > class autorelease
 {
 public:
+   /**
+    * constructor,only used by the fifo
+    * @param fifo - FIFO&, current fifo that the object points to
+    */
    autorelease( FIFO &fifo ) : fifo( fifo ),
                                item( fifo.peek< T >( &signal ) )
    {}
-
+   /** copy constructor **/
    autorelease( const autorelease< T, type >  &other ) : 
       fifo( other.fifo ),
       item( other.item ),
@@ -50,6 +60,11 @@ public:
       const_cast< autorelease< T, type >& >( other ).copied = true;
    }
    
+   /**
+    * destructor - handles poping of the object
+    * which is implemented as a peek, requiring the
+    * call of unpeek() and recycle(1).
+    */
    ~autorelease()
    {
       if( ! copied )
@@ -59,20 +74,31 @@ public:
       }
    }
 
+   /**
+    * *operator - dereference this auto-release objec to 
+    * get the actual value (by reference).
+    * @return T&
+    */
    T& operator *()
    {
       return( item );
    }
-
+   /**
+    * sig - get the current signal
+    * @return raft::signal
+    */
    raft::signal& sig()
    {
       return( (this)->signal );
    }
 private:
-
+   /** reference to fifo, needed for peek ops **/
    FIFO         &fifo;
+   /** copy of signal at the current peek point **/
    raft::signal signal;
+   /** reference to item, retrieved via peek call **/
    T            &item;
+   /** necessary in case the compiler doesn't optimize copy **/
    bool         copied = false;
 };
 

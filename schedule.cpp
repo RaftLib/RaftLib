@@ -7,6 +7,7 @@
 
 Schedule::Schedule( Map &map ) : map_ref( map )
 {
+   //TODO, see if we want to keep this 
    handlers.addHandler( raft::quit, Schedule::quitHandler ); 
 }
 
