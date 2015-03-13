@@ -82,5 +82,8 @@ public:
     * @return KernelIterator
     */
    auto end() -> KernelIterator< decltype( list.end() ) >;
+
+   void lock();
+   void unlock();
 };
 #endif /* END _KERNELCONTAINER_HPP_ */

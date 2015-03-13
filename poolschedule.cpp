@@ -76,7 +76,6 @@ pool_schedule::start()
                          partition_mapping,
                          n_threads );
 
-      std::int64_t i( 0 );
       for( auto i( 0 ); i < kernel_map.size(); i++ )
       {
          container[ partition_mapping[ i ] ]->addKernel( kernel_map[ i ] );
@@ -128,7 +127,6 @@ pool_schedule::poolrun( KernelContainer *container, volatile std::uint8_t &sched
 {
    while( sched_done == 0 )
    {
-      std::cerr << "here: " << "\n";
       std::vector< raft::kernel* > unschedule_list;
       for( auto &kernel : *container )
       {
@@ -143,6 +141,7 @@ pool_schedule::poolrun( KernelContainer *container, volatile std::uint8_t &sched
       {
          container->removeKernel( kernel );
       }
+      container->unlock();
       if( container->size() == 0 )
       {
          std::chrono::microseconds dura( 100 );

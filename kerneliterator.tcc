@@ -41,17 +41,21 @@ template < class T > class KernelIterator :
 private:
    /** declare local iterator of the type inside the container **/
    T iterator;   
-   std::mutex &lock;
+   std::mutex &locka;
+   std::mutex &lockb;
 public:
-   KernelIterator( T iterator, std::mutex &lock ) : iterator( iterator ),
-                                                     lock( lock )
+   KernelIterator( T iterator, 
+                   std::mutex &locka,
+                   std::mutex &lockb   ) : iterator( iterator ),
+                                           locka( locka ),
+                                           lockb( lockb )
    {
-      (this)->lock.lock(); 
    }
    
    virtual ~KernelIterator()
    {
-      lock.unlock();
+      locka.unlock();
+      lockb.unlock();
    }
 
    /** increment in the usual way **/ 

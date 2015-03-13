@@ -19,6 +19,8 @@
  */
 #include "kernelcontainer.hpp"
 #include <cassert>
+#include <mutex>
+
 
 KernelContainer::KernelContainer()
 {
@@ -32,9 +34,9 @@ void
 KernelContainer::addKernel( raft::kernel *kernel )
 {
    assert( kernel != nullptr );
-   std::lock_guard< decltype( m_begin ) > lb( m_begin );
-   std::lock_guard< decltype( m_end ) >   le( m_end );
+   lock();
    list.insert( kernel );
+   unlock();
 }
 
 bool
@@ -42,8 +44,7 @@ KernelContainer::removeKernel( raft::kernel *kernel )
 {
    assert( kernel != nullptr );
    /** get both locks **/
-   std::lock_guard< decltype( m_begin ) > lb( m_begin );
-   std::lock_guard< decltype( m_end ) >   le( m_end );
+   lock();
    auto el( list.find( kernel ) );
    if( el == list.end() )
    {
@@ -54,6 +55,7 @@ KernelContainer::removeKernel( raft::kernel *kernel )
       list.erase( el );
       return( true );
    }
+   unlock();
 }
 
 auto
@@ -65,11 +67,33 @@ KernelContainer::size() -> decltype( list.size() )
 auto
 KernelContainer::begin() -> KernelIterator< decltype( list.begin() ) >
 {
-   return( KernelIterator< decltype( list.begin() ) >( list.begin(), m_begin ) );
+   lock();
+   return( KernelIterator< decltype( list.begin() ) >( list.begin(), 
+                                                       m_begin,
+                                                       m_end ) );
 }
 
 auto
 KernelContainer::end() -> KernelIterator< decltype( list.end() ) >
 {
-   return( KernelIterator< decltype( list.end() ) >( list.end(), m_end ) );
+   return( KernelIterator< decltype( list.end() ) >( list.end(), 
+                                                     m_begin,
+                                                     m_end ) );
+}
+
+void
+KernelContainer::lock()
+{
+   while( std::try_lock( m_begin, m_end ) != true )
+   {
+      m_begin.unlock();
+      m_end.unlock();
+   }
+}
+
+void
+KernelContainer::unlock()
+{
+   m_begin.unlock();
+   m_end.unlock();
 }
