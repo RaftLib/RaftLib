@@ -245,10 +245,6 @@ protected:
    
    /** we need some friends **/
    friend class MapBase;
-   friend void GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
-                                edge_func fun,
-                                void *data,
-                                bool connection_error );
-   
+   friend class GraphTools; 
 };
 #endif /* END _PORT_HPP_ */

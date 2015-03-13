@@ -5,21 +5,29 @@
 
 using namespace raft;
 
-std::size_t kernel::kernel_id( 0 );
+std::size_t kernel::kernel_count( 0 );
 
 /** default **/
-kernel::kernel()
+kernel::kernel() : kernel_id( kernel::kernel_count )
 {
-   kernel::kernel_id++;
+   kernel::kernel_count++;
 };
 
 /** existing memory **/
 kernel::kernel( void * const ptr, 
                 const std::size_t nbytes ) : 
    input(  this, ptr, nbytes ),
-   output( this, ptr, nbytes )
+   output( this, ptr, nbytes ),
+   kernel_id( kernel::kernel_count )
 {
 }
+
+std::size_t
+kernel::get_id()
+{
+   return( kernel_id );
+}
+
 
 //std::string
 //kernel::getName()

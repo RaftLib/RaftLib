@@ -91,6 +91,7 @@ public:
       return( nullptr );
    }
 
+   std::size_t get_id();
 protected:
    /**
     * PORTS - input and output, use these to interact with the
@@ -102,17 +103,18 @@ protected:
 
    friend class ::MapBase;
    friend class ::Schedule;
-   friend void  GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
-                                 edge_func fun,
-                                 void *data,
-                                 bool connection_error );
+   friend class ::GraphTools;
    
    /**
     * NOTE: doesn't need to be atomic since only one thread
     * will have responsibility to to create new compute 
     * kernels.
     */
-   static std::size_t kernel_id;
+   static std::size_t kernel_count;
+
+private:
+   const  std::size_t kernel_id;
+
 };
 } /** end namespace raft */
 #endif /* END _KERNEL_HPP_ */

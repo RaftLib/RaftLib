@@ -48,14 +48,40 @@
  * in order to allow inline "new" construction of kernels that
  * might be re-used in multiple instances.
  */
-struct kernel_pair_t
+class kernel_pair_t
 {
-   kernel_pair_t( raft::kernel &a, raft::kernel &b ) : src( a ),
-                                           dst( b )
+public:
+   kernel_pair_t( raft::kernel &a, raft::kernel &b ) : 
+                                           src( &a ),
+                                           dst( &b )
    {
    }
-   raft::kernel &src;
-   raft::kernel &dst;
+
+   kernel_pair_t( kernel_pair_t &other ) : src( other.src ),
+                                           dst( other.dst )
+   {
+   }
+   
+   kernel_pair_t& operator == ( kernel_pair_t &other )
+   {
+      src = other.src;
+      dst = other.dst;
+      return( *this );
+   }
+
+   raft::kernel& getSrc()
+   {
+      return( *src );
+   }
+
+   raft::kernel& getDst()
+   {
+      return( *dst );
+   }
+
+private:
+   raft::kernel *src;
+   raft::kernel *dst;
 };
 
 

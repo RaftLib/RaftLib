@@ -12,11 +12,11 @@ RELEASE = -O3 -mtune=native
 BUILD = $(TEST)
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -fpermissive -std=c++11 -DRDTSCP=1  
-LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl $(RT) 
+LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl -lscotch -lscotcherr  $(RT) 
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
       join lambdatest allocate_s foreach peekrange gamma uniform \
-      gaussian exponential
+      gaussian exponential partitionTest
 
 OBS = $(addsuffix .o, $(EXE))
 
@@ -32,11 +32,12 @@ lambdatest: lambdatest.o
 allocate_s: allocate_s.o
 foreach: foreach.o
 peekrange: peekrange.o
-gamma: gamma.cpp
-uniform: uniform.cpp
-gaussian: gaussian.cpp
-exponential: exponential.cpp
+gamma: gamma.o
+uniform: uniform.o
+gaussian: gaussian.o
+exponential: exponential.o
+partitionTest: partitionTest.o
 
 .PHONY: clean
 clean:
-	rm -rf $(EXE) $(OBS) intelremotemonfifo*
+	rm -rf $(EXE) $(OBS) intelremotemonfifo* *.dwarf

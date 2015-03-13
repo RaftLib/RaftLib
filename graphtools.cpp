@@ -47,6 +47,34 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                      queue.push( k );
                      visited_set.insert( k );
                   } );
+   GraphTools::__BFS( queue, visited_set, func, data, connected_error );
+}
+
+void
+GraphTools::BFS( std::vector< raft::kernel* > &source_kernels,
+                 edge_func func,
+                 void      *data,
+                 bool      connected_error )
+{
+   std::set< raft::kernel* >       visited_set;
+   std::queue< raft::kernel* >     queue;
+   std::for_each( source_kernels.begin(),
+                  source_kernels.end(),
+                  [&]( raft::kernel *k )
+                  { 
+                     queue.push( k );
+                     visited_set.insert( k );
+                  } );
+   GraphTools::__BFS( queue, visited_set, func, data, connected_error );
+}
+
+void 
+GraphTools::__BFS( std::queue< raft::kernel* > &queue,
+                   std::set<   raft::kernel* > &visited_set,
+                   edge_func                   func,
+                   void                        *data,
+                   bool                        connected_error )
+{
    while( queue.size() > 0 )
    {
       auto *k( queue.front() );

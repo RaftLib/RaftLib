@@ -106,7 +106,6 @@ public:
       auto edge_index( 0 );
       for( const auto vertex_id : vertex_hash )
       {
-         std::cerr << vertex_id << "\n";
          const auto out_edge_size( edgelist[ vertex_id ]->size() );
          vertex_list[ vertex_list_index++ ] = edge_index;
          std::vector< wt > &dstlist( (*edgelist[ vertex_id ]) );
@@ -222,5 +221,5 @@ private:
    std::set< std::int32_t >                     vertex_hash;
 };
 
-
+} /** end namespace raft **/
 #endif /* END _GRAPH_TCC_ */

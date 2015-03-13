@@ -92,11 +92,12 @@ protected:
    /**
     * printEdges - print a nice pretty picture using graphviz
     * of the current layout, future versions will pop up a 
-    * window and display the topolgoy as a 3-d graph, but we'll
+    * window and display the topology as a 3-d graph, but we'll
     * save that till everything is relatively stable.
     * @param source_k, &std::set< raft::kernel* >
     */
    void printEdges( std::set< raft::kernel* > &source_k );
+   
 
 
    friend class Schedule;

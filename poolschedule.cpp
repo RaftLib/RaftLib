@@ -23,11 +23,12 @@
 #include <algorithm>
 #include <chrono>
 #include <thread>
-
 #include "kernel.hpp"
 #include "map.hpp"
 #include "poolschedule.hpp"
 #include "rafttypes.hpp"
+
+#include "partition.hpp"
 
 pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
                                      n_threads( std::thread::hardware_concurrency() ),
@@ -69,14 +70,28 @@ pool_schedule::scheduleKernel( raft::kernel *kernel )
 void
 pool_schedule::start()
 {
-   auto it( container.begin() );
-   for( auto *kernel : kernel_map )
    {
-      (*it)->addKernel( kernel );
-      if( ++it == container.end() )
+      std::vector< std::size_t > partition_mapping;
+      Partition::simple( kernel_map, 
+                         partition_mapping,
+                         n_threads );
+
+      std::int64_t i( 0 );
+      for( auto i( 0 ); i < kernel_map.size(); i++ )
       {
-         it = container.begin();
+         container[ partition_mapping[ i ] ]->addKernel( kernel_map[ i ] );
       }
+      //std::cerr << "\n";
+      //auto it( container.begin() );
+      //for( auto *k : kernel_map )
+      //{
+      //   (*it)->addKernel( k );
+      //   ++it;
+      //   if( it == container.end() )
+      //   {
+      //      it = container.begin();
+      //   }
+      //}
    }
 
    auto is_done( []( std::vector< KernelContainer* > &containers ) -> bool
@@ -113,6 +128,7 @@ pool_schedule::poolrun( KernelContainer *container, volatile std::uint8_t &sched
 {
    while( sched_done == 0 )
    {
+      std::cerr << "here: " << "\n";
       std::vector< raft::kernel* > unschedule_list;
       for( auto &kernel : *container )
       {
