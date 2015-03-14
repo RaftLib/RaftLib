@@ -13,7 +13,7 @@ main( int argc, char **argv )
    auto rndgen( raft::kernel::make< 
       raft::random_variate< std::uint32_t, raft::uniform > >( 100, 
                                                               10000, 
-                                                              100 ) );
+                                                              1000000 ) );
    
    using sub = raft::lambdak< std::uint32_t >;
    auto  l_sub( [&]( Port &input,

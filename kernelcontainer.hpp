@@ -32,8 +32,7 @@ class KernelContainer
 private:
    std::set< raft::kernel * > list;
    
-   std::mutex                   m_begin;
-   std::mutex                   m_end;
+   std::mutex                   access;
    friend class KernelIterator< decltype( list.begin() ) >;
 
 public:

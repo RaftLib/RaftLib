@@ -20,7 +20,6 @@
 #ifndef _KERNELITERATOR_TCC_
 #define _KERNELITERATOR_TCC_  1
 #include <iterator>
-#include <mutex>
 #include <vector>
 #include "kernelcontainer.hpp"
 
@@ -41,21 +40,13 @@ template < class T > class KernelIterator :
 private:
    /** declare local iterator of the type inside the container **/
    T iterator;   
-   std::mutex &locka;
-   std::mutex &lockb;
 public:
-   KernelIterator( T iterator, 
-                   std::mutex &locka,
-                   std::mutex &lockb   ) : iterator( iterator ),
-                                           locka( locka ),
-                                           lockb( lockb )
+   KernelIterator( T iterator ) : iterator( iterator )
    {
    }
    
    virtual ~KernelIterator()
    {
-      locka.unlock();
-      lockb.unlock();
    }
 
    /** increment in the usual way **/ 
