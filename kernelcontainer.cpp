@@ -35,6 +35,7 @@ KernelContainer::addKernel( raft::kernel *kernel )
 {
    assert( kernel != nullptr );
    list.insert( kernel );
+   return;
 }
 
 bool
@@ -62,15 +63,13 @@ KernelContainer::size() -> decltype( list.size() )
 auto
 KernelContainer::begin() -> KernelIterator< decltype( list.begin() ) >
 {
-   return( KernelIterator< decltype( list.begin() ) >( list.begin() 
-                                                       ) );
+   return( KernelIterator< decltype( list.begin() ) >( list.begin() ) );
 }
 
 auto
 KernelContainer::end() -> KernelIterator< decltype( list.end() ) >
 {
-   return( KernelIterator< decltype( list.end() ) >( list.end()
-                                                     ) );
+   return( KernelIterator< decltype( list.end() ) >( list.end() ) );
 }
 
 void
@@ -78,12 +77,14 @@ KernelContainer::lock()
 {
    while( access.try_lock() == false )
    {
-      std::this_thread::yield();
+      //std::this_thread::yield();
    }
+   return;
 }
 
 void
 KernelContainer::unlock()
 {
    access.unlock();
+   return;
 }

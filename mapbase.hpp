@@ -51,18 +51,18 @@
 class kernel_pair_t
 {
 public:
-   kernel_pair_t( raft::kernel &a, raft::kernel &b ) : 
-                                           src( &a ),
-                                           dst( &b )
+   kernel_pair_t( raft::kernel *a, raft::kernel *b ) : 
+                                           src( a ),
+                                           dst( b )
    {
    }
 
-   kernel_pair_t( kernel_pair_t &other ) : src( other.src ),
-                                           dst( other.dst )
+   kernel_pair_t( const kernel_pair_t &other ) : src( other.src ),
+                                                 dst( other.dst )
    {
    }
    
-   kernel_pair_t& operator == ( kernel_pair_t &other )
+   kernel_pair_t& operator == ( kernel_pair_t &&other )
    {
       src = other.src;
       dst = other.dst;
@@ -181,7 +181,7 @@ public:
          }
          break;
       }
-      return( kernel_pair_t( *a, *b ) );
+      return( kernel_pair_t( a, b ) );
    }
    
    /** 
@@ -239,7 +239,7 @@ public:
          }
          break;
       }
-      return( kernel_pair_t( *a, *b ) );
+      return( kernel_pair_t( a, b ) );
    }
 
 
@@ -299,7 +299,7 @@ public:
          }
          break;
       }
-      return( kernel_pair_t( *a, *b ) );
+      return( kernel_pair_t( a, b ) );
    }
    
    /**
@@ -344,7 +344,7 @@ public:
          }
          break;
       }
-      return( kernel_pair_t( *a, *b ) );
+      return( kernel_pair_t( a, b ) );
    }
 
 

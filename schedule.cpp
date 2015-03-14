@@ -3,6 +3,7 @@
 #include "kernel.hpp"
 #include "map.hpp"
 #include "schedule.hpp"
+#include "optdef.hpp"
 
 
 Schedule::Schedule( Map &map ) : map_ref( map )
@@ -108,7 +109,7 @@ Schedule::kernelHasInputData( raft::kernel *kernel )
    }
    for( auto &port : port_list )
    {
-      if( port.size() )
+      if( likely( port.size() > 0 ) )
       {
          return( true );
       }
@@ -125,7 +126,7 @@ Schedule::kernelHasNoInputPorts( raft::kernel *kernel )
    /** assume data check is already complete **/
    for( auto &port : port_list )
    {
-      if( ! port.is_invalid() )
+      if( likely( ! port.is_invalid() ) )
       {
          return( false );
       }
@@ -136,19 +137,19 @@ void
 Schedule::kernelRun( raft::kernel * const kernel,
                       volatile bool       &finished )
 {
-   auto sig_status( raft::proceed );
-   while( sig_status == raft::proceed )
+   if( likely( kernelHasInputData( kernel ) ) )
    {
-      if( kernelHasInputData( kernel ) )
+      const auto sig_status = kernel->run();
+      if( unlikely( sig_status == raft::stop ) )
       {
-         sig_status = kernel->run();
-      }
-      else if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
-      {
-         sig_status = raft::stop;
+         invalidateOutputPorts( kernel );
+         finished = true;
       }
    }
-   /** invalidate output queues **/
-   invalidateOutputPorts( kernel );
-   finished = true;
+   else if( unlikely( kernelHasNoInputPorts( kernel ) ) )
+   {
+      invalidateOutputPorts( kernel );
+      finished = true;
+   }
+   return;
 }

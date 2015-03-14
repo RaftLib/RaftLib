@@ -21,6 +21,7 @@
 #define _RINGBUFFERHEAP_TCC_  1
 
 #include "portexception.hpp"
+#include "optdef.hpp"
 
 template < class T, 
            Type::RingBufferType type > class RingBufferBase : 
@@ -129,7 +130,7 @@ TOP:
     */
    virtual void send( const raft::signal signal = raft::none )
    {
-      if( ! (this)->allocate_called  )
+      if( __builtin_expect( ! (this)->allocate_called, 0 ) )
       {
          return;
       }
@@ -300,7 +301,7 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::allocate );
-         if( dm.notResizing() && space_avail() > 0 )
+         if( dm.notResizing() && space_avail() > 0  )
          {
             break;
          }
@@ -537,7 +538,6 @@ protected:
             }
             else if( (this)->is_invalid() && size() == 0 )
             { 
-               fprintf( stderr, "Size: %zu\n", size() );
                throw ClosedPortAccessException( 
                   "Accessing closed port with pop call, exiting!!" );
             }

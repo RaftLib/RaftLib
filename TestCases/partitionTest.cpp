@@ -11,8 +11,8 @@ int
 main( int argc, char **argv )
 {
    auto rndgen( raft::kernel::make< 
-      raft::random_variate< std::uint32_t, raft::uniform > >( 100, 
-                                                              10000, 
+      raft::random_variate< std::uint32_t, raft::uniform > >( 1000, 
+                                                              2000, 
                                                               1000000 ) );
    
    using sub = raft::lambdak< std::uint32_t >;
@@ -20,7 +20,7 @@ main( int argc, char **argv )
                      Port &output )
       {
          auto a( input[ "0" ].pop_s< std::uint32_t >() );
-         output[ "0" ].push( (*a) - 1 );
+         output[ "0" ].push( (*a) - 10 );
          return( raft::proceed );
       } );
 

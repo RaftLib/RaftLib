@@ -116,7 +116,7 @@ public:
           * in the size() function from the ringbufferheap.tcc 
           * file.
           */
-         auto * const buff_ptr( (this)->get() );
+         auto * const buff_ptr( get() );
          const auto rpt( Pointer::val( buff_ptr->read_pt  ) );
          const auto wpt( Pointer::val( buff_ptr->write_pt ) );
          return( rpt < wpt );
@@ -157,7 +157,7 @@ public:
     * get - returns the current buffer object 
     * @return - Buffer< T, B >*
     */
-   auto get() noexcept -> Buffer::Data< T, B >*
+   inline auto get() noexcept -> Buffer::Data< T, B >*
    {
       return( buffer );
    }
@@ -168,7 +168,7 @@ public:
     * will soon be in use.
     * @param - key, dm::access_key
     */
-   void  enterBuffer( const dm::access_key key ) noexcept
+   inline void enterBuffer( const dm::access_key key ) noexcept
    {
       /** see lambda below **/
       set_helper( key, 1 );
@@ -180,7 +180,7 @@ public:
     * in use.
     * @param - key, dm::access_key
     */
-   void exitBuffer( const dm::access_key key ) noexcept
+   inline void exitBuffer( const dm::access_key key ) noexcept
    {
       /** see lambda below **/
       set_helper( key, 0 );
@@ -191,7 +191,7 @@ public:
     * to check first entry flag before signalling enterBuffer()
     * @return bool - currently not resizing 
     */
-   bool notResizing() noexcept
+   inline bool notResizing() noexcept
    {
       return( ! resizing ); 
    }
@@ -212,7 +212,7 @@ private:
       std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
    } __attribute__((aligned(64))) volatile thread_access[ 2 ];
    
-   void set_helper( dm::access_key key, const int val )
+   void set_helper( dm::access_key key, const int val ) noexcept
    {
       if( (int) key <= (int) dm::push )
       {
