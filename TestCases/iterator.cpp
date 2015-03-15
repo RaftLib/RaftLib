@@ -3,13 +3,13 @@
 #include <cstdint>
 #include <cstdlib>
 #include <raft>
+#include <raftio>
 
-
-template < typename T > class Generate : public raft::kernel
+template < typename T > class generate : public raft::kernel
 {
 public:
-   Generate( std::int64_t count = 1000 ) : raft::kernel(),
-                                          count( count )
+   generate( std::int64_t count = 1000 ) : raft::kernel(),
+                                           count( count )
    {
       output.addPort< T >( "number_stream" );
    }
@@ -36,67 +36,48 @@ private:
    std::int64_t count;
 };
 
-template< typename A, typename B, typename C > class Sum : public raft::kernel
+template< typename A, typename C > class sum : public raft::kernel
 {
 public:
-   Sum() : raft::kernel()
+   sum() : raft::kernel()
    {
       input.addPort< A >( "input_a" );
-      input.addPort< B >( "input_b" );
+      input.addPort< A >( "input_b" );
       output.addPort< C  >( "sum" );
    }
    
    virtual raft::kstatus run()
    {
-      A a;
-      B b;
-      raft::signal  sig_a( raft::none  ), sig_b( raft::none );
-      input[ "input_a" ].pop( a, &sig_a );
-      input[ "input_b" ].pop( b, &sig_b );
-      assert( sig_a == sig_b );
-      C c( a + b );
-      output[ "sum" ].push( c , sig_a );
-      if( sig_b == raft::eof )
+      auto c( output[ "sum" ].allocate_s< C >() );
+      (*c) = 0;
+      for( auto &port : input )
       {
-         return( raft::stop );
+         A a;
+         port.pop( a );
+         (*c) += a;
       }
       return( raft::proceed );
    }
 
-};
-
-template< typename T > class Print : public raft::kernel
-{
-public:
-   Print() : raft::kernel()
-   {
-      input.addPort< T >( "in" );
-   }
-
-   virtual raft::kstatus run()
-   {
-      T data;
-      raft::signal  signal( raft::none );
-      input[ "in" ].pop( data, &signal );
-      fprintf( stderr, "%" PRIu64 "\n", data );
-      if( signal == raft::eof )
-      {
-         return( raft::stop );
-      }
-      return( raft::proceed );
-   }
 };
 
 int
 main( int argc, char **argv )
 {
-   using namespace raft;
-   Map map;
-   auto linked_kernels( map.link( new Generate< std::int64_t >(),
-                                  new Sum< std::int64_t,std::int64_t, std::int64_t >(),
-                                  "input_a" ) );
-   map.link( new Generate< std::int64_t >(), &( linked_kernels.dst ), "input_b" );
-   map.link( &( linked_kernels.dst ), new Print< std::int64_t >() );
-   map.exe();
+   const auto count( 10000 );
+   using gen    = generate< std::int64_t >;
+   using s      = sum< std::int64_t, std::int64_t >;
+   using print  = raft::print< std::int64_t, '\n'>;
+   auto kernels = 
+      raft::map.link( 
+         raft::kernel::make< gen >( count ),
+         raft::kernel::make< s >(), "input_a" );
+   raft::map.link(   
+      raft::kernel::make< gen >( count ),
+      &kernels.getDst(), "input_b" );
+   raft::map.link( 
+      &kernels.getDst(),
+      raft::kernel::make< print >() );
+   raft::map.exe();
    return( EXIT_SUCCESS );
 }

@@ -16,7 +16,7 @@ LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl -lscotch -lscotcherr  $(RT)
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
       join lambdatest allocate_s foreach peekrange gamma uniform \
-      gaussian exponential partitionTest
+      gaussian exponential partitionTest iterator
 
 OBS = $(addsuffix .o, $(EXE))
 
@@ -37,6 +37,7 @@ uniform: uniform.o
 gaussian: gaussian.o
 exponential: exponential.o
 partitionTest: partitionTest.o
+iterator: iterator.o
 
 .PHONY: clean
 clean:

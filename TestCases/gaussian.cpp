@@ -28,12 +28,11 @@
  int
  main( int argc, char **argv )
  {
-   using namespace raft;
-   auto rndgen( 
-      kernel::make< 
-         random_variate< double , gaussian> >( 0, 1 , 10000 ) );
-   auto pr( kernel::make< print< double , '\n' > >() );
-   map.link( rndgen, pr );
-   map.exe();
+   using gen   = raft::random_variate< double , raft::gaussian >;
+   using p_gen = raft::print< double , '\n' >;
+   raft::map.link(
+      raft::kernel::make< gen >( 1, 0 , 10000 ),
+      raft::kernel::make< p_gen >() );
+   raft::map.exe();
    return( EXIT_SUCCESS );
  }

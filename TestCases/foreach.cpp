@@ -5,37 +5,24 @@
 #include <vector>
 #include <iterator>
 #include <raft>
-
-template< typename T > class print : public raft::kernel
-{
-public:
-   print() : raft::kernel()
-   {
-      input.addPort< T >( "in" );
-   }
-
-   virtual raft::kstatus run()
-   {
-      T data;
-      input[ "in" ].pop( data );
-      std::cout << data << "\n";
-      return( raft::proceed );
-   }
-};
+#include <raftio>
 
 int
 main( int argc, char **argv )
 {
-   int *arr = (int*) malloc( sizeof( int ) * 100 );
-   for( int i( 0 ); i < 100; i++ )
+   const auto arr_size( 1000 );
+   std::int32_t *arr = (std::int32_t*) malloc( sizeof( std::int32_t ) * arr_size );
+   for( std::int32_t i( 0 ); i < arr_size; i++ )
    {
-      arr[ i ] = i * 2;
+      arr[ i ] = i;
    }
-
+   
+   using print    = raft::print< std::int32_t, '\n' >;
+   using foreach  = raft::for_each< std::int32_t >;
 
    raft::map.link( 
-      raft::kernel::make< raft::for_each< int > >( arr, 100, 1),
-      raft::kernel::make< print< int > >() );
+      raft::kernel::make< foreach >( arr, arr_size, 1),
+      raft::kernel::make< print   >() );
 
    raft::map.exe();
    

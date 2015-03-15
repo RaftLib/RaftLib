@@ -75,12 +75,19 @@ main( int argc, char **argv )
    {
       count = atoi( argv[ 1 ] );
    }
-   using namespace raft;
-   auto linked_kernels( map.link( new Generate< std::int64_t >( count ),
-                                  new Sum< std::int64_t,std::int64_t, std::int64_t >(),
-                                  "input_a" ) );
-   map.link( new Generate< std::int64_t >( count ), &( linked_kernels.dst ), "input_b" );
-   map.link( &( linked_kernels.dst ), new print< std::int64_t, '\n' >() );
-   map.exe();
+   using gen = Generate< std::int64_t >;
+   using sum = Sum< std::int64_t, std::int64_t, std::int64_t >;
+   using p_out = raft::print< std::int64_t, '\n' >;
+
+   auto linked_kernels( 
+      raft::map.link( raft::kernel::make< gen >( count ),
+                      raft::kernel::make< sum >(), "input_a" ) );
+   raft::map.link( 
+      raft::kernel::make< gen >( count ),
+      &linked_kernels.getDst(), "input_b"  );
+   raft::map.link( 
+      &linked_kernels.getDst(), 
+      raft::kernel::make< p_out >() );
+   raft::map.exe();
    return( EXIT_SUCCESS );
 }

@@ -229,12 +229,14 @@ public:
       local_pop( ptr, signal );
       return;
    }
-
+   
+#if 0
    template< class T >
    auto pop_s() -> autorelease< T, poptype >
    {
       return( autorelease< T, poptype >( (*this) ) );
    }
+#endif
 
    /**
     * pop_range - pops n_items from the buffer into the 

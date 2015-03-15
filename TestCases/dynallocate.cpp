@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <chrono>
 #include <thread>
+#include <raftio>
 
 template < typename T > class Generate : public raft::kernel
 {
@@ -79,10 +80,14 @@ public:
 int
 main( int argc, char **argv )
 {
-   using namespace raft;
-   Map map;
-   map.link( new Generate< std::int64_t >(), new Print< std::int64_t, '\n' >() );
-   map.exe();
+   /** set aliases for kernel types **/
+   using gen = Generate< std::int64_t >;
+   using p   = raft::print< std::int64_t, '\n' >;
+
+   /** make a map and link **/
+   raft::map.link( raft::kernel::make< gen >( 1000000 ),
+                   raft::kernel::make< p >() );
+   raft::map.exe();
    return( EXIT_SUCCESS );
 }
 

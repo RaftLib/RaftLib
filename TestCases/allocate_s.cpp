@@ -52,12 +52,13 @@ public:
    }
    virtual raft::kstatus run()
    {
-      /** look at mem on head of queue for a & b, no copy **/
-      auto a( input[ "input_a" ].pop_s< A >() );
-      auto b( input[ "input_b" ].pop_s< B >() );
+      A a;
+      B b;
+      input[ "input_a" ].pop( a );
+      input[ "input_b" ].pop( b );
       /** allocate mem directly on queue **/
       auto c( output[ "sum" ].allocate_s< C >() );
-      (*c) = (*a) + (*b);
+      (*c) = a + b;
       /** mem automatically freed upon scope exit **/
       return( raft::proceed );
    }
@@ -72,14 +73,19 @@ main( int argc, char **argv )
    {
       count = atoi( argv[ 1 ] );
    }
-   auto gen( raft::kernel::make< Generate< std::int64_t > >( count ) );
-   
-   auto linked_kernels( raft::map.link( gen->clone(),
-                                        new sum< std::int64_t,std::int64_t, std::int64_t >(),
-                                        "input_a" ) );
-   raft::map.link( gen->clone() , &( linked_kernels.dst ), "input_b" );
-   raft::map.link( &( linked_kernels.dst ), 
-                   new raft::print< std::int64_t ,'\n' >() );
+   using gen = Generate< std::int64_t >;
+   using add = sum< std::int64_t, std::int64_t, std::int64_t >;
+   using p_out = raft::print< std::int64_t, '\n' >;
+
+   auto linked_kernels( 
+      raft::map.link( raft::kernel::make< gen >( count ),
+                      raft::kernel::make< add >(), "input_a" ) );
+   raft::map.link( 
+      raft::kernel::make< gen >( count ),
+      &linked_kernels.getDst(), "input_b"  );
+   raft::map.link( 
+      &linked_kernels.getDst(), 
+      raft::kernel::make< p_out >() );
    raft::map.exe();
    return( EXIT_SUCCESS );
 }
