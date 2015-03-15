@@ -19,7 +19,7 @@ main( int argc, char **argv )
    auto  l_sub( [&]( Port &input,
                      Port &output )
       {
-         auto a( input[ "0" ].pop_s< std::uint32_t >() );
+         auto a( input[ "0" ].pop< std::uint32_t >());
          output[ "0" ].push( (*a) - 10 );
          return( raft::proceed );
       } );
@@ -27,7 +27,7 @@ main( int argc, char **argv )
    
    auto kernels = raft::map.link( rndgen,
                                   raft::kernel::make< sub >( 1, 1, l_sub ) );
-   for( int i( 0 ); i < 20; i++ )
+   for( int i( 0 ); i < 2 ; i++ )
    {
       kernels = raft::map.link( &kernels.getDst(),
                                 raft::kernel::make< sub >( 1, 1, l_sub ) );
