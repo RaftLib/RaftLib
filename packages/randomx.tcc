@@ -26,6 +26,7 @@
 namespace raft{
 
 enum rndtype { 
+   sequential,
    exponential, 
    gaussian, 
    uniform,

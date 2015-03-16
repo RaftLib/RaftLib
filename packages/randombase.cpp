@@ -100,16 +100,22 @@ std::map< raft::rndgenerator,
 randombase::randombase( const raft::rndgenerator gen,
                         const std::uint64_t      seed )
 {
-   gsl_rng_env_setup();
-   rng =  gsl_rng_alloc( ptrmap[ gen ] );
-   gsl_rng_set( rng, seed ); 
+   if( gen != raft::dummy )
+   {
+      gsl_rng_env_setup();
+      rng =  gsl_rng_alloc( ptrmap[ gen ] );
+      gsl_rng_set( rng, seed ); 
+   }
 }
 
 randombase::randombase( const raft::rndgenerator gen )
 {
-   gsl_rng_env_setup();
-   rng =  gsl_rng_alloc( ptrmap[ gen ] );
-   gsl_rng_set( rng, sample_system_rng() ); 
+   if( gen != raft::dummy )
+   {
+      gsl_rng_env_setup();
+      rng =  gsl_rng_alloc( ptrmap[ gen ] );
+      gsl_rng_set( rng, sample_system_rng() ); 
+   }
 }
 
 std::uint64_t

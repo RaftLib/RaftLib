@@ -25,7 +25,7 @@
 namespace raft{
 
 enum rndgenerator : std::int32_t { 
-sequential,
+dummy,
 borosh13,
 coveyou,
 cmrg,

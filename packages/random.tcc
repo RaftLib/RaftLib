@@ -255,6 +255,53 @@ private:
    const double sigma;
 };
 
+/** SEQUENTIAL **/
+template< class T > class random_variate< T, raft::sequential > : 
+   public raft::randomx< T >
+{
+public:
+   random_variate( const T delta,
+                   const std::uintmax_t count ) : randomx< T >( count,
+                                                                dummy,
+                                                                0 ),
+                                                  delta( delta )
+   {
+   }
+
+   random_variate(   const T min,
+                     const T max,
+                     const std::uintmax_t count ) : randomx< T >( count,
+                                                                  dummy,
+                                                                  0 ),
+                                                    delta( delta ),
+                                                    min( min ),
+                                                    max( max )
+   {
+   }
+
+protected:
+   virtual T draw()
+   {
+      T out;
+      out = current;
+      if( current >= max - delta )
+      {
+         current = min;
+      }
+      else
+      {
+         current = ( current + delta ) % max;
+      }
+      return( out );
+   }
+private:
+   const T min = std::numeric_limits< T >::min();;
+   const T max = std::numeric_limits< T >::max();
+   const T delta;
+   T       current = min;
+};
+
+
 /** GAMMA DIST **/
 template< class T > class random_variate< T, raft::gammadist > : 
    public raft::randomx< T >
