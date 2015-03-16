@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstdint>
+#include <functional>
 /** TODO, might bring this lib into RaftLib **/
 #include <scotch.h>
 #include "graph.tcc"
@@ -30,37 +31,96 @@
 
 class Partition
 {
+
 public:
    Partition() = delete;
 
-   template < class Container >
+   template < class Container,
+              class MappingContainer >
    static 
    void  
-   simple( Container &c, 
-           std::vector< std::size_t > &mapping,
+   simple( Container         &c, 
+           MappingContainer  &mapping,
            const std::size_t cores )
    {
-      if( c.size() <= cores )
+      if( simple_check( c, mapping, cores ) )
       {
-         const auto length( c.size() );
-         for( auto i( 0 ); i < length; i++ )
-         {
-            mapping.push_back( i );
-         }
          return;
       }
-      using nummap_t = std::map< raft::kernel*,
+      auto weight_func( 
+         []( PortInfo &a, PortInfo &b, void *weight_data ) -> std::int32_t
+         {
+            /** simple weight to start **/
+            return( 1 );
+         }
+      );
+      run_scotch( c, 
+                  mapping, 
+                  cores, 
+                  weight_func, 
+                  nullptr );
+      return;
+   }
+
+   template < class Container,
+              class MappingContainer >
+   static
+   void 
+   utilization_weighted( Container &c,
+                         MappingContainer  &mapping,
+                         const std::size_t cores )
+   {
+      if( simple_check( c, mapping, cores ) )
+      {
+         return;
+      }
+      /** else use queue weights **/
+      auto weight_func(
+         []( PortInfo &a, PortInfo &b, void *weight_data ) -> std::int32_t
+         {
+            //TODO, add streaming mean to fifo stats
+            return( a.getFIFO()->size() );
+         }
+      );
+      run_scotch( c, 
+                  mapping, 
+                  cores, 
+                  weight_func, 
+                  nullptr );
+      return;
+   }
+
+
+private:
+   
+   using weight_function_t = 
+      typename std::function< std::int32_t( PortInfo&,PortInfo&,void* ) >;
+   
+   using raftgraph_t = raft::graph< std::int32_t,
+                                    std::int32_t >;
+
+   
+   
+   template < class Container >
+      static
+      void get_graph_info( Container         &c,
+                           raftgraph_t       &raft_graph,
+                           weight_function_t weight_func,
+                           void              *weight_data )
+   {
+      using nummap_t = std::map< raft::kernel const *,
                                  std::size_t >;
-      using raftgraph_t = raft::graph< std::int32_t,
-                                       std::int32_t >;
-      raftgraph_t raft_graph;
       /** get an ordering, can be optimized a bit further **/
       nummap_t numbering;
       {
          auto index( 0 );
-         for( raft::kernel *k : c )
+         for( raft::kernel const *k : c )
          {
-            numbering.insert( std::make_pair( k, index++ ) );
+            if( Schedule::isActive( k ) )
+            {
+               numbering.insert( std::make_pair( k, index ) );
+            }
+            index++;
          }
       }
       struct LocalData
@@ -78,16 +138,65 @@ public:
               PortInfo &b,
               void *data )
       {
+         if( ! Schedule::isActive( a.my_kernel ) )
+         {
+            return;
+         }
          auto *local_data(
             reinterpret_cast< LocalData* >( data ) );
          const auto num_src( local_data->num_map[ a.my_kernel ] );
          const auto num_dst( local_data->num_map[ b.my_kernel ] );
-         local_data->graph.addEdge( num_src, num_dst, 1 ); 
+         const auto weight( weight_func( a, b, weight_data ) );
+         local_data->graph.addEdge( num_src, num_dst, weight ); 
+         return;
       };
       GraphTools::BFS( c, 
                        graph_function,
                        (void*) &d, 
                        false );
+
+   }
+   
+   /** 
+    * simple case check
+    */
+   template < class Container,
+              class MapContainer >
+      static
+      bool simple_check( Container &c, 
+                         MapContainer &mapping,
+                         const std::size_t cores )
+   {
+      if( c.size() <= cores )
+      {
+         const auto length( c.size() );
+         for( auto i( 0 ); i < length; i++ )
+         {
+            mapping.push_back( i );
+         }
+         return( true );
+      }
+      /** else do nothing, return false **/
+      return( false );
+   }
+   
+   /**
+    * run scotch 
+    */
+   template < class Container,
+              class MapContainer >
+      static
+      void run_scotch( Container         &c,
+                       MapContainer      &mapping,
+                       const std::size_t cores,
+                       weight_function_t weight_func,
+                       void              *weight )
+   {
+      raftgraph_t raft_graph;
+      get_graph_info( c, 
+                      raft_graph, 
+                      weight_func, 
+                      nullptr );
       SCOTCH_Graph graph;
       if( SCOTCH_graphInit( &graph ) != 0 )
       {
@@ -176,5 +285,6 @@ public:
       SCOTCH_archExit ( &archdat );
       return;
    }
+
 };
 #endif /* END _PARTITION_HPP_ */

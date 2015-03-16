@@ -101,9 +101,10 @@ pool_schedule::start()
 
    while( ! is_done( container ) )
    {
-      std::chrono::microseconds dura( 100 );
+      const std::chrono::milliseconds dura( 16 );
       std::this_thread::sleep_for( dura );
       /** add re-partitioning code here **/
+      /** partition using streaming mean and std of queue occupancy **/
    }
    /** done **/
    for( auto &flag : status_flags )
@@ -132,9 +133,10 @@ pool_schedule::poolrun( KernelContainer *container, volatile std::uint8_t &sched
             unschedule_list.push_back( &kernel );
          }
       }
-      for( raft::kernel *kernel : unschedule_list )
+      for( raft::kernel * const kernel : unschedule_list )
       {
          container->removeKernel( kernel );
+         Schedule::inactivate( kernel );
       }
       container->unlock();
    }

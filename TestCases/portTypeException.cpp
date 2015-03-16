@@ -5,32 +5,7 @@
 #include <raft>
 
 
-template < typename T > class Generate : public raft::kernel
-{
-public:
-   Generate( std::int64_t count = 1000 ) : raft::kernel(),
-                                          count( count )
-   {
-      output.addPort< T >( "number_stream" );
-   }
-
-   virtual raft::kstatus run()
-   {
-      if( count-- > 1 )
-      {
-         output[ "number_stream" ].push( count );
-         return( raft::proceed );
-      }
-      /** else **/
-      output[ "number_stream" ].push( count, raft::eof );
-      return( raft::stop );
-   }
-
-private:
-   std::int64_t count;
-};
-
-template< typename A, typename B, typename C > class Sum : public raft::kernel
+template< typename A, typename B, typename C > class sum : public raft::kernel
 {
 public:
    Sum() : raft::kernel()
@@ -59,27 +34,6 @@ public:
 
 };
 
-template< typename T > class Print : public raft::kernel
-{
-public:
-   Print() : raft::kernel()
-   {
-      input.addPort< T >( "in" );
-   }
-
-   virtual raft::kstatus run()
-   {
-      T data;
-      raft::signal  signal( raft::none );
-      input[ "in" ].pop( data, &signal );
-      fprintf( stderr, "%" PRIu64 "\n", data );
-      if( signal == raft::eof )
-      {
-         return( raft::stop );
-      }
-      return( raft::proceed );
-   }
-};
 
 int
 main( int argc, char **argv )

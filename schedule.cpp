@@ -153,3 +153,16 @@ Schedule::kernelRun( raft::kernel * const kernel,
    }
    return;
 }
+
+bool
+Schedule::isActive( raft::kernel const * const kernel )
+{
+   return( kernel->active );
+}
+
+void 
+Schedule::inactivate( raft::kernel * const kernel )
+{
+   kernel->active = false;
+   return;
+}

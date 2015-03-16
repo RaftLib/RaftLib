@@ -8,6 +8,7 @@ I''m currently remodeling.  The following test cases work:
 * gaussian
 * iterator
 * partitionTest
+* sequential
 
 The rest I''m still working on.  I''m going to add a 
 sequential generator in the raftrandom package in order

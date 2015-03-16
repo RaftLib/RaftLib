@@ -48,6 +48,11 @@ public:
     * is called by the map object
     */
    virtual void init();
+   
+   
+   static bool isActive( raft::kernel const * const kernel );
+
+   static void inactivate( raft::kernel * const kernel );
 protected:
   
    /**
@@ -123,6 +128,8 @@ protected:
    static void kernelRun( raft::kernel * const kernel,
                           volatile bool       &finished );
 
+   
+   
    /**
     * signal handlers
     */

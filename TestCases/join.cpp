@@ -2,43 +2,25 @@
 #include <cstdint>
 #include <iostream>
 #include <raftio>
+#include <raftrandom>
 
-template < typename T > class Generate : public raft::kernel
-{
-public:
-   Generate( std::int64_t count = 1000 ) : raft::kernel(),
-                                          count( count )
-   {
-      output.addPort< T >( "number_stream" );
-   }
-
-   virtual raft::kstatus run()
-   {
-      if( count-- > 1 )
-      {
-         output[ "number_stream" ].push( count );
-         return( raft::proceed );
-      }
-      output[ "number_stream" ].push( count, raft::eof );
-      return( raft::stop );
-   }
-
-private:
-   std::int64_t count;
-};
 
 int
 main( int argc, char **argv )
 {
-   using namespace raft;
-   Map map;
+   using type  = std::uint32_t;
+   using gen   = raft::random_variate< type, 
+                                       raft::sequential >;
+   using join  = raft::join< type >;
+   using print = raft::print< type, '\n' >;
+
    /** manually link split kernels **/
    auto kernels( 
-   map.link( kernel::make< Generate< std::int64_t > >(),
-             kernel::make< join< std::int64_t > >() ) );
+   raft::map.link( raft::kernel::make< gen >( 1, 10000 ),
+                   raft::kernel::make< join >() ) );
    
-   map.link( &(kernels.dst), 
-             kernel::make< print< std::int64_t, '\n' > >() );
-   map.exe();
+   raft::map.link( &kernels.getDst(), 
+                   raft::kernel::make< print >() );
+   raft::map.exe();
    return( EXIT_FAILURE );
 }
