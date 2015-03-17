@@ -20,14 +20,14 @@ public:
       if( count-- > 1 )
       {
          
-         auto &ref( output[ "number_stream" ].allocate< T >() );
+         auto &ref( output[ "number_stream" ].template allocate< T >() );
          ref = count;
          output[ "number_stream"].send();
          
          return( raft::proceed );
       }
       /** else **/
-      auto &ref( output[ "number_stream" ].allocate< T >() );
+      auto &ref( output[ "number_stream" ].template allocate< T >() );
       ref = count;
       output[ "number_stream" ].send( raft::eof );
       return( raft::stop );

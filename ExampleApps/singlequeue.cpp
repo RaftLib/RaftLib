@@ -4,44 +4,17 @@
 #include <cstdlib>
 #include <raft>
 #include <raftio>
+#include <raftrandom>
 
 
-
-template < typename T > class generate : public raft::kernel
-{
-public:
-   generate( std::int64_t count = 1000000) : raft::kernel(),
-                                             count( count )
-   {
-      output.addPort< T >( "number_stream" );
-   }
-
-   virtual raft::kstatus run()
-   {
-      if( count-- > 1 )
-      {
-         output[ "number_stream" ].push( count );
-         return( raft::proceed );
-      }
-      output[ "number_stream" ].push( count, raft::eof );
-      return( raft::stop );
-   }
-
-private:
-   std::int64_t count;
-};
-
-namespace raft
-{
-   Map map;
-}
 
 int
 main( int argc, char **argv )
 {
-   using namespace raft;
-   map.link( kernel::make< generate< std::int64_t > >(), 
-             kernel::make< raft::print< std::int64_t, '\n' > >() );
-   map.exe();
+   using gen = raft::random_variate< std::int64_t, raft::sequential >;
+   raft::map.link( 
+      raft::kernel::make< gen >( 1, 10000 ), 
+      raft::kernel::make< raft::print< std::int64_t, '\n' > >() );
+   raft::map.exe();
    return( EXIT_SUCCESS );
 }

@@ -9,7 +9,7 @@ endif
 CFLAGS   = -Ofast -mtune=native -Wall -std=c99
 CXXFLAGS = -Ofast -mtune=native -Wall -std=c++11 -DRDTSCP=1
 LDFLAGS  = -L./ $(LINUXLDFLAGS)
-LDLIBS   = -lraft $(LINUXLIBS)
+LDLIBS   = -lraft -lgsl -lscotch -lscotcherr $(LINUXLIBS)
 
 EXE      = sumapp readtest singlequeue
 OBJS     = $(addsuffix .o, $(CPPFILES)) $(addsuffix .o, $(EXE))

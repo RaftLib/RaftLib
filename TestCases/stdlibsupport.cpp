@@ -27,7 +27,6 @@ int
 main( int argc, char **argv )
 {
    using namespace raft;
-   Map map;
    std::vector< std::uint32_t > v;
    int i( 0 );
    auto func( [&](){ return( i++ ); } );
@@ -37,9 +36,8 @@ main( int argc, char **argv )
    map.link( kernel::make< raft::read_each< std::uint32_t > >( v.begin(), v.end() ),
              kernel::make< raft::write_each< std::uint32_t > >( std::back_inserter( o ) ) );
    
-   //map.link( new read_each< std::uint32_t >( v.begin(), v.end() ),
-   //          new write_each< std::uint32_t >( std::back_inserter( o ) ) );
    map.exe();
+   
    /** once function returns, o should be readable **/
    for( auto val : o )
    {

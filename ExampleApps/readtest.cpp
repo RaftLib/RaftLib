@@ -3,19 +3,15 @@
 #include <raft>
 #include <raftio>
 
-namespace raft
-{
-   Map map;
-}
-
 int
 main( int argc, char **argv )
 {
-   using namespace raft;
-   
-   map.link( kernel::make< raft::filereader<filechunk< 1024  >, false> > ( argv[ 1 ]  ), 
-             kernel::make< raft::print< filechunk< 1024  > > >() );
-
-   map.exe();
+   using chunk = raft::filechunk< 1024 >;
+   using fr = raft::filereader< chunk, false >; 
+   using pr = raft::print< chunk >;
+   raft::map.link( 
+      raft::kernel::make< fr > ( argv[ 1 ]  ), 
+      raft::kernel::make< pr >() );
+   raft::map.exe();
    return( EXIT_SUCCESS );
 };

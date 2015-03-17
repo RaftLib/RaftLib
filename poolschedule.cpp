@@ -105,6 +105,22 @@ pool_schedule::start()
       std::this_thread::sleep_for( dura );
       /** add re-partitioning code here **/
       /** partition using streaming mean and std of queue occupancy **/
+#if 0      
+      std::vector< std::size_t > partition_mapping;
+      Partition::simple( kernel_map, 
+                         partition_mapping,
+                         n_threads );
+
+      for( auto i( 0 ); i < kernel_map.size(); i++ )
+      {
+         const std::size_t partition_index( partition_mapping[ i ] );
+         raft::kernel *kern( kernel_map[ i ] );
+         auto c( container[ partition_index ] );
+         c->lock();
+         c->addKernel( kern );
+         c->unlock();
+      }
+#endif
    }
    /** done **/
    for( auto &flag : status_flags )

@@ -1,6 +1,7 @@
 ###Notes
 
-I''m currently remodeling.  The following test cases work:
+The following test cases build and work on OS X Yosemite and Linux using 
+Intel ICC and GNU GCC 4.9: 
 * allocate\_s
 * dynallocate
 * foreach
@@ -9,7 +10,9 @@ I''m currently remodeling.  The following test cases work:
 * iterator
 * partitionTest
 * sequential
+* portTypeException
+* peekrange
+* lambdatest 
+* split
+* stdlibsupport
 
-The rest I''m still working on.  I''m going to add a 
-sequential generator in the raftrandom package in order
-to make writing test cases faster and easier

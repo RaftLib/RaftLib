@@ -37,7 +37,7 @@ main( int argc, char **argv )
    map.link( kernel::make< Generate< std::int64_t > >(),
              kernel::make< split< std::int64_t > >() ) );
    
-   map.link( &(kernels.dst), 
+   map.link( &kernels.getDst(), 
              kernel::make< print< std::int64_t, '\n' > >() );
    map.exe();
    return( EXIT_FAILURE );

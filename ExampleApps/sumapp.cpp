@@ -4,75 +4,33 @@
 #include <cstdlib>
 #include <raft>
 #include <raftio>
-
-#include <vector>
-#include <type_traits>
-#include <utility>
+#include <raftrandom>
 
 
-template < typename T > class generate : public raft::kernel
+template< typename A, typename B, typename C > class Sum : public raft::kernel
 {
 public:
-   generate( std::int64_t count = 1000 ) : raft::kernel(),
-                                           count( count )
+   Sum() : raft::kernel()
    {
-      output.addPort< T >( "number_stream" );
+      input.template addPort< A >( "input_a" );
+      input.template addPort< B >( "input_b" );
+      output.template addPort< C  >( "sum" );
    }
-
+   
    virtual raft::kstatus run()
    {
-      if( count-- > 1 )
+      A a;
+      B b;
+      raft::signal  sig_a( raft::none  ), sig_b( raft::none );
+      input[ "input_a" ].pop( a, &sig_a );
+      input[ "input_b" ].pop( b, &sig_b );
+      assert( sig_a == sig_b );
+      C c( a + b );
+      output[ "sum" ].push( c , sig_a );
+      if( sig_b == raft::eof )
       {
-         output[ "number_stream" ].push( count );
-         return( raft::proceed );
+         return( raft::stop );
       }
-      output[ "number_stream" ].push( count, raft::eof );
-      return( raft::stop );
-   }
-
-private:
-   std::int64_t count;
-};
-
-template< typename A, typename B, typename C > class sum : public raft::kernel
-{
-public:
-   sum() : raft::kernel()
-   {
-      input.addPort< A >( "input_a" );
-      input.addPort< B >( "input_b" );
-      output.addPort< C >( "sum" );
-   }
-#define M1 1 
-   virtual raft::kstatus run()
-   {
-#ifdef M1 
-      A a;
-      B b;
-      /** copies a & b **/
-      input[ "input_a" ].pop( a );
-      input[ "input_b" ].pop( b );
-      C c = a + b;
-      output[ "sum" ].push( c );
-#elif defined M2 
-      A a;
-      B b;
-      /** copies a & b **/
-      input[ "input_a" ].pop( a );
-      input[ "input_b" ].pop( b );
-      /** allocate directly on queue **/
-      auto &c( output[ "sum" ].allocate< C >() );
-      c = a + b;
-      output[ "sum" ].push();
-#elif defined M3
-      /** look at mem on head of queue for a & b, no copy **/
-      auto a( input[ "input_a" ].pop_s< A >() );
-      auto b( input[ "input_b" ].pop_s< B >() );
-      /** allocate mem directly on queue **/
-      auto c( output[ "sum" ].allocate_s< C >() );
-      (*c) = (*a) + (*b);
-      /** mem automatically freed upon scope exit **/
-#endif      
       return( raft::proceed );
    }
 
@@ -82,20 +40,24 @@ public:
 int
 main( int argc, char **argv )
 {
-   using sumkernel = sum< std::int64_t,std::int64_t, std::int64_t >;
-   using rnd       = generate< std::int64_t >;
-   using namespace raft;
-   const std::size_t count( 100000 );
+   int count( 1000 );
+   if( argc == 2 )
+   {
+      count = atoi( argv[ 1 ] );
+   }
+   using gen = raft::random_variate< std::int64_t, raft::sequential >;
+   using sum = Sum< std::int64_t, std::int64_t, std::int64_t >;
+   using p_out = raft::print< std::int64_t, '\n' >;
+
    auto linked_kernels( 
-      map.link( kernel::make< rnd >( count ),
-                kernel::make< sumkernel >(), "input_a" ) );
-   map.link( kernel::make< rnd >( count ), 
-             &( linked_kernels.dst ), 
-               "input_b" );
-   map.link( &( linked_kernels.dst ), 
-             kernel::make< raft::print< std::int64_t ,'\n'> >() );
-   map.exe();
+      raft::map.link( raft::kernel::make< gen >( 1, count ),
+                      raft::kernel::make< sum >(), "input_a" ) );
+   raft::map.link( 
+      raft::kernel::make< gen >( 1, count ),
+      &linked_kernels.getDst(), "input_b"  );
+   raft::map.link( 
+      &linked_kernels.getDst(), 
+      raft::kernel::make< p_out >() );
+   raft::map.exe();
    return( EXIT_SUCCESS );
 }
-
-
