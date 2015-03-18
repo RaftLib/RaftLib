@@ -52,6 +52,88 @@ template < typename EDGETYPE, typename WEIGHT > class graph;
 
 template <> class graph< std::int32_t, std::int32_t >
 {
+private:
+   /**
+    * wt - struct to hold the destination of each edge,
+    * and the weight associated with the src-dst combination
+    */
+   struct wt
+   {
+      /**
+       * wt - constructor
+       * @param   dst - const std::int32_t, destination of appropriate source vertex
+       * @param   weight - const std::int32_t, weight associated with this edge (arc)
+       */
+      wt( const std::int32_t dst,
+          const std::int32_t weight ) : dst( dst ),
+                                        weight( weight )
+      {
+         /** nothing to do here **/
+      }
+
+      /** copy constructor **/
+      wt( const wt &other ) : dst( other.dst ),
+                              weight( other.weight )
+      {
+      }
+
+      /** needed for find operation **/
+      bool operator == ( const wt &other )
+      {
+         return( dst == other.dst );
+      }
+
+      const std::int32_t dst;
+      const std::int32_t weight;
+   };
+  
+   /**
+    * __addEdge - helper method for same named
+    * function above, see its documentation.
+    */
+   void __addEdge( const std::int32_t src,
+                   const std::int32_t dst,
+                   const std::int32_t weight )
+   {
+      auto it( edgelist.find( src ) );
+      wt w( dst, weight );  
+      if( it == edgelist.end() )
+      {
+         auto *v( new std::vector< wt >() );
+         v->push_back( w );
+         edgelist.insert(
+            std::make_pair( src, 
+                            v ) );
+         vertex_hash.insert( src );
+         /** we know the src hasn't been seen, don't know about the dst **/
+         if( vertex_hash.find( dst ) == vertex_hash.end() )
+         {
+            vertex_hash.insert( dst );
+         }
+      }
+      else /** src already in graph **/
+      {
+#if DEBUG
+         const auto &local_vector( *(*it).second );
+         assert( std::find( vector.begin(), vector.end(), dst ) == local_vector.end() );
+#endif
+         (*it).second->push_back( w );
+         /** we know the source is already there, just need to check the dst **/
+         if( vertex_hash.find( dst ) == vertex_hash.end() )
+         {
+            vertex_hash.insert( dst );
+         }
+      }
+      return;
+   }
+   /** edge adjacency list **/
+   std::map< std::int32_t, std::vector< wt >* > edgelist; 
+   /** 
+    * simplifies counting the number of vertices.
+    * TODO, recode with counter...if this gets large
+    * it could get really really large
+    */
+   std::set< std::int32_t >                     vertex_hash;
 public:
    
    /** don't need anything special **/
@@ -136,89 +218,12 @@ public:
       return( table );
    }
 
-
-private:
-   /**
-    * wt - struct to hold the destination of each edge,
-    * and the weight associated with the src-dst combination
-    */
-   struct wt
+   const decltype( vertex_hash )
+   getVertexNumbersAtIndicies() 
    {
-      /**
-       * wt - constructor
-       * @param   dst - const std::int32_t, destination of appropriate source vertex
-       * @param   weight - const std::int32_t, weight associated with this edge (arc)
-       */
-      wt( const std::int32_t dst,
-          const std::int32_t weight ) : dst( dst ),
-                                        weight( weight )
-      {
-         /** nothing to do here **/
-      }
-
-      /** copy constructor **/
-      wt( const wt &other ) : dst( other.dst ),
-                              weight( other.weight )
-      {
-      }
-
-      /** needed for find operation **/
-      bool operator == ( const wt &other )
-      {
-         return( dst == other.dst );
-      }
-
-      const std::int32_t dst;
-      const std::int32_t weight;
-   };
-  
-   /**
-    * __addEdge - helper method for same named
-    * function above, see its documentation.
-    */
-   void __addEdge( const std::int32_t src,
-                   const std::int32_t dst,
-                   const std::int32_t weight )
-   {
-      auto it( edgelist.find( src ) );
-      wt w( dst, weight );  
-      if( it == edgelist.end() )
-      {
-         auto *v( new std::vector< wt >() );
-         v->push_back( w );
-         edgelist.insert(
-            std::make_pair( src, 
-                            v ) );
-         vertex_hash.insert( src );
-         /** we know the src hasn't been seen, don't know about the dst **/
-         if( vertex_hash.find( dst ) == vertex_hash.end() )
-         {
-            vertex_hash.insert( dst );
-         }
-      }
-      else /** src already in graph **/
-      {
-#if DEBUG
-         const auto &local_vector( *(*it).second );
-         assert( std::find( vector.begin(), vector.end(), dst ) == local_vector.end() );
-#endif
-         (*it).second->push_back( w );
-         /** we know the source is already there, just need to check the dst **/
-         if( vertex_hash.find( dst ) == vertex_hash.end() )
-         {
-            vertex_hash.insert( dst );
-         }
-      }
-      return;
+      return( vertex_hash ); 
    }
-   /** edge adjacency list **/
-   std::map< std::int32_t, std::vector< wt >* > edgelist; 
-   /** 
-    * simplifies counting the number of vertices.
-    * TODO, recode with counter...if this gets large
-    * it could get really really large
-    */
-   std::set< std::int32_t >                     vertex_hash;
+
 };
 
 } /** end namespace raft **/

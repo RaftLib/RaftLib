@@ -77,7 +77,6 @@ KernelContainer::lock()
 {
    while( access.try_lock() == false )
    {
-      //std::this_thread::yield();
    }
    return;
 }
@@ -87,4 +86,10 @@ KernelContainer::unlock()
 {
    access.unlock();
    return;
+}
+
+void 
+KernelContainer::clear()
+{
+   list.clear();
 }

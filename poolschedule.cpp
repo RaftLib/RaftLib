@@ -71,14 +71,15 @@ void
 pool_schedule::start()
 {
    {
-      std::vector< std::size_t > partition_mapping;
+      /** must be signed type **/
+      std::vector< std::int64_t > partition_mapping;
       Partition::simple( kernel_map, 
                          partition_mapping,
                          n_threads );
 
       for( auto i( 0 ); i < kernel_map.size(); i++ )
       {
-         const std::size_t partition_index( partition_mapping[ i ] );
+         const auto partition_index( partition_mapping[ i ] );
          raft::kernel *kern( kernel_map[ i ] );
          auto c( container[ partition_index ] );
          c->lock();
@@ -105,22 +106,29 @@ pool_schedule::start()
       std::this_thread::sleep_for( dura );
       /** add re-partitioning code here **/
       /** partition using streaming mean and std of queue occupancy **/
-#if 0      
-      std::vector< std::size_t > partition_mapping;
-      Partition::simple( kernel_map, 
+#if 0
+      std::vector< std::int64_t > partition_mapping;
+      for( auto * const c : container )
+      {
+         c->lock();
+         c->clear();
+      }     
+      Partition::utilization_weighted( 
+                         kernel_map, 
                          partition_mapping,
                          n_threads );
-
       for( auto i( 0 ); i < kernel_map.size(); i++ )
       {
-         const std::size_t partition_index( partition_mapping[ i ] );
+         const auto partition_index( partition_mapping[ i ] );
          raft::kernel *kern( kernel_map[ i ] );
          auto c( container[ partition_index ] );
-         c->lock();
          c->addKernel( kern );
+      }
+      for( auto * const c : container )
+      {
          c->unlock();
       }
-#endif
+#endif 
    }
    /** done **/
    for( auto &flag : status_flags )

@@ -116,11 +116,7 @@ private:
          auto index( 0 );
          for( raft::kernel const *k : c )
          {
-            if( Schedule::isActive( k ) )
-            {
-               numbering.insert( std::make_pair( k, index ) );
-            }
-            index++;
+            numbering.insert( std::make_pair( k, index++ ) );
          }
       }
       struct LocalData
@@ -192,6 +188,11 @@ private:
                        weight_function_t weight_func,
                        void              *weight )
    {
+#if 0
+      static_assert( std::is_signed< 
+         std::remove_reference< decltype( c.end() ) >::type >::value, 
+            "Container must have signed types so that -1 may signify no mapping" );
+#endif            
       raftgraph_t raft_graph;
       get_graph_info( c, 
                       raft_graph, 
@@ -274,10 +275,43 @@ private:
          std::cerr << "Failed to map!!\n";
          exit( EXIT_FAILURE );
       }
-      /** copy mapping **/ 
-      for( SCOTCH_Num i( 0 ); i < table.num_vertices; i++ )
+      /**
+       * first case is for if we've mapped all vertices, 
+       * second is for when some of the kernels are innactive
+       * in which case the number of vertices in the 
+       * table will be less than the size of c in which case
+       * we need to get which vertices (the actual number id
+       * from the application) are mapped and to where, the 
+       * returned table in mapping must include even the 
+       * vertices that aren't active (indicated by a -1) so
+       * that the returning loop can be as simple as possible
+       */
+      if( c.size() == table.num_vertices )
       {
-         mapping.push_back( table.partition[ i ] );
+         /** copy mapping **/ 
+         for( auto i( 0 ); i < table.num_vertices; i++ )
+         {
+            mapping.push_back( table.partition[ i ] );
+         }
+      }
+      else
+      {
+         const auto &vmapping( raft_graph.getVertexNumbersAtIndicies() );
+         auto it_map_index( vmapping.cbegin() );
+         auto table_index( 0 );
+         const auto size( c.size() );
+         for( auto i( 0 ); i < size; i++ )
+         {
+            if( i == (*it_map_index) &&  it_map_index != vmapping.cend() )
+            {
+               mapping.push_back( table.partition[ table_index++ ] );
+               ++it_map_index;
+            }
+            else
+            {
+               mapping.push_back( -1 );
+            }
+         }
       }
       /** call exit graph **/
       SCOTCH_graphExit( &graph    );
