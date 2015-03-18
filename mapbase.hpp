@@ -298,7 +298,7 @@ public:
       
       join( *a, a_port, port_info_a, 
             *b, b_port, port_info_b );
-      witch( t )
+      switch( t )
       {
          case( order::in ):
          {
