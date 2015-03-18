@@ -1,0 +1,4 @@
+<map id="frame_resolution::frame_resolution" name="frame_resolution::frame_resolution">
+<area shape="rect" id="node2" href="$class_clock.html#a9c1808239308465e8e9cc4aebd50f696" title="Clock::getResolution" alt="" coords="216,13,360,41"/>
+<area shape="rect" id="node3" href="$class_clock.html#aa01fbc51935015e140350da545d9b420" title="Clock::getTime" alt="" coords="409,13,519,41"/>
+</map>

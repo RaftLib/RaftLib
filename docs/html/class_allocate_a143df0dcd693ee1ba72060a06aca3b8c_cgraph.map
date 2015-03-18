@@ -1,0 +1,4 @@
+<map id="Allocate::initialize" name="Allocate::initialize">
+<area shape="rect" id="node2" href="$struct_port_info.html#a9045e2d4e4d53e6a876cd277060fecb0" title="PortInfo::getFIFO" alt="" coords="179,5,303,33"/>
+<area shape="rect" id="node3" href="$struct_port_info.html#a8eadd0276864dc2d7752381ff0cfeb8b" title="PortInfo::setFIFO" alt="" coords="180,57,303,85"/>
+</map>
