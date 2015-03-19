@@ -19,7 +19,7 @@ public:
       auto &port( input[ "in" ] );
       try
       {
-         auto range( port.peek_range< T >( 5 ) );
+         auto range( port.template peek_range< T >( 5 ) );
          for( int i( 0 ); i < 5; i++ )
          {
             std::cout << " " << range[ i ];

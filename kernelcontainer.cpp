@@ -91,5 +91,5 @@ KernelContainer::unlock()
 void 
 KernelContainer::clear()
 {
-   list.clear();
+   list.erase( list.begin(), list.end() );
 }

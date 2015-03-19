@@ -1,5 +1,6 @@
 CC    ?= gcc
 CXX   ?= g++
+AR    ?= ar
 
 PREFIX ?= /usr/local
 

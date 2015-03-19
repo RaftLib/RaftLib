@@ -88,7 +88,8 @@ protected:
    {
       const auto val( gsl_rng_uniform( (this)->rng ) );
       if( almost_equal( val, 
-                        (std::remove_reference< decltype( val ) >::type )(0.0),
+                        static_cast< typename 
+                           std::remove_reference< decltype( val ) >::type >( 0 ),
                         2 ) )
       {
          return( (T) min );
