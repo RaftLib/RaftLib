@@ -18,7 +18,7 @@ endif
 TEST = -O0 -g 
 RELEASE = -Ofast -mtune=native
 
-BUILD = $(RELEASE) 
+BUILD = $(TEST) 
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11  -DRDTSCP=1

@@ -1,10 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classraft_1_1kernel.html" title="raft::kernel" alt="" coords="6,161,90,189"/>
+<area shape="rect" id="node1" href="$classraft_1_1kernel.html" title="raft::kernel" alt="" coords="6,135,90,163"/>
 <area shape="rect" id="node2" href="$class_generate.html" title="Generate\&lt; T \&gt;" alt="" coords="145,5,253,33"/>
-<area shape="rect" id="node3" href="$classgenerate.html" title="generate\&lt; T \&gt;" alt="" coords="146,57,251,85"/>
-<area shape="rect" id="node4" href="$classprint.html" title="print\&lt; T \&gt;" alt="" coords="159,109,238,137"/>
-<area shape="rect" id="node5" href="$class_print.html" title="Print\&lt; T, delim \&gt;" alt="" coords="139,161,258,189"/>
-<area shape="rect" id="node6" href="$classraft_1_1parallel__k.html" title="raft::parallel_k" alt="" coords="146,213,251,241"/>
-<area shape="rect" id="node7" href="$classsum.html" title="sum\&lt; A, B, C \&gt;" alt="" coords="143,265,255,293"/>
-<area shape="rect" id="node8" href="$class_sum.html" title="Sum\&lt; A, B, C \&gt;" alt="" coords="142,317,256,345"/>
+<area shape="rect" id="node3" href="$classprint.html" title="print\&lt; T \&gt;" alt="" coords="159,57,238,85"/>
+<area shape="rect" id="node4" href="$class_print.html" title="Print\&lt; T, delim \&gt;" alt="" coords="139,109,258,137"/>
+<area shape="rect" id="node5" href="$classraft_1_1parallel__k.html" title="raft::parallel_k" alt="" coords="146,161,251,189"/>
+<area shape="rect" id="node6" href="$classsum.html" title="sum\&lt; A, B, C \&gt;" alt="" coords="143,213,255,241"/>
+<area shape="rect" id="node7" href="$class_sum.html" title="Sum\&lt; A, B, C \&gt;" alt="" coords="142,265,256,293"/>
 </map>

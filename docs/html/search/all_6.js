@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['generate',['Generate',['../class_generate.html',1,'Generate&lt; T &gt;'],['../classgenerate.html',1,'generate&lt; T &gt;']]],
+  ['generate',['Generate',['../class_generate.html',1,'']]],
   ['genkey',['GenKey',['../class_s_h_m.html#ab5619833b87eb94c07b062973453be08',1,'SHM']]],
   ['get_5ffrac_5fwrite_5fblocked',['get_frac_write_blocked',['../class_f_i_f_o.html#a4d44784c43a4026508e85982eb3174c7',1,'FIFO']]],
   ['get_5fsignal',['get_signal',['../class_signal_data.html#a565e9b24fa291fffacf3182a60b95bbf',1,'SignalData']]],

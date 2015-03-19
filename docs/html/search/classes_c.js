@@ -8,7 +8,7 @@ var searchData=
   ['splitmethod',['splitmethod',['../classsplitmethod.html',1,'']]],
   ['stdalloc',['stdalloc',['../classstdalloc.html',1,'']]],
   ['submap',['SubMap',['../class_sub_map.html',1,'']]],
-  ['sum',['Sum',['../class_sum.html',1,'Sum&lt; A, B, C &gt;'],['../classsum.html',1,'sum&lt; A, B, C &gt;']]],
+  ['sum',['sum',['../classsum.html',1,'sum&lt; A, B, C &gt;'],['../class_sum.html',1,'Sum&lt; A, B, C &gt;']]],
   ['systeminfo',['SystemInfo',['../class_system_info.html',1,'']]],
   ['systemsignalfifo',['SystemSignalFIFO',['../class_system_signal_f_i_f_o.html',1,'']]],
   ['systemsignalhandler',['SystemSignalHandler',['../class_system_signal_handler.html',1,'']]]

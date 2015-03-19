@@ -96,34 +96,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="dynheader">
 Inheritance diagram for Generate&lt; T &gt;:</div>
 <div class="dyncontent">
-<div class="center"><!-- SVG 0 -->
+<div class="center"><iframe scrolling="no" frameborder="0" src="class_generate__inherit__graph.svg" width="118" height="118"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for Generate&lt; T &gt;:</div>
 <div class="dyncontent">
-<div class="center"><!-- SVG 1 -->
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="class_generate__coll__graph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0028b43a655e3e5fabf969c5f7a7402d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0028b43a655e3e5fabf969c5f7a7402d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Generate</b> (std::int64_t count=1000)</td></tr>
-<tr class="separator:a0028b43a655e3e5fabf969c5f7a7402d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8253370207e1457b9b79e62253c2925"><td class="memItemLeft" align="right" valign="top">virtual raft::kstatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_generate.html#aa8253370207e1457b9b79e62253c2925">run</a> ()</td></tr>
-<tr class="separator:aa8253370207e1457b9b79e62253c2925"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0218d10a1a3069dab8a8b6e58dd93ee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0218d10a1a3069dab8a8b6e58dd93ee"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Generate</b> (std::int64_t count=10)</td></tr>
-<tr class="separator:ac0218d10a1a3069dab8a8b6e58dd93ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ad2d5f12e734f2b0c577f0462f9d281"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ad2d5f12e734f2b0c577f0462f9d281"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Generate</b> (const <a class="el" href="class_generate.html">Generate</a>&lt; T &gt; &amp;other)</td></tr>
-<tr class="separator:a3ad2d5f12e734f2b0c577f0462f9d281"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2c361ed11b492710372858e1c036579"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac2c361ed11b492710372858e1c036579"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>CLONE</b> ()</td></tr>
-<tr class="separator:ac2c361ed11b492710372858e1c036579"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8253370207e1457b9b79e62253c2925"><td class="memItemLeft" align="right" valign="top">virtual raft::kstatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_generate.html#aa8253370207e1457b9b79e62253c2925">run</a> ()</td></tr>
-<tr class="separator:aa8253370207e1457b9b79e62253c2925"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0028b43a655e3e5fabf969c5f7a7402d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0028b43a655e3e5fabf969c5f7a7402d"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Generate</b> (std::int64_t count=1000)</td></tr>
 <tr class="separator:a0028b43a655e3e5fabf969c5f7a7402d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -172,7 +156,7 @@ template&lt;class T , class... Args&gt; </td></tr>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -200,7 +184,7 @@ template&lt;typename T&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -229,7 +213,7 @@ template&lt;typename T&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -248,64 +232,6 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 <p>run - function to be extended for the actual execution. Code can be executed outside of the run function, i.e., with any function call, however the scheduler will only call the run function so it must initiate any follow-on behavior desired by the user. </p>
-<p>else </p>
-
-<p>Implements <a class="el" href="classraft_1_1kernel.html#a05094286d7577360fb1b91c91fc05901">raft::kernel</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aa8253370207e1457b9b79e62253c2925"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual raft::kstatus <a class="el" href="class_generate.html">Generate</a>&lt; T &gt;::run </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>run - function to be extended for the actual execution. Code can be executed outside of the run function, i.e., with any function call, however the scheduler will only call the run function so it must initiate any follow-on behavior desired by the user. </p>
-
-<p>Implements <a class="el" href="classraft_1_1kernel.html#a05094286d7577360fb1b91c91fc05901">raft::kernel</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aa8253370207e1457b9b79e62253c2925"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual raft::kstatus <a class="el" href="class_generate.html">Generate</a>&lt; T &gt;::run </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>run - function to be extended for the actual execution. Code can be executed outside of the run function, i.e., with any function call, however the scheduler will only call the run function so it must initiate any follow-on behavior desired by the user. </p>
-<p>else </p>
 
 <p>Implements <a class="el" href="classraft_1_1kernel.html#a05094286d7577360fb1b91c91fc05901">raft::kernel</a>.</p>
 
@@ -313,15 +239,13 @@ template&lt;typename T&gt; </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>TestCases/allocate.cpp</li>
-<li>allocate_s.cpp</li>
 <li>dynallocate.cpp</li>
-<li>portTypeException.cpp</li>
 <li>split.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 18 2015 10:48:41 for RaftLib by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 19 2015 14:14:01 for RaftLib by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.8
 </small></address>
