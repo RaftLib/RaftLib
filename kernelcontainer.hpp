@@ -30,9 +30,19 @@
 class KernelContainer
 {
 private:
-   std::set< raft::kernel * > list;
-   
-   std::mutex                   access;
+   enum sched_cmd { ADD, REMOVE };
+   struct sched_cmd_t
+   {
+      sched_cmd_t( const sched_cmd cmd,
+                   raft::kernel * const kernel ) : cmd( cmd ),
+                                                   kernel( kernel )
+      {
+      }
+
+      const sched_cmd cmd;
+      raft::kernel<F9>
+   }
+   using buffer = RingBuffer
    friend class KernelIterator< decltype( list.begin() ) >;
 
 public:
@@ -82,9 +92,5 @@ public:
     */
    auto end() -> KernelIterator< decltype( list.end() ) >;
 
-   void lock();
-   void unlock();
-
-   void clear();
 };
 #endif /* END _KERNELCONTAINER_HPP_ */

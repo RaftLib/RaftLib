@@ -25,10 +25,13 @@
 #ifndef _POOLSSCHEDULE_HPP_
 #define _POOLSSCHEDULE_HPP_  1
 #include <vector>
+#include <set>
 #include <thread>
 #include <cstdint>
 #include "schedule.hpp"
-#include "kernelcontainer.hpp"
+#include "ringbuffertypes.hpp"
+#include "ringbuffer.tcc"
+#include "sched_cmd_t.hpp"
 
 class Map;
 namespace raft{
@@ -38,6 +41,27 @@ namespace raft{
 
 class pool_schedule : public Schedule
 {
+private:
+   using buffer = RingBuffer< sched_cmd_t                /** type                **/, 
+                              Type::RingBufferType::Heap /** heap alloc          **/, 
+                              false                      /** no instrumentation  **/ >;
+   using kernel_container_t = std::set< raft::kernel* >;
+   struct container_struct
+   {
+      container_struct()
+      {
+         kernel_container = new kernel_container_t();
+         buff             = new buffer( 100 /** buffer size **/ );
+      }
+
+      ~container_struct()
+      {
+         delete( kernel_container );
+         delete( buff );
+      }
+      kernel_container_t *kernel_container  = nullptr;
+      buffer             *buff              = nullptr;
+   };
 public:
    /**
     * pool_schedule - constructor, takes a map object, 
@@ -67,7 +91,7 @@ protected:
     * @param kernel - raft::kernel*
     * @return bool - always true
     */
-   virtual bool scheduleKernel( raft::kernel *kernel );
+   virtual bool scheduleKernel( raft::kernel * const kernel );
 
    /**
     * total # of hardware supported threads 
@@ -80,7 +104,8 @@ protected:
    /**
     * container - holds all the kernels
     */
-   std::vector< KernelContainer* > container;
+   std::vector< container_struct* > container;
+
    /**
     * used std::uint8_t b/c I don't want a bitset from std::vector, 
     * status_flags used to tell the sub-schedulers when to quit.
@@ -89,7 +114,7 @@ protected:
 
    /**
     * stores all kernels that we're currently executing, might
-    * be removed from KernelContainer objects, but they'll still
+    * be removed from kernel_container_t objects, but they'll still
     * be here. TODO, double check to make sure we're deleting
     * and removing these once everything is done.
     */
@@ -102,7 +127,8 @@ private:
     * mini-scheduler which runs all kernels in a given
     * container.
     */
-   static void poolrun( KernelContainer *container, 
+   static void poolrun( container_struct      *container, 
                         volatile std::uint8_t &sched_done );
+
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */

@@ -251,6 +251,11 @@ TOP:
    {
       write_finished = (this)->write_finished;
    }
+   
+   virtual void unpeek()
+   {
+      dm.exitBuffer( dm::peek );
+   }
 
 protected:
    
@@ -609,10 +614,6 @@ protected:
       return;
    }
    
-   virtual void unpeek()
-   {
-      dm.exitBuffer( dm::peek );
-   }
 
    /**
     * local_peek() - look at a reference to the head of the

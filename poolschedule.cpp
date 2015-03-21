@@ -22,6 +22,7 @@
 #include <iostream>
 #include <algorithm>
 #include <chrono>
+#include <map>
 #include <thread>
 #include "kernel.hpp"
 #include "map.hpp"
@@ -39,10 +40,10 @@ pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
    for( std::int64_t index( 0 ); index < n_threads; index++ )
    {
       status_flags[index] = false;
-      container[index] = new KernelContainer();
-      pool[ index ] = new std::thread( poolrun,
-                                       container[ index ],
-                                       std::ref(  status_flags[index] ) );
+      container[ index ]  = new container_struct();
+      pool[ index ]       = new std::thread( poolrun,
+                                             container[ index ],
+                                             std::ref(  status_flags[index] ) );
    }
 }
 
@@ -70,26 +71,19 @@ pool_schedule::scheduleKernel( raft::kernel *kernel )
 void
 pool_schedule::start()
 {
+   std::map< raft::kernel*,
+             container_struct* >
+   curr_mapping;
+              
+   partition::simple( kernel_map,
+                      container,
+                      curr_mapping );
+   
+   auto is_done( []( std::vector< container_struct* > &containers ) -> bool
    {
-      for( auto * const c : container )
+      for( auto * const c : containers )
       {
-         c->lock();
-      }     
-      
-      partition::simple( kernel_map,
-                         container );
-      
-      for( auto * const c : container )
-      {
-         c->unlock();
-      }     
-   }
-
-   auto is_done( []( std::vector< KernelContainer* > &containers ) -> bool
-   {
-      for( auto *c : containers )
-      {
-         if( c->size() != 0 )
+         if( c->kernel_container->size() != 0 || c->buff->size() != 0 )
          {
             return( false );
          }
@@ -101,18 +95,10 @@ pool_schedule::start()
    {
       const std::chrono::milliseconds dura( 100 );
       std::this_thread::sleep_for( dura );
-#if 0      
-      for( auto * const c : container )
-      {
-         c->lock();
-         c->clear();
-      }     
+#if 0
       partition::simple( kernel_map,
-                         container );
-      for( auto * const c : container )
-      {
-         c->unlock();
-      }
+                         container,
+                         curr_mapping );
 #endif
    }
    /** done **/
@@ -127,26 +113,56 @@ pool_schedule::start()
 }
 
 void 
-pool_schedule::poolrun( KernelContainer *container, volatile std::uint8_t &sched_done )
+pool_schedule::poolrun( container_struct *container, volatile std::uint8_t &sched_done )
 {
    while( sched_done == 0 )
    {
-      std::vector< raft::kernel* > unschedule_list;
-      container->lock();
-      for( auto &kernel : *container )
+      /** two lists for actions **/ 
+      std::set< raft::kernel* > unschedule_list;
+      /** buff **/
+      auto *buff( container->buff );
+      while( buff->size() > 0 )
+      {
+         auto &cmd_struct( buff->peek< sched_cmd_t >() );
+         switch( cmd_struct.cmd )
+         {  
+            case( schedule::ADD ):
+            {
+               /** add kernel to run container **/
+               container->kernel_container->insert( cmd_struct.kernel );
+            }
+            break;
+            case( schedule::REMOVE ):
+            {
+               /** add to unschedule list, reconcile at end of run **/
+               unschedule_list.insert( cmd_struct.kernel );
+            }
+            break;
+            default:
+               assert( false );
+         }
+         /** clean up buffer **/
+         buff->unpeek();
+         buff->recycle( 1 );
+      }
+      /** run kernels **/
+      auto * const list( container->kernel_container );
+      for( auto * const kernel : *list )
       {
          bool done( false );
-         Schedule::kernelRun( &kernel, done );
+         Schedule::kernelRun( kernel, done );
          if( done )
          {
-            unschedule_list.emplace_back( &kernel );
+            unschedule_list.insert( kernel );
          }
       }
+      /** reconcile all kernels to remove **/
       for( raft::kernel * const kernel : unschedule_list )
       {
-         container->removeKernel( kernel );
+         auto el( list->find( kernel ) );
+         assert( el != list->end() );
+         list->erase( el );
          Schedule::inactivate( kernel );
       }
-      container->unlock();
    }
 }

@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <cstddef>
 #include "schedule.hpp"
+#include <utility>
 
 class partition
 {
@@ -35,11 +36,13 @@ public:
     * @param   run_container - R&
     */
    template < class KernelList,
-              class RunContainer >
+              class RunContainer,
+              class PriorMapping >
    static
    void
    simple( KernelList   &kernel_list, 
-           RunContainer &run_container )
+           RunContainer &run_container,
+           PriorMapping &prior )
    {
       auto begin( run_container.cbegin() );
       auto it(    begin                  );
@@ -48,7 +51,25 @@ public:
       {
          if( Schedule::isActive( kernel ) )
          {
-            (*it)->addKernel( kernel );
+            /** unschedule kernel **/
+            auto prior_container( prior.find( kernel ) );
+            if( prior_container != prior.end() )
+            {
+               auto * const prior_buff( (*prior_container).second->buff );
+               auto &unschedule( prior_buff->template allocate< sched_cmd_t >() );
+               unschedule.cmd    = schedule::REMOVE;
+               unschedule.kernel = kernel;
+               prior_buff->send();
+               prior.erase( prior_container );
+            }
+            /** add kernel to new container **/
+            auto * const buff( (*it)->buff );
+            auto &to_schedule( buff->template allocate< sched_cmd_t >() );
+            to_schedule.cmd    = schedule::ADD;
+            to_schedule.kernel = kernel;
+            buff->send();
+            /** insert new kernel -> container map **/
+            prior.insert( std::make_pair( kernel, (*it) ) );
             if( ++it == end ) 
             {
                it = begin;

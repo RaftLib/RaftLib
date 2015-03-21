@@ -10,10 +10,10 @@ endif
 TEST = -O0 -g -DUNITTEST=1
 RELEASE = -O3 -mtune=native 
 
-BUILD = $(RELEASE)
+BUILD = $(TEST)
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1 
-LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl -lscotch -lscotcherr  $(RT) 
+LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl $(RT) 
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
       join lambdatest allocate_s foreach peekrange gamma uniform \

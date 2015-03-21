@@ -18,7 +18,7 @@ endif
 TEST = -O0 -g 
 RELEASE = -Ofast -mtune=native
 
-BUILD = $(RELEASE) 
+BUILD = $(TEST) 
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11  -DRDTSCP=1
@@ -27,8 +27,7 @@ CXXFLAGS =  $(BUILD) -Wall -std=c++11  -DRDTSCP=1
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
                    simpleschedule stdalloc portiterator dynalloc \
                    roundrobin kernel mapbase submap globalmap \
-                   systemsignalhandler kernelcontainer \
-                   poolschedule
+                   systemsignalhandler poolschedule
 
 COBJS   = $(RBCOBJS)
 CXXOBJS = $(PACKAGEOBJS) $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)

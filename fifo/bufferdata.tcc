@@ -122,7 +122,7 @@ template < class T,
    }
 
 
-   ~Data()
+   virtual ~Data()
    {
       //DELETE USED HERE
       delete( (this)->read_pt );

@@ -71,28 +71,3 @@ KernelContainer::end() -> KernelIterator< decltype( list.end() ) >
 {
    return( KernelIterator< decltype( list.end() ) >( list.end() ) );
 }
-
-void
-KernelContainer::lock()
-{
-   while( access.try_lock() == false )
-   {
-      std::this_thread::yield();
-   }
-   return;
-}
-
-
-void
-KernelContainer::unlock()
-{
-   access.unlock();
-   return;
-}
-
-void 
-KernelContainer::clear()
-{
-   //list.erase( list.begin(), list.end() );
-   list.clear();
-}
