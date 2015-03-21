@@ -1,6 +1,0 @@
-
---This line, and those below, will be ignored--
-
-M    parser_ll.c
-M    parser_ly.h
-M    parser_yy.c

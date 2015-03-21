@@ -84,6 +84,7 @@ public:
 
    void lock();
    void unlock();
+
    void clear();
 };
 #endif /* END _KERNELCONTAINER_HPP_ */

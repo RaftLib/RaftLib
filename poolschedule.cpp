@@ -28,7 +28,7 @@
 #include "poolschedule.hpp"
 #include "rafttypes.hpp"
 
-#include "partition.hpp"
+#include "partition.tcc"
 
 pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
                                      n_threads( std::thread::hardware_concurrency() ),
@@ -63,7 +63,7 @@ bool
 pool_schedule::scheduleKernel( raft::kernel *kernel )
 {
    assert( kernel != nullptr );
-   kernel_map.push_back( kernel );
+   kernel_map.emplace_back( kernel );
    return( true );
 }
 
@@ -71,21 +71,18 @@ void
 pool_schedule::start()
 {
    {
-      /** must be signed type **/
-      std::vector< std::int64_t > partition_mapping;
-      Partition::simple( kernel_map, 
-                         partition_mapping,
-                         n_threads );
-
-      for( auto i( 0 ); i < kernel_map.size(); i++ )
+      for( auto * const c : container )
       {
-         const auto partition_index( partition_mapping[ i ] );
-         raft::kernel *kern( kernel_map[ i ] );
-         auto c( container[ partition_index ] );
          c->lock();
-         c->addKernel( kern );
+      }     
+      
+      partition::simple( kernel_map,
+                         container );
+      
+      for( auto * const c : container )
+      {
          c->unlock();
-      }
+      }     
    }
 
    auto is_done( []( std::vector< KernelContainer* > &containers ) -> bool
@@ -102,31 +99,16 @@ pool_schedule::start()
 
    while( ! is_done( container ) )
    {
-      const std::chrono::milliseconds dura( 16 );
+      const std::chrono::milliseconds dura( 100 );
       std::this_thread::sleep_for( dura );
-      /** add re-partitioning code here **/
-      /** partition using streaming mean and std of queue occupancy **/
 #if 0      
-      std::vector< std::int64_t > partition_mapping;
       for( auto * const c : container )
       {
          c->lock();
          c->clear();
       }     
-      Partition::utilization_weighted( 
-                         kernel_map, 
-                         partition_mapping,
-                         n_threads );
-      for( auto i( 0 ); i < kernel_map.size(); i++ )
-      {
-         const auto partition_index( partition_mapping[ i ] );
-         if( partition_index < 0 )
-         {
-            raft::kernel * const kern( kernel_map[ i ] );
-            auto c( container[ partition_index ] );
-            c->addKernel( kern );
-         }
-      }
+      partition::simple( kernel_map,
+                         container );
       for( auto * const c : container )
       {
          c->unlock();
@@ -157,7 +139,7 @@ pool_schedule::poolrun( KernelContainer *container, volatile std::uint8_t &sched
          Schedule::kernelRun( &kernel, done );
          if( done )
          {
-            unschedule_list.push_back( &kernel );
+            unschedule_list.emplace_back( &kernel );
          }
       }
       for( raft::kernel * const kernel : unschedule_list )

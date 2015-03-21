@@ -18,7 +18,7 @@ endif
 TEST = -O0 -g 
 RELEASE = -Ofast -mtune=native
 
-BUILD = $(TEST) 
+BUILD = $(RELEASE) 
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11  -DRDTSCP=1
@@ -40,7 +40,7 @@ OBJS = $(addsuffix .o, $(COBJS) ) $(addsuffix .o, $(CXXOBJS) )
 
 
 INCS = $(addprefix -I, $(DIRINCS))
-LIBS = $(RT) $(PTHREAD) $(PACKAGELIBS) -lscotch -lscotcherr 
+LIBS = $(RT) $(PTHREAD) $(PACKAGELIBS) 
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(OBJS)

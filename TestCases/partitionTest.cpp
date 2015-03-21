@@ -10,10 +10,15 @@
 int
 main( int argc, char **argv )
 {
+   int count( 1000 );
+   if( argc == 2 )
+   {
+      count = atoi( argv[ 1 ] );
+   }
    auto rndgen( raft::kernel::make< 
       raft::random_variate< std::uint32_t, raft::uniform > >( 1000, 
                                                               2000, 
-                                                              100000 ) );
+                                                              count  ) );
    
    using sub = raft::lambdak< std::uint32_t >;
    auto  l_sub( [&]( Port &input,

@@ -25,7 +25,7 @@
 #include <vector>
 #include <set>
 #include <utility>
-
+#include <ostream>
 
 namespace raft
 {
@@ -46,6 +46,30 @@ template< typename T > struct ScotchTables
    T              *partition  = nullptr;
    std::size_t    num_vertices;
    std::size_t    num_edges;
+
+   static 
+   std::ostream& print( std::ostream &stream, const ScotchTables< T > &table )
+   {
+      stream << "Vertices: \n";
+      for( auto i( 0 ); i < table.num_vertices; i++ )
+      {
+         stream << table.vtable[ i ] << "  ";
+      }
+      stream << "\n\n";
+      stream << "Edges: \n";
+      for( auto i( 0 ); i < table.num_edges; i++ )
+      {
+         stream << table.etable[ i ] << "  ";
+      }
+      stream << "\n\n";
+      stream << "Weights: \n";
+      for( auto i( 0 ); i < table.num_edges; i++ )
+      {
+         stream << table.eweight[ i ] << "  ";
+      }
+      stream << "\n";
+      return( stream );
+   }
 };
 
 template < typename EDGETYPE, typename WEIGHT > class graph;
@@ -100,7 +124,7 @@ private:
       if( it == edgelist.end() )
       {
          auto *v( new std::vector< wt >() );
-         v->push_back( w );
+         v->emplace_back( w );
          edgelist.insert(
             std::make_pair( src, 
                             v ) );
@@ -117,7 +141,7 @@ private:
          const auto &local_vector( *(*it).second );
          assert( std::find( vector.begin(), vector.end(), dst ) == local_vector.end() );
 #endif
-         (*it).second->push_back( w );
+         (*it).second->emplace_back( w );
          /** we know the source is already there, just need to check the dst **/
          if( vertex_hash.find( dst ) == vertex_hash.end() )
          {
@@ -135,7 +159,8 @@ private:
     */
    std::set< std::int32_t >                     vertex_hash;
 public:
-   
+
+
    /** don't need anything special **/
    graph()  = default;
 
@@ -186,6 +211,7 @@ public:
       std::vector< std::int32_t > edge_list_weight_temp;
       auto vertex_list_index( 0 );
       auto edge_index( 0 );
+      const auto first_vertex_index( *vertex_hash.cbegin() );
       for( const auto vertex_id : vertex_hash )
       {
          const auto out_edge_size( edgelist[ vertex_id ]->size() );
@@ -193,8 +219,8 @@ public:
          std::vector< wt > &dstlist( (*edgelist[ vertex_id ]) );
          for( const auto &edge : dstlist )
          {
-            edge_list_temp.push_back( edge.dst );
-            edge_list_weight_temp.push_back( edge.weight );
+            edge_list_temp.emplace_back( edge.dst - first_vertex_index );
+            edge_list_weight_temp.emplace_back( edge.weight );
          }
          edge_index += out_edge_size;
       }
@@ -216,6 +242,18 @@ public:
       table.num_edges         = edge_list_temp_size;
       table.partition         = new std::int32_t[ size ];
       return( table );
+   }
+   
+   std::ostream& print( std::ostream &stream )
+   {  
+      for( const auto vertex : vertex_hash )
+      {
+         for( const auto &edge : *edgelist[ vertex ] )
+         {
+            stream << "Edge: " << vertex << " -> " << edge.dst << "\n";
+         }
+      }
+      return( stream );
    }
 
    const decltype( vertex_hash )
