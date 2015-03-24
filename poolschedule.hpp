@@ -29,9 +29,7 @@
 #include <thread>
 #include <cstdint>
 #include "schedule.hpp"
-#include "ringbuffertypes.hpp"
-#include "ringbuffer.tcc"
-#include "sched_cmd_t.hpp"
+#include "kernelcontainer.hpp"
 
 class Map;
 namespace raft{
@@ -41,27 +39,6 @@ namespace raft{
 
 class pool_schedule : public Schedule
 {
-private:
-   using buffer = RingBuffer< sched_cmd_t                /** type                **/, 
-                              Type::RingBufferType::Heap /** heap alloc          **/, 
-                              false                      /** no instrumentation  **/ >;
-   using kernel_container_t = std::set< raft::kernel* >;
-   struct container_struct
-   {
-      container_struct()
-      {
-         kernel_container = new kernel_container_t();
-         buff             = new buffer( 100 /** buffer size **/ );
-      }
-
-      ~container_struct()
-      {
-         delete( kernel_container );
-         delete( buff );
-      }
-      kernel_container_t *kernel_container  = nullptr;
-      buffer             *buff              = nullptr;
-   };
 public:
    /**
     * pool_schedule - constructor, takes a map object, 
@@ -85,6 +62,7 @@ public:
    virtual void start(); 
    
 protected:
+   /** BEGIN FUNCTIONS **/
    /**
     * scheduleKernel - override base class function in order
     * to add kernels to the right place.
@@ -94,41 +72,42 @@ protected:
    virtual bool scheduleKernel( raft::kernel * const kernel );
 
    /**
+    * container_min - returns true if the input queue of a has
+    * fewer items than the input queue of b
+    * @param a - kernel_container * const
+    * @param b - kernel_container * const
+    * @return  bool - true if a->qsize() < b->qsize()
+    */
+   static bool  container_min_input( kernel_container * const a,
+                                     kernel_container * const b );
+
+   /**
+    * container_max - returns true if the output queue of a
+    * is greater than b.
+    * @param   a - kernel_container * const
+    * @param   b - kernel_container * const
+    * @return  bool - true if a->outqsize > b->qoutsize
+    */
+   static bool  container_min_output( kernel_container * const a,
+                                      kernel_container * const b );
+
+
+   /** END FUNCTIONS, BEGIN VAR DECLS **/
+
+   /**
     * total # of hardware supported threads 
     */
    const decltype( std::thread::hardware_concurrency() )    n_threads;
    /**
     * used as a thread pool
     */
-   std::vector< std::thread* >     pool;
-   /**
-    * container - holds all the kernels
+   std::vector< std::thread* >      pool;
+   /** 
+    * max_heap_container - sorted by max output-queue occupancy 
     */
-   std::vector< container_struct* > container;
+   std::vector< kernel_container* > container;
 
-   /**
-    * used std::uint8_t b/c I don't want a bitset from std::vector, 
-    * status_flags used to tell the sub-schedulers when to quit.
-    */
-   std::vector< std::uint8_t >             status_flags;
-
-   /**
-    * stores all kernels that we're currently executing, might
-    * be removed from kernel_container_t objects, but they'll still
-    * be here. TODO, double check to make sure we're deleting
-    * and removing these once everything is done.
-    */
-   std::vector< raft::kernel* >    kernel_map;
-
-private:
-   /**
-    * poolrun- called by each thread within 
-    * the pool, essentially this function acts as a 
-    * mini-scheduler which runs all kernels in a given
-    * container.
-    */
-   static void poolrun( container_struct      *container, 
-                        volatile std::uint8_t &sched_done );
-
+   std::size_t                      kernel_count = 0;
+   std::remove_reference< decltype( container.end() ) >::type container_it;
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */

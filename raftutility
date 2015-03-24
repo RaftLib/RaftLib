@@ -1,7 +1,8 @@
 /**
- * random.cpp - 
+ * raftutility - collection of headers for various raft utility number functions
+ *
  * @author: Jonathan Beard
- * @version: Mon Mar  2 14:00:14 2015
+ * @version: Tue Mar  3 11:52:51 2015
  * 
  * Copyright 2015 Jonathan Beard
  * 
@@ -17,27 +18,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef _RAFTUTILITY_HPP_
+#define _RAFTUTILITY_HPP_  1
 
- #include <raft>
- #include <raftrandom>
- #include <cstdint>
- #include <iostream>
- #include <raftio>
+#include "./raft_dir/utility.hpp"
 
-
- int
- main( int argc, char **argv )
- {
-   int count( 1000 );
-   if( argc == 2 )
-   {
-      count = atoi( argv[ 1 ] );
-   }
-   using gen   = raft::random_variate< std::int32_t, raft::sequential >;
-   using p_gen = raft::print< std::int32_t  , '\n' >;
-   raft::map.link(
-      raft::kernel::make< gen >( 1, count ),
-      raft::kernel::make< p_gen >() );
-   raft::map.exe();
-   return( EXIT_SUCCESS );
- }
+#endif /* END _RAFTUTILITY_HPP_ */

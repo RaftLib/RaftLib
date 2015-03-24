@@ -49,10 +49,17 @@ public:
     */
    virtual void init();
    
-   
-   static bool isActive( raft::kernel const * const kernel );
-
-   static void inactivate( raft::kernel * const kernel );
+   /**
+    * kernelRun - all the logic necessary to run a single
+    * kernel successfully.  Any additional signal handling
+    * should be handled by this function as its the only
+    * one that will be universally called by the scheduler.
+    * @param   kernel - raft::kernel *const object, non-null kernel
+    * @param   finished - volatile bool - function sets to 
+    * true when done.
+    */
+   static void kernelRun( raft::kernel * const kernel,
+                          volatile bool       &finished );
 protected:
   
    /**
@@ -116,17 +123,6 @@ protected:
     */
    static bool kernelHasNoInputPorts( raft::kernel *kernel );
 
-   /**
-    * kernelRun - all the logic necessary to run a single
-    * kernel successfully.  Any additional signal handling
-    * should be handled by this function as its the only
-    * one that will be universally called by the scheduler.
-    * @param   kernel - raft::kernel *const object, non-null kernel
-    * @param   finished - volatile bool - function sets to 
-    * true when done.
-    */
-   static void kernelRun( raft::kernel * const kernel,
-                          volatile bool       &finished );
 
    
    

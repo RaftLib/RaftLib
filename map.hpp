@@ -50,7 +50,8 @@ public:
    virtual ~Map();
    
 
-   template< class scheduler = pool_schedule, class allocator = dynalloc > 
+   template< class scheduler = pool_schedule, 
+             class allocator = dynalloc > 
       void exe()
    {
       checkEdges( source_kernels );

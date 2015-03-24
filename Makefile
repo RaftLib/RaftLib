@@ -7,7 +7,7 @@ PREFIX ?= /usr/local
 include fifo/buffer.makefile
 include packages/packages.makefile
 
-DIRINCS = $(PACKAGESDIR) $(RINGBUFFERDIR) ./
+DIRINCS = $(PACKAGEDIR) $(RINGBUFFERDIR) ./
 
 ifneq ($(shell uname -s), Darwin)
 RT = -lrt
@@ -18,16 +18,16 @@ endif
 TEST = -O0 -g 
 RELEASE = -Ofast -mtune=native
 
-BUILD = $(TEST) 
+BUILD = $(RELEASE) 
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
-CXXFLAGS =  $(BUILD) -Wall -std=c++11  -DRDTSCP=1
+CXXFLAGS =  $(BUILD) -Wall -std=c++11
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
                    simpleschedule stdalloc portiterator dynalloc \
                    roundrobin kernel mapbase submap globalmap \
-                   systemsignalhandler poolschedule
+                   systemsignalhandler poolschedule kernelcontainer
 
 COBJS   = $(RBCOBJS)
 CXXOBJS = $(PACKAGEOBJS) $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)
@@ -57,6 +57,7 @@ install:
 	cp raftio $(PREFIX)/include/
 	cp raftrandom $(PREFIX)/include/
 	cp raftstat $(PREFIX)/include/
+	cp raftutility $(PREFIX)/include/
 	echo "Install complete!"
 
 uninstall:
@@ -66,6 +67,7 @@ uninstall:
 	rm -rf $(PREFIX)/include/raftio
 	rm -rf $(PREFIX)/include/raftrandom
 	rm -rf $(PREFIX)/include/raftstat
+	rm -rf $(PREFIX)/include/raftutility
 	echo "Uninstalled!"
 
 %.o: %.cpp

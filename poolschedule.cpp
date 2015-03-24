@@ -28,141 +28,131 @@
 #include "map.hpp"
 #include "poolschedule.hpp"
 #include "rafttypes.hpp"
-
-#include "partition.tcc"
+#include "utility.hpp"
+#include "sched_cmd_t.hpp"
 
 pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
                                      n_threads( std::thread::hardware_concurrency() ),
                                      pool( n_threads ),
-                                     container( n_threads ),
-                                     status_flags( n_threads )
+                                     container( n_threads )
 {
-   for( std::int64_t index( 0 ); index < n_threads; index++ )
+   for( int i( 0 ); i < n_threads; i++ )
    {
-      status_flags[index] = false;
-      container[ index ]  = new container_struct();
-      pool[ index ]       = new std::thread( poolrun,
-                                             container[ index ],
-                                             std::ref(  status_flags[index] ) );
+      /** initialize container objects **/
+      container[ i ] = new kernel_container();
+      /** initialize threads **/
+      pool[ i ] = new std::thread( kernel_container::container_run,
+                                   std::ref( *(container[ i ]) ) );
    }
 }
 
 
 pool_schedule::~pool_schedule()
 {
-   for( auto *th : pool )
-   {
-      delete( th );
-   }
-   for( auto *kc : container )
-   {
-      delete( kc );
-   }
-}
-
-bool
-pool_schedule::scheduleKernel( raft::kernel *kernel )
-{
-   assert( kernel != nullptr );
-   kernel_map.emplace_back( kernel );
-   return( true );
-}
-
-void
-pool_schedule::start()
-{
-   std::map< raft::kernel*,
-             container_struct* >
-   curr_mapping;
-              
-   partition::simple( kernel_map,
-                      container,
-                      curr_mapping );
-   
-   auto is_done( []( std::vector< container_struct* > &containers ) -> bool
-   {
-      for( auto * const c : containers )
-      {
-         if( c->kernel_container->size() != 0 || c->buff->size() != 0 )
-         {
-            return( false );
-         }
-      }
-      return( true );
-   } );
-
-   while( ! is_done( container ) )
-   {
-      const std::chrono::milliseconds dura( 100 );
-      std::this_thread::sleep_for( dura );
-#if 0
-      partition::simple( kernel_map,
-                         container,
-                         curr_mapping );
-#endif
-   }
-   /** done **/
-   for( auto &flag : status_flags )
-   {
-      flag = 1;
-   }
+   assert( kernel_count == 0 );
+   /** join threads **/
    for( std::thread *thr : pool )
    {
       thr->join();
    }
+   /** delete threads **/
+   for( auto *th : pool )
+   {
+      delete( th );
+   }
+   /** delete containers **/
+   for( auto *c : container )
+   {
+      delete( c );
+   }
 }
 
-void 
-pool_schedule::poolrun( container_struct *container, volatile std::uint8_t &sched_done )
+bool
+pool_schedule::scheduleKernel( raft::kernel * const kernel )
 {
-   while( sched_done == 0 )
+   assert( kernel != nullptr );
+   /** get a container **/
+   auto it( std::min_element( container.begin(), 
+                              container.end(),
+                              container_min_input ) );
+   auto &buffer( (*it)->getInputQueue() );
+   auto &new_cmd( buffer.allocate< sched_cmd_t >() );
+   new_cmd.cmd    = schedule::add;
+   new_cmd.kernel = kernel;
+   buffer.send();
+   kernel_count++;
+   return( true );
+}
+
+
+void
+pool_schedule::start()
+{
+   while( kernel_count > 0 )
    {
-      /** two lists for actions **/ 
-      std::set< raft::kernel* > unschedule_list;
-      /** buff **/
-      auto *buff( container->buff );
-      while( buff->size() > 0 )
+      auto it( std::max_element( container.begin(),
+                                 container.end(),
+                                 container_min_output ) );
+      
+      /** we want to get the max queue occupancy **/
+      auto &in_buff( (*it)->getOutputQueue() );
+      if( in_buff.size() > 0 )
       {
-         auto &cmd_struct( buff->peek< sched_cmd_t >() );
-         switch( cmd_struct.cmd )
-         {  
-            case( schedule::ADD ):
+         /** some message exists **/
+         auto &rcvd_cmd( in_buff.peek< sched_cmd_t >() );
+         switch( rcvd_cmd.cmd )
+         {
+            case( schedule::reschedule ):
             {
-               /** add kernel to run container **/
-               container->kernel_container->insert( cmd_struct.kernel );
+               auto it_r( std::min_element( container.begin(), 
+                                            container.end(),
+                                            container_min_input ) );
+               auto &buffer( (*it_r)->getInputQueue() );
+               auto &send_cmd( buffer.allocate< sched_cmd_t >() );
+               send_cmd.cmd    = schedule::add;
+               send_cmd.kernel = rcvd_cmd.kernel;
+               buffer.send();
             }
             break;
-            case( schedule::REMOVE ):
+            case( schedule::kernelfinished ):
             {
-               /** add to unschedule list, reconcile at end of run **/
-               unschedule_list.insert( cmd_struct.kernel );
+               /** remove kernel **/
+               kernel_count--;
             }
             break;
             default:
-               assert( false );
+            {
+               std::cerr << "Invalid signal: " << 
+                  schedule::sched_cmd_str[ rcvd_cmd.cmd ] << "\n";
+               exit( EXIT_FAILURE );
+            }
          }
-         /** clean up buffer **/
-         buff->unpeek();
-         buff->recycle( 1 );
-      }
-      /** run kernels **/
-      auto * const list( container->kernel_container );
-      for( auto * const kernel : *list )
-      {
-         bool done( false );
-         Schedule::kernelRun( kernel, done );
-         if( done )
-         {
-            unschedule_list.insert( kernel );
-         }
-      }
-      /** reconcile all kernels to remove **/
-      for( raft::kernel * const kernel : unschedule_list )
-      {
-         auto el( list->find( kernel ) );
-         assert( el != list->end() );
-         list->erase( el );
-         Schedule::inactivate( kernel );
+         in_buff.unpeek();
+         in_buff.recycle( 1 );
       }
    }
+
+   /** all done, shutdown **/ 
+   for( auto * const c : container )
+   {
+      auto &out_buff( c->getInputQueue() );
+      auto &new_cmd( out_buff.allocate< sched_cmd_t >() );
+      new_cmd.cmd    = schedule::shutdown;
+      new_cmd.kernel = nullptr;
+      out_buff.send();
+   }
+}
+
+bool
+pool_schedule::container_min_input( kernel_container * const a,
+                                    kernel_container * const b )
+{
+   return( a->getInputQueue().size() < b->getInputQueue().size() ? true : false ); 
+}
+
+bool
+pool_schedule::container_min_output( kernel_container * const a,
+                                     kernel_container * const b )
+{
+   return( a->getOutputQueue().size() < b->getOutputQueue().size() ? true : false );
 }

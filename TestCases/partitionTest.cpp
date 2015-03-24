@@ -24,16 +24,19 @@ main( int argc, char **argv )
    auto  l_sub( [&]( Port &input,
                      Port &output )
       {
-         std::uint32_t a;
-         input[ "0" ].pop( a );
-         output[ "0" ].push( a - 10 );
+         if( output[ "0" ].space_avail() > 0 )
+         {
+            std::uint32_t a;
+            input[ "0" ].pop( a );
+            output[ "0" ].push( a - 10 );
+         }
          return( raft::proceed );
       } );
 
    
    auto kernels = raft::map.link( rndgen,
                                   raft::kernel::make< sub >( 1, 1, l_sub ) );
-   for( int i( 0 ); i < 90 ; i++ )
+   for( int i( 0 ); i < 50 ; i++ )
    {
       kernels = raft::map.link( &kernels.getDst(),
                                 raft::kernel::make< sub >( 1, 1, l_sub ) );

@@ -291,7 +291,7 @@ protected:
       }
       else
       {
-         current = ( current + delta ) % max;
+         current = current + delta;
       }
       return( out );
    }

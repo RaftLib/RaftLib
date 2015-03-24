@@ -7,10 +7,10 @@ STATIC = -static -static-libgcc -static-libstdc++
 RT =  -lrt -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 endif
 
-TEST = -O0 -g -DUNITTEST=1
+TEST = -O0 -g -DUNITTEST=1 -ggdb
 RELEASE = -O3 -mtune=native 
 
-BUILD = $(TEST)
+BUILD = $(RELEASE)
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1 
 LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl $(RT) 

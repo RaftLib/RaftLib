@@ -72,7 +72,7 @@ TOP:
              * this is in fact the best of all possible returns (see Leibniz or Candide 
              * for further info).
              */
-            //std::this_thread::yield();
+            std::this_thread::yield();
             __builtin_prefetch( buff_ptr, 0, 3 );
             goto TOP;
          }
@@ -328,7 +328,6 @@ protected:
 #endif           
       }
       auto * const buff_ptr( dm.get() );
-      
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       *ptr = (void*)&( buff_ptr->store[ write_index ] );
       (this)->allocate_called = true;

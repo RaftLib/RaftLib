@@ -129,14 +129,17 @@ public:
     * @param   n - const std::size_t, # items to allocate
     * @return  std::vector< std::reference_wrapper< T > >
     */
-   template < class T > auto allocate_range( const std::size_t n ) -> std::vector< 
-                                                std::reference_wrapper< T > >
+   template < class T > 
+      auto allocate_range( const std::size_t n ) -> 
+         std::vector< std::reference_wrapper< T > >
    {
       std::vector< std::reference_wrapper< T > > output;
       void *ptr( (void*) &output );
       local_allocate_n( ptr, n );
       /** compiler should optimize this copy, if not then it'll be a copy of referneces not full objects **/
-      return( output );
+      return( std::forward<
+         std::vector< 
+            std::reference_wrapper< T > > >( output ) );
    }
    /**
     * send - releases the last item allocated by allocate() to the 

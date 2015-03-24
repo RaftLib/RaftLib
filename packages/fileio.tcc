@@ -99,21 +99,24 @@ public:
    {  
       for( auto &port : output )
       {
-         auto &chunk( port.template allocate< chunktype  >() );
-         chunk.start_position = ftell( fp );
-         const auto chunksize( chunktype::getChunkSize() );
-         const auto num_read(  
-            fread( chunk.buffer, sizeof( char ), chunksize , fp ) );
-         chunk.buffer[ num_read ] = '\0';
-         chunk.length = num_read;
-         port.send( 
-            ( iterations - output.count() /* num ports */ ) > 0 ? 
-               raft::none : 
-               raft::eof );
-         
-         if( --iterations <= 0 )
-         {  
-            return( raft::stop );
+         if( port.space_avail() )
+         {
+            auto &chunk( port.template allocate< chunktype  >() );
+            chunk.start_position = ftell( fp );
+            const auto chunksize( chunktype::getChunkSize() );
+            const auto num_read(  
+               fread( chunk.buffer, sizeof( char ), chunksize , fp ) );
+            chunk.buffer[ num_read ] = '\0';
+            chunk.length = num_read;
+            port.send( 
+               ( iterations - output.count() /* num ports */ ) > 0 ? 
+                  raft::none : 
+                  raft::eof );
+            
+            if( --iterations <= 0 )
+            {  
+               return( raft::stop );
+            }
          }
       }
       return( raft::proceed );

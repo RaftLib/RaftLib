@@ -85,10 +85,13 @@ public:
    {
       for( auto &port : output )
       {
-         port.template push< T >( draw() );
-         if( --count == 0 )
+         if( port.space_avail() > 0 )
          {
-            return( raft::stop );
+            port.template push< T >( draw() );
+            if( --count == 0 )
+            {
+               return( raft::stop );
+            }
          }
       }
       return( raft::proceed );

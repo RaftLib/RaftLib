@@ -28,11 +28,30 @@ namespace raft
 }
 
 namespace schedule{
-   enum sched_cmd : std::int8_t { ADD, REMOVE };
+   enum sched_cmd : std::int8_t { add, 
+                                  removekernel, 
+                                  remove,
+                                  kernelfinished, 
+                                  reschedule, 
+                                  shutdown,
+                                  NCMD };
+   const std::string sched_cmd_str[ schedule::NCMD ] = 
+      { 
+         "add",
+         "removekernel",
+         "remove",
+         "kernelfinished",
+         "reschedule",
+         "shutdown"
+      };
 }
 
 struct sched_cmd_t
 {
+   sched_cmd_t()
+   {
+   }
+   
    sched_cmd_t( const schedule::sched_cmd cmd,
                 raft::kernel *kernel ) : cmd( cmd ),
                                          kernel( kernel )
@@ -46,8 +65,11 @@ struct sched_cmd_t
    }
 
    virtual ~sched_cmd_t() = default;
-   schedule::sched_cmd      cmd;
-   raft::kernel *kernel = nullptr;
+  
+   /** some reasonable default **/
+   schedule::sched_cmd      cmd = schedule::add;
+   /** default == null **/
+   raft::kernel *kernel         = nullptr;
 };
 
 #endif /* END _SCHED_CMD_T_HPP_ */

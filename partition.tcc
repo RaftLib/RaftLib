@@ -51,6 +51,13 @@ public:
       {
          if( Schedule::isActive( kernel ) )
          {
+            /** add kernel to new container **/
+            auto * const buff( (*it)->buff );
+            auto &to_schedule( buff->template allocate< sched_cmd_t >() );
+            to_schedule.cmd    = schedule::ADD;
+            to_schedule.kernel = kernel;
+            buff->send();
+            
             /** unschedule kernel **/
             auto prior_container( prior.find( kernel ) );
             if( prior_container != prior.end() )
@@ -62,12 +69,7 @@ public:
                prior_buff->send();
                prior.erase( prior_container );
             }
-            /** add kernel to new container **/
-            auto * const buff( (*it)->buff );
-            auto &to_schedule( buff->template allocate< sched_cmd_t >() );
-            to_schedule.cmd    = schedule::ADD;
-            to_schedule.kernel = kernel;
-            buff->send();
+            
             /** insert new kernel -> container map **/
             prior.insert( std::make_pair( kernel, (*it) ) );
             if( ++it == end ) 

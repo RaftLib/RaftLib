@@ -114,7 +114,6 @@ protected:
 
 private:
    const  std::size_t kernel_id;
-   bool               active = true;
 };
 } /** end namespace raft */
 #endif /* END _KERNEL_HPP_ */

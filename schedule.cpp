@@ -137,32 +137,23 @@ void
 Schedule::kernelRun( raft::kernel * const kernel,
                       volatile bool       &finished )
 {
-   if( likely( kernelHasInputData( kernel ) ) )
+   if( kernelHasInputData( kernel ) )
    {
       const auto sig_status = kernel->run();
-      if( unlikely( sig_status == raft::stop ) )
+      if( sig_status == raft::stop )
       {
          invalidateOutputPorts( kernel );
          finished = true;
       }
-   }
-   else if( unlikely( kernelHasNoInputPorts( kernel ) ) )
+   } 
+   /** 
+    * must recheck data items again after port valid check, there could
+    * have been a push between these two conditional statements.
+    */
+   else if(  kernelHasNoInputPorts( kernel ) && ! kernelHasInputData( kernel ) )
    {
       invalidateOutputPorts( kernel );
       finished = true;
    }
-   return;
-}
-
-bool
-Schedule::isActive( raft::kernel const * const kernel )
-{
-   return( kernel->active );
-}
-
-void 
-Schedule::inactivate( raft::kernel * const kernel )
-{
-   kernel->active = false;
    return;
 }
