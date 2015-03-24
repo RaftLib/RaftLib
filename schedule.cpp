@@ -133,9 +133,12 @@ Schedule::kernelHasNoInputPorts( raft::kernel *kernel )
    }
    return( true );
 }
-void 
+
+bool
 Schedule::kernelRun( raft::kernel * const kernel,
-                      volatile bool       &finished )
+                      volatile bool       &finished,
+                      jmp_buf             *gotostate,
+                      jmp_buf             *kernel_state )
 {
    if( kernelHasInputData( kernel ) )
    {
@@ -155,5 +158,5 @@ Schedule::kernelRun( raft::kernel * const kernel,
       invalidateOutputPorts( kernel );
       finished = true;
    }
-   return;
+   return( true );
 }

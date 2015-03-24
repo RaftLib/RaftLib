@@ -20,7 +20,9 @@
 #ifndef _KERNEL_HPP_
 #define _KERNEL_HPP_  1
 
+#include <functional>
 #include <utility>
+#include <setjmp.h>
 
 #include "port.hpp"
 #include "signalvars.hpp"
@@ -114,6 +116,21 @@ protected:
 
 private:
    const  std::size_t kernel_id;
+   /**
+    * NOTE: this is only accessible to the run-time tools, 
+    * we need it to preempt the kernel if we're in a blocked
+    * function that has gone on for far too long.  Not a problem
+    * when using the OS scheduler, but an issue when we use
+    * a pool scheme
+    */
+   jmp_buf            current_state;
+   /**
+    * NOTE: previous state is the state as it was before the 
+    * kernel was executed.  The scheduler will return the 
+    * kernel to it's "current_state" on the next invocation 
+    * of the compute kernel.
+    */
+   jmp_buf            prev_state;
 };
 } /** end namespace raft */
 #endif /* END _KERNEL_HPP_ */

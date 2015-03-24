@@ -28,6 +28,21 @@
 namespace raft
 {
 
+
+
+/** 
+ * irange - simple utility that returns a vector of 
+ * integers with the common type of A & B, useful for
+ * some instances when a range is needed....however
+ * don't be too tempted to use this over and over 
+ * in a tight loop since the compiler will more than
+ * likely create lots of copies.
+ * @param   a - const A, start of range (inclusive)
+ * @param   b - const B, end of range   (inclusive)
+ * @param   delta - const std::size_t 
+ * @return std::vector< T >, where T is common type of 
+ *         A & B
+ */
 template < typename A,
            typename B> 
 static

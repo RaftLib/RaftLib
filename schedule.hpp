@@ -19,6 +19,7 @@
  */
 #ifndef _SCHEDULE_HPP_
 #define _SCHEDULE_HPP_  1
+#include <setjmp.h>
 #include "signalvars.hpp"
 #include "systemsignalhandler.hpp"
 #include "rafttypes.hpp"
@@ -57,9 +58,13 @@ public:
     * @param   kernel - raft::kernel *const object, non-null kernel
     * @param   finished - volatile bool - function sets to 
     * true when done.
+    * @return  true if run with no need for jmp_buf, false if 
+    * the scheduler needs to run again with the kernel_state
     */
-   static void kernelRun( raft::kernel * const kernel,
-                          volatile bool       &finished );
+   static bool kernelRun( raft::kernel * const kernel,
+                          volatile bool       &finished,
+                          jmp_buf             *gotostate    = nullptr,
+                          jmp_buf             *kernel_state = nullptr  );
 protected:
   
    /**

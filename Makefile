@@ -11,14 +11,14 @@ DIRINCS = $(PACKAGEDIR) $(RINGBUFFERDIR) ./
 
 ifneq ($(shell uname -s), Darwin)
 RT = -lrt
-STATIC = -static -static-libgcc -static-libstdc++
+STATIC = -DRDTSCP=1 -static -static-libgcc -static-libstdc++
 PTHREAD = -lpthread  
 endif
 
 TEST = -O0 -g 
 RELEASE = -Ofast -mtune=native
 
-BUILD = $(RELEASE) 
+BUILD = $(RELEASE) $(STATIC)
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11
