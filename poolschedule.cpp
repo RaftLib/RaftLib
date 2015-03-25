@@ -36,7 +36,7 @@ pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
                                      pool( n_threads ),
                                      container( n_threads )
 {
-   for( int i( 0 ); i < n_threads; i++ )
+   for( decltype( std::thread::hardware_concurrency() ) i( 0 ); i < n_threads; i++ )
    {
       /** initialize container objects **/
       container[ i ] = new kernel_container();

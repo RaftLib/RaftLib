@@ -7,7 +7,6 @@
 #include <raftrandom>
 #include <fstream>
 
-
 int
 main( int argc, char **argv )
 {
@@ -40,7 +39,7 @@ main( int argc, char **argv )
    auto kernels = raft::map.link( rndgen,
                                   raft::kernel::make< sub >( 1, 1, l_sub ) );
    
-   for( int i( 0 ); i < 40 ; i++ )
+   for( int i( 0 ); i < 50 ; i++ )
    {
       kernels = raft::map.link( &kernels.getDst(),
                                 raft::kernel::make< sub >( 1, 1, l_sub ) );
