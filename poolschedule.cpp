@@ -93,7 +93,7 @@ pool_schedule::start()
       auto it( std::max_element( container.begin(),
                                  container.end(),
                                  container_min_output ) );
-      
+       
       /** we want to get the max queue occupancy **/
       auto &in_buff( (*it)->getOutputQueue() );
       if( in_buff.size() > 0 )
@@ -107,7 +107,11 @@ pool_schedule::start()
                auto it_r( std::min_element( container.begin(), 
                                             container.end(),
                                             container_min_input ) );
-               auto &buffer( (*it_r)->getInputQueue() );
+               const auto container_to_use
+               ( ( (*it_r)->getInputQueue().size() <
+                        (*it)->getInputQueue().size() * diff_weight ) ? it_r : it );
+               
+               auto &buffer( (*container_to_use)->getInputQueue() );
                auto &send_cmd( buffer.allocate< sched_cmd_t >() );
                send_cmd.cmd    = schedule::add;
                send_cmd.kernel = rcvd_cmd.kernel;

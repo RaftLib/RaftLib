@@ -31,6 +31,7 @@
 #include <typeinfo>
 #include <cassert>
 #include <cxxabi.h>
+#include <vector>
 #include <thread>
 #include <sstream>
 
@@ -133,6 +134,10 @@ public:
       {
          source_kernels.insert( a );   
       }
+      if( ! b->output.hasPorts() )
+      {
+         dst_kernels.insert( b );
+      }
       all_kernels.insert( a );
       all_kernels.insert( b );
       PortInfo *port_info_a;
@@ -205,6 +210,10 @@ public:
       {
          source_kernels.insert( a );   
       }
+      if( ! b->output.hasPorts() )
+      {
+         dst_kernels.insert( b );
+      }
       all_kernels.insert( a );
       all_kernels.insert( b );
       PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
@@ -264,6 +273,10 @@ public:
       {
          source_kernels.insert( a );   
       }
+      if( ! b->output.hasPorts() )
+      {
+         dst_kernels.insert( b );
+      }
       all_kernels.insert( a );
       all_kernels.insert( b );
       PortInfo *port_info_a;
@@ -322,6 +335,10 @@ public:
       {
          source_kernels.insert( a );   
       }
+      if( ! b->output.hasPorts() )
+      {
+         dst_kernels.insert( b );
+      }
       all_kernels.insert( a );
       all_kernels.insert( b );
       auto &port_info_a( a->output.getPortInfoFor( a_port ) );
@@ -350,8 +367,6 @@ public:
 
 
 protected:
-  
-
    /**
     * join - helper method joins the two ports given the correct 
     * information.  Essentially the correct information for the 
@@ -372,8 +387,13 @@ protected:
 
    /** need to keep source kernels **/
    std::set< raft::kernel* > source_kernels;
-   
+   /** dst kernels **/
+   std::set< raft::kernel* > dst_kernels;
    /** and keep a list of all kernels **/
    std::set< raft::kernel* > all_kernels; 
+   /** flatten these kernels into main map once we run **/
+   std::vector< MapBase* >   sub_maps;
+
+   friend class Map;
 };
 #endif /* END _MAPBASE_HPP_ */

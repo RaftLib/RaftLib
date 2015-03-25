@@ -54,6 +54,11 @@ public:
              class allocator = dynalloc > 
       void exe()
    {
+      for( auto * const submap : sub_maps )
+      {
+         all_kernels.insert( submap->all_kernels.begin(),
+                             submap->all_kernels.end()   );
+      }
       checkEdges( source_kernels );
       volatile bool exit_alloc( false );
       allocator alloc( (*this), exit_alloc );

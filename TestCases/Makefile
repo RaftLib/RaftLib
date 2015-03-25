@@ -8,7 +8,7 @@ RT =  -lrt -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 endif
 
 TEST = -O0 -g -DUNITTEST=1 -ggdb
-RELEASE = -O3 -mtune=native 
+RELEASE = -Ofast -mtune=native 
 
 BUILD = $(RELEASE)
 CFLAGS   =  $(BUILD) -Wall -std=c99 

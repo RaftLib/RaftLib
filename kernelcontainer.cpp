@@ -77,8 +77,9 @@ kernel_container::container_run( kernel_container &container )
                bool done( false );
                auto &out_cmd( output_buffer.allocate< sched_cmd_t >() );
                Schedule::kernelRun( new_cmd.kernel, done );
-               out_cmd.cmd = ( done ? schedule::kernelfinished : schedule::reschedule );
-               out_cmd.kernel = new_cmd.kernel;
+               out_cmd.cmd            = ( done ? schedule::kernelfinished : 
+                                                 schedule::reschedule );
+               out_cmd.kernel         = new_cmd.kernel;
                output_buffer.send();
             }
             break;

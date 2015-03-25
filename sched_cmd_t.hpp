@@ -21,11 +21,14 @@
 #define _SCHED_CMD_T_HPP_  1
 #include <cstdint>
 
+
 /** full def in kernel.hpp **/
 namespace raft
 {
    class kernel;
 }
+
+class kernel_container;
 
 namespace schedule{
    enum sched_cmd : std::int8_t { add, 
@@ -67,9 +70,9 @@ struct sched_cmd_t
    virtual ~sched_cmd_t() = default;
   
    /** some reasonable default **/
-   schedule::sched_cmd      cmd = schedule::add;
+   schedule::sched_cmd      cmd     = schedule::add;
    /** default == null **/
-   raft::kernel *kernel         = nullptr;
+   raft::kernel            *kernel         = nullptr;
 };
 
 #endif /* END _SCHED_CMD_T_HPP_ */

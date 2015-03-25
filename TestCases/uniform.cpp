@@ -31,7 +31,7 @@
    using namespace raft;
    auto rndgen( 
       kernel::make< 
-         random_variate< std::uint32_t, uniform > >( 100, 1000 , 10000 ) );
+         random_variate< std::uint32_t, uniform > >( 1000, 2000 , 10000 ) );
    auto pr( kernel::make< print< std::uint32_t , '\n' > >() );
    map.link( rndgen, pr );
    map.exe();

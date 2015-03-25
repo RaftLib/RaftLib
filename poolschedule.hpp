@@ -93,7 +93,12 @@ protected:
 
 
    /** END FUNCTIONS, BEGIN VAR DECLS **/
-
+   /**
+    * The thread has to have this much more "work" than 
+    * the previous thread in order to get moved ot a new
+    * thread.  Used in pool_schedule::start().
+    */
+   const float diff_weight = .5;
    /**
     * total # of hardware supported threads 
     */

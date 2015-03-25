@@ -11,15 +11,16 @@
 int
 main( int argc, char **argv )
 {
-   int count( 100000 );
-   //if( argc == 2 )
-   //{
-   //   count = atoi( argv[ 1 ] );
-   //}
+   int count( 1000 );
+   if( argc == 2 )
+   {
+      count = atoi( argv[ 1 ] );
+   }
    auto rndgen( raft::kernel::make< 
       raft::random_variate< std::uint32_t, raft::uniform > >( 1000, 
                                                               2000, 
                                                               count  ) );
+                                                              
    
    using sub = raft::lambdak< std::uint32_t >;
    auto  l_sub( [&]( Port &input,
@@ -34,21 +35,21 @@ main( int argc, char **argv )
          return( raft::proceed );
       } );
 
-   std::ofstream ofs( "/dev/null" );
+   //std::ofstream ofs( "/dev/null" );
     
    auto kernels = raft::map.link( rndgen,
                                   raft::kernel::make< sub >( 1, 1, l_sub ) );
-   const auto kernel_count( atoi( argv[ 1 ] ) );                                  
-   for( int i( 0 ); i < kernel_count ; i++ )
+   
+   for( int i( 0 ); i < 40 ; i++ )
    {
       kernels = raft::map.link( &kernels.getDst(),
                                 raft::kernel::make< sub >( 1, 1, l_sub ) );
    }
    raft::map.link( &kernels.getDst(), 
-             raft::kernel::make< raft::print< std::uint32_t, '\n' > >( ofs ) );
+             raft::kernel::make< raft::print< std::uint32_t, '\n' > >( std::cout ) );
    raft::map.exe();
    
-   ofs.close();
+   //ofs.close();
 
    return( EXIT_SUCCESS );
 }
