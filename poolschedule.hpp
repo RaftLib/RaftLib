@@ -98,7 +98,7 @@ protected:
     * the previous thread in order to get moved ot a new
     * thread.  Used in pool_schedule::start().
     */
-   const float diff_weight = .25;
+   const float diff_weight = .20;
    /**
     * total # of hardware supported threads 
     */

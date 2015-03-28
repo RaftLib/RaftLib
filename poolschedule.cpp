@@ -56,12 +56,12 @@ pool_schedule::~pool_schedule()
       thr->join();
    }
    /** delete threads **/
-   for( auto *th : pool )
+   for( auto * const th : pool )
    {
       delete( th );
    }
    /** delete containers **/
-   for( auto *c : container )
+   for( auto * const c : container )
    {
       delete( c );
    }
