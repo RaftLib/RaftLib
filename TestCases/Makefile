@@ -10,7 +10,7 @@ endif
 TEST = -O0 -g -DUNITTEST=1 -ggdb
 RELEASE = -Ofast -mtune=native 
 
-BUILD = $(TEST)
+BUILD = $(RELEASE)
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1 
 LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl $(RT) 
