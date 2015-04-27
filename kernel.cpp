@@ -28,6 +28,17 @@ kernel::get_id()
    return( kernel_id );
 }
 
+void
+kernel::setRunningState( raft::kernel * const k )
+{
+   assert( false );
+}
+
+void
+kernel::preemptState( raft::kernel * const k )
+{
+   assert( false );
+}
 
 //std::string
 //kernel::getName()

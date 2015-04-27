@@ -1,6 +1,6 @@
-CC  ?= gcc
-CXX ?= g++
-AR  ?= ar
+CC  = gcc
+CXX = g++
+AR  = ar
 
 ifneq ($(shell uname -s), Darwin)
 STATIC = -static -static-libgcc -static-libstdc++
@@ -10,10 +10,15 @@ endif
 TEST = -O0 -g -DUNITTEST=1 -ggdb
 RELEASE = -Ofast -mtune=native 
 
+ifeq ($(type), test)
+BUILD = $(TEST)
+else
 BUILD = $(RELEASE)
+endif
+
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1 
-LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl $(RT) 
+LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl $(RT) -lm 
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
       join lambdatest allocate_s foreach peekrange gamma uniform \

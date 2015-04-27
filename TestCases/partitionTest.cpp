@@ -39,7 +39,7 @@ main( int argc, char **argv )
    auto kernels = raft::map.link( rndgen,
                                   raft::kernel::make< sub >( 1, 1, l_sub ) );
    
-   for( int i( 0 ); i < 50 ; i++ )
+   for( int i( 0 ); i < 5 ; i++ )
    {
       kernels = raft::map.link( &kernels.getDst(),
                                 raft::kernel::make< sub >( 1, 1, l_sub ) );

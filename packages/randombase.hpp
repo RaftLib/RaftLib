@@ -118,7 +118,9 @@ public:
 protected:
    /**
     * sample_system_rng - returns system provided uint64_t from 
-    * /dev/random.
+    * /dev/urandom.  Normally I'd say use /dev/random however
+    * then we have to handle blocking for lack of entropy and this
+    * seems a bit simpler at the moment.
     * @return std::uint64_t 
     */
    static std::uint64_t sample_system_rng();

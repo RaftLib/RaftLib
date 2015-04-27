@@ -18,7 +18,12 @@ endif
 TEST = -O0 -g 
 RELEASE = -Ofast -mtune=native
 
+ifeq ($(type), test)
+BUILD = $(TEST) $(STATIC)
+else
 BUILD = $(RELEASE) $(STATIC)
+endif
+
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11

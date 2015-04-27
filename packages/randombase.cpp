@@ -123,17 +123,17 @@ randombase::sample_system_rng()
 {
    errno = 0;
    std::uint64_t output( 0 );
-   FILE *fp( fopen( "/dev/random", "r" ) );
+   FILE *fp( std::fopen( "/dev/urandom", "r" ) );
    if( fp == nullptr )
    {
       /** TODO, throw appropriate raft exception **/
-      perror( "Failed to open /dev/random, seeding with zero" );
+      std::perror( "Failed to open /dev/urandom, seeding with zero" );
       return( output );
    }
-   if( fread( &output, sizeof( std::uint64_t ), 1, fp ) != 1 )
+   if( std::fread( &output, sizeof( std::uint64_t ), 1, fp ) != 1 )
    {
-      perror( "Failed to read from /dev/random" );
+      std::perror( "Failed to read from /dev/urandom" );
    }
-   fclose( fp );
+   std::fclose( fp );
    return( output );
 }

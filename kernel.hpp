@@ -115,6 +115,21 @@ protected:
    static std::size_t kernel_count;
 
 private:
+   /** 
+    * setRunningState - set the running state of this kernel
+    * before preemption so that the scheduler can return 
+    * right where this kernel is supposed to be executing.
+    * @param k - raft::kernel*
+    */
+   static void setRunningState( raft::kernel * const k );
+   /**
+    * preemptState - jump to the previous state stored
+    * within this kernel so that the scheduler can do 
+    * something else while this kernel is stuck.
+    * @param   k   - raft::kernel*
+    */
+   static void preemptState( raft::kernel * const k );
+
    const  std::size_t kernel_id;
    /**
     * NOTE: this is only accessible to the run-time tools, 
@@ -123,14 +138,14 @@ private:
     * when using the OS scheduler, but an issue when we use
     * a pool scheme
     */
-   jmp_buf            current_state;
+   jmp_buf            running_state;
    /**
     * NOTE: previous state is the state as it was before the 
     * kernel was executed.  The scheduler will return the 
     * kernel to it's "current_state" on the next invocation 
     * of the compute kernel.
     */
-   jmp_buf            prev_state;
+   jmp_buf            preempt_state;
 };
 } /** end namespace raft */
 #endif /* END _KERNEL_HPP_ */
