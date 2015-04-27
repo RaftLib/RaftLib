@@ -82,7 +82,7 @@ public:
     * @return  bool
     */
    template < class T >
-   bool addPort( const std::string port_name )
+   bool addPort( const std::string &&port_name )
    {
       /**
        * we'll have to make a port info object first and pass it by copy
@@ -139,14 +139,14 @@ public:
     * @return  const type_index&
     * @throws PortNotFoundException
     */
-   const std::type_index& getPortType( const std::string port_name );
+   const std::type_index& getPortType( const std::string &&port_name );
 
 
    /**
     * operator[] - input the port name and get a port
     * if it exists. 
     */
-   virtual FIFO& operator[]( const std::string port_name );
+   virtual FIFO& operator[]( const std::string &&port_name );
 
 
    /**

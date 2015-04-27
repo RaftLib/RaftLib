@@ -12,9 +12,9 @@ template< typename A, typename B, typename C > class sum : public raft::kernel
 public:
    sum() : raft::kernel()
    {
-      input.addPort< A >( "input_a" );
-      input.addPort< B >( "input_b" );
-      output.addPort< C >( "sum" );
+      input. template addPort< A >( "input_a" );
+      input. template addPort< B >( "input_b" );
+      output.template addPort< C >( "sum" );
    }
    virtual raft::kstatus run()
    {

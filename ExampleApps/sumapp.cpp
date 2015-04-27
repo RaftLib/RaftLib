@@ -25,7 +25,7 @@ public:
       input[ "input_a" ].pop( a, &sig_a );
       input[ "input_b" ].pop( b, &sig_b );
       assert( sig_a == sig_b );
-      C c( a + b );
+      const C c( a + b );
       output[ "sum" ].push( c , sig_a );
       if( sig_b == raft::eof )
       {

@@ -188,6 +188,8 @@ private:
    const double mean;
 };
 
+
+/** GAUSSIAN **/
 template< class T > class random_variate< T, raft::gaussian > : 
    public raft::randomx< T >
 {
@@ -271,6 +273,7 @@ public:
 
    random_variate(   const T min,
                      const T max,
+                     const T delta,
                      const std::uintmax_t count ) : randomx< T >( count,
                                                                   dummy,
                                                                   0 ),
@@ -283,9 +286,8 @@ public:
 protected:
    virtual T draw()
    {
-      T out;
-      out = current;
-      if( current >= max - delta )
+      const T out( current );
+      if( __builtin_expect( current > max - delta, 0 /* false */ )  )
       {
          current = min;
       }
@@ -298,7 +300,7 @@ protected:
 private:
    const T min = std::numeric_limits< T >::min();;
    const T max = std::numeric_limits< T >::max();
-   const T delta;
+   const T delta = 1;
    T       current = min;
 };
 
