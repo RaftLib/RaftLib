@@ -22,14 +22,17 @@
 
 #include <functional>
 #include <utility>
+#include <cstdint>
 #include <setjmp.h>
 
 #include "port.hpp"
 #include "signalvars.hpp"
 #include "rafttypes.hpp"
 
+/** pre-declare for friends **/ 
 class MapBase;
 class Schedule;
+class kernel_container;
 
 #ifndef CLONE
 namespace raft
@@ -106,6 +109,7 @@ protected:
    friend class ::MapBase;
    friend class ::Schedule;
    friend class ::GraphTools;
+   friend class ::kernel_container;   
    
    /**
     * NOTE: doesn't need to be atomic since only one thread
@@ -120,15 +124,30 @@ private:
     * before preemption so that the scheduler can return 
     * right where this kernel is supposed to be executing.
     * @param k - raft::kernel*
+    * @return  - returns flag from setjmp, see man setjmp for 
+    *  details
     */
-   static void setRunningState( raft::kernel * const k );
+   static std::int32_t setRunningState( raft::kernel * const k );
    /**
-    * preemptState - jump to the previous state stored
-    * within this kernel so that the scheduler can do 
-    * something else while this kernel is stuck.
-    * @param   k   - raft::kernel*
+    * setPreemptState - set the state to before this kernel
+    * was scheduled so that other kernels can run, should
+    * be called by the scheduler before executing.  The kernel
+    * if it is stuck will call longjmp( state, 1 ) so that
+    * the scheduler will receive a 1 from a preempted kernel
+    * @param k - raft::kernel*const
+    * @return  - returns flag from setjmp, see man setjmp for 
+    *  details
     */
-   static void preemptState( raft::kernel * const k );
+   static std::int32_t setPreemptState( raft::kernel * const k );
+   /**
+    * preempt - called by the kernel if it is stuck
+    * and cannot make forward proress.  Will longjmp
+    * back to the scheduler and allow another kernel
+    * a chance to execute.  The scheduler will receive
+    * a 1 in return.
+    * @param   k - raft::kernel * const
+    */
+   static void preempt( raft::kernel * const k );
 
    const  std::size_t kernel_id;
    /**

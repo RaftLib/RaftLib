@@ -80,7 +80,7 @@ public:
    static void container_run( kernel_container &container  );
 private:
    using kernel_container_t = std::set< raft::kernel* >;
-
+   kernel_container_t  container;
    buffer             *input_buff   = nullptr; 
    buffer             *output_buff  = nullptr;         
 };

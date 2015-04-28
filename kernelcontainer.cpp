@@ -22,7 +22,7 @@
 #include <cassert>
 #include "schedule.hpp"
 #include "kernelcontainer.hpp"
-
+#include "kernel.hpp"
 
 kernel_container::kernel_container() 
 {
@@ -74,13 +74,34 @@ kernel_container::container_run( kernel_container &container )
             case( schedule::add ):
             {
                assert( new_cmd.kernel != nullptr );
-               bool done( false );
-               auto &out_cmd( output_buffer.allocate< sched_cmd_t >() );
-               Schedule::kernelRun( new_cmd.kernel, done );
-               out_cmd.cmd            = ( done ? schedule::kernelfinished : 
-                                                 schedule::reschedule );
-               out_cmd.kernel         = new_cmd.kernel;
-               output_buffer.send();
+               
+               const auto ret_val( raft::kernel::setPreemptState( new_cmd.kernel ) );
+               switch( ret_val )
+               {
+                  case( 0 /* newly scheduled kernel */ ):
+                  {
+                     bool done( false );
+                     auto &out_cmd( output_buffer.allocate< sched_cmd_t >() );
+                     Schedule::kernelRun( new_cmd.kernel, done );
+                     out_cmd.cmd            = ( done ? schedule::kernelfinished : 
+                                                       schedule::reschedule );
+                     out_cmd.kernel         = new_cmd.kernel;
+                     output_buffer.send();
+                  }
+                  break;
+                  case( 1 /* kernel preempted */ ):
+                  {
+                     assert( false );
+                  }
+                  break;
+                  case( 2 /* kernel prempted a second time, leave in container */ ):
+                  {
+                     assert( false );
+                  }
+                  break;
+                  default:
+                     assert( false );
+               }
             }
             break;
             case( schedule::shutdown ):
