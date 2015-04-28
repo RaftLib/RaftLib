@@ -59,7 +59,10 @@ public:
          all_kernels.insert( submap->all_kernels.begin(),
                              submap->all_kernels.end()   );
       }
+      /** check types, ensure all are linked **/
       checkEdges( source_kernels );
+      /** adds in split/join kernels **/
+      enableDuplication( source_kernels );
       volatile bool exit_alloc( false );
       allocator alloc( (*this), exit_alloc );
       /** launch allocator in a thread **/
@@ -94,7 +97,16 @@ protected:
     * @throws PortException - thrown if an unconnected edge is found.
     */
    void checkEdges( std::set< raft::kernel* > &source_k );
-   
+
+   /**
+    * enableDuplication - add split / join kernels where needed, 
+    * for the moment we're going with a simple split/join topology,
+    * however that doesn't mean that more complex topologies might
+    * not be implemented in the future.
+    * @param    source_k - std::set< raft::kernel* > with sources
+    */
+   void enableDuplication( std::set< raft::kernel* > &source_k );
+
    /**
     * printEdges - print a nice pretty picture using graphviz
     * of the current layout, future versions will pop up a 

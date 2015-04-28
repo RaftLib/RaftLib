@@ -61,6 +61,22 @@ Map::checkEdges( std::set< raft::kernel* > &source_k )
    return;
 }
 
+void 
+Map::enableDuplication( std::set< raft::kernel* > &source_k )
+{
+
+    GraphTools::BFS( source_k,
+                     []( const PortInfo &a, const PortInfo &b, void *data )
+                     {
+                        if( a.out_of_order && b.out_of_order )
+                        {
+                            /** TODO, finish thought **/
+                        }
+                     },
+                     nullptr,
+                     false );
+}
+
 
 void
 Map::printEdges( std::set< raft::kernel* > &source_k )

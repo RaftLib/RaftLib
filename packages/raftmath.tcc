@@ -1,7 +1,7 @@
 /**
- * random.cpp - 
+ * raftmath.tcc - 
  * @author: Jonathan Beard
- * @version: Mon Mar  2 14:00:14 2015
+ * @version: Tue Apr 28 13:48:37 2015
  * 
  * Copyright 2015 Jonathan Beard
  * 
@@ -17,27 +17,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef _RAFTMATH_TCC_
+#define _RAFTMATH_TCC_  1
 
- #include <raft>
- #include <raftrandom>
- #include <cstdint>
- #include <iostream>
- #include <raftio>
+class Port;
+class FIFO;
 
+namespace raft
+{
+   /** TODO, finish this **/
+   template T sum_to( 
+} /** end namespace raft **/
 
- int
- main( int argc, char **argv )
- {
-   int count( 1001 );
-   if( argc == 2 )
-   {
-      count = atoi( argv[ 1 ] );
-   }
-   using gen   = raft::random_variate< std::int32_t, raft::sequential >;
-   using p_gen = raft::print< std::int32_t  , '\n' >;
-   raft::map.link(
-      raft::kernel::make< gen >( 1, 1000, 1 , count ),
-      raft::kernel::make< p_gen >() );
-   raft::map.exe();
-   return( EXIT_SUCCESS );
- }
+#endif /* END _RAFTMATH_TCC_ */

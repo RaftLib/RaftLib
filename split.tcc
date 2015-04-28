@@ -39,6 +39,7 @@ public:
       /** TODO, add code to do multi-item inserts **/
       raft::signal signal;
       T &item( input[ "0" ].template peek< T >( &signal ) );
+      /** split funtion selects a fifo using the appropriate split method **/
       if( split_func.send( item, signal, output ) )
       {
          /* recycle item */

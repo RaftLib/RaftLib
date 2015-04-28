@@ -27,13 +27,13 @@
 class splitmethod 
 {
 public:
-   splitmethod() = default;
+   splitmethod()          = default;
    virtual ~splitmethod() = default;
    
    template < class T /* item */ >
       bool send( T &item, const raft::signal signal, Port &outputs )
    {
-      auto *fifo( select_fifo( outputs, sendtype ) );
+      auto * const fifo( select_fifo( outputs, sendtype ) );
       if( fifo != nullptr )
       {
          fifo->push( item, signal );
@@ -48,7 +48,7 @@ public:
    template < class T /* item */ >
       bool get( T &item, raft::signal &signal, Port &inputs )
    {
-      auto *fifo( select_fifo( inputs, gettype ) );
+      auto * const fifo( select_fifo( inputs, gettype ) );
       if( fifo != nullptr )
       {
          fifo->pop< T >( item, &signal );
