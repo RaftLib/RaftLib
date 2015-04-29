@@ -25,8 +25,6 @@ class FIFO;
 
 namespace raft
 {
-   /** TODO, finish this **/
-   template T sum_to( 
 } /** end namespace raft **/
 
 #endif /* END _RAFTMATH_TCC_ */

@@ -63,6 +63,7 @@ install:
 	cp raftrandom $(PREFIX)/include/
 	cp raftstat $(PREFIX)/include/
 	cp raftutility $(PREFIX)/include/
+	cp raftmath $(PREFIX)/include/
 	echo "Install complete!"
 
 uninstall:
@@ -73,6 +74,7 @@ uninstall:
 	rm -rf $(PREFIX)/include/raftrandom
 	rm -rf $(PREFIX)/include/raftstat
 	rm -rf $(PREFIX)/include/raftutility
+	rm -rf $(PREFIX)/include/raftmath
 	echo "Uninstalled!"
 
 %.o: %.cpp
