@@ -135,8 +135,8 @@ struct PortInfo
    std::map< Type::RingBufferType , instr_map_t* > const_map;
 
 
-   split_factor_t   *split_func      = nullptr;
-   join_factory_t   *join_func       = nullptr;
+   split_factory_t   *split_func      = nullptr;
+   join_factory_t    *join_func       = nullptr;
 
    raft::kernel     *my_kernel       = nullptr;
    std::string       my_name         = "";

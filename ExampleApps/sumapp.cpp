@@ -5,32 +5,24 @@
 #include <raft>
 #include <raftio>
 #include <raftrandom>
+#include <raftmath>
 
 
-template< typename A, typename B, typename C > class Sum : public raft::kernel
+template< typename T  > class Sum : public raft::kernel
 {
 public:
    Sum() : raft::kernel()
    {
-      input.template addPort< A >( "input_a" );
-      input.template addPort< B >( "input_b" );
-      output.template addPort< C  >( "sum" );
+      input.template addPort< T >( "a" );
+      input.template addPort< T >( "b" );
+      output.template addPort< T  >( "sum" );
    }
    
    virtual raft::kstatus run()
    {
-      A a;
-      B b;
-      raft::signal  sig_a( raft::none  ), sig_b( raft::none );
-      input[ "input_a" ].pop( a, &sig_a );
-      input[ "input_b" ].pop( b, &sig_b );
-      assert( sig_a == sig_b );
-      const C c( a + b );
-      output[ "sum" ].push( c , sig_a );
-      if( sig_b == raft::eof )
-      {
-         return( raft::stop );
-      }
+      raft::sum_to( output[ "sum" ] /* destination */, 
+                    input[ "a" ]    /* source a */, 
+                    input[ "b" ]    /* source b */ );
       return( raft::proceed );
    }
 
@@ -45,16 +37,23 @@ main( int argc, char **argv )
    {
       count = atoi( argv[ 1 ] );
    }
-   using gen = raft::random_variate< std::int64_t, raft::sequential >;
-   using sum = Sum< std::int64_t, std::int64_t, std::int64_t >;
-   using p_out = raft::print< std::int64_t, '\n' >;
+   using type_t = std::int64_t;
+   using gen = raft::random_variate< type_t, raft::sequential >;
+   using sum = Sum< type_t >;
+   using p_out = raft::print< type_t, '\n' >;
 
    auto linked_kernels( 
-      raft::map.link( raft::kernel::make< gen >( 1, count ),
-                      raft::kernel::make< sum >(), "input_a" ) );
+      raft::map.link( raft::kernel::make< gen >( 1    /* min range */,
+                                                 100  /* max range */, 
+                                                 1    /* delta */,
+                                                 count ),
+                      raft::kernel::make< sum >(), "a" ) );
    raft::map.link( 
-      raft::kernel::make< gen >( 1, count ),
-      &linked_kernels.getDst(), "input_b"  );
+      raft::kernel::make< gen >( 1     /* min range */, 
+                                 100   /* max range */,
+                                 1     /* delta */, 
+                                 count ),
+      &linked_kernels.getDst(), "b"  );
    raft::map.link( 
       &linked_kernels.getDst(), 
       raft::kernel::make< p_out >() );
