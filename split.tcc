@@ -47,12 +47,13 @@ public:
       }
       return( raft::proceed );
    }
-
-protected:
+   
    virtual void addPort()
    {
       addPortTo< T >( output );
    }
+
+protected:
    method split_func;
 };
 } /** end namespace raft **/

@@ -22,10 +22,23 @@
 #include <cstddef>
 #include <map>
 #include <functional>
-#include "fifo.hpp"
 
-typedef std::map< bool, std::function< FIFO* ( std::size_t /** n_items **/,
-                                               std::size_t /** alignof **/,
-                                               void*   /** data struct **/ ) > >
-                                                   instr_map_t;
+namespace raft
+{
+   /* defined in ./parallelk.hpp */
+   class parallel_k;
+}
+/* defined in fifo/fifo.hpp */
+class FIFO;
+
+/**
+ * instr_map_t - used as a factory function to create type-appropriate queues within
+ * the PortInfo object.
+ */
+using instr_map_t =  std::map< bool, std::function< FIFO* ( std::size_t /** n_items **/,
+                                                            std::size_t /** alignof **/,
+                                                            void*   /** data struct **/ ) > >;
+
+using split_factory_t = std::function< raft::parallel_k*() >;
+using join_factory_t  = std::function< raft::parallel_k*() >;
 #endif /* END _PORT_INFO_TYPES_HPP_ */

@@ -134,15 +134,24 @@ struct PortInfo
     */
    std::map< Type::RingBufferType , instr_map_t* > const_map;
 
+
+   split_factor_t   *split_func      = nullptr;
+   join_factory_t   *join_func       = nullptr;
+
    raft::kernel     *my_kernel       = nullptr;
    std::string       my_name         = "";
    
    raft::kernel     *other_kernel    = nullptr;
    std::string       other_name      = "";
+   
+   /** runtime settings **/
    bool              use_my_allocator= false;
    bool              out_of_order    = false;
    void             *existing_buffer = nullptr;
    std::size_t       nitems          = 0;
    std::size_t       start_index     = 0;
+
+
+   
 };
 #endif /* END _PORT_INFO_HPP_ */

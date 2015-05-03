@@ -37,6 +37,12 @@ public:
 
    virtual ~parallel_k() = default;
 
+   /**
+    * addPort - we only add on ports to one side
+    * when auto-parallelizing so we only need one
+    * of these functions. 
+    */
+   virtual void addPort() = 0;
 protected:
    /** 
     * addPort - adds a port, either to the input or 
@@ -48,12 +54,6 @@ protected:
       port.addPort< T >( std::to_string( port_name_index++ ) );
    }
 
-   /**
-    * addPort - we only add on ports to one side
-    * when auto-parallelizing so we only need one
-    * of these functions. 
-    */
-   virtual void addPort() = 0;
 
    std::size_t  port_name_index = 0; 
    friend class ::Schedule;
