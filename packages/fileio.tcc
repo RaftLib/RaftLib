@@ -30,6 +30,8 @@
 
 namespace raft{
 
+enum readertype : std::int32_t { chunk, fasta };
+
 template < std::size_t size = 65536 > struct filechunk
 {
    filechunk() = default;
@@ -57,7 +59,14 @@ template < std::size_t size = 65536 > struct filechunk
    }
 };
 
-template < class chunktype = filechunk< 65536 >, 
+template < std::size_t size = 47 > struct fastachunk
+{
+
+};
+
+
+template < typename type = chunk,
+           class chunktype = filechunk< 65536 >, 
            bool copy = false > class filereader : public raft::kernel
 {
 public:
