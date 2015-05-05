@@ -94,6 +94,8 @@ public:
        pi.my_kernel = kernel;
        pi.my_name   = port_name;
        (this)->initializeConstMap<T>( pi );
+       (this)->initializeSplit< T >( pi );
+       (this)->initializeJoin< T >( pi );
       const auto ret_val( portmap.map.insert( std::make_pair( port_name, 
                                                           pi ) ) );
       return( ret_val.second );
@@ -201,6 +203,22 @@ protected:
                          RingBuffer< T, Type::SharedMemory >::make_new_fifo ) );
       /** no instrumentation version defined yet **/
       return;
+   }
+
+   /**
+    * initializeSplit
+    */
+   template < class T > void initializeSplit( PortInfo &pi )
+   {
+   
+   }
+
+   /**
+    * initializeJoin
+    */
+   template < class T > void initializeJoin( PortInfo &pi )
+   {
+
    }
    
    /**
