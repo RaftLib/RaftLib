@@ -59,18 +59,12 @@ template < std::size_t size = 65536 > struct filechunk
    }
 };
 
-template < std::size_t size = 47 > struct fastachunk
-{
 
-};
-
-
-template < typename type = chunk,
-           class chunktype = filechunk< 65536 >, 
+template < class chunktype = filechunk< 65536 >, 
            bool copy = false > class filereader : public raft::kernel
 {
 public:
-   filereader( const std::string inputfile, 
+   filereader( const std::string &&inputfile, 
                const std::size_t n_output_ports = 1,
                const std::size_t chunk_offset = 0 )
    {

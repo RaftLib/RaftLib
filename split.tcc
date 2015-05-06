@@ -38,12 +38,17 @@ public:
    {
       /** TODO, add code to do multi-item inserts **/
       raft::signal signal;
-      T &item( input[ "0" ].template peek< T >( &signal ) );
+      auto &output_port( input[ "0" ] );
+      T &item( output_port.template peek< T >( &signal ) );
       /** split funtion selects a fifo using the appropriate split method **/
       if( split_func.send( item, signal, output ) )
       {
          /* recycle item */
-         input[ "0" ].recycle( 1 );
+         output_port.recycle( 1 );
+      }
+      else
+      {
+         output_port.unpeek();
       }
       return( raft::proceed );
    }

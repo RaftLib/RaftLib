@@ -40,12 +40,17 @@ public:
    virtual raft::kstatus run()
    {
       /** multiple calls to allocate will return same reference **/
-      T &mem( output[ "0" ].template allocate< T >() );
+      auto &output_port( output[ "0" ] );
+      T &mem( output_port.template allocate< T >() );
       raft::signal temp_signal;
       if( split_func.get( mem, temp_signal, input ) )
       {
          /** call push to release above allocated memory **/
-         output[ "0" ].send( temp_signal );
+         output_port.send( temp_signal );
+      }
+      else /** didn't use allocated mem, deallocate **/
+      {
+         output_port.deallocate();
       }
       return( raft::proceed );
    }

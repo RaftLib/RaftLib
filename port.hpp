@@ -38,7 +38,6 @@
 #include "port_info_types.hpp"
 #include "portmap_t.hpp"
 #include "portiterator.hpp"
-
 /** needed for friending below **/
 class MapBase;
 
@@ -46,6 +45,7 @@ class MapBase;
 namespace raft{
    class kernel;
 }
+
 
 class Port : public PortBase
 {
@@ -206,19 +206,25 @@ protected:
    }
 
    /**
-    * initializeSplit
+    * initializeSplit - pre-allocate split kernels...saves
+    * allocation time later, then all that is needed is to 
+    * hook them up, and allocate memory for the ports.
     */
    template < class T > void initializeSplit( PortInfo &pi )
    {
-   
+      //pi.split_func = static_cast< split_factory_t* >( raft::kernel::make< raft::split< T > >() ); 
    }
 
    /**
-    * initializeJoin
+    * initializeJoin - pre-allocate join kernels...saves
+    * allocation time later, takes up minimal space and
+    * all that is needed when these are actually used
+    * is to allocate memory for the ports which is done
+    * by the 
     */
    template < class T > void initializeJoin( PortInfo &pi )
    {
-
+      //pi.join_func = static_cast< join_factory_t* >( raft::kernel::make< raft::join< T > >() );
    }
    
    /**

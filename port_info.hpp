@@ -135,6 +135,11 @@ struct PortInfo
    std::map< Type::RingBufferType , instr_map_t* > const_map;
 
 
+   /**
+    * NOTE: These are allocated by the run-time but not
+    * destroyed unless they're used...they'll of course
+    * be destroyed upon program termination.
+    */
    split_factory_t   *split_func      = nullptr;
    join_factory_t    *join_func       = nullptr;
 
