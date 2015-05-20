@@ -24,6 +24,7 @@
 #include <cstdint>
 #include <functional>
 #include <cassert>
+#include <utility>
 
 namespace raft
 {

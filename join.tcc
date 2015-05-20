@@ -29,10 +29,13 @@ namespace raft{
 template < class T, class method = roundrobin  > class join : public raft::parallel_k
 {
 public:
-   join()
+   join( const std::size_t num_ports = 1 )
    {
-      addPortTo< T >( input );
       output.addPort< T >( "0" );
+      for( auto it( 0 ); it < num_ports; it++ )
+      {
+         addPortTo< T >( input );
+      }
    }
 
    virtual ~join() = default;

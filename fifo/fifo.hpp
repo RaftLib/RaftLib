@@ -79,8 +79,10 @@ public:
    /**
     * allocate - returns a reference to a writeable 
     * member at the tail of the FIFO.  You must have 
-    * a subsequent call to push in order to release
+    * a subsequent call to send in order to release
     * this object to the FIFO once it is written.
+    * If the user needs to de-allocate the memory without
+    * using it, they can call the deallocate function.
     * @return  T&
     */
    template < class T > T& allocate()
