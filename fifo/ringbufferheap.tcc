@@ -209,7 +209,7 @@ TOP:
                   return;
                }
             }
-            if( blocked++ > Scheduler::PREEMPT_LIMIT )
+            if( blocked++ > Schedule::PREEMPT_LIMIT )
             {
                auto ret_val( raft::kernel::setRunningState( (this)->dst_kernel ) );
                if( ret_val == 0 /* not returning from scheduler */ )
