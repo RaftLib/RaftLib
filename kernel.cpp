@@ -48,6 +48,12 @@ kernel::preempt( raft::kernel * const k )
    longjmp( k->preempt_state , 1 );
 }
 
+void 
+kernel::restore( raft::kernel * const k )
+{
+   longjmp( k->running_state, 1 );
+}
+
 //std::string
 //kernel::getName()
 //{

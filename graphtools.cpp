@@ -121,6 +121,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
                    vertex_func                 func,
                    void                        *data )
 {
+#if 0
    while( queue.size() > 0 )
    {
       auto *source( queue.front() );
@@ -162,6 +163,8 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
       }
    }
    return;
+#endif
+   assert( false ); /** FIXME: error above with virtual function 'func', fix in a bit **/
 }
 
 void

@@ -19,7 +19,7 @@
  */
 #ifndef _KERNELCONTAINER_HPP_
 #define _KERNELCONTAINER_HPP_  1
-#include <set>
+#include <queue>
 #include <type_traits>
 #include "sched_cmd_t.hpp"
 #include "ringbuffer.tcc"
@@ -79,8 +79,8 @@ public:
     */
    static void container_run( kernel_container &container  );
 private:
-   using kernel_container_t = std::set< raft::kernel* >;
-   kernel_container_t  container;
+   using kernel_container_t = std::queue< raft::kernel* >;
+   kernel_container_t  preempted_kernel_pool;
    buffer             *input_buff   = nullptr; 
    buffer             *output_buff  = nullptr;         
 };

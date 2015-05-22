@@ -179,7 +179,8 @@ TOP:
       (this)->n_allocated     = 0; 
       dm.exitBuffer( dm::allocate_range );
    }
-   
+  
+   //FIXME, come back here 
    /**
     * removes range items from the buffer, ignores
     * them without the copy overhead.
@@ -192,6 +193,7 @@ TOP:
          return;
       }
       do{ /** at least one to remove **/
+         std::uint8_t blocked( 0 );
          for( ;; )
          {
             dm.enterBuffer( dm::recycle );
@@ -205,6 +207,20 @@ TOP:
                {
                   dm.exitBuffer( dm::recycle );
                   return;
+               }
+            }
+            if( blocked++ > Scheduler::PREEMPT_LIMIT )
+            {
+               auto ret_val( raft::kernel::setRunningState( (this)->dst_kernel ) );
+               if( ret_val == 0 /* not returning from scheduler */ )
+               {
+                  /** pre-empt back to scheduler **/
+                  raft::kernel::preempt( (this)->dst_kernel );
+               }
+               else
+               {
+                  /** reset blocked, keep trying **/
+                  blocked = 0;
                }
             }
          }

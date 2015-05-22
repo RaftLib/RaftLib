@@ -149,6 +149,14 @@ private:
     */
    static void preempt( raft::kernel * const k );
 
+   /**
+    * restore - called by the scheduler to restore the
+    * state of this kernel before it was pre-empted so 
+    * that progress can continue unabated.  
+    * @param k - raft::kernel * const
+    */
+   static void restore( raft::kernel * const k );
+
    const  std::size_t kernel_id;
    /**
     * NOTE: this is only accessible to the run-time tools, 

@@ -64,9 +64,9 @@ kernel_container::container_run( kernel_container &container )
    bool shutdown( false );
    auto &input_buffer( container.getInputQueue() );
    auto &output_buffer( container.getOutputQueue() );
-   while( ! shutdown )
+   while( ! shutdown && container.preempted_kernel_pool.size() != 0 )
    {
-      while( container.getInputQueue().size() > 0 )
+      if( container.getInputQueue().size() > 0 )
       {
          auto &new_cmd( input_buffer.peek< sched_cmd_t >() );
          switch( new_cmd.cmd )
@@ -91,12 +91,7 @@ kernel_container::container_run( kernel_container &container )
                   break;
                   case( 1 /* kernel preempted */ ):
                   {
-                     assert( false );
-                  }
-                  break;
-                  case( 2 /* kernel prempted a second time, leave in container */ ):
-                  {
-                     assert( false );
+                     container.preempted_kernel_pool.push( new_cmd.kernel );
                   }
                   break;
                   default:
@@ -120,6 +115,14 @@ kernel_container::container_run( kernel_container &container )
          /** clean-up buffer and recycle head of FIFO **/
          input_buffer.unpeek();
          input_buffer.recycle( 1 );
+      }
+      /** try these kernels again **/
+      if( container.preempted_kernel_pool.size() > 0 )
+      {
+         auto * const kernel( container.preempted_kernel_pool.front() );
+         container.preempted_kernel_pool.pop();
+         raft::kernel::restore( kernel );
+         /** after this it'll longjmp to the running state **/ 
       }
    }
 }
