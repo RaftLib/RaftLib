@@ -28,31 +28,6 @@ kernel::get_id()
    return( kernel_id );
 }
 
-std::int32_t
-kernel::setRunningState( raft::kernel * const k )
-{
-   return( static_cast< 
-            std::int32_t >( setjmp( k->running_state ) ) );
-}
-
-std::int32_t
-kernel::setPreemptState( raft::kernel * const k )
-{
-   return( static_cast< 
-            std::int32_t >( setjmp( k->preempt_state ) ) );
-}
-
-void
-kernel::preempt( raft::kernel * const k )
-{
-   longjmp( k->preempt_state , 1 );
-}
-
-void 
-kernel::restore( raft::kernel * const k )
-{
-   longjmp( k->running_state, 1 );
-}
 
 //std::string
 //kernel::getName()

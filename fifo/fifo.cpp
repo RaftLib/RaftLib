@@ -1,5 +1,5 @@
 /**
- * fifo.cpp - 
+ * FIFO.cpp - 
  * @author: Jonathan Beard
  * @version: Thu Sep  4 12:59:45 2014
  * 
@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "fifo.hpp"
+#include "FIFO.hpp"
 
 FIFO::FIFO()
 {
@@ -48,4 +48,16 @@ bool
 FIFO::is_invalid()
 {
    return( ! valid );
+}
+
+void
+FIFO::set_src_kernel( raft::kernel * const k )
+{
+   src_kernel = k;
+}
+
+void
+FIFO::set_dst_kernel( raft::kernel * const k )
+{
+   dst_kernel = k;
 }

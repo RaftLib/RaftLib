@@ -75,7 +75,7 @@ kernel_container::container_run( kernel_container &container )
             {
                assert( new_cmd.kernel != nullptr );
                
-               const auto ret_val( raft::kernel::setPreemptState( new_cmd.kernel ) );
+               const auto ret_val( kernel_preempt::setPreemptState( new_cmd.kernel ) );
                switch( ret_val )
                {
                   case( 0 /* newly scheduled kernel */ ):
@@ -121,7 +121,7 @@ kernel_container::container_run( kernel_container &container )
       {
          auto * const kernel( container.preempted_kernel_pool.front() );
          container.preempted_kernel_pool.pop();
-         raft::kernel::restore( kernel );
+         kernel_preempt::restore( kernel );
          /** after this it'll longjmp to the running state **/ 
       }
    }

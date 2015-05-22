@@ -36,6 +36,8 @@
 #include "fifoabstract.tcc"
 #include "datamanager.tcc"
 
+#include "kernelpreempt.hpp"
+
 namespace raft
 {
    class kernel;

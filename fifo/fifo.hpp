@@ -36,7 +36,10 @@
 
 /** pre-declare Schedule class **/
 class Schedule;
-
+namespace raft
+{
+   class kernel;
+}
 
 class FIFO
 {
@@ -387,6 +390,29 @@ public:
     */
    bool is_invalid();
 protected:
+   /**
+    * set_src_kernel - sets teh protected source
+    * kernel for this fifo, necessary for preemption,
+    * see comments on variables below.
+    * @param   k - raft::kernel*
+    */
+   void set_src_kernel( raft::kernel * const k );
+   /**
+    * set_dst_kernel - sets the protected destination
+    * kernel for this fifo, necessary for preemption,
+    * see comments on variables below.
+    * @param   k - raft::kernel*
+    */
+   void set_dst_kernel( raft::kernel * const k );
+   /**
+    * need a reference to source and destination 
+    * kernels for preemption to work properly, essentially
+    * there has to be a way to give orderly control from
+    * the fifo copying data back to the scheduler and the
+    * only realistic way is through the kernel
+    */
+   raft::kernel            *src_kernel      = nullptr;
+   raft::kernel            *dst_kernel      = nullptr;
    /**
     * signal_peek - special function for the scheduler
     * to peek at a signal on the head of the queue.

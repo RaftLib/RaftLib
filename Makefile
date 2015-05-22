@@ -32,7 +32,8 @@ CXXFLAGS =  $(BUILD) -Wall -std=c++11
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
                    simpleschedule stdalloc portiterator dynalloc \
                    roundrobin kernel mapbase submap globalmap \
-                   systemsignalhandler poolschedule kernelcontainer
+                   systemsignalhandler poolschedule kernelcontainer \
+                   kernelpreempt
 
 COBJS   = $(RBCOBJS)
 CXXOBJS = $(PACKAGEOBJS) $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)

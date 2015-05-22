@@ -22,6 +22,7 @@
 
 #include "portexception.hpp"
 #include "optdef.hpp"
+#include "scheduleconst.hpp"
 
 template < class T, 
            Type::RingBufferType type > class RingBufferBase : 
@@ -209,13 +210,13 @@ TOP:
                   return;
                }
             }
-            if( blocked++ > Schedule::PREEMPT_LIMIT )
+            if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
             {
-               auto ret_val( raft::kernel::setRunningState( (this)->dst_kernel ) );
+               auto ret_val( kernel_preempt::setRunningState( (this)->dst_kernel ) );
                if( ret_val == 0 /* not returning from scheduler */ )
                {
                   /** pre-empt back to scheduler **/
-                  raft::kernel::preempt( (this)->dst_kernel );
+                  kernel_preempt::preempt( (this)->dst_kernel );
                }
                else
                {

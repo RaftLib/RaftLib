@@ -32,16 +32,6 @@ class Map;
 class Schedule
 {
 public:
-   /**
-    * PREEMPT_LIMIT - this is set as a global constant to 
-    * preempt kernels within the fifo itself if they are
-    * stuck waiting for their specified action for N or 
-    * more iterations.  Eventually I'd like this to be a
-    * parameter selected via some analytic formula or ML
-    * but for not it'll be a static constant set by the 
-    * library developer.
-    */
-   static const std::uint8_t PREEMPT_LIMIT = 5;
 
    /** 
     * Schedule - base constructor takes a map object

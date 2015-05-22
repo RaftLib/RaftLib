@@ -110,7 +110,7 @@ protected:
    friend class ::Schedule;
    friend class ::GraphTools;
    friend class ::kernel_container;   
-   
+   friend class ::kernel_preempt;   
    /**
     * NOTE: doesn't need to be atomic since only one thread
     * will have responsibility to to create new compute 
@@ -119,43 +119,6 @@ protected:
    static std::size_t kernel_count;
 
 private:
-   /** 
-    * setRunningState - set the running state of this kernel
-    * before preemption so that the scheduler can return 
-    * right where this kernel is supposed to be executing.
-    * @param k - raft::kernel*
-    * @return  - returns flag from setjmp, see man setjmp for 
-    *  details
-    */
-   static std::int32_t setRunningState( raft::kernel * const k );
-   /**
-    * setPreemptState - set the state to before this kernel
-    * was scheduled so that other kernels can run, should
-    * be called by the scheduler before executing.  The kernel
-    * if it is stuck will call longjmp( state, 1 ) so that
-    * the scheduler will receive a 1 from a preempted kernel
-    * @param k - raft::kernel*const
-    * @return  - returns flag from setjmp, see man setjmp for 
-    *  details
-    */
-   static std::int32_t setPreemptState( raft::kernel * const k );
-   /**
-    * preempt - called by the kernel if it is stuck
-    * and cannot make forward proress.  Will longjmp
-    * back to the scheduler and allow another kernel
-    * a chance to execute.  The scheduler will receive
-    * a 1 in return.
-    * @param   k - raft::kernel * const
-    */
-   static void preempt( raft::kernel * const k );
-
-   /**
-    * restore - called by the scheduler to restore the
-    * state of this kernel before it was pre-empted so 
-    * that progress can continue unabated.  
-    * @param k - raft::kernel * const
-    */
-   static void restore( raft::kernel * const k );
 
    const  std::size_t kernel_id;
    /**
