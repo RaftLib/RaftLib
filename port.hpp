@@ -212,6 +212,7 @@ protected:
     */
    template < class T > void initializeSplit( PortInfo &pi )
    {
+      //FIXME, needs to be implemented
       //pi.split_func = static_cast< split_factory_t* >( raft::kernel::make< raft::split< T > >() ); 
    }
 

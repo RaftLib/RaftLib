@@ -169,6 +169,7 @@ public:
       return( n_items );
    }
 
+   /** TODO, build iterator for this **/
 private:
    FIFO             &fifo;
    T  *  const       queue;

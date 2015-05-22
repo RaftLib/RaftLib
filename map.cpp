@@ -18,7 +18,6 @@
  * limitations under the License.
  */
 #include <sstream>
-#include <cxxabi.h>
 #include <map>
 #include <sstream>
 #include <vector>
@@ -29,6 +28,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "common.hpp"
 #include "map.hpp"
 #include "graphtools.hpp"
 
@@ -91,14 +91,13 @@ Map::printEdges( std::set< raft::kernel* > &source_k )
    GraphTools::BFS( source_k,
                     [&]( const PortInfo &a, const PortInfo &b, void *data )
                     {
-                        int status( 0 );
-                        const std::string name_a( abi::__cxa_demangle( typeid( *(a.my_kernel) ).name(), 0, 0, &status ) );
+                        const std::string name_a( common::printClassName( *(a.my_kernel) ) );
                         const auto ret_val( gviz_node_map.insert( std::make_pair( name_a, gviz_node_index ) ) );
                         if( ret_val.second /* new kernel */ )
                         {
                            gviz_node_index++;
                         }
-                        const std::string name_b( abi::__cxa_demangle( typeid( *(b.my_kernel) ).name(), 0, 0, &status ) );
+                        const std::string name_b( common::printClassName( *(b.my_kernel) ) );
                         const auto ret_val_2( gviz_node_map.insert( std::make_pair( name_b, gviz_node_index ) ) );
                         if( ret_val_2.second /* new kernel */ )
                         {

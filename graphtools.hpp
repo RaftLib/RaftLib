@@ -22,6 +22,7 @@
 #include <functional>
 #include <set>
 #include <queue>
+#include <stack>
 #include <vector>
 /** pre-declarations for below **/
 struct PortInfo;
@@ -38,9 +39,19 @@ namespace raft
  * it will be passed to the function every time it 
  * calls.
  */
-typedef std::function< void(  PortInfo&,  
-                              PortInfo&, 
-                              void* ) > edge_func;
+using edge_func = std::function< void(  PortInfo&,  
+                                        PortInfo&, 
+                                        void* ) >;
+/**
+ * vertex_func - function to implement if you
+ * want to use the native graph traversal functions. 
+ * if you use the void* pointer, it comes from the 
+ * traversal function invocation and will the the
+ * same across calls (i.e., it saves state).
+ */
+using vertex_func = std::function< void( raft::kernel*,
+                                         void* ) >;
+
 
 class GraphTools
 {
@@ -84,10 +95,36 @@ public:
                     void *data = nullptr,
                     bool connected_error = false );
 private:
+   /**
+    * BFS - breadth first search helper function, performs
+    * the actual work for the above BFS functions.  The
+    * first variable (queue or stack) is the visiting 
+    * queue that performs the actual ordering (queue for 
+    * BFS and stack for the DFS).  The first parameter should
+    * come filled with all the source vertices to start the
+    * process off.  The set should be empty and contains
+    * the vertices that have already been visited.
+    * @param q/stack - container with source kernels
+    * @param s       - all
+    */
+    //FIXME - you need to finish this, then fix the rest
+    //of the related stuff in the morning!!
    static void __BFS( std::queue< raft::kernel* > &q,
                       std::set<   raft::kernel* > &s,
                       edge_func                   func,
                       void                        *data,
                       bool                        connected_error );
+   static void __BFS( std::queue< raft::kernel* > &q,
+                      std::set<   raft::kernel* > &s,
+                      vertex_func                 func,
+                      void                        *data );
+   static void __DFS( std::stack< raft::kernel* > &stack,
+                      std::set<   raft::kernel* > &visited_set,
+                      edge_func                   func,
+                      void                        *data );
+   static void __DFS( std::stack< raft::kernel* > &stack,
+                      std::set<   raft::kernel* > &visited_set,
+                      vertex_func                 func,
+                      void                        *data );
 };
 #endif /* END _GRAPHTOOLS_HPP_ */
