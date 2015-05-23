@@ -30,13 +30,12 @@ namespace Buffer
 /**
  * DataBase - not quite the best name since we 
  * conjure up a relational database, but it is
- * literally the base for the Data structs below.
+ * literally the base for the Data structs.
  */
 template < class T > struct DataBase 
 {
    DataBase( const std::size_t max_cap ) : max_cap ( max_cap )
    {
-
       length_store   = ( sizeof( T  )     * max_cap ); 
       length_signal  = ( sizeof( Signal ) * max_cap );
    }
