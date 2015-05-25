@@ -136,7 +136,7 @@ TOP:
          return;
       }
       /** should be the end of the write, regardless of which allocate called **/
-      auto *buff_ptr( dm.get() ); 
+      auto * const buff_ptr( dm.get() ); 
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       buff_ptr->signal[ write_index ] = signal;
       write_stats.count++;
@@ -181,7 +181,6 @@ TOP:
       dm.exitBuffer( dm::allocate_range );
    }
   
-   //FIXME, come back here 
    /**
     * removes range items from the buffer, ignores
     * them without the copy overhead.
@@ -204,19 +203,21 @@ TOP:
                {
                   break;
                }
-               else if( (this)->is_invalid() && size() == 0 )
+               else if( (this)->is_invalid() and size() == 0 )
                {
                   dm.exitBuffer( dm::recycle );
                   return;
                }
             }
-            if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
+            if( blocked++ > ScheduleConst::PREEMPT_LIMIT and dm.notResizing() )
             {
-               auto ret_val( kernel_preempt::setRunningState( (this)->dst_kernel ) );
+               
+               auto * const k( dm.get()->dst_kernel );
+               auto ret_val( kernel_preempt::setRunningState( k ) );
                if( ret_val == 0 /* not returning from scheduler */ )
                {
                   /** pre-empt back to scheduler **/
-                  kernel_preempt::preempt( (this)->dst_kernel );
+                  kernel_preempt::preempt( k );
                }
                else
                {
@@ -275,7 +276,41 @@ TOP:
    }
 
 protected:
-   
+
+
+   /**
+    * set_src_kernel - sets teh protected source
+    * kernel for this fifo, necessary for preemption,
+    * see comments on variables below.
+    * @param   k - raft::kernel*
+    */
+   virtual void set_src_kernel( raft::kernel * const k )
+   {
+      assert( k != nullptr );
+      while( ! dm.notResizing() )
+      { 
+         /* spin */ 
+      }
+      auto * const buffer( dm.get() );
+      buffer->setSourceKernel( k );
+   }
+   /**
+    * set_dst_kernel - sets the protected destination
+    * kernel for this fifo, necessary for preemption,
+    * see comments on variables below.
+    * @param   k - raft::kernel*
+    */
+   virtual void set_dst_kernel( raft::kernel * const k )
+   {
+      assert( k != nullptr );
+      while( ! dm.notResizing() )
+      {
+         /* spin */
+      }
+      auto * const buffer( dm.get() );
+      buffer->setDestKernel( k );
+   }
+
    /**
     * signal_peek - return signal at head of 
     * queue and nothing else
@@ -320,12 +355,29 @@ protected:
     */
    virtual void local_allocate( void **ptr )
    {
+      std::uint8_t blocked( 0 );
       for(;;)
       {
          dm.enterBuffer( dm::allocate );
-         if( dm.notResizing() && space_avail() > 0  )
+         if( dm.notResizing() and space_avail() > 0  )
          {
             break;
+         }
+         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT and dm.notResizing() )
+         {
+            
+            auto * const k( dm.get()->src_kernel );
+            auto ret_val( kernel_preempt::setRunningState( k ) );
+            if( ret_val == 0 /* not returning from scheduler */ )
+            {
+               /** pre-empt back to scheduler **/
+               kernel_preempt::preempt( k );
+            }
+            else
+            {
+               /** reset blocked, keep trying **/
+               blocked = 0;
+            }
          }
          dm.exitBuffer( dm::allocate );
          /** else, spin **/
@@ -353,12 +405,29 @@ protected:
 
    virtual void local_allocate_n( void *ptr, const std::size_t n )
    {
+      std::uint8_t blocked( 0 );
       for( ;; )
       {
          dm.enterBuffer( dm::allocate_range );
-         if( dm.notResizing() && space_avail() >= n )
+         if( dm.notResizing() and space_avail() >= n )
          {
             break;
+         }
+         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT and dm.notResizing() )
+         {
+            
+            auto * const k( dm.get()->src_kernel );
+            auto ret_val( kernel_preempt::setRunningState( k ) );
+            if( ret_val == 0 /* not returning from scheduler */ )
+            {
+               /** pre-empt back to scheduler **/
+               kernel_preempt::preempt( k );
+            }
+            else
+            {
+               /** reset blocked, keep trying **/
+               blocked = 0;
+            }
          }
          else
          {
@@ -394,7 +463,7 @@ protected:
           * TODO, fix this logic here, write index must get iterated, but 
           * not here
           */
-         container->push_back( buff_ptr->store[ write_index ] );
+         container->emplace_back( buff_ptr->store[ write_index ] );
          buff_ptr->signal[ write_index ] = raft::none;
          write_index = ( write_index + 1 ) % buff_ptr->max_cap;
       }
@@ -416,6 +485,7 @@ protected:
     */
    virtual void  local_push( void *ptr, const raft::signal &signal )
    {
+      std::uint8_t blocked( 0 );
       for(;;)
       {
          dm.enterBuffer( dm::push );
@@ -424,6 +494,22 @@ protected:
             if( space_avail() > 0 )
             {
                break;
+            }
+            else if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
+            {
+               
+               auto * const k( dm.get()->src_kernel );
+               auto ret_val( kernel_preempt::setRunningState( k ) );
+               if( ret_val == 0 /* not returning from scheduler */ )
+               {
+                  /** pre-empt back to scheduler **/
+                  kernel_preempt::preempt( k );
+               }
+               else
+               {
+                  /** reset blocked, keep trying **/
+                  blocked = 0;
+               }
             }
          }
          dm.exitBuffer( dm::push );
@@ -548,6 +634,7 @@ protected:
    virtual void 
    local_pop( void *ptr, raft::signal *signal )
    {
+      std::uint8_t blocked( 0 );
       for(;;)
       {
          dm.enterBuffer( dm::pop );
@@ -557,10 +644,26 @@ protected:
             {
                break;
             }
-            else if( (this)->is_invalid() && size() == 0 )
+            else if( (this)->is_invalid() and size() == 0 )
             { 
                throw ClosedPortAccessException( 
                   "Accessing closed port with pop call, exiting!!" );
+            }
+            else if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
+            {
+               
+               auto * const k( dm.get()->src_kernel );
+               auto ret_val( kernel_preempt::setRunningState( k ) );
+               if( ret_val == 0 /* not returning from scheduler */ )
+               {
+                  /** pre-empt back to scheduler **/
+                  kernel_preempt::preempt( k );
+               }
+               else
+               {
+                  /** reset blocked, keep trying **/
+                  blocked = 0;
+               }
             }
          }
          dm.exitBuffer( dm::pop );
@@ -650,7 +753,7 @@ protected:
             { 
                break;
             }
-            else if( (this)->is_invalid() && size() == 0 )
+            else if( (this)->is_invalid() and size() == 0 )
             {
                throw ClosedPortAccessException( 
                   "Accessing closed port with local_peek call, exiting!!" );
@@ -698,12 +801,12 @@ protected:
             { 
                break;
             }
-            else if( (this)->is_invalid() && size() == 0 )
+            else if( (this)->is_invalid() and size() == 0 )
             {
                throw ClosedPortAccessException( 
                   "Accessing closed port with local_peek_range call, exiting!!" );
             }
-            else if( (this)->is_invalid() && size() < n )
+            else if( (this)->is_invalid() and size() < n )
             {
                std::stringstream ss;
                ss << "Too few items (" << size() << ") left on a closed port, kernel exiting!!";

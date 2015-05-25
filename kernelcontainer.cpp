@@ -91,6 +91,9 @@ kernel_container::container_run( kernel_container &container )
                   break;
                   case( 1 /* kernel preempted */ ):
                   {
+#ifdef DEBUG
+                     fprintf( stderr, "kernel prempted\n" );
+#endif
                      container.preempted_kernel_pool.push( new_cmd.kernel );
                   }
                   break;

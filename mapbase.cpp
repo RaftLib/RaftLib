@@ -45,7 +45,7 @@ MapBase::~MapBase()
 
 void
 MapBase::join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
-           raft::kernel &b, const std::string name_b, PortInfo &b_info )
+               raft::kernel &b, const std::string name_b, PortInfo &b_info )
 {
    if( a_info.type != b_info.type )
    {

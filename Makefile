@@ -19,7 +19,7 @@ TEST = -O0 -g
 RELEASE = -Ofast -mtune=native
 
 ifeq ($(type), test)
-BUILD = $(TEST) $(STATIC)
+BUILD = $(TEST) $(STATIC) -DDEBUG=1
 else
 BUILD = $(RELEASE) $(STATIC)
 endif

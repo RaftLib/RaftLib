@@ -49,15 +49,3 @@ FIFO::is_invalid()
 {
    return( ! valid );
 }
-
-void
-FIFO::set_src_kernel( raft::kernel * const k )
-{
-   src_kernel = k;
-}
-
-void
-FIFO::set_dst_kernel( raft::kernel * const k )
-{
-   dst_kernel = k;
-}

@@ -24,6 +24,12 @@
 #include "signal.hpp"
 #include <cstddef>
 
+
+namespace raft
+{
+   class kernel;
+}
+
 namespace Buffer
 {
 
@@ -54,6 +60,36 @@ template < class T > struct DataBase
    Pointer                 *write_pt  = nullptr;
    const std::size_t        max_cap;
 
+   /**
+    * setSourceKernel - set the source kernel 
+    * so that an object using this buffer can
+    * have access to it, these must be preserved
+    * across copies.  Null kernel references 
+    * will fail an assertion and exit the program.
+    * @param    k - raft::kernel * const
+    */
+   void setSourceKernel( raft::kernel * const k )
+   {
+      assert( k != nullptr );
+      src_kernel = k;
+      return;
+   }
+
+   /**
+    * setDestKernel - set the destination kernel 
+    * so that an object using this buffer can
+    * have access to it, these must be preserved
+    * across copies.  Null kernel references 
+    * will fail an assertion and exit the program.
+    * @param    k - raft::kernel * const
+    */
+   void setDestKernel( raft::kernel * const k )
+   {
+      assert( k != nullptr );
+      dst_kernel = k;
+      return;
+   }
+
    /** 
     * allocating these as structs gives a bit
     * more flexibility later in what to pass
@@ -67,8 +103,20 @@ template < class T > struct DataBase
    Signal                  *signal        = nullptr;
    bool                    external_alloc = false;
    
+   /** sizes, might need to define a local type **/
    std::size_t             length_store;
    std::size_t             length_signal;
+
+   /**
+    * need a reference to source and destination 
+    * kernels for preemption to work properly, essentially
+    * there has to be a way to give orderly control from
+    * the fifo copying data back to the scheduler and the
+    * only realistic way is through the kernel.  These
+    * must be preserved across copies.
+    */
+   raft::kernel            *src_kernel      = nullptr;
+   raft::kernel            *dst_kernel      = nullptr;
 };
 
 } /** end namespace Buffer **/

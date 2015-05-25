@@ -7,7 +7,7 @@ STATIC = -static -static-libgcc -static-libstdc++
 RT =  -lrt -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 endif
 
-TEST = -O0 -g -DUNITTEST=1 -ggdb
+TEST = -O0 -g -DUNITTEST=1 -ggdb -DDEBUG=1
 RELEASE = -Ofast -mtune=native 
 
 ifeq ($(type), test)

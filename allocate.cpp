@@ -74,10 +74,12 @@ Allocate::initialize( PortInfo *src, PortInfo *dst, FIFO *fifo )
    if( src != nullptr )
    {
       src->setFIFO( fifo );
+      fifo->set_src_kernel( src->my_kernel );
    }
    if( dst != nullptr )
    {
       dst->setFIFO( fifo );
+      fifo->set_dst_kernel( dst->my_kernel );
    }
    /** NOTE: this list simply speeds up the monitoring if we want it **/
    allocated_fifo.insert( fifo ); 
