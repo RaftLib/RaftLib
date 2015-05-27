@@ -25,30 +25,27 @@ main( int argc, char **argv )
    auto  l_sub( [&]( Port &input,
                      Port &output )
       {
-         if( output[ "0" ].space_avail() > 0 )
-         {
-            std::uint32_t a;
-            input[ "0" ].pop( a );
-            output[ "0" ].push( a - 10 );
-         }
+         std::uint32_t a;
+         input[ "0" ].pop( a );
+         output[ "0" ].push( a - 10 );
          return( raft::proceed );
       } );
 
-   //std::ofstream ofs( "/dev/null" );
+   std::ofstream ofs( "/tmp/log.csv" );
     
    auto kernels = raft::map.link( rndgen,
                                   raft::kernel::make< sub >( 1, 1, l_sub ) );
    
-   for( int i( 0 ); i < 5 ; i++ )
+   for( int i( 0 ); i < 50 ; i++ )
    {
       kernels = raft::map.link( &kernels.getDst(),
                                 raft::kernel::make< sub >( 1, 1, l_sub ) );
    }
    raft::map.link( &kernels.getDst(), 
-             raft::kernel::make< raft::print< std::uint32_t, '\n' > >( std::cout ) );
+             raft::kernel::make< raft::print< std::uint32_t, '\n' > >( ofs ) );
    raft::map.exe();
    
-   //ofs.close();
+   ofs.close();
 
    return( EXIT_SUCCESS );
 }

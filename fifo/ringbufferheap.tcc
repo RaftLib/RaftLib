@@ -203,7 +203,7 @@ TOP:
                {
                   break;
                }
-               else if( (this)->is_invalid() and size() == 0 )
+               else if( (this)->is_invalid() && size() == 0 )
                {
                   dm.exitBuffer( dm::recycle );
                   return;
@@ -211,7 +211,6 @@ TOP:
             }
             if( blocked++ > ScheduleConst::PREEMPT_LIMIT and dm.notResizing() )
             {
-               
                auto * const k( dm.get()->dst_kernel );
                auto ret_val( kernel_preempt::setRunningState( k ) );
                if( ret_val == 0 /* not returning from scheduler */ )
@@ -359,11 +358,11 @@ protected:
       for(;;)
       {
          dm.enterBuffer( dm::allocate );
-         if( dm.notResizing() and space_avail() > 0  )
+         if( dm.notResizing() && space_avail() > 0  )
          {
             break;
          }
-         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT and dm.notResizing() )
+         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT && dm.notResizing() )
          {
             
             auto * const k( dm.get()->src_kernel );
@@ -409,11 +408,11 @@ protected:
       for( ;; )
       {
          dm.enterBuffer( dm::allocate_range );
-         if( dm.notResizing() and space_avail() >= n )
+         if( dm.notResizing() && space_avail() >= n )
          {
             break;
          }
-         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT and dm.notResizing() )
+         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT && dm.notResizing() )
          {
             
             auto * const k( dm.get()->src_kernel );
@@ -495,24 +494,24 @@ protected:
             {
                break;
             }
-            else if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
-            {
-               
-               auto * const k( dm.get()->src_kernel );
-               auto ret_val( kernel_preempt::setRunningState( k ) );
-               if( ret_val == 0 /* not returning from scheduler */ )
-               {
-                  /** pre-empt back to scheduler **/
-                  kernel_preempt::preempt( k );
-               }
-               else
-               {
-                  /** reset blocked, keep trying **/
-                  blocked = 0;
-               }
-            }
          }
          dm.exitBuffer( dm::push );
+         if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
+         {
+            
+            auto * const k( dm.get()->src_kernel );
+            auto ret_val( kernel_preempt::setRunningState( k ) );
+            if( ret_val == 0 /* not returning from scheduler */ )
+            {
+               /** pre-empt back to scheduler **/
+               kernel_preempt::preempt( k );
+            }
+            else
+            {
+               /** reset blocked, keep trying **/
+               blocked = 0;
+            }
+         }
 #ifdef NICE      
          std::this_thread::yield();
 #endif         
@@ -644,29 +643,29 @@ protected:
             {
                break;
             }
-            else if( (this)->is_invalid() and size() == 0 )
+            else if( (this)->is_invalid() && size() == 0 )
             { 
                throw ClosedPortAccessException( 
                   "Accessing closed port with pop call, exiting!!" );
             }
-            else if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
-            {
-               
-               auto * const k( dm.get()->src_kernel );
-               auto ret_val( kernel_preempt::setRunningState( k ) );
-               if( ret_val == 0 /* not returning from scheduler */ )
-               {
-                  /** pre-empt back to scheduler **/
-                  kernel_preempt::preempt( k );
-               }
-               else
-               {
-                  /** reset blocked, keep trying **/
-                  blocked = 0;
-               }
-            }
          }
          dm.exitBuffer( dm::pop );
+         if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
+         {
+            
+            auto * const k( dm.get()->src_kernel );
+            auto ret_val( kernel_preempt::setRunningState( k ) );
+            if( ret_val == 0 /* not returning from scheduler */ )
+            {
+               /** pre-empt back to scheduler **/
+               kernel_preempt::preempt( k );
+            }
+            else
+            {
+               /** reset blocked, keep trying **/
+               blocked = 0;
+            }
+         }
 #ifdef NICE      
          std::this_thread::yield();
 #endif        
@@ -801,12 +800,12 @@ protected:
             { 
                break;
             }
-            else if( (this)->is_invalid() and size() == 0 )
+            else if( (this)->is_invalid() && size() == 0 )
             {
                throw ClosedPortAccessException( 
                   "Accessing closed port with local_peek_range call, exiting!!" );
             }
-            else if( (this)->is_invalid() and size() < n )
+            else if( (this)->is_invalid() && size() < n )
             {
                std::stringstream ss;
                ss << "Too few items (" << size() << ") left on a closed port, kernel exiting!!";
