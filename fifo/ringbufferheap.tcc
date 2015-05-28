@@ -208,22 +208,25 @@ TOP:
                   dm.exitBuffer( dm::recycle );
                   return;
                }
-            }
-            if( blocked++ > ScheduleConst::PREEMPT_LIMIT and dm.notResizing() )
-            {
-               auto * const k( dm.get()->dst_kernel );
-               auto ret_val( kernel_preempt::setRunningState( k ) );
-               if( ret_val == 0 /* not returning from scheduler */ )
+#ifndef NOPREEMPT
+               else if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
                {
-                  /** pre-empt back to scheduler **/
-                  kernel_preempt::preempt( k );
+                  auto * const k( dm.get()->dst_kernel );
+                  const auto ret_val( setRunningState( k ) );
+                  if( ret_val == 0 /* not returning from scheduler */ )
+                  {
+                     /** pre-empt back to scheduler **/
+                     preempt( k );
+                  }
+                  else
+                  {
+                     /** reset blocked, keep trying **/
+                     blocked = 0;
+                  }
                }
-               else
-               {
-                  /** reset blocked, keep trying **/
-                  blocked = 0;
-               }
+#endif               
             }
+            dm.exitBuffer( dm::recycle );
          }
          auto * const buff_ptr( dm.get() );
          Pointer::inc( buff_ptr->read_pt );
@@ -362,15 +365,16 @@ protected:
          {
             break;
          }
+#ifndef NOPREEMPT         
          else if( blocked++ > ScheduleConst::PREEMPT_LIMIT && dm.notResizing() )
          {
             
             auto * const k( dm.get()->src_kernel );
-            auto ret_val( kernel_preempt::setRunningState( k ) );
+            auto ret_val( setRunningState( k ) );
             if( ret_val == 0 /* not returning from scheduler */ )
             {
                /** pre-empt back to scheduler **/
-               kernel_preempt::preempt( k );
+               preempt( k );
             }
             else
             {
@@ -378,6 +382,7 @@ protected:
                blocked = 0;
             }
          }
+#endif       
          dm.exitBuffer( dm::allocate );
          /** else, spin **/
 #ifdef NICE      
@@ -412,15 +417,16 @@ protected:
          {
             break;
          }
+#ifndef NOPREEMPT         
          else if( blocked++ > ScheduleConst::PREEMPT_LIMIT && dm.notResizing() )
          {
             
             auto * const k( dm.get()->src_kernel );
-            auto ret_val( kernel_preempt::setRunningState( k ) );
+            auto ret_val( setRunningState( k ) );
             if( ret_val == 0 /* not returning from scheduler */ )
             {
                /** pre-empt back to scheduler **/
-               kernel_preempt::preempt( k );
+               preempt( k );
             }
             else
             {
@@ -428,6 +434,7 @@ protected:
                blocked = 0;
             }
          }
+#endif         
          else
          {
             dm.exitBuffer( dm::allocate_range );
@@ -496,15 +503,16 @@ protected:
             }
          }
          dm.exitBuffer( dm::push );
+#ifndef NOPREEMPT         
          if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
          {
             
             auto * const k( dm.get()->src_kernel );
-            auto ret_val( kernel_preempt::setRunningState( k ) );
+            auto ret_val( setRunningState( k ) );
             if( ret_val == 0 /* not returning from scheduler */ )
             {
                /** pre-empt back to scheduler **/
-               kernel_preempt::preempt( k );
+               preempt( k );
             }
             else
             {
@@ -512,6 +520,7 @@ protected:
                blocked = 0;
             }
          }
+#endif         
 #ifdef NICE      
          std::this_thread::yield();
 #endif         
@@ -650,15 +659,16 @@ protected:
             }
          }
          dm.exitBuffer( dm::pop );
+#ifndef NOPREEMPT         
          if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
          {
             
             auto * const k( dm.get()->src_kernel );
-            auto ret_val( kernel_preempt::setRunningState( k ) );
+            auto ret_val( setRunningState( k ) );
             if( ret_val == 0 /* not returning from scheduler */ )
             {
                /** pre-empt back to scheduler **/
-               kernel_preempt::preempt( k );
+               preempt( k );
             }
             else
             {
@@ -666,6 +676,7 @@ protected:
                blocked = 0;
             }
          }
+#endif         
 #ifdef NICE      
          std::this_thread::yield();
 #endif        

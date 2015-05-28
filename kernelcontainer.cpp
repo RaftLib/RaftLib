@@ -74,7 +74,7 @@ kernel_container::container_run( kernel_container &container )
             case( schedule::add ):
             {
                assert( new_cmd.kernel != nullptr );
-               const auto ret_val( kernel_preempt::setPreemptState( new_cmd.kernel ) );
+               const auto ret_val( setPreemptState( new_cmd.kernel ) );
                switch( ret_val )
                {
                   case( 0 /* newly scheduled kernel */ ):
@@ -90,7 +90,6 @@ kernel_container::container_run( kernel_container &container )
                   break;
                   case( 1 /* kernel preempted */ ):
                   {
-                     fprintf( stderr, "preempted in switch statement\n" );
                      container.preempted_kernel_pool.push( new_cmd.kernel );
                   }
                   break;
@@ -119,10 +118,9 @@ kernel_container::container_run( kernel_container &container )
       /** try these kernels again **/
       if( container.preempted_kernel_pool.size() > 0 )
       {
-         fprintf( stderr, "running preempt\n" );
          auto * const kernel( container.preempted_kernel_pool.front() );
          container.preempted_kernel_pool.pop();
-         kernel_preempt::restore( kernel );
+         restore( kernel );
          /** after this it'll longjmp to the running state **/ 
       }
    }

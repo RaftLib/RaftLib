@@ -26,14 +26,13 @@ endif
 
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
-CXXFLAGS =  $(BUILD) -Wall -std=c++11
+CXXFLAGS =  $(BUILD) -Wall -std=c++11 -Wstack-protector -fstack-protector-all
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
                    simpleschedule stdalloc portiterator dynalloc \
                    roundrobin kernel mapbase submap globalmap \
-                   systemsignalhandler poolschedule kernelcontainer \
-                   kernelpreempt
+                   systemsignalhandler poolschedule kernelcontainer 
 
 COBJS   = $(RBCOBJS)
 CXXOBJS = $(PACKAGEOBJS) $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)

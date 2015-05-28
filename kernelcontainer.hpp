@@ -22,9 +22,10 @@
 #include <queue>
 #include <type_traits>
 #include "sched_cmd_t.hpp"
+#define NOPREEMPT 1
 #include "ringbuffer.tcc"
 #include "ringbuffertypes.hpp"
-
+#undef  NOPREEMPT
 namespace raft{
    class kernel;
 }

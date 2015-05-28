@@ -97,30 +97,7 @@ public:
    }
 
    std::size_t get_id();
-protected:
-   /**
-    * PORTS - input and output, use these to interact with the
-    * outside world.
-    */
-   Port               input  = { this };
-   Port               output = { this };
- 
-
-   friend class ::MapBase;
-   friend class ::Schedule;
-   friend class ::GraphTools;
-   friend class ::kernel_container;   
-   friend class ::kernel_preempt;   
-   /**
-    * NOTE: doesn't need to be atomic since only one thread
-    * will have responsibility to to create new compute 
-    * kernels.
-    */
-   static std::size_t kernel_count;
-
-private:
-
-   const  std::size_t kernel_id;
+   //TODO, make these a wrapper inside the kernel_container
    /**
     * NOTE: this is only accessible to the run-time tools, 
     * we need it to preempt the kernel if we're in a blocked
@@ -136,6 +113,30 @@ private:
     * of the compute kernel.
     */
    jmp_buf            preempt_state;
+protected:
+   /**
+    * PORTS - input and output, use these to interact with the
+    * outside world.
+    */
+   Port               input  = { this };
+   Port               output = { this };
+ 
+
+   friend class ::MapBase;
+   friend class ::Schedule;
+   friend class ::GraphTools;
+   friend class ::kernel_container;   
+   
+   /**
+    * NOTE: doesn't need to be atomic since only one thread
+    * will have responsibility to to create new compute 
+    * kernels.
+    */
+   static std::size_t kernel_count;
+
+private:
+
+   const  std::size_t kernel_id;
 };
 } /** end namespace raft */
 #endif /* END _KERNEL_HPP_ */

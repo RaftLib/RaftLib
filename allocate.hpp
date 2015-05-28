@@ -63,7 +63,7 @@ public:
     * waitTillReady - call after initializing the allocate thread, returns
     * when the initial allocation is complete.
     */
-   void waitTillReady();
+   void waitTillReady() noexcept;
 
    
 protected:
@@ -78,13 +78,15 @@ protected:
     * @param   fifo - FIFO*
     * @throws  PortDoubleInitializeException - if either port is already initialized.
     */
-   void initialize( PortInfo *src, PortInfo *dst, FIFO *fifo );
+   void initialize( PortInfo * const src, 
+                    PortInfo * const dst, 
+                    FIFO * const fifo );
 
    /**
     * setReady - call within the implemented run function to signal
     * that the initial allocations have been completed.
     */
-   void setReady();
+   void setReady() noexcept;
 
    /** both convenience structs, hold exactly what the names say **/
    std::set< raft::kernel* > &source_kernels;
