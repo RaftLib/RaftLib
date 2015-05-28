@@ -68,7 +68,8 @@ kernel_container::container_run( kernel_container &container )
    {
       if( container.getInputQueue().size() > 0 )
       {
-         auto &new_cmd( input_buffer.peek< sched_cmd_t >() );
+         sched_cmd_t new_cmd;
+         input_buffer.pop< sched_cmd_t >( new_cmd );
          switch( new_cmd.cmd )
          {
             case( schedule::add ):
@@ -86,6 +87,7 @@ kernel_container::container_run( kernel_container &container )
                                                        schedule::reschedule );
                      out_cmd.kernel         = new_cmd.kernel;
                      output_buffer.send();
+                     /** clean-up buffer and recycle head of FIFO **/
                   }
                   break;
                   case( 1 /* kernel preempted */ ):
@@ -111,9 +113,6 @@ kernel_container::container_run( kernel_container &container )
                assert( false );
             }
          }
-         /** clean-up buffer and recycle head of FIFO **/
-         input_buffer.unpeek();
-         input_buffer.recycle( 1 );
       }
       /** try these kernels again **/
       if( container.preempted_kernel_pool.size() > 0 )

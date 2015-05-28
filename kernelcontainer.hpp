@@ -81,6 +81,7 @@ public:
    static void container_run( kernel_container &container  );
 private:
    using kernel_container_t = std::queue< raft::kernel* >;
+   
    kernel_container_t  preempted_kernel_pool;
    buffer             *input_buff   = nullptr; 
    buffer             *output_buff  = nullptr;         
