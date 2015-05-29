@@ -50,7 +50,7 @@ public:
    virtual ~Map();
    
 
-   template< class scheduler = pool_schedule, 
+   template< class scheduler = simple_schedule, 
              class allocator = dynalloc > 
       void exe()
    {

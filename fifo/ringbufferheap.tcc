@@ -24,6 +24,10 @@
 #include "optdef.hpp"
 #include "scheduleconst.hpp"
 
+#ifndef NOPREEMPT
+#define NOPREEMPT
+#endif
+
 template < class T, 
            Type::RingBufferType type > class RingBufferBase : 
             public FIFOAbstract< T, type > {
@@ -193,7 +197,9 @@ TOP:
          return;
       }
       do{ /** at least one to remove **/
+#ifndef NOPREEMPT
          std::uint8_t blocked( 0 );
+#endif
          for( ;; )
          {
             dm.enterBuffer( dm::recycle );
@@ -357,7 +363,9 @@ protected:
     */
    virtual void local_allocate( void **ptr )
    {
+#ifndef NOPREEMPT
       std::uint8_t blocked( 0 );
+#endif
       for(;;)
       {
          dm.enterBuffer( dm::allocate );
@@ -409,7 +417,9 @@ protected:
 
    virtual void local_allocate_n( void *ptr, const std::size_t n )
    {
+#ifndef NOPREEMPT   
       std::uint8_t blocked( 0 );
+#endif      
       for( ;; )
       {
          dm.enterBuffer( dm::allocate_range );
@@ -491,7 +501,9 @@ protected:
     */
    virtual void  local_push( void *ptr, const raft::signal &signal )
    {
+#ifndef NOPREEMPT   
       std::uint8_t blocked( 0 );
+#endif      
       for(;;)
       {
          dm.enterBuffer( dm::push );
@@ -642,7 +654,9 @@ protected:
    virtual void 
    local_pop( void *ptr, raft::signal *signal )
    {
+#ifndef NOPREEMPT   
       std::uint8_t blocked( 0 );
+#endif      
       for(;;)
       {
          dm.enterBuffer( dm::pop );
