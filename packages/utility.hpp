@@ -29,7 +29,11 @@
 namespace raft
 {
 
+template < typename A, 
+           typename B > using common_t = typename std::common_type< A, B >::type;
 
+template < typename A, 
+           typename B > using common_v_t = std::vector< common_t< A, B > >;
 
 /** 
  * irange - simple utility that returns a vector of 
@@ -45,38 +49,34 @@ namespace raft
  *         A & B
  */
 template < typename A,
-           typename B> 
+           typename B > 
 static
-std::vector< typename std::common_type< A, B >::type > 
+common_v_t< A, B >
 irange( const A a, 
         const B b, 
         const std::size_t delta = 1 )
 {
   static_assert( std::is_integral< A >::value, "A must be an integral type" );
   static_assert( std::is_integral< B >::value, "B must be an integral type" );
-  using common_t = 
-   typename std::common_type< A, B >::type;
   if( a < b )
   {
      const auto cap( (b - a + 1) / delta );
-     std::vector< common_t > out( cap );
-     auto index( 0 );
-     for( auto i( a ); i <= b; i += delta, index++ )
+     common_v_t< A, B > out( cap );
+     for( auto i( a ), index( 0 ); i <= b; i += delta, index++ )
      {
         out[ index ] = i;
      }
-     return( std::forward< std::vector< common_t > >( out ) );
+     return( std::forward< common_v_t< A, B > >( out ) );
   }
   else
   {
      const auto cap( (a - b + 1) / delta );
-     std::vector< common_t > out( cap );
-     auto index( 0 );
-     for( auto i( a ); i >= b; i -= delta, index++ )
+     common_v_t< A, B > out( cap );
+     for( auto i( a ), index( 0 ); i >= b; i -= delta, index++ )
      {
         out[ index ] = i;
      }
-     return( std::forward< std::vector< common_t > >( out ) );
+     return( std::forward< common_v_t< A, B > >( out ) );
   }
 }
 
