@@ -16,6 +16,7 @@ STATIC = -DRDTSCP=1 -static -static-libgcc -static-libstdc++
 PTHREAD = -lpthread  
 endif
 
+type =? release
 TEST = -O0 -g 
 RELEASE = -Ofast -mtune=native
 
