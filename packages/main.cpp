@@ -8,9 +8,7 @@
 int
 main( int argc, char **argv )
 {
-   const int f( 100 );
-   int a( 4 );
-   for( const auto n : raft::irange( 1,100 ) )
+   for( const auto n : raft::range( 2.0,1.0,.1 ) )
    {
       std::cerr << n << "\n";
    }

@@ -26,6 +26,7 @@
 #include <cassert>
 #include <utility>
 #include <type_traits>
+#include <cmath>
 
 namespace raft
 {
@@ -50,20 +51,22 @@ template < typename A,
  *         A & B
  */
 template < typename A,
-           typename B > 
+           typename B,
+           typename std::enable_if< std::is_arithmetic< A >::value >::type* = nullptr,
+           typename std::enable_if< std::is_arithmetic< B >::value >::type* = nullptr > 
 static
 common_v_t< A, B >
-irange( const A a, 
-        const B b, 
-        const std::size_t delta = 1 )
+range( const A a, 
+       const B b, 
+       const common_t< A, B > delta = 1 )
 {
-  static_assert( std::is_integral< A >::value, "A must be an integral type" );
-  static_assert( std::is_integral< B >::value, "B must be an integral type" );
   if( a < b )
   {
-     const auto cap( (b - a + 1) / delta );
+     const auto cap( (b - a + delta) / delta );
      common_v_t< A, B > out( cap );
-     for( auto i( a ), index( 0 ); i <= b; i += delta, index++ )
+     auto index( 0 );
+     for( common_t< A, B > i( a ); 
+      std::islessequal( i, b + delta ); i += delta, index++ )
      {
         out[ index ] = i;
      }
@@ -71,9 +74,11 @@ irange( const A a,
   }
   else
   {
-     const auto cap( (a - b + 1) / delta );
+     const auto cap( (a - b + delta ) / delta );
      common_v_t< A, B > out( cap );
-     for( auto i( a ), index( 0 ); i >= b; i -= delta, index++ )
+     auto index( 0 );
+     for( common_t< A, B > i( a ); 
+      std::isgreaterequal( i, b - delta ); i -= delta, index++ )
      {
         out[ index ] = i;
      }
@@ -86,7 +91,9 @@ irange( const A a,
  * but I want to get it working, so I'm settling for the faster to type but less cool
  * version
  */
-template < class T, class F, typename std::enable_if< std::is_arithmetic< T >::value >::type* = nullptr > 
+template < class T, 
+           class F, 
+           typename std::enable_if< std::is_arithmetic< T >::value >::type* = nullptr > 
 static 
 void
 sum( F &&dst, F &&a, F &&b )
