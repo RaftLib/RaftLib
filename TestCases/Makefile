@@ -17,7 +17,7 @@ BUILD = $(RELEASE)
 endif
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
-CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1 -Wstack-protector -fstack-protector-all
+CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1 
 LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl $(RT) -lm 
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
@@ -48,4 +48,4 @@ sequential: sequential.o
 
 .PHONY: clean
 clean:
-	rm -rf $(EXE) $(OBS) intelremotemonfifo* *.dwarf
+	rm -rf $(EXE) $(OBS) intelremotemonfifo* *.dwarf lldb

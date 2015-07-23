@@ -6,7 +6,7 @@
 #include <raftio>
 #include <raftrandom>
 #include <raftmath>
-
+#include <raftutility>
 
 template< typename T  > class Sum : public raft::kernel
 {
@@ -20,9 +20,7 @@ public:
    
    virtual raft::kstatus run()
    {
-      raft::sum_to( output[ "sum" ] /* destination */, 
-                    input[ "a" ]    /* source a */, 
-                    input[ "b" ]    /* source b */ );
+      raft::sum< T >( output[ "sum" ], input[ "a" ], input[ "b" ] );
       return( raft::proceed );
    }
 

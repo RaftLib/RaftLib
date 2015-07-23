@@ -97,22 +97,6 @@ public:
    }
 
    std::size_t get_id();
-   //TODO, make these a wrapper inside the kernel_container
-   /**
-    * NOTE: this is only accessible to the run-time tools, 
-    * we need it to preempt the kernel if we're in a blocked
-    * function that has gone on for far too long.  Not a problem
-    * when using the OS scheduler, but an issue when we use
-    * a pool scheme
-    */
-   jmp_buf            running_state;
-   /**
-    * NOTE: previous state is the state as it was before the 
-    * kernel was executed.  The scheduler will return the 
-    * kernel to it's "current_state" on the next invocation 
-    * of the compute kernel.
-    */
-   jmp_buf            preempt_state;
 protected:
    /**
     * PORTS - input and output, use these to interact with the

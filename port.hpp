@@ -176,6 +176,10 @@ public:
     */
    std::size_t count();
 
+   /*******
+    * SOME OPERATOR OVERLOADING STUFFS TO MAKE LIFE EASIER 
+    */
+   
 protected:
    /**
     * initializeConstMap - hack to get around the inability to otherwise

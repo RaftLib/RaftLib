@@ -26,9 +26,9 @@
 #include <functional>
 #include <typeinfo>
 
-namespace common
+class common
 {
-
+public:
 /**
  * __printClassName - helper function for below function,
  * basically see the more complete docs below for the delta,
@@ -36,49 +36,9 @@ namespace common
  * of the class from either the typeinfo or typeid( xx ).name()
  * call.
  */
-static std::string __printClassName( const std::string &&obj_name )
-{
-   enum FailureCods : std::int32_t { InvalidArg = -3, 
-                                     InvalidName = -2,
-                                     MemAllocationFailure = -1,
-                                     DemangleSuccess = 0 };
-   std::int32_t status( 0 );
-   /** user must delete this, make string then delete **/
-   char *str( abi::__cxa_demangle( obj_name.c_str(), 0, 0, &status ) );
-   std::string out_str( str );
-   std::free( str );
-   switch( status )
-   {
-      case( DemangleSuccess ):
-      break; /** one good case **/
-      case( InvalidArg ):
-      {
-         return( "invalid argument provided to cxa_demangle!" );
-      }
-      break;
-      case( InvalidName ):
-      {
-         return( "invalid name provided to cxa_demangle" );
-      }
-      break;
-      case( MemAllocationFailure ):
-      {
-         return( "memory allocation error, can't demangle class name" );
-      }
-      break;
-      default:
-         assert( false );
-   }
-   return( out_str );
+static std::string __printClassName( const std::string &&obj_name );
 
-}
-
-static
-std::string
-printClassNameFromStr( const std::string &&str )
-{
-   return( std::move< std::string >( common::__printClassName( std::move( str ) ) ) );
-}
+static std::string printClassNameFromStr( const std::string &&str );
 
 /**
  * pringClassName - takes in a class reference and 
@@ -88,13 +48,13 @@ printClassNameFromStr( const std::string &&str )
  * @param k - Class reference for which you want the class.
  * @returns std::string
  */
-template < class K > inline
+template < class K > static
    std::string printClassName( K &k )
 {
    return( std::move< std::string >( common::__printClassName( typeid( k ).name() ) ) );
 }
 
 
-} /** end namespace common **/
+};
 
 #endif /* END _COMMON_HPP_ */

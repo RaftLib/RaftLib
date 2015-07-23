@@ -6,6 +6,7 @@ PREFIX ?= /usr/local
 
 include fifo/buffer.makefile
 include packages/packages.makefile
+#include libfiber/libfiber.makefile
 
 DIRINCS = $(PACKAGEDIR) $(RINGBUFFERDIR) ./
 
@@ -26,15 +27,16 @@ endif
 
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
-CXXFLAGS =  $(BUILD) -Wall -std=c++11 -Wstack-protector -fstack-protector-all
+CXXFLAGS =  $(BUILD) -Wall -std=c++11 #-Wstack-protector -fstack-protector-all
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
                    simpleschedule stdalloc portiterator dynalloc \
                    roundrobin kernel mapbase submap globalmap \
-                   systemsignalhandler poolschedule kernelcontainer 
+                   systemsignalhandler poolschedule kernelcontainer \
+                   common
 
-COBJS   = $(RBCOBJS)
+COBJS   = $(RBCOBJS) $(LIBFIBERCOBJS)
 CXXOBJS = $(PACKAGEOBJS) $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)
 
 CFILES = $(addsuffix .c, $(COBJS) )

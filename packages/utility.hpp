@@ -25,6 +25,7 @@
 #include <functional>
 #include <cassert>
 #include <utility>
+#include <type_traits>
 
 namespace raft
 {
@@ -78,6 +79,23 @@ irange( const A a,
      }
      return( std::forward< common_v_t< A, B > >( out ) );
   }
+}
+
+/** 
+ * FIXME, this can be a whole lot cooler, add struct recursion with varargs and vectorize 
+ * but I want to get it working, so I'm settling for the faster to type but less cool
+ * version
+ */
+template < class T, class F, typename std::enable_if< std::is_arithmetic< T >::value >::type* = nullptr > 
+static 
+void
+sum( F &&dst, F &&a, F &&b )
+{
+   auto &dst_ref( dst.template allocate< T >() );
+   dst_ref = a.template peek< T >() + b.template peek< T >();
+   a.recycle();
+   b.recycle();
+   dst.send();
 }
 
 }
