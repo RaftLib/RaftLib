@@ -38,6 +38,7 @@ template < typename T,
            std::size_t N,
            class Enable = void > struct matrix{};
 
+/** generic square matrix **/
 template < typename T, 
            std::size_t N >  struct matrix< T, N, 
            typename std::enable_if< std::is_fundamental< T >::value >::type  >
@@ -45,11 +46,22 @@ template < typename T,
    T              arr[ N * N ];;
    decltype( N )  dim = N;
 
+   /** 
+    * [] - for convenience, references arr inside
+    * square matrix.
+    * @return T&
+    */
    T& operator []( const std::size_t index )
    {
       return(  arr[ index ] );
    }
 
+   /**
+    * << - for pretty printing the matrix
+    * @param   stream - std::ostream&, output stream
+    * @param   m - matrix< T, N >, input matrix
+    * @return  std::ostream&, same stream from input for chaining
+    */
    friend std::ostream& operator << ( std::ostream &stream, matrix< T, N > &m )
    {
       for( auto x( 0 ); std::isless( x,  8 ); x++ )
@@ -67,7 +79,7 @@ template < typename T,
 };
 
 
-
+/** generic base class with two ports of type port_t **/
 template < typename T,
            std::size_t DIM > class dctbase : public kernel
 {
@@ -94,7 +106,13 @@ public:
    }
 
 protected:
-
+   /**
+    * dct_generic - very generic DCT for JPEG encode
+    * meant to be able to be used with any fundamental
+    * type and be relatively efficient.
+    * @param   a  - const T*, src array
+    * @param   b  - const T*, dst array 
+    */
    void dct_generic( const T * const a, T * const b)
    {
       const auto height( 8 ), width( 8 );
@@ -107,6 +125,14 @@ protected:
       }
    }
 
+   /**
+    * compute_dct - helper function for above generic
+    * dct.  
+    * @param   u - row position
+    * @param   v - column position
+    * @param   a - const T * const, source array
+    * @return  T - dct value for this position
+    */
    T compute_dct( const std::uint8_t u,
                   const std::uint8_t v, 
                   const T * const a)
@@ -141,23 +167,28 @@ template < typename T,
            DCTTYPE type, 
            class ENABLE = void > class dct{};
 
-/** specialization for numeric types **/
-template <> class dct< float, x88, 
-   typename std::enable_if< std::is_floating_point< float >::value >::type  > :
-      public dctbase< float , 8 >
+/** 
+ * TODO: eventually we'll write specializations for all types, but
+ * for now lets just go with one for all floating point types.
+ */
+template < typename T > class dct< T , 
+      x88, 
+      typename std::enable_if< std::is_fundamental< T >::value >::type  > :
+         public dctbase< T, 8 >
 {
+   using port_t = raft::matrix< T, 8>;
 public:
-   dct() : dctbase< float, 8 >()
+   dct() : dctbase< T, 8 >()
    {
    }
 
    raft::kstatus run()
    {
-      auto &in_matrix( input[ "0" ]. template peek< port_t >() );
-      auto &out_matrix( output[ "0" ]. template allocate< port_t >() );
-      dct_generic( in_matrix.arr, out_matrix.arr ); 
-      input["0"].recycle();
-      output["0"].send();
+      auto &in_matrix( (this)->input[ "0" ]. template peek< port_t >() );
+      auto &out_matrix( (this)->output[ "0" ]. template allocate< port_t >() );
+      (this)->dct_generic( in_matrix.arr, out_matrix.arr ); 
+      (this)->input["0"].recycle();
+      (this)->output["0"].send();
       return( raft::proceed );
    }
 };

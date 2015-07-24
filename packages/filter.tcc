@@ -29,7 +29,7 @@
 #include <exception>
 #include <raftstat>
 
-enum FilterType { Gaussian, LaplacianGaussian };
+enum FilterType { Gaussian, LaplacianGaussian, Bloom };
 
 
 template < typename D, 

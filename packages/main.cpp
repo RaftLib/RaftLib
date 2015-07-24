@@ -23,19 +23,21 @@ float array_A[ 64 ] =
   -41.0, -49.0, -59.0, -60.0, -63.0, -52.0, -50.0, -34.0
 };
 
+
 int
 main( int argc, char **argv )
 {
-   using matrix_t = raft::matrix< float, 8 >;
+   using type_t   = float;
+   using matrix_t = raft::matrix< type_t, 8 >;
    using vector_t = std::vector< matrix_t >;
    using reader_t = raft::read_each< matrix_t >;
-   using dct_t    = raft::dct< float, raft::x88 >;
+   using dct_t    = raft::dct< type_t, raft::x88 >;
 
    vector_t v( 3 );
    std::for_each( v.begin(), v.end(), 
       [&]( matrix_t &m )
       {
-         std::memcpy( m.arr, array_A, sizeof( float ) * 64 );
+         std::memcpy( m.arr, array_A, sizeof( type_t ) * 64 );
       });
     
    auto edge_a = raft::map.link(

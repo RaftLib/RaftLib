@@ -86,11 +86,8 @@ range( const A a,
   }
 }
 
-/** 
- * FIXME, this can be a whole lot cooler, add struct recursion with varargs and vectorize 
- * but I want to get it working, so I'm settling for the faster to type but less cool
- * version
- */
+
+template < class... PORTS > struct 
 template < class T, 
            class F, 
            typename std::enable_if< std::is_arithmetic< T >::value >::type* = nullptr > 
