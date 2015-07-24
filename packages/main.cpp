@@ -29,6 +29,7 @@ main( int argc, char **argv )
    using matrix_t = raft::matrix< float, 8 >;
    using vector_t = std::vector< matrix_t >;
    using reader_t = raft::read_each< matrix_t >;
+   using dct_t    = raft::dct< float, raft::x88 >;
 
    vector_t v( 3 );
    std::for_each( v.begin(), v.end(), 
@@ -37,9 +38,11 @@ main( int argc, char **argv )
          std::memcpy( m.arr, array_A, sizeof( float ) * 64 );
       });
     
-   raft::map.link(
+   auto edge_a = raft::map.link(
       raft::kernel::make< reader_t >( v.begin(), v.end() ),
-      raft::kernel::make< raft::print< matrix_t, '\n' > >() ); 
+      raft::kernel::make< dct_t >() );
+   raft::map.link( &edge_a.getDst(),
+                   raft::kernel::make< raft::print< matrix_t, '\n' > >() ); 
    raft::map.exe();
    return( EXIT_FAILURE );
 }

@@ -142,7 +142,8 @@ template < typename T,
            class ENABLE = void > class dct{};
 
 /** specialization for numeric types **/
-template <> class dct< float, x88, float > :
+template <> class dct< float, x88, 
+   typename std::enable_if< std::is_floating_point< float >::value >::type  > :
       public dctbase< float , 8 >
 {
 public:
