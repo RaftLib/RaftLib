@@ -34,32 +34,34 @@ namespace raft
 
 enum DCTTYPE : std::int32_t { NDIM, x88 };
 
+template < typename T,
+           std::size_t N,
+           class Enable = void > struct matrix{};
+
 template < typename T, 
-           std::size_t N, 
-           typename std::enable_if< std::is_integral< T >::value >::type* = nullptr >
-struct matrix 
+           std::size_t N >  struct matrix< T, N, 
+           typename std::enable_if< std::is_fundamental< T >::value >::type  >
 {
-   T          arr[ N * N ];;
-   const decltype( N )dim = N;
+   T              arr[ N * N ];;
+   decltype( N )  dim = N;
 
    T& operator []( const std::size_t index )
    {
-      return( std::forward< T >( arr[ index ] ));
+      return(  arr[ index ] );
    }
 
    friend std::ostream& operator << ( std::ostream &stream, matrix< T, N > &m )
    {
-      stream << std::fixed << std::setw( 9 ) << std::setprecision( 3 );
       for( auto x( 0 ); std::isless( x,  8 ); x++ )
       {
          for( auto y( 0 ); std::isless( y, 8 ); y++ )
          {
+            stream << std::fixed <<  std::setw( 7 ) << std::setprecision( 2 );
             stream << m[ ( x * 8 ) + y ];
          }
          stream << "\n";
       }
       stream << "\n";
-      stream << std::defaultfloat;
       return( stream );
    }
 };
@@ -107,7 +109,7 @@ protected:
 
    T compute_dct( const std::uint8_t u,
                   const std::uint8_t v, 
-                  T * const a)
+                  const T * const a)
    {
       constexpr const double pi_div_8( M_PI/8.0 );
       const auto dim( 8 );
@@ -144,7 +146,7 @@ template <> class dct< float, x88, float > :
       public dctbase< float , 8 >
 {
 public:
-   dct() : dctbase< T, N >();
+   dct() : dctbase< float, 8 >()
    {
    }
 
@@ -153,8 +155,8 @@ public:
       auto &in_matrix( input[ "0" ]. template peek< port_t >() );
       auto &out_matrix( output[ "0" ]. template allocate< port_t >() );
       dct_generic( in_matrix.arr, out_matrix.arr ); 
-      in_matrix.recycle();
-      out_matrix.send();
+      input["0"].recycle();
+      output["0"].send();
       return( raft::proceed );
    }
 };

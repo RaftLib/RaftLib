@@ -9,6 +9,7 @@
 #include <vector>
 #include <cstring>
 #include <algorithm>
+#include <raftio>
 
 float array_A[ 64 ] = 
 {
@@ -26,11 +27,19 @@ int
 main( int argc, char **argv )
 {
    using matrix_t = raft::matrix< float, 8 >;
-   std::vector< matrix_t > v( 3 );
-   auto func( [&]( matrix_t &m )
-   {
-      std::memcpy( m.arr, array_A, sizeof( float ) * 64 );
-   });
-   std::for_each( v.begin(), v.end(), func );
+   using vector_t = std::vector< matrix_t >;
+   using reader_t = raft::read_each< matrix_t >;
+
+   vector_t v( 3 );
+   std::for_each( v.begin(), v.end(), 
+      [&]( matrix_t &m )
+      {
+         std::memcpy( m.arr, array_A, sizeof( float ) * 64 );
+      });
+    
+   raft::map.link(
+      raft::kernel::make< reader_t >( v.begin(), v.end() ),
+      raft::kernel::make< raft::print< matrix_t, '\n' > >() ); 
+   raft::map.exe();
    return( EXIT_FAILURE );
 }
