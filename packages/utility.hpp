@@ -87,7 +87,6 @@ range( const A a,
 }
 
 
-template < class... PORTS > struct 
 template < class T, 
            class F, 
            typename std::enable_if< std::is_arithmetic< T >::value >::type* = nullptr > 
