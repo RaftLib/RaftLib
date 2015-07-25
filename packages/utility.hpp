@@ -85,10 +85,9 @@ range( const A a,
      return( std::forward< common_v_t< A, B > >( out ) );
   }
 }
-
+/** START recursive templates for sum **/
 template < class RETTYPE, class... PORTS > struct sum_helper{};
-
-
+/** dummy template to end the recursion **/
 template < class RETTYPE > struct sum_helper< RETTYPE >
 {
    constexpr static RETTYPE sum()
@@ -96,7 +95,7 @@ template < class RETTYPE > struct sum_helper< RETTYPE >
       return( std::move< RETTYPE >( static_cast< RETTYPE >( 0 ) ) );
    }
 };
-
+/** helper struct, for recursive template **/
 template < class RETTYPE, class PORT, class... PORTS >
    struct sum_helper< RETTYPE, PORT, PORTS... >
 {
@@ -109,12 +108,55 @@ template < class RETTYPE, class PORT, class... PORTS >
                      std::forward< PORTS >( ports )... ) ) );
    }
 };
-
+/**
+ * sum - takes a set of ports in, pops the head off the FIFOs
+ * and adds them, moving the value to the return which is
+ * well the return.
+ */
 template < typename RETTYPE,
-           class... PORTS > static RETTYPE sum(  PORTS&&... ports )
+           class... PORTS,
+        typename std::enable_if< std::is_arithmetic< RETTYPE >::value >::type* = nullptr 
+           > static RETTYPE sum(  PORTS&&... ports )
 {
-   return( std::move< RETTYPE >( sum_helper< RETTYPE, PORTS... >::sum( ports... ) ) ); 
+   return( std::move< RETTYPE >( sum_helper< RETTYPE, PORTS... >::sum( 
+               std::forward< PORTS >( ports )... ) ) ); 
 };
 
+/** START recursive templates for mult **/
+template < class RETTYPE, class... PORTS > struct mult_helper{};
+/** dummy template to end the recursion **/
+template < class RETTYPE > struct mult_helper< RETTYPE >
+{
+   constexpr static RETTYPE mult()
+   {
+      return( std::move< RETTYPE >( static_cast< RETTYPE >( 0 ) ) );
+   }
+};
+/** helper struct, for recursive template **/
+template < class RETTYPE, class PORT, class... PORTS >
+   struct mult_helper< RETTYPE, PORT, PORTS... >
+{
+   static RETTYPE mult( PORT &&port, PORTS&&... ports )
+   {
+      RETTYPE val;
+      port.pop( val );
+      return(  std::move< RETTYPE >( 
+                  val * mult_helper< RETTYPE, PORTS... >::mult( 
+                     std::forward< PORTS >( ports )... ) ) );
+   }
+};
+/**
+ * mult - takes a set of ports in, pops the head off the FIFOs
+ * and adds them, moving the value to the return which is
+ * well the return.
+ */
+template < typename RETTYPE,
+           class... PORTS,
+        typename std::enable_if< std::is_arithmetic< RETTYPE >::value >::type* = nullptr 
+           > static RETTYPE mult(  PORTS&&... ports )
+{
+   return( std::move< RETTYPE >( mult_helper< RETTYPE, PORTS... >::mult( 
+            std::forward< PORTS >( ports )... ) ) ); 
+};
 }
 #endif /* END _UTILITY_HPP_ */
