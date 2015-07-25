@@ -20,7 +20,9 @@ public:
    
    virtual raft::kstatus run()
    {
-      raft::sum< T >( output[ "sum" ], input[ "a" ], input[ "b" ] );
+      auto &out( output[ "sum" ].template allocate< T >() );
+      out = std::move( raft::sum< T >( input[ "a" ], input[ "b" ] ) );
+      output[ "sum" ].send();
       return( raft::proceed );
    }
 

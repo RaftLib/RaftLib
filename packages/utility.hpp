@@ -86,20 +86,35 @@ range( const A a,
   }
 }
 
+template < class RETTYPE, class... PORTS > struct sum_helper{};
 
-template < class T, 
-           class F, 
-           typename std::enable_if< std::is_arithmetic< T >::value >::type* = nullptr > 
-static 
-void
-sum( F &&dst, F &&a, F &&b )
+
+template < class RETTYPE > struct sum_helper< RETTYPE >
 {
-   auto &dst_ref( dst.template allocate< T >() );
-   dst_ref = a.template peek< T >() + b.template peek< T >();
-   a.recycle();
-   b.recycle();
-   dst.send();
-}
+   constexpr static RETTYPE sum()
+   {
+      return( std::move< RETTYPE >( static_cast< RETTYPE >( 0 ) ) );
+   }
+};
+
+template < class RETTYPE, class PORT, class... PORTS >
+   struct sum_helper< RETTYPE, PORT, PORTS... >
+{
+   static RETTYPE sum( PORT &&port, PORTS&&... ports )
+   {
+      RETTYPE val;
+      port.pop( val );
+      return(  std::move< RETTYPE >( 
+                  val + sum_helper< RETTYPE, PORTS... >::sum( 
+                     std::forward< PORTS >( ports )... ) ) );
+   }
+};
+
+template < typename RETTYPE,
+           class... PORTS > static RETTYPE sum(  PORTS&&... ports )
+{
+   return( std::move< RETTYPE >( sum_helper< RETTYPE, PORTS... >::sum( ports... ) ) ); 
+};
 
 }
 #endif /* END _UTILITY_HPP_ */
