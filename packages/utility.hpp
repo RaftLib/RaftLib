@@ -129,7 +129,7 @@ template < class RETTYPE > struct mult_helper< RETTYPE >
 {
    constexpr static RETTYPE mult()
    {
-      return( std::move< RETTYPE >( static_cast< RETTYPE >( 0 ) ) );
+      return( std::move< RETTYPE >( static_cast< RETTYPE >( 1 ) ) );
    }
 };
 /** helper struct, for recursive template **/

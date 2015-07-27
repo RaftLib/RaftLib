@@ -85,7 +85,7 @@ public:
    {
       for( auto &port : output )
       {
-         port.template push< T >( draw() );
+         port.template push< T >( std::forward< T >( draw() ) );
          if( --count == 0 )
          {
             return( raft::stop );

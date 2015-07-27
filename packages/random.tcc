@@ -92,11 +92,11 @@ protected:
                            std::remove_reference< decltype( val ) >::type >( 0 ),
                         2 ) )
       {
-         return( (T) min );
+         return( min );
       }
       else
       {
-         return( (T)( min + (diff * val) ) );
+         return( min + (diff * val) );
       }
    }
 private:
@@ -109,14 +109,14 @@ private:
     * couldn't have written it better myself.
     */
    template<class D>
-   typename std::enable_if<!std::numeric_limits<D>::is_integer, bool>::type
+   typename std::enable_if< ! std::numeric_limits<D>::is_integer, bool>::type
        almost_equal(const D x, const D y, const std::uint32_t ulp)
    {
        // the machine epsilon has to be scaled to the magnitude of the values used
        // and multiplied by the desired precision in ULPs (units in the last place)
-       return std::abs(x-y) < std::numeric_limits<D>::epsilon() * std::abs(x+y) * ulp
+       return( std::abs(x-y) < std::numeric_limits<D>::epsilon() * std::abs(x+y) * ulp
        // unless the result is subnormal
-              || std::abs(x-y) < std::numeric_limits<D>::min();
+              || std::abs(x-y) < std::numeric_limits<D>::min() );
    }
 
 };

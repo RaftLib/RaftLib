@@ -5,7 +5,6 @@
 #include <raft>
 #include <raftio>
 #include <raftrandom>
-#include <fstream>
 
 int
 main( int argc, char **argv )
@@ -31,7 +30,6 @@ main( int argc, char **argv )
          return( raft::proceed );
       } );
 
-   std::ofstream ofs( "/tmp/log.csv" );
     
    auto kernels = raft::map.link( rndgen,
                                   raft::kernel::make< sub >( 1, 1, l_sub ) );
@@ -42,10 +40,9 @@ main( int argc, char **argv )
                                 raft::kernel::make< sub >( 1, 1, l_sub ) );
    }
    raft::map.link( &kernels.getDst(), 
-             raft::kernel::make< raft::print< std::uint32_t, '\n' > >( ofs ) );
+             raft::kernel::make< raft::print< std::uint32_t, '\n' > >() );
    raft::map.exe();
    
-   ofs.close();
 
    return( EXIT_SUCCESS );
 }
