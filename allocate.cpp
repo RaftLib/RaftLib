@@ -43,21 +43,25 @@ Allocate::~Allocate()
 }
 
 void
-Allocate::waitTillReady()
+Allocate::waitTillReady() noexcept
 {
    while( ! ready );
 }
 
 void
-Allocate::setReady()
+Allocate::setReady() noexcept
 {
    ready = true;
 }
 
 void
-Allocate::initialize( PortInfo *src, PortInfo *dst, FIFO *fifo )
+Allocate::initialize( PortInfo * const src, 
+                      PortInfo * const dst, 
+                      FIFO * const fifo )
 {
    assert( fifo != nullptr );
+   assert( dst  != nullptr );
+   assert( src  != nullptr );
    if( src != nullptr )
    {
       if( src->getFIFO() != nullptr )
@@ -71,14 +75,10 @@ Allocate::initialize( PortInfo *src, PortInfo *dst, FIFO *fifo )
       throw PortDoubleInitializeException( 
          "Destination port \"" + dst->my_name +  "\" already initialized!" );
    }
-   if( src != nullptr )
-   {
-      src->setFIFO( fifo );
-   }
-   if( dst != nullptr )
-   {
-      dst->setFIFO( fifo );
-   }
+   src->setFIFO( fifo );
+   fifo->set_src_kernel( src->my_kernel );
+   dst->setFIFO( fifo );
+   fifo->set_dst_kernel( dst->my_kernel );
    /** NOTE: this list simply speeds up the monitoring if we want it **/
    allocated_fifo.insert( fifo ); 
 }

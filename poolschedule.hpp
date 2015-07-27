@@ -25,6 +25,7 @@
 #ifndef _POOLSSCHEDULE_HPP_
 #define _POOLSSCHEDULE_HPP_  1
 #include <vector>
+#include <set>
 #include <thread>
 #include <cstdint>
 #include "schedule.hpp"
@@ -61,14 +62,43 @@ public:
    virtual void start(); 
    
 protected:
+   /** BEGIN FUNCTIONS **/
    /**
     * scheduleKernel - override base class function in order
     * to add kernels to the right place.
     * @param kernel - raft::kernel*
     * @return bool - always true
     */
-   virtual bool scheduleKernel( raft::kernel *kernel );
+   virtual bool scheduleKernel( raft::kernel * const kernel );
 
+   /**
+    * container_min - returns true if the input queue of a has
+    * fewer items than the input queue of b
+    * @param a - kernel_container * const
+    * @param b - kernel_container * const
+    * @return  bool - true if a->qsize() < b->qsize()
+    */
+   static bool  container_min_input( kernel_container * const a,
+                                     kernel_container * const b );
+
+   /**
+    * container_max - returns true if the output queue of a
+    * is greater than b.
+    * @param   a - kernel_container * const
+    * @param   b - kernel_container * const
+    * @return  bool - true if a->outqsize > b->qoutsize
+    */
+   static bool  container_min_output( kernel_container * const a,
+                                      kernel_container * const b );
+
+
+   /** END FUNCTIONS, BEGIN VAR DECLS **/
+   /**
+    * The thread has to have this much more "work" than 
+    * the previous thread in order to get moved ot a new
+    * thread.  Used in pool_schedule::start().
+    */
+   const float diff_weight = .20;
    /**
     * total # of hardware supported threads 
     */
@@ -76,31 +106,13 @@ protected:
    /**
     * used as a thread pool
     */
-   std::vector< std::thread* >     pool;
-   /**
-    * container - holds all the kernels
+   std::vector< std::thread* >      pool;
+   /** 
+    * max_heap_container - sorted by max output-queue occupancy 
     */
-   std::vector< KernelContainer* > container;
-   /**
-    * used std::uint8_t b/c I don't want a bitset from std::vector, 
-    * status_flags used to tell the sub-schedulers when to quit.
-    */
-   std::vector< std::uint8_t >             status_flags;
+   std::vector< kernel_container* > container;
 
-   /**
-    * stores all kernels that we're currently executing, migth
-    * be removed from KernelContainer objects, but they'll still
-    * be here.
-    */
-   std::vector< raft::kernel* >    kernel_map;
-
-private:
-   /**
-    * poolrun- called by each thread within 
-    * the pool, essentially this function acts as a 
-    * mini-scheduler which runs all kernels in a given
-    * container.
-    */
-   static void poolrun( KernelContainer *container, volatile std::uint8_t &sched_done );
+   std::size_t                      kernel_count = 0;
+   std::remove_reference< decltype( container.end() ) >::type container_it;
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */

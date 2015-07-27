@@ -30,6 +30,8 @@
 
 namespace raft{
 
+enum readertype : std::int32_t { chunk, fasta };
+
 template < std::size_t size = 65536 > struct filechunk
 {
    filechunk() = default;
@@ -57,11 +59,12 @@ template < std::size_t size = 65536 > struct filechunk
    }
 };
 
+
 template < class chunktype = filechunk< 65536 >, 
            bool copy = false > class filereader : public raft::kernel
 {
 public:
-   filereader( const std::string inputfile, 
+   filereader( const std::string &&inputfile, 
                const std::size_t n_output_ports = 1,
                const std::size_t chunk_offset = 0 )
    {
@@ -99,21 +102,24 @@ public:
    {  
       for( auto &port : output )
       {
-         auto &chunk( port.template allocate< chunktype  >() );
-         chunk.start_position = ftell( fp );
-         const auto chunksize( chunktype::getChunkSize() );
-         const auto num_read(  
-            fread( chunk.buffer, sizeof( char ), chunksize , fp ) );
-         chunk.buffer[ num_read ] = '\0';
-         chunk.length = num_read;
-         port.send( 
-            ( iterations - output.count() /* num ports */ ) > 0 ? 
-               raft::none : 
-               raft::eof );
-         
-         if( --iterations <= 0 )
-         {  
-            return( raft::stop );
+         if( port.space_avail() )
+         {
+            auto &chunk( port.template allocate< chunktype  >() );
+            chunk.start_position = ftell( fp );
+            const auto chunksize( chunktype::getChunkSize() );
+            const auto num_read(  
+               fread( chunk.buffer, sizeof( char ), chunksize , fp ) );
+            chunk.buffer[ num_read ] = '\0';
+            chunk.length = num_read;
+            port.send( 
+               ( iterations - output.count() /* num ports */ ) > 0 ? 
+                  raft::none : 
+                  raft::eof );
+            
+            if( --iterations <= 0 )
+            {  
+               return( raft::stop );
+            }
          }
       }
       return( raft::proceed );

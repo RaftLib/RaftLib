@@ -19,12 +19,12 @@
  */
 #include "submap.hpp"
 
-SubMap::SubMap() : MapBase()
+submap::submap() : MapBase()
 {
    /** nothing really to do **/
 }
 
-SubMap::~SubMap()
+submap::~submap()
 {
    /** nothing really to do **/
 }

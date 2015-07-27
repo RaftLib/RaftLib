@@ -18,7 +18,6 @@
  * limitations under the License.
  */
 #include <sstream>
-#include <cxxabi.h>
 #include <map>
 #include <sstream>
 #include <vector>
@@ -29,6 +28,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "common.hpp"
 #include "mapbase.hpp"
 #include "graphtools.hpp"
 
@@ -45,19 +45,16 @@ MapBase::~MapBase()
 
 void
 MapBase::join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
-           raft::kernel &b, const std::string name_b, PortInfo &b_info )
+               raft::kernel &b, const std::string name_b, PortInfo &b_info )
 {
    if( a_info.type != b_info.type )
    {
       std::stringstream ss;
-      int status;
-      ss << "When attempting to join ports (" << 
-         abi::__cxa_demangle( typeid( a ).name(), 0, 0, &status ) << "[" << 
-         name_a << "] -> " << 
-         abi::__cxa_demangle( typeid( b ).name(), 0, 0, &status ) << "[" << 
+      ss << "When attempting to join ports (" << common::printClassName( a ) <<  
+         "[" << name_a << "] -> " << common::printClassName( b ) << "[" << 
          name_b << "] have conflicting types.  " << 
-         abi::__cxa_demangle( a_info.type.name(), 0, 0, &status ) << 
-         " and " << abi::__cxa_demangle( b_info.type.name(), 0, 0, &status ) << "\n";
+            common::printClassNameFromStr( a_info.type.name() ) <<  
+         " and " << common::printClassNameFromStr( b_info.type.name() ) << "\n"; 
       throw PortTypeMismatchException( ss.str() );
    }
 

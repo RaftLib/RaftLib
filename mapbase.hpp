@@ -31,6 +31,7 @@
 #include <typeinfo>
 #include <cassert>
 #include <cxxabi.h>
+#include <vector>
 #include <thread>
 #include <sstream>
 
@@ -48,14 +49,40 @@
  * in order to allow inline "new" construction of kernels that
  * might be re-used in multiple instances.
  */
-struct kernel_pair_t
+class kernel_pair_t
 {
-   kernel_pair_t( raft::kernel &a, raft::kernel &b ) : src( a ),
+public:
+   kernel_pair_t( raft::kernel *a, raft::kernel *b ) : 
+                                           src( a ),
                                            dst( b )
    {
    }
-   raft::kernel &src;
-   raft::kernel &dst;
+
+   kernel_pair_t( const kernel_pair_t &other ) : src( other.src ),
+                                                 dst( other.dst )
+   {
+   }
+   
+   kernel_pair_t& operator == ( kernel_pair_t &&other )
+   {
+      src = other.src;
+      dst = other.dst;
+      return( *this );
+   }
+
+   raft::kernel& getSrc()
+   {
+      return( *src );
+   }
+
+   raft::kernel& getDst()
+   {
+      return( *dst );
+   }
+
+private:
+   raft::kernel *src;
+   raft::kernel *dst;
 };
 
 
@@ -94,7 +121,8 @@ public:
     * only a single input otherwise an exception will be thrown.
     * @param   a - raft::kernel*, src kernel
     * @param   b - raft::kernel*, dst kernel
-    * @throws  AmbiguousPortAssignmentException - thrown if either src or dst have more than 
+    * @throws  AmbiguousPortAssignmentException - thrown if either src or 
+    *          dst have more than 
     *          a single port to link.
     * @return  kernel_pair_t - references to src, dst kernels.
     */
@@ -105,6 +133,10 @@ public:
       if( ! a->input.hasPorts() )
       {
          source_kernels.insert( a );   
+      }
+      if( ! b->output.hasPorts() )
+      {
+         dst_kernels.insert( b );
       }
       all_kernels.insert( a );
       all_kernels.insert( b );
@@ -154,7 +186,7 @@ public:
          }
          break;
       }
-      return( kernel_pair_t( *a, *b ) );
+      return( kernel_pair_t( a, b ) );
    }
    
    /** 
@@ -174,31 +206,35 @@ public:
    template < order::spec t = order::in > 
       kernel_pair_t link( raft::kernel *a, const std::string  a_port, raft::kernel *b )
    {
+      if( ! a->input.hasPorts() )
+      {
+         source_kernels.insert( a );   
+      }
+      if( ! b->output.hasPorts() )
+      {
+         dst_kernels.insert( b );
+      }
+      all_kernels.insert( a );
+      all_kernels.insert( b );
+      PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
+      
+      PortInfo *port_info_b;
+      try{
+         port_info_b = &(b->input.getPortInfo());
+      }
+      catch( PortNotFoundException &ex ) 
+      {
+         int status( 0 );
+         std::stringstream ss;
+         ss << "Destination port from kernel " << 
+            abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) <<
+            "has more than a single port.";
+         throw AmbiguousPortAssignmentException( ss.str() );
+      }
+      join( *a, a_port , port_info_a, 
+            *b, port_info_b->my_name, *port_info_b );
       switch( t )
       {
-         if( ! a->input.hasPorts() )
-         {
-            source_kernels.insert( a );   
-         }
-         all_kernels.insert( a );
-         all_kernels.insert( b );
-         PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
-         
-         PortInfo *port_info_b;
-         try{
-            port_info_b = &(b->input.getPortInfo());
-         }
-         catch( PortNotFoundException &ex ) 
-         {
-            int status( 0 );
-            std::stringstream ss;
-            ss << "Destination port from kernel " << 
-               abi::__cxa_demangle( typeid( *b ).name(), 0, 0, &status ) <<
-               "has more than a single port.";
-            throw AmbiguousPortAssignmentException( ss.str() );
-         }
-         join( *a, a_port , port_info_a, 
-               *b, port_info_b->my_name, *port_info_b );
          case( order::in ):
          {
             port_info_a.out_of_order   = false;
@@ -212,9 +248,10 @@ public:
          }
          break;
       }
-      return( kernel_pair_t( *a, *b ) );
+      return( kernel_pair_t( a, b ) );
    }
-  
+
+
    /**
     * link - same as above save for the following differences:
     * raft::kernel a is assumed to have a single output port.  raft::kernel
@@ -232,43 +269,50 @@ public:
    template < order::spec t = order::in >
       kernel_pair_t link( raft::kernel *a, raft::kernel *b, const std::string b_port )
    {
+      if( ! a->input.hasPorts() )
+      {
+         source_kernels.insert( a );   
+      }
+      if( ! b->output.hasPorts() )
+      {
+         dst_kernels.insert( b );
+      }
+      all_kernels.insert( a );
+      all_kernels.insert( b );
+      PortInfo *port_info_a;
+      try{
+         port_info_a = &(a->output.getPortInfo() );
+      }
+      catch( PortNotFoundException &ex ) 
+      {
+         std::stringstream ss;
+         int status( 0 );
+         ss << "Source port from kernel " << 
+            abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) <<
+            "has more than a single port.";
+         throw AmbiguousPortAssignmentException( ss.str() );
+      }
+      
+      PortInfo &port_info_b( b->input.getPortInfoFor( b_port) );
+      
+      join( *a, port_info_a->my_name, *port_info_a, 
+            *b, b_port, port_info_b );
       switch( t )
       {
          case( order::in ):
          {
-            if( ! a->input.hasPorts() )
-            {
-               source_kernels.insert( a );   
-            }
-            all_kernels.insert( a );
-            all_kernels.insert( b );
-            PortInfo *port_info_a;
-            try{
-               port_info_a = &(a->output.getPortInfo() );
-            }
-            catch( PortNotFoundException &ex ) 
-            {
-               std::stringstream ss;
-               int status( 0 );
-               ss << "Source port from kernel " << 
-                  abi::__cxa_demangle( typeid( *a ).name(), 0, 0, &status ) <<
-                  "has more than a single port.";
-               throw AmbiguousPortAssignmentException( ss.str() );
-            }
-            
-            PortInfo &port_info_b( b->input.getPortInfoFor( b_port) );
-            
-            join( *a, port_info_a->my_name, *port_info_a, 
-                  *b, b_port, port_info_b );
+            port_info_a->out_of_order   = false;
+            port_info_b.out_of_order    = false;
          }
          break;
          case( order::out ):
          {
-            assert( false );
+            port_info_a->out_of_order   = true;
+            port_info_b.out_of_order    = true;
          }
          break;
       }
-      return( kernel_pair_t( *a, *b ) );
+      return( kernel_pair_t( a, b ) );
    }
    
    /**
@@ -291,6 +335,10 @@ public:
       {
          source_kernels.insert( a );   
       }
+      if( ! b->output.hasPorts() )
+      {
+         dst_kernels.insert( b );
+      }
       all_kernels.insert( a );
       all_kernels.insert( b );
       auto &port_info_a( a->output.getPortInfoFor( a_port ) );
@@ -298,7 +346,7 @@ public:
       
       join( *a, a_port, port_info_a, 
             *b, b_port, port_info_b );
-      witch( t )
+      switch( t )
       {
          case( order::in ):
          {
@@ -313,14 +361,12 @@ public:
          }
          break;
       }
-      return( kernel_pair_t( *a, *b ) );
+      return( kernel_pair_t( a, b ) );
    }
 
 
 
 protected:
-  
-
    /**
     * join - helper method joins the two ports given the correct 
     * information.  Essentially the correct information for the 
@@ -341,8 +387,13 @@ protected:
 
    /** need to keep source kernels **/
    std::set< raft::kernel* > source_kernels;
-   
+   /** dst kernels **/
+   std::set< raft::kernel* > dst_kernels;
    /** and keep a list of all kernels **/
    std::set< raft::kernel* > all_kernels; 
+   /** flatten these kernels into main map once we run **/
+   std::vector< MapBase* >   sub_maps;
+
+   friend class Map;
 };
 #endif /* END _MAPBASE_HPP_ */

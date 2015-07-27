@@ -26,6 +26,7 @@
 
 #include "fifo.hpp"
 
+
 extern Clock *system_clock;
 
 template < class T, Type::RingBufferType type > 

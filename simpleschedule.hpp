@@ -39,6 +39,8 @@ protected:
    
    virtual bool scheduleKernel( raft::kernel *kernel );
 
+   static void simple_run( raft::kernel * const kernel,
+                           volatile bool        &finished );
    /**
     * NOTE: for more complex schedules it'd behoove us
     * to keep more information here for each scheduled

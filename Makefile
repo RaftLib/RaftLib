@@ -1,35 +1,44 @@
 CC    ?= gcc
 CXX   ?= g++
+AR    ?= ar
 
-PREFIX = /usr/local
+PREFIX ?= /usr/local
 
 include fifo/buffer.makefile
+include packages/packages.makefile
+#include libfiber/libfiber.makefile
 
-DIRINCS = $(RINGBUFFERDIR) ./
+DIRINCS = $(PACKAGEDIR) $(RINGBUFFERDIR) ./
 
 ifneq ($(shell uname -s), Darwin)
 RT = -lrt
-STATIC = -static -static-libgcc -static-libstdc++
+STATIC = -DRDTSCP=1 -static -static-libgcc -static-libstdc++
 PTHREAD = -lpthread  
 endif
 
+type =? release
 TEST = -O0 -g 
 RELEASE = -Ofast -mtune=native
 
-BUILD = $(TEST) 
+ifeq ($(type), test)
+BUILD = $(TEST) $(STATIC) -DDEBUG=1
+else
+BUILD = $(RELEASE) $(STATIC)
+endif
+
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
-CXXFLAGS =  $(BUILD) -Wall -std=c++11  -DRDTSCP=1
+CXXFLAGS =  $(BUILD) -Wall -std=c++11 #-Wstack-protector -fstack-protector-all
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
                    simpleschedule stdalloc portiterator dynalloc \
                    roundrobin kernel mapbase submap globalmap \
-                   systemsignalhandler kernelcontainer \
-                   poolschedule
+                   systemsignalhandler poolschedule kernelcontainer \
+                   common
 
-COBJS   = $(RBCOBJS)
-CXXOBJS = $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)
+COBJS   = $(RBCOBJS) $(LIBFIBERCOBJS)
+CXXOBJS = $(PACKAGEOBJS) $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)
 
 CFILES = $(addsuffix .c, $(COBJS) )
 CXXFILES = $(addsuffix .cpp, $(CXXOBJS) )
@@ -38,7 +47,7 @@ OBJS = $(addsuffix .o, $(COBJS) ) $(addsuffix .o, $(CXXOBJS) )
 
 
 INCS = $(addprefix -I, $(DIRINCS))
-LIBS = $(RT) $(PTHREAD)
+LIBS = $(RT) $(PTHREAD) $(PACKAGELIBS) 
 
 compile: $(CXXFILES) $(CFILES)
 	$(MAKE) $(OBJS)
@@ -54,6 +63,10 @@ install:
 	cp ./packages/* $(PREFIX)/include/raft_dir/
 	cp raft $(PREFIX)/include/
 	cp raftio $(PREFIX)/include/
+	cp raftrandom $(PREFIX)/include/
+	cp raftstat $(PREFIX)/include/
+	cp raftutility $(PREFIX)/include/
+	cp raftmath $(PREFIX)/include/
 	echo "Install complete!"
 
 uninstall:
@@ -61,7 +74,12 @@ uninstall:
 	rm -rf $(PREFIX)/include/raft_dir
 	rm -rf $(PREFIX)/include/raft
 	rm -rf $(PREFIX)/include/raftio
+	rm -rf $(PREFIX)/include/raftrandom
+	rm -rf $(PREFIX)/include/raftstat
+	rm -rf $(PREFIX)/include/raftutility
+	rm -rf $(PREFIX)/include/raftmath
 	echo "Uninstalled!"
+
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCS) -o $@ $<
 

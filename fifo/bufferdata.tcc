@@ -110,6 +110,9 @@ template < class T,
       delete( (this)->write_pt );
       (this)->write_pt = new Pointer( (other->write_pt), (this)->max_cap );
 
+      (this)->src_kernel = other->src_kernel;
+      (this)->dst_kernel = other->dst_kernel;
+
       /** buffer is already alloc'd, copy **/
       std::memcpy( (void*)(this)->store /* dst */,
                    (void*)other->store  /* src */,
@@ -122,11 +125,12 @@ template < class T,
    }
 
 
-   ~Data()
+   virtual ~Data()
    {
       //DELETE USED HERE
       delete( (this)->read_pt );
       delete( (this)->write_pt );
+      
       //FREE USED HERE
       if( ! (this)->external_alloc )
       {

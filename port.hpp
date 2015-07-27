@@ -38,7 +38,6 @@
 #include "port_info_types.hpp"
 #include "portmap_t.hpp"
 #include "portiterator.hpp"
-
 /** needed for friending below **/
 class MapBase;
 
@@ -46,6 +45,7 @@ class MapBase;
 namespace raft{
    class kernel;
 }
+
 
 class Port : public PortBase
 {
@@ -82,7 +82,7 @@ public:
     * @return  bool
     */
    template < class T >
-   bool addPort( const std::string port_name )
+   bool addPort( const std::string &&port_name )
    {
       /**
        * we'll have to make a port info object first and pass it by copy
@@ -94,6 +94,8 @@ public:
        pi.my_kernel = kernel;
        pi.my_name   = port_name;
        (this)->initializeConstMap<T>( pi );
+       (this)->initializeSplit< T >( pi );
+       (this)->initializeJoin< T >( pi );
       const auto ret_val( portmap.map.insert( std::make_pair( port_name, 
                                                           pi ) ) );
       return( ret_val.second );
@@ -139,14 +141,14 @@ public:
     * @return  const type_index&
     * @throws PortNotFoundException
     */
-   const std::type_index& getPortType( const std::string port_name );
+   const std::type_index& getPortType( const std::string &&port_name );
 
 
    /**
     * operator[] - input the port name and get a port
     * if it exists. 
     */
-   virtual FIFO& operator[]( const std::string port_name );
+   virtual FIFO& operator[]( const std::string &&port_name );
 
 
    /**
@@ -174,6 +176,10 @@ public:
     */
    std::size_t count();
 
+   /*******
+    * SOME OPERATOR OVERLOADING STUFFS TO MAKE LIFE EASIER 
+    */
+   
 protected:
    /**
     * initializeConstMap - hack to get around the inability to otherwise
@@ -201,6 +207,29 @@ protected:
                          RingBuffer< T, Type::SharedMemory >::make_new_fifo ) );
       /** no instrumentation version defined yet **/
       return;
+   }
+
+   /**
+    * initializeSplit - pre-allocate split kernels...saves
+    * allocation time later, then all that is needed is to 
+    * hook them up, and allocate memory for the ports.
+    */
+   template < class T > void initializeSplit( PortInfo &pi )
+   {
+      //FIXME, needs to be implemented
+      //pi.split_func = static_cast< split_factory_t* >( raft::kernel::make< raft::split< T > >() ); 
+   }
+
+   /**
+    * initializeJoin - pre-allocate join kernels...saves
+    * allocation time later, takes up minimal space and
+    * all that is needed when these are actually used
+    * is to allocate memory for the ports which is done
+    * by the 
+    */
+   template < class T > void initializeJoin( PortInfo &pi )
+   {
+      //pi.join_func = static_cast< join_factory_t* >( raft::kernel::make< raft::join< T > >() );
    }
    
    /**
@@ -245,9 +274,6 @@ protected:
    
    /** we need some friends **/
    friend class MapBase;
-   friend void GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
-                                edge_func fun,
-                                bool connection_error );
-   
+   friend class GraphTools; 
 };
 #endif /* END _PORT_HPP_ */

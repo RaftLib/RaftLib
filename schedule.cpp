@@ -3,10 +3,12 @@
 #include "kernel.hpp"
 #include "map.hpp"
 #include "schedule.hpp"
+#include "optdef.hpp"
 
 
 Schedule::Schedule( Map &map ) : map_ref( map )
 {
+   //TODO, see if we want to keep this 
    handlers.addHandler( raft::quit, Schedule::quitHandler ); 
 }
 
@@ -107,7 +109,7 @@ Schedule::kernelHasInputData( raft::kernel *kernel )
    }
    for( auto &port : port_list )
    {
-      if( port.size() )
+      if( likely( port.size() > 0 ) )
       {
          return( true );
       }
@@ -124,30 +126,37 @@ Schedule::kernelHasNoInputPorts( raft::kernel *kernel )
    /** assume data check is already complete **/
    for( auto &port : port_list )
    {
-      if( ! port.is_invalid() )
+      if( likely( ! port.is_invalid() ) )
       {
          return( false );
       }
    }
    return( true );
 }
-void 
+
+bool
 Schedule::kernelRun( raft::kernel * const kernel,
-                      volatile bool       &finished )
+                      volatile bool       &finished,
+                      jmp_buf             *gotostate,
+                      jmp_buf             *kernel_state )
 {
-   auto sig_status( raft::proceed );
-   while( sig_status == raft::proceed )
+   if( kernelHasInputData( kernel ) )
    {
-      if( kernelHasInputData( kernel ) )
+      const auto sig_status = kernel->run();
+      if( sig_status == raft::stop )
       {
-         sig_status = kernel->run();
+         invalidateOutputPorts( kernel );
+         finished = true;
       }
-      else if( kernelHasNoInputPorts( kernel ) /** no data too **/ )
-      {
-         sig_status = raft::stop;
-      }
+   } 
+   /** 
+    * must recheck data items again after port valid check, there could
+    * have been a push between these two conditional statements.
+    */
+   else if(  kernelHasNoInputPorts( kernel ) && ! kernelHasInputData( kernel ) )
+   {
+      invalidateOutputPorts( kernel );
+      finished = true;
    }
-   /** invalidate output queues **/
-   invalidateOutputPorts( kernel );
-   finished = true;
+   return( true );
 }

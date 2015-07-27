@@ -26,10 +26,13 @@ namespace raft {
 template < class T, class method = roundrobin > class split : public raft::parallel_k
 {
 public:
-   split()
+   split( const std::size_t num_ports = 1 )
    {
       input.addPort<  T >( "0" );
-      addPortTo< T >( output );
+      for( auto it( 0 ); it < num_ports; it++ )
+      {
+         addPortTo< T >( output );
+      }
    }
 
    virtual ~split() = default;
@@ -38,20 +41,27 @@ public:
    {
       /** TODO, add code to do multi-item inserts **/
       raft::signal signal;
-      T &item( input[ "0" ].peek< T >( &signal ) );
+      auto &output_port( input[ "0" ] );
+      T &item( output_port.template peek< T >( &signal ) );
+      /** split funtion selects a fifo using the appropriate split method **/
       if( split_func.send( item, signal, output ) )
       {
          /* recycle item */
-         input[ "0" ].recycle( 1 );
+         output_port.recycle( 1 );
+      }
+      else
+      {
+         output_port.unpeek();
       }
       return( raft::proceed );
    }
-
-protected:
+   
    virtual void addPort()
    {
       addPortTo< T >( output );
    }
+
+protected:
    method split_func;
 };
 } /** end namespace raft **/

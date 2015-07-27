@@ -56,10 +56,11 @@ simple_schedule::start()
 
    std::vector< thread_info_t > thread_map( kernel_map.size() );
    
+
    for( std::size_t index( 0 ); index < kernel_map.size(); index++ )
    {
       thread_map[ index ].th = 
-         new std::thread( Schedule::kernelRun, 
+         new std::thread( simple_run, 
                           kernel_map[ index ]                      /* kernel ptr  */,
                           std::ref( thread_map[ index ].finished ) /* finished ref */);
    }
@@ -84,5 +85,15 @@ simple_schedule::start()
             }
          }
       }
+   }
+}
+
+void
+simple_schedule::simple_run( raft::kernel * const kernel,
+                             volatile bool        &finished )
+{
+   while( ! finished )
+   {
+      Schedule::kernelRun( kernel, finished );
    }
 }

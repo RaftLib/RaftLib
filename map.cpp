@@ -18,7 +18,6 @@
  * limitations under the License.
  */
 #include <sstream>
-#include <cxxabi.h>
 #include <map>
 #include <sstream>
 #include <vector>
@@ -29,6 +28,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "common.hpp"
 #include "map.hpp"
 #include "graphtools.hpp"
 
@@ -55,9 +55,26 @@ Map::checkEdges( std::set< raft::kernel* > &source_k )
     * errors.
     */
    GraphTools::BFS( source_k, 
-                    []( const PortInfo &a, const PortInfo &b ){ return; },
+                    []( const PortInfo &a, const PortInfo &b, void *data ){ return; },
+                    nullptr,
                     true );
    return;
+}
+
+void 
+Map::enableDuplication( std::set< raft::kernel* > &source_k )
+{
+
+    GraphTools::BFS( source_k,
+                     []( const PortInfo &a, const PortInfo &b, void *data )
+                     {
+                        if( a.out_of_order && b.out_of_order )
+                        {
+                            /** TODO, finish thought **/
+                        }
+                     },
+                     nullptr,
+                     false );
 }
 
 
@@ -72,16 +89,15 @@ Map::printEdges( std::set< raft::kernel* > &source_k )
    gviz_output << "digraph G{\n";
    gviz_output << "size=\"10,10\";\n";
    GraphTools::BFS( source_k,
-                    [&]( const PortInfo &a, const PortInfo &b )
+                    [&]( const PortInfo &a, const PortInfo &b, void *data )
                     {
-                        int status( 0 );
-                        const std::string name_a( abi::__cxa_demangle( typeid( *(a.my_kernel) ).name(), 0, 0, &status ) );
+                        const std::string name_a( common::printClassName( *(a.my_kernel) ) );
                         const auto ret_val( gviz_node_map.insert( std::make_pair( name_a, gviz_node_index ) ) );
                         if( ret_val.second /* new kernel */ )
                         {
                            gviz_node_index++;
                         }
-                        const std::string name_b( abi::__cxa_demangle( typeid( *(b.my_kernel) ).name(), 0, 0, &status ) );
+                        const std::string name_b( common::printClassName( *(b.my_kernel) ) );
                         const auto ret_val_2( gviz_node_map.insert( std::make_pair( name_b, gviz_node_index ) ) );
                         if( ret_val_2.second /* new kernel */ )
                         {
@@ -92,6 +108,7 @@ Map::printEdges( std::set< raft::kernel* > &source_k )
                            a.my_name << " to " << a.other_name << "\" ]";
                         gviz_edge_map.push_back( ss.str() );
                     },
+                    nullptr,
                     false );
    for( auto it( gviz_node_map.begin() ); it != gviz_node_map.end(); ++it )
    {

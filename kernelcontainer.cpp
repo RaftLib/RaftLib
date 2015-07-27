@@ -1,7 +1,7 @@
 /**
  * kernelcontainer.cpp - 
  * @author: Jonathan Beard
- * @version: Wed Jan 14 08:12:47 2015
+ * @version: Sun Mar 22 09:13:32 2015
  * 
  * Copyright 2015 Jonathan Beard
  * 
@@ -17,59 +17,112 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "kernelcontainer.hpp"
-#include <cassert>
+#include <vector>
 
-KernelContainer::KernelContainer()
+#include <cassert>
+#include "schedule.hpp"
+#include "kernelcontainer.hpp"
+#include "kernel.hpp"
+
+kernel_container::kernel_container() 
 {
+   input_buff  = new buffer( 100 );
+   output_buff = new buffer( 100 );
 }
 
-KernelContainer::~KernelContainer()
+kernel_container::kernel_container( const std::size_t N ) 
 {
+   input_buff  = new buffer( N );
+   output_buff = new buffer( N );
+}
+
+
+kernel_container::~kernel_container()
+{
+   delete( input_buff );
+   delete( output_buff );
+}
+
+
+kernel_container::buffer&
+kernel_container::getInputQueue()
+{
+   assert( input_buff != nullptr );
+   return( *input_buff );
+}
+
+kernel_container::buffer&
+kernel_container::getOutputQueue()
+{
+   assert( output_buff != nullptr );
+   return( *output_buff );
 }
 
 void
-KernelContainer::addKernel( raft::kernel *kernel )
+kernel_container::container_run( kernel_container &container )
 {
-   assert( kernel != nullptr );
-   std::lock_guard< decltype( m_begin ) > lb( m_begin );
-   std::lock_guard< decltype( m_end ) >   le( m_end );
-   list.insert( kernel );
-}
-
-bool
-KernelContainer::removeKernel( raft::kernel *kernel )
-{
-   assert( kernel != nullptr );
-   /** get both locks **/
-   std::lock_guard< decltype( m_begin ) > lb( m_begin );
-   std::lock_guard< decltype( m_end ) >   le( m_end );
-   auto el( list.find( kernel ) );
-   if( el == list.end() )
+   bool shutdown( false );
+   auto &input_buffer( container.getInputQueue() );
+   auto &output_buffer( container.getOutputQueue() );
+   while( ! shutdown || container.preempted_kernel_pool.size() > 0 )
    {
-      return( false );
+      if( container.getInputQueue().size() > 0 )
+      {
+         sched_cmd_t new_cmd;
+         input_buffer.pop< sched_cmd_t >( new_cmd );
+         switch( new_cmd.cmd )
+         {
+            case( schedule::add ):
+            {
+               assert( new_cmd.kernel != nullptr );
+               //FIXME: hacked this so it'll compile, need to fix preempt state
+               //const auto ret_val( setPreemptState( new_cmd.kernel ) );
+               const auto ret_val( 0 );
+               switch( ret_val )
+               {
+                  case( 0 /* newly scheduled kernel */ ):
+                  {
+                     bool done( false );
+                     auto &out_cmd( output_buffer.allocate< sched_cmd_t >() );
+                     Schedule::kernelRun( new_cmd.kernel, done );
+                     out_cmd.cmd            = ( done ? schedule::kernelfinished : 
+                                                       schedule::reschedule );
+                     out_cmd.kernel         = new_cmd.kernel;
+                     output_buffer.send();
+                     /** clean-up buffer and recycle head of FIFO **/
+                  }
+                  break;
+                  case( 1 /* kernel preempted */ ):
+                  {
+                     container.preempted_kernel_pool.push( new_cmd.kernel );
+                  }
+                  break;
+                  default:
+                     assert( false );
+               }
+            }
+            break;
+            case( schedule::shutdown ):
+            {
+               /** just in case, a sanity check here **/
+               shutdown = true;
+            }
+            break;
+            default:
+            {
+               std::cerr << "Invalid signal: " << 
+                  schedule::sched_cmd_str[ new_cmd.cmd ] << "\n";
+               assert( false );
+            }
+         }
+      }
+      /** try these kernels again **/
+      if( container.preempted_kernel_pool.size() > 0 )
+      {
+         //auto * const kernel( container.preempted_kernel_pool.front() );
+         container.preempted_kernel_pool.pop();
+         //restore( kernel );
+         /** after this it'll longjmp to the running state **/ 
+      }
    }
-   else
-   {
-      list.erase( el );
-      return( true );
-   }
-}
-
-auto
-KernelContainer::size() -> decltype( list.size() )
-{
-   return( list.size() );
-}
-
-auto
-KernelContainer::begin() -> KernelIterator< decltype( list.begin() ) >
-{
-   return( KernelIterator< decltype( list.begin() ) >( list.begin(), m_begin ) );
-}
-
-auto
-KernelContainer::end() -> KernelIterator< decltype( list.end() ) >
-{
-   return( KernelIterator< decltype( list.end() ) >( list.end(), m_end ) );
 }

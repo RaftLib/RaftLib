@@ -116,7 +116,7 @@ public:
           * in the size() function from the ringbufferheap.tcc 
           * file.
           */
-         auto * const buff_ptr( (this)->get() );
+         auto * const buff_ptr( get() );
          const auto rpt( Pointer::val( buff_ptr->read_pt  ) );
          const auto wpt( Pointer::val( buff_ptr->write_pt ) );
          return( rpt < wpt );
@@ -168,7 +168,7 @@ public:
     * will soon be in use.
     * @param - key, dm::access_key
     */
-   void  enterBuffer( const dm::access_key key ) noexcept
+   void enterBuffer( const dm::access_key key ) noexcept
    {
       /** see lambda below **/
       set_helper( key, 1 );
@@ -212,7 +212,8 @@ private:
       std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
    } __attribute__((aligned(64))) volatile thread_access[ 2 ];
    
-   void set_helper( dm::access_key key, const int val )
+   inline void set_helper( const dm::access_key key, 
+                           const int val ) noexcept
    {
       if( (int) key <= (int) dm::push )
       {

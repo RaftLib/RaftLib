@@ -33,8 +33,15 @@
 #include "blocked.hpp"
 #include "signalvars.hpp"
 
-class Schedule;
 
+/** pre-declare Schedule class **/
+class Schedule;
+class Allocate;
+
+namespace raft
+{
+   class kernel;
+}
 
 class FIFO
 {
@@ -77,8 +84,10 @@ public:
    /**
     * allocate - returns a reference to a writeable 
     * member at the tail of the FIFO.  You must have 
-    * a subsequent call to push in order to release
+    * a subsequent call to send in order to release
     * this object to the FIFO once it is written.
+    * If the user needs to de-allocate the memory without
+    * using it, they can call the deallocate function.
     * @return  T&
     */
    template < class T > T& allocate()
@@ -89,8 +98,20 @@ public:
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
 
+   /**
+    * deallocate - call after allocate if memory allocated
+    * is not needed.  Will deallocate all memory allocated
+    * by a previous allocate call.
+    */
    virtual void deallocate() = 0;
 
+   /**
+    * allocate_s - "auto-release" version of allocate,
+    * where the action of pushing the memory allocated
+    * to the consumer is handled by the returned object
+    * exiting the calling stack frame.
+    * @return autorelease< T, allocatetype >
+    */
    template < class T > auto allocate_s() -> 
       autorelease< T, allocatetype >
    {
@@ -115,14 +136,17 @@ public:
     * @param   n - const std::size_t, # items to allocate
     * @return  std::vector< std::reference_wrapper< T > >
     */
-   template < class T > auto allocate_range( const std::size_t n ) -> std::vector< 
-                                                std::reference_wrapper< T > >
+   template < class T > 
+      auto allocate_range( const std::size_t n ) -> 
+         std::vector< std::reference_wrapper< T > >
    {
       std::vector< std::reference_wrapper< T > > output;
       void *ptr( (void*) &output );
       local_allocate_n( ptr, n );
       /** compiler should optimize this copy, if not then it'll be a copy of referneces not full objects **/
-      return( output );
+      return( std::forward<
+         std::vector< 
+            std::reference_wrapper< T > > >( output ) );
    }
    /**
     * send - releases the last item allocated by allocate() to the 
@@ -215,12 +239,14 @@ public:
       local_pop( ptr, signal );
       return;
    }
-
+   
+#if 0
    template< class T >
    auto pop_s() -> autorelease< T, poptype >
    {
       return( autorelease< T, poptype >( (*this) ) );
    }
+#endif
 
    /**
     * pop_range - pops n_items from the buffer into the 
@@ -347,10 +373,39 @@ public:
     */
    virtual float get_frac_write_blocked() = 0;
 
+   /**
+    * invalidate - used by producer thread to label this
+    * queue as invalid.  Could be for many differing reasons,
+    * however the bottom line is that once empty, this queue
+    * will receive no extra data and the receiver must
+    * do something to deal with this type of behavior
+    * if more data is requested.
+    */
    void invalidate();
    
+   /**
+    * is_invalid - called by the consumer thread to check 
+    * if this queue is in fact valid.  This is typically 
+    * only called if the queue is empty or if the consumer
+    * is asking for more data than is currently available.
+    * @return bool - true if invalid
+    */
    bool is_invalid();
 protected:
+   /**
+    * set_src_kernel - sets teh protected source
+    * kernel for this fifo, necessary for preemption,
+    * see comments on variables below.
+    * @param   k - raft::kernel*
+    */
+   virtual void set_src_kernel( raft::kernel * const k ) = 0;
+   /**
+    * set_dst_kernel - sets the protected destination
+    * kernel for this fifo, necessary for preemption,
+    * see comments on variables below.
+    * @param   k - raft::kernel*
+    */
+   virtual void set_dst_kernel( raft::kernel * const k ) = 0;
    /**
     * signal_peek - special function for the scheduler
     * to peek at a signal on the head of the queue.
@@ -372,8 +427,6 @@ protected:
     * @param sig - raft::signal, signal to be sent
     */
    virtual void inline_signal_send( const raft::signal sig ) = 0;
-   
-   friend class Schedule;
 
    /** 
     * local_allocate - in order to get this whole thing
@@ -443,16 +496,30 @@ protected:
     */
    virtual void local_peek( void **ptr,
                             raft::signal *signal ) = 0;
-      
-
+   /**
+    * local_peek_range - peeks at head of queue with the specified
+    * range, data may be modified but not erased.  Since the queue
+    * might be non-contiguous then we must return the memory location
+    * of each element.
+    * @param   ptr - void**, pointer to pointers at which to 
+    *                store the pointers to items on the queue
+    * @param   sig - void**, same as above but for signal queue
+    * @param   n_items - const std::size_t, number of items requested
+    * @param   curr_pointer_loc - number of items able to be returned
+    */
    virtual void local_peek_range( void **ptr, 
                                   void **sig,
                                   const std::size_t n_items,
                                   std::size_t &curr_pointer_loc ) = 0;
 
+   /** valid - set to true at start **/
    volatile bool valid = true;
-
-private:
+   
+   /**
+    * needed to keep as a friend for signalling access 
+    */
+   friend class Schedule;
+   friend class Allocate;
 };
 
 

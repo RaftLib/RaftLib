@@ -29,10 +29,13 @@ namespace raft{
 template < class T, class method = roundrobin  > class join : public raft::parallel_k
 {
 public:
-   join()
+   join( const std::size_t num_ports = 1 )
    {
-      addPortTo< T >( input );
       output.addPort< T >( "0" );
+      for( auto it( 0 ); it < num_ports; it++ )
+      {
+         addPortTo< T >( input );
+      }
    }
 
    virtual ~join() = default;
@@ -40,21 +43,27 @@ public:
    virtual raft::kstatus run()
    {
       /** multiple calls to allocate will return same reference **/
-      T &mem( output[ "0" ].allocate< T >() );
+      auto &output_port( output[ "0" ] );
+      T &mem( output_port.template allocate< T >() );
       raft::signal temp_signal;
       if( split_func.get( mem, temp_signal, input ) )
       {
          /** call push to release above allocated memory **/
-         output[ "0" ].send( temp_signal );
+         output_port.send( temp_signal );
+      }
+      else /** didn't use allocated mem, deallocate **/
+      {
+         output_port.deallocate();
       }
       return( raft::proceed );
    }
-
-protected:
+   
    virtual void addPort()
    {
       addPortTo< T >( input );
    }
+
+protected:
 
    method split_func; 
 };

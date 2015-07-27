@@ -19,6 +19,7 @@
  */
 #ifndef _SCHEDULE_HPP_
 #define _SCHEDULE_HPP_  1
+#include <setjmp.h>
 #include "signalvars.hpp"
 #include "systemsignalhandler.hpp"
 #include "rafttypes.hpp"
@@ -31,8 +32,19 @@ class Map;
 class Schedule
 {
 public:
-   
+
+   /** 
+    * Schedule - base constructor takes a map object
+    * so that all sub-classes can access some of the 
+    * map features through the schedule sub-class
+    * accessors.
+    * @param   map - Map&
+    */
    Schedule( Map &map );
+   
+   /**
+    * destructor, takes care of cleanup
+    */
    virtual ~Schedule();
    
    /**
@@ -48,6 +60,22 @@ public:
     * is called by the map object
     */
    virtual void init();
+   
+   /**
+    * kernelRun - all the logic necessary to run a single
+    * kernel successfully.  Any additional signal handling
+    * should be handled by this function as its the only
+    * one that will be universally called by the scheduler.
+    * @param   kernel - raft::kernel *const object, non-null kernel
+    * @param   finished - volatile bool - function sets to 
+    * true when done.
+    * @return  true if run with no need for jmp_buf, false if 
+    * the scheduler needs to run again with the kernel_state
+    */
+   static bool kernelRun( raft::kernel * const kernel,
+                          volatile bool       &finished,
+                          jmp_buf             *gotostate    = nullptr,
+                          jmp_buf             *kernel_state = nullptr  );
 protected:
   
    /**
@@ -111,18 +139,9 @@ protected:
     */
    static bool kernelHasNoInputPorts( raft::kernel *kernel );
 
-   /**
-    * kernelRun - all the logic necessary to run a single
-    * kernel successfully.  Any additional signal handling
-    * should be handled by this function as its the only
-    * one that will be universally called by the scheduler.
-    * @param   kernel - raft::kernel *const object, non-null kernel
-    * @param   finished - volatile bool - function sets to 
-    * true when done.
-    */
-   static void kernelRun( raft::kernel * const kernel,
-                          volatile bool       &finished );
 
+   
+   
    /**
     * signal handlers
     */

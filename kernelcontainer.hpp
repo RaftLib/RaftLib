@@ -1,9 +1,7 @@
 /**
- * kernelcontainer.hpp - simple container with lockable iterators
- * for use with raft::kernel objects.
- *
+ * kernelcontainer.hpp - 
  * @author: Jonathan Beard
- * @version: Wed Jan 14 08:12:47 2015
+ * @version: Sun Mar 22 09:13:32 2015
  * 
  * Copyright 2015 Jonathan Beard
  * 
@@ -21,66 +19,76 @@
  */
 #ifndef _KERNELCONTAINER_HPP_
 #define _KERNELCONTAINER_HPP_  1
-#include <mutex>
-#include <set>
-#include <cstddef>
-#include "kernel.hpp"
-#include "kerneliterator.tcc"
+#include <queue>
+#include <type_traits>
+#include "sched_cmd_t.hpp"
+#ifndef NOPREEMPT
+#define NOPREEMPT 1
+#endif
+#include "ringbuffer.tcc"
+#include "ringbuffertypes.hpp"
 
-class KernelContainer
+
+namespace raft{
+   class kernel;
+}
+
+class kernel_container
 {
-private:
-   std::set< raft::kernel * > list;
-   
-   std::mutex                   m_begin;
-   std::mutex                   m_end;
-   friend class KernelIterator< decltype( list.begin() ) >;
-
 public:
+   
+   using buffer = RingBuffer< sched_cmd_t                /** type                **/, 
+                              Type::RingBufferType::Heap /** heap alloc          **/, 
+                              false                      /** no instrumentation  **/ >;
    /**
-    * Contstructor for a container for raft::kernel objects
+    * kernel_container - default constructor, initializes all above pointers.
     */
-   KernelContainer();
-   virtual ~KernelContainer();
+   kernel_container();
+   
+   /**
+    * kernel_container - constructor, initializes all above pointers.
+    * @param N - const std::size_t, default size of buffer
+    */
+   kernel_container( const std::size_t N );
 
    /** 
-    * size - return the number of kernels currently
-    * assigned
-    * @return std::size_t
+    * default destructor, cleans up all pointers
     */
-   auto size() -> decltype( list.size() );
-   /** 
-    * removeKernel - call to remove the kernel specified
-    * as the param, which must not be null.  The function
-    * first gains a lock on the list then proceeds to 
-    * remove it.
-    * @param   kernel - raft::kernel const *
-    * @return  bool, true if removed, false otherwise
-    */
-   bool removeKernel( raft::kernel *kernel );
+   ~kernel_container();
+
    /**
-    * addKernel - add a kernel to this container.  Gains
-    * a lock before committing the kernel to the data
-    * structure.
-    * @param   raft::kernel*, kernel to be added
+    * getInput - get input FIFO
+    * @return buffer&
     */
-   void addKernel( raft::kernel *kernel );
+   buffer& getInputQueue();
+
    /**
-    * begin - returns an iterator to the first kernel in the list,
-    * future behavior might produce a priority type ordering, but
-    * this should be handled by the iterator and its sub-classes.
-    * Iterator is thread safe!
-    * @return KernelIterator
+    * getOutputQueue
+    * @return buffer&
     */
-   auto begin() -> KernelIterator< decltype( list.begin() ) >;
-   /** 
-    * end - returns an iterator to one past the last 
-    * kernel in the list, this cannot be relied upon to be the
-    * last element since the iterator does not define a -- operator,
-    * so really it can just be used for detecting when all the kernels
-    * have been iterated through.
-    * @return KernelIterator
+   buffer& getOutputQueue();
+   
+   /**
+    * size - returns the number of items currently scheduled
+    * for this container.
+    * @return std::size_t, number of items
     */
-   auto end() -> KernelIterator< decltype( list.end() ) >;
+   std::size_t size();
+
+   /**
+    * container_run - function to be used by a thread which 
+    * is called until the appropriate signal is sent (defined
+    * in sched_cmd_t.hpp.
+    * @param   container - kernel_container&
+    */
+   static void container_run( kernel_container &container  );
+private:
+   using kernel_container_t = std::queue< raft::kernel* >;
+   
+   kernel_container_t  preempted_kernel_pool;
+   buffer             *input_buff   = nullptr; 
+   buffer             *output_buff  = nullptr;         
 };
+
+
 #endif /* END _KERNELCONTAINER_HPP_ */

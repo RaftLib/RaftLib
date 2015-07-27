@@ -36,6 +36,13 @@
 #include "fifoabstract.tcc"
 #include "datamanager.tcc"
 
+#include "kernelpreempt.hpp"
+
+namespace raft
+{
+   class kernel;
+}
+
 /**
  * Note: there is a NICE define that can be uncommented
  * below if you want sched_yield called when waiting for

@@ -20,12 +20,17 @@
 #ifndef _DEPARTURERATESAMPLETYPE_TCC_
 #define _DEPARTURERATESAMPLETYPE_TCC_  1
 #include <string>
+
+#include <queue>
+#ifdef _EXP_
+#include <array>
+#include <cinttypes>
+#endif
+
 #include "ringbuffertypes.hpp"
 #include "ratesampletype.tcc"
 #include "blocked.hpp"
-#include <cinttypes>
 #include "Clock.hpp"
-#include <array>
 
 extern Clock *system_clock;
 
@@ -48,7 +53,11 @@ sample( RingBufferBase< T, type > &buffer, bool &global_blocked )
 {
    Blocked departure_copy;
    buffer.get_zero_read_stats( departure_copy );
+
+#ifdef _EXP_
    (this)->temp.items_copied = departure_copy.count;
+#endif
+   
    if( departure_copy.blocked != 0 )
    {
       (this)->blocked = true;
@@ -64,11 +73,14 @@ accept( volatile bool &converged )
    if( converged &&  ! (this)->blocked && ! (this)->finished )
    {
       (this)->real += (this)->temp;
+
+#ifdef _EXP_      
       if( item_index < 100000 )
       {
          item_log[ item_index ].items = (this)->temp.items_copied;
          item_log[ item_index++ ].time  = system_clock->getTime();
       }
+#endif
    }
    (this)->temp.items_copied  = 0;
    (this)->blocked            = false;
@@ -78,6 +90,8 @@ protected:
 virtual std::string
 printHeader()
 {
+/** below code for experimental purposes **/
+#ifdef _EXP_
    std::cerr.precision( 20 );
    std::cerr << "{" << (this)->frame_width << ",{"; 
    for( auto i( 0 ); i < item_index; i++ )
@@ -96,12 +110,17 @@ printHeader()
       }
    }
    std::cerr << "}";
+#endif
    return( "departure_rate" );
 }
 
 private:
 bool  blocked;
 bool  finished;
+
+
+/** below code for experimental purposes **/
+#ifdef __EXP__
 struct ITEM
 {
    std::int64_t items;
@@ -109,5 +128,6 @@ struct ITEM
 };
 std::array< ITEM , 100000 > item_log;
 std::int64_t item_index = 0;
+#endif
 };
 #endif /* END _DEPARTURERATESAMPLETYPE_TCC_ */

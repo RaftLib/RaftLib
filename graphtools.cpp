@@ -23,9 +23,9 @@
 #include <utility>
 #include <string>
 #include <sstream>
-#include <cxxabi.h>
 #include <mutex>
 
+#include "common.hpp"
 #include "portmap_t.hpp"
 #include "portexception.hpp"
 #include "graphtools.hpp"
@@ -35,6 +35,7 @@
 void
 GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                  edge_func func,
+                 void      *data,
                  bool      connected_error )
 {
    std::set< raft::kernel* > visited_set;
@@ -46,6 +47,34 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                      queue.push( k );
                      visited_set.insert( k );
                   } );
+   GraphTools::__BFS( queue, visited_set, func, data, connected_error );
+}
+
+void
+GraphTools::BFS( std::vector< raft::kernel* > &source_kernels,
+                 edge_func func,
+                 void      *data,
+                 bool      connected_error )
+{
+   std::set< raft::kernel* >       visited_set;
+   std::queue< raft::kernel* >     queue;
+   std::for_each( source_kernels.begin(),
+                  source_kernels.end(),
+                  [&]( raft::kernel *k )
+                  { 
+                     queue.push( k );
+                     visited_set.insert( k );
+                  } );
+   GraphTools::__BFS( queue, visited_set, func, data, connected_error );
+}
+
+void 
+GraphTools::__BFS( std::queue< raft::kernel* > &queue,
+                   std::set<   raft::kernel* > &visited_set,
+                   edge_func                   func,
+                   void                        *data,
+                   bool                        connected_error )
+{
    while( queue.size() > 0 )
    {
       auto *k( queue.front() );
@@ -63,15 +92,14 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
          {
             PortInfo &dst( 
                source.other_kernel->input.getPortInfoFor( source.other_name ) );
-            func( source, dst );
+            func( source, dst, data );
          }
          else
          if( connected_error )
          {
-            int status( 0 );
             std::stringstream ss;
             ss << "Unconnected port detected at " << 
-               abi::__cxa_demangle( typeid( *k ).name(), 0, 0, &status ) << 
+               common::printClassName( *k ) <<  
                   "[ \"" <<
                   source.my_name << " \"], please fix and recompile.";
             throw PortException( ss.str() );
@@ -85,4 +113,76 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
       }
    }
    return;
+}
+
+void
+GraphTools::__BFS( std::queue< raft::kernel* > &queue,
+                   std::set< raft::kernel*   > &visited_set,
+                   vertex_func                 func,
+                   void                        *data )
+{
+#if 0
+   while( queue.size() > 0 )
+   {
+      auto *source( queue.front() );
+      queue.pop();
+      /** iterate over all out-edges **/
+      /** 1) get lock **/
+      std::lock_guard< std::mutex > lock( source->output.portmap.map_mutex );
+      /** 2) get map **/
+      std::map< std::string, PortInfo > &map_of_ports( source->output.portmap.map );
+      /** 3) visit kernel **/
+      func( *source, data );
+      /** 4) add children to queue **/
+      for( auto &port : map_of_ports )
+      {
+         PortInfo &source( port.second );
+         /** get dst edge to call function on **/
+         if( source.other_kernel != nullptr  )
+         {
+            PortInfo &dst( 
+               source.other_kernel->input.getPortInfoFor( source.other_name ) );
+            func( source, dst, data );
+         }
+         else
+         if( connected_error )
+         {
+            std::stringstream ss;
+            ss << "Unconnected port detected at " << 
+               common::printClassName( *k ) <<  
+                  "[ \"" <<
+                  source.my_name << " \"], please fix and recompile.";
+            throw PortException( ss.str() );
+         }
+         /** if the dst kernel hasn't been visited, visit it **/
+         if( visited_set.find( source.other_kernel ) == visited_set.end() )
+         {
+            queue.push( source.other_kernel );
+            visited_set.insert( source.other_kernel ); 
+         }
+      }
+   }
+   return;
+#endif
+   assert( false ); /** FIXME: error above with virtual function 'func', fix in a bit **/
+}
+
+void
+GraphTools::__DFS( std::stack< raft::kernel* > &stack,
+                   std::set<   raft::kernel* > &visited_set,
+                   edge_func                   func,
+                   void                        *data )
+{
+   /** TODO, implement me **/
+   assert( false );
+}
+
+void
+GraphTools::__DFS( std::stack< raft::kernel* > &stack,
+                   std::set<   raft::kernel* > &visited_set,
+                   vertex_func                 func,
+                   void                        *data )
+{
+   /** TODO, implement me **/
+   assert( false );
 }

@@ -54,7 +54,7 @@ Port::~Port()
 }
 
 const std::type_index&
-Port::getPortType( const std::string port_name )
+Port::getPortType( const std::string &&port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
@@ -65,7 +65,7 @@ Port::getPortType( const std::string port_name )
 }
 
 FIFO&
-Port::operator[]( const std::string port_name )
+Port::operator[]( const std::string &&port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )

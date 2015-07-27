@@ -21,6 +21,12 @@
 #define _RINGBUFFERHEAP_TCC_  1
 
 #include "portexception.hpp"
+#include "optdef.hpp"
+#include "scheduleconst.hpp"
+
+#ifndef NOPREEMPT
+#define NOPREEMPT
+#endif
 
 template < class T, 
            Type::RingBufferType type > class RingBufferBase : 
@@ -71,7 +77,7 @@ TOP:
              * this is in fact the best of all possible returns (see Leibniz or Candide 
              * for further info).
              */
-            //std::this_thread::yield();
+            std::this_thread::yield();
             __builtin_prefetch( buff_ptr, 0, 3 );
             goto TOP;
          }
@@ -129,12 +135,12 @@ TOP:
     */
    virtual void send( const raft::signal signal = raft::none )
    {
-      if( ! (this)->allocate_called  )
+      if( __builtin_expect( ! (this)->allocate_called, 0 ) )
       {
          return;
       }
       /** should be the end of the write, regardless of which allocate called **/
-      auto *buff_ptr( dm.get() ); 
+      auto * const buff_ptr( dm.get() ); 
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       buff_ptr->signal[ write_index ] = signal;
       write_stats.count++;
@@ -178,7 +184,7 @@ TOP:
       (this)->n_allocated     = 0; 
       dm.exitBuffer( dm::allocate_range );
    }
-   
+  
    /**
     * removes range items from the buffer, ignores
     * them without the copy overhead.
@@ -191,6 +197,9 @@ TOP:
          return;
       }
       do{ /** at least one to remove **/
+#ifndef NOPREEMPT
+         std::uint8_t blocked( 0 );
+#endif
          for( ;; )
          {
             dm.enterBuffer( dm::recycle );
@@ -205,7 +214,25 @@ TOP:
                   dm.exitBuffer( dm::recycle );
                   return;
                }
+#ifndef NOPREEMPT
+               else if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
+               {
+                  auto * const k( dm.get()->dst_kernel );
+                  const auto ret_val( setRunningState( k ) );
+                  if( ret_val == 0 /* not returning from scheduler */ )
+                  {
+                     /** pre-empt back to scheduler **/
+                     preempt( k );
+                  }
+                  else
+                  {
+                     /** reset blocked, keep trying **/
+                     blocked = 0;
+                  }
+               }
+#endif               
             }
+            dm.exitBuffer( dm::recycle );
          }
          auto * const buff_ptr( dm.get() );
          Pointer::inc( buff_ptr->read_pt );
@@ -250,9 +277,48 @@ TOP:
    {
       write_finished = (this)->write_finished;
    }
+   
+   virtual void unpeek()
+   {
+      dm.exitBuffer( dm::peek );
+   }
 
 protected:
-   
+
+
+   /**
+    * set_src_kernel - sets teh protected source
+    * kernel for this fifo, necessary for preemption,
+    * see comments on variables below.
+    * @param   k - raft::kernel*
+    */
+   virtual void set_src_kernel( raft::kernel * const k )
+   {
+      assert( k != nullptr );
+      while( ! dm.notResizing() )
+      { 
+         /* spin */ 
+      }
+      auto * const buffer( dm.get() );
+      buffer->setSourceKernel( k );
+   }
+   /**
+    * set_dst_kernel - sets the protected destination
+    * kernel for this fifo, necessary for preemption,
+    * see comments on variables below.
+    * @param   k - raft::kernel*
+    */
+   virtual void set_dst_kernel( raft::kernel * const k )
+   {
+      assert( k != nullptr );
+      while( ! dm.notResizing() )
+      {
+         /* spin */
+      }
+      auto * const buffer( dm.get() );
+      buffer->setDestKernel( k );
+   }
+
    /**
     * signal_peek - return signal at head of 
     * queue and nothing else
@@ -297,13 +363,34 @@ protected:
     */
    virtual void local_allocate( void **ptr )
    {
+#ifndef NOPREEMPT
+      std::uint8_t blocked( 0 );
+#endif
       for(;;)
       {
          dm.enterBuffer( dm::allocate );
-         if( dm.notResizing() && space_avail() > 0 )
+         if( dm.notResizing() && space_avail() > 0  )
          {
             break;
          }
+#ifndef NOPREEMPT         
+         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT && dm.notResizing() )
+         {
+            
+            auto * const k( dm.get()->src_kernel );
+            auto ret_val( setRunningState( k ) );
+            if( ret_val == 0 /* not returning from scheduler */ )
+            {
+               /** pre-empt back to scheduler **/
+               preempt( k );
+            }
+            else
+            {
+               /** reset blocked, keep trying **/
+               blocked = 0;
+            }
+         }
+#endif       
          dm.exitBuffer( dm::allocate );
          /** else, spin **/
 #ifdef NICE      
@@ -322,7 +409,6 @@ protected:
 #endif           
       }
       auto * const buff_ptr( dm.get() );
-      
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       *ptr = (void*)&( buff_ptr->store[ write_index ] );
       (this)->allocate_called = true;
@@ -331,6 +417,9 @@ protected:
 
    virtual void local_allocate_n( void *ptr, const std::size_t n )
    {
+#ifndef NOPREEMPT   
+      std::uint8_t blocked( 0 );
+#endif      
       for( ;; )
       {
          dm.enterBuffer( dm::allocate_range );
@@ -338,6 +427,24 @@ protected:
          {
             break;
          }
+#ifndef NOPREEMPT         
+         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT && dm.notResizing() )
+         {
+            
+            auto * const k( dm.get()->src_kernel );
+            auto ret_val( setRunningState( k ) );
+            if( ret_val == 0 /* not returning from scheduler */ )
+            {
+               /** pre-empt back to scheduler **/
+               preempt( k );
+            }
+            else
+            {
+               /** reset blocked, keep trying **/
+               blocked = 0;
+            }
+         }
+#endif         
          else
          {
             dm.exitBuffer( dm::allocate_range );
@@ -372,7 +479,7 @@ protected:
           * TODO, fix this logic here, write index must get iterated, but 
           * not here
           */
-         container->push_back( buff_ptr->store[ write_index ] );
+         container->emplace_back( buff_ptr->store[ write_index ] );
          buff_ptr->signal[ write_index ] = raft::none;
          write_index = ( write_index + 1 ) % buff_ptr->max_cap;
       }
@@ -394,6 +501,9 @@ protected:
     */
    virtual void  local_push( void *ptr, const raft::signal &signal )
    {
+#ifndef NOPREEMPT   
+      std::uint8_t blocked( 0 );
+#endif      
       for(;;)
       {
          dm.enterBuffer( dm::push );
@@ -405,6 +515,24 @@ protected:
             }
          }
          dm.exitBuffer( dm::push );
+#ifndef NOPREEMPT         
+         if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
+         {
+            
+            auto * const k( dm.get()->src_kernel );
+            auto ret_val( setRunningState( k ) );
+            if( ret_val == 0 /* not returning from scheduler */ )
+            {
+               /** pre-empt back to scheduler **/
+               preempt( k );
+            }
+            else
+            {
+               /** reset blocked, keep trying **/
+               blocked = 0;
+            }
+         }
+#endif         
 #ifdef NICE      
          std::this_thread::yield();
 #endif         
@@ -526,6 +654,9 @@ protected:
    virtual void 
    local_pop( void *ptr, raft::signal *signal )
    {
+#ifndef NOPREEMPT   
+      std::uint8_t blocked( 0 );
+#endif      
       for(;;)
       {
          dm.enterBuffer( dm::pop );
@@ -537,12 +668,29 @@ protected:
             }
             else if( (this)->is_invalid() && size() == 0 )
             { 
-               fprintf( stderr, "Size: %zu\n", size() );
                throw ClosedPortAccessException( 
                   "Accessing closed port with pop call, exiting!!" );
             }
          }
          dm.exitBuffer( dm::pop );
+#ifndef NOPREEMPT         
+         if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
+         {
+            
+            auto * const k( dm.get()->src_kernel );
+            auto ret_val( setRunningState( k ) );
+            if( ret_val == 0 /* not returning from scheduler */ )
+            {
+               /** pre-empt back to scheduler **/
+               preempt( k );
+            }
+            else
+            {
+               /** reset blocked, keep trying **/
+               blocked = 0;
+            }
+         }
+#endif         
 #ifdef NICE      
          std::this_thread::yield();
 #endif        
@@ -609,10 +757,6 @@ protected:
       return;
    }
    
-   virtual void unpeek()
-   {
-      dm.exitBuffer( dm::peek );
-   }
 
    /**
     * local_peek() - look at a reference to the head of the
@@ -633,7 +777,7 @@ protected:
             { 
                break;
             }
-            else if( (this)->is_invalid() && size() == 0 )
+            else if( (this)->is_invalid() and size() == 0 )
             {
                throw ClosedPortAccessException( 
                   "Accessing closed port with local_peek call, exiting!!" );

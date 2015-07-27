@@ -1,5 +1,5 @@
 /**
- * fifo.cpp - 
+ * FIFO.cpp - 
  * @author: Jonathan Beard
  * @version: Thu Sep  4 12:59:45 2014
  * 

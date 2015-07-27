@@ -1,0 +1,13 @@
+<map id="Map" name="Map">
+<area shape="rect" id="node2" href="$class_map_base.html" title="MapBase" alt="" coords="1187,59,1264,87"/>
+<area shape="rect" id="node4" href="$classraft_1_1kernel.html" title="raft::kernel" alt="" coords="525,154,609,182"/>
+<area shape="rect" id="node13" href="$struct_port_info.html" title="PortInfo" alt="" coords="891,403,959,431"/>
+<area shape="rect" id="node6" href="$class_port.html" title="Port" alt="" coords="1613,221,1659,249"/>
+<area shape="rect" id="node7" href="$class_port_base.html" title="PortBase" alt="" coords="1427,246,1503,274"/>
+<area shape="rect" id="node9" href="$structportmap__t.html" title="portmap_t" alt="" coords="1425,518,1506,546"/>
+<area shape="rect" id="node11" title="STL class. " alt="" coords="527,541,606,569"/>
+<area shape="rect" id="node12" title="STL class. " alt="" coords="152,566,277,610"/>
+<area shape="rect" id="node16" title="STL class. " alt="" coords="155,493,275,521"/>
+<area shape="rect" id="node24" title="STL class. " alt="" coords="328,54,424,82"/>
+<area shape="rect" id="node21" href="$class_f_i_f_o.html" title="FIFO" alt="" coords="541,419,593,447"/>
+</map>

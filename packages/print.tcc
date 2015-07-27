@@ -77,8 +77,11 @@ public:
     */
    virtual raft::kstatus run()
    {
-      auto data( (this)->input[ "in" ].template pop_s< T >() );
-      *((this)->ofs) << (*data) << delim;
+      auto &input_port( (this)->input[ "in" ] );
+      auto &data( input_port.template peek< T >() );
+      *((this)->ofs) << data << delim;
+      input_port.unpeek();
+      input_port.recycle( 1 );
       return( raft::proceed );
    }
 };
@@ -105,8 +108,11 @@ public:
     */
    virtual raft::kstatus run()
    {
-      auto data( (this)->input[ "in" ].template pop_s< T >() );
-      *((this)->ofs) << (*data);
+      auto &input_port( (this)->input[ "in" ] );
+      auto &data( input_port.template peek< T >() );
+      *((this)->ofs) << data;
+      input_port.unpeek();
+      input_port.recycle( 1 );
       return( raft::proceed );
    }
 };

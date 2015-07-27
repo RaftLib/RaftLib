@@ -184,15 +184,16 @@ private:
             assert( value != NULL );
             std::memset( key, '\0', buff_size );
             std::memset( value, '\0', buff_size );
-            uint64_t frequency( 0 );
-            int count = EOF;
+            std::uint64_t frequency( 0 );
+            auto count = EOF;
             while( ( count = fscanf(fp,"%[^:]:%[^\n]\n", key, value) ) != EOF )
             {
                if( count == 2 ){
                   /* TODO, not the best way to get CPU Frequency */
                   if( strncmp( key, "cpu MHz", 7 ) == 0 )
                   {
-                     frequency = ( uint64_t ) (atof( value ) * 1e6f );
+                     frequency = ( std::uint64_t ) 
+                        (std::atof( value ) * 1e6f );
                      goto END;
                   }
                }
@@ -231,7 +232,7 @@ private:
             /** wait till we know we're on the right processor **/
             pthread_yield();
             /** get to the timing, previous is captured by the lambda function **/
-            uint64_t previous( 0 );
+            std::uint64_t previous( 0 );
             /** begin assembly section to init previous **/
 #ifdef   __x86_64
             __asm__ volatile(
@@ -283,7 +284,7 @@ private:
             {
                /** begin assembly sections **/
 #ifdef   __x86_64
-               uint64_t difference;
+               std::uint64_t difference;
                __asm__ volatile(
 #if RDTSCP               
                "\
@@ -391,7 +392,7 @@ private:
                clock->increment( seconds );
             };
 #elif defined __APPLE__
-            uint64_t  previous( mach_absolute_time() );
+            std::uint64_t  previous( mach_absolute_time() );
             /** init **/
             static mach_timebase_info_data_t sTimebaseInfo;
             if( sTimebaseInfo.denom == 0 )
@@ -408,8 +409,9 @@ private:
                 * figure out what units the return val is in.
                 */
                 
-                const uint64_t elapsedNano( diff * sTimebaseInfo.numer / 
-                                                   sTimebaseInfo.denom );
+                const std::uint64_t 
+                  elapsedNano( diff * sTimebaseInfo.numer / 
+                                      sTimebaseInfo.denom );
                 
                 const sclock_t seconds( (sclock_t) elapsedNano * 1.0e-9 );
                 clock->increment( seconds );
