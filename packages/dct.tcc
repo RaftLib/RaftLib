@@ -41,7 +41,7 @@ template < typename T,
 /** generic square matrix **/
 template < typename T, 
            std::size_t N >  struct matrix< T, N, 
-           typename std::enable_if< std::is_fundamental< T >::value >::type  >
+               typename std::enable_if< std::is_fundamental< T >::value >::type  >
 {
    T              arr[ N * N ];;
    decltype( N )  dim = N;
@@ -92,6 +92,35 @@ public:
       output.addPort< port_t >( "0" );
    }
 };
+
+template < typename T,
+           std::size_t DIM > class idctbase : public dctbase< T, DIM >
+{
+public:
+   using port_t = raft::matrix< T, 8>;
+   idctbase() : dctbase< T, DIM >()
+   {
+
+   }
+
+};
+
+template < typename T > class idct : public idctbase< T, 8 >
+{
+public:
+   using port_t = raft::matrix< T, 8>;
+   idct() : idctbase< T, 8 >()
+   {
+
+   }
+
+protected:
+
+
+private:
+   T  c[8][8];
+};
+
 
 /** specialization base dct for 8x8 **/
 template < typename T > class dctbase< T, 8 > : public kernel
