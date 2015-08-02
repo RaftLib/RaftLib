@@ -25,15 +25,18 @@
 #include <cstddef>
 
 class Pointer{
+   using wrap_t = std::size_t;
+
 public:
    /**
     * Pointer - used to synchronize read and write
     * pointers for the ring buffer.  This class encapsulates
     * wrapping.
     */
-   Pointer( const size_t cap );
+   Pointer( const std::size_t cap );
    
-   Pointer( const std::size_t cap, const std::int8_t wrap_set );
+   Pointer( const std::size_t cap, 
+            const wrap_t wrap_set );
    /**
     * Pointer - used to snchronize read and write poitners for the
     * ring buffer, this constructer is a copy constructor that
@@ -41,7 +44,8 @@ public:
     * @param   other, const Pointer&, the other pointer to be cpied
     * @param   new_cap, the new max cap
     */
-   Pointer( Pointer *other, const size_t new_cap );
+   Pointer( Pointer * const other, 
+            const std::size_t new_cap );
 
    /**
     * val - returns the current value of val.  Internally
@@ -52,25 +56,26 @@ public:
     * estimate of how many items can be written and the 
     * consumer will only see a "conservative" estimate of how
     * many items can be read.
-    * @return size_t, current 'true' value of the pointer
+    * @return std::size_t, current 'true' value of the pointer
     */
-   static size_t val( Pointer *ptr );
+   static std::size_t val( Pointer * const ptr ) noexcept;
 
    /**
     * inc - increments the pointer, takes care of wrapping
     * the pointers as well so you don't run off the page
-    * @return  size_t, current value of pointer after increment
+    * @return  std::size_t, current value of pointer after increment
     */
-   static void inc( Pointer * const ptr );
+   static void inc( Pointer * const ptr ) noexcept;
    
    /**
     * incBy - increments the current pointer poisition
     * by 'in' increments.  To be used for range insertion
     * and removal
-    * @param  in - const size_t
-    * @return  size_t, current increment after adding 'in'
+    * @param  in - const std::size_t
+    * @return  std::size_t, current increment after adding 'in'
     */
-   static void incBy( const size_t in, Pointer * const ptr );
+   static void incBy( const std::size_t in, 
+                      Pointer * const ptr ) noexcept;
 
    
    /**
@@ -79,13 +84,13 @@ public:
     * at best they should be equal.  This is used when
     * determining to return max_cap or zero for the current
     * queue size.  
-    * @return  size_t
+    * @return  std::size_t
     */
-   static size_t wrapIndicator( Pointer *ptr );
+   static std::size_t wrapIndicator( Pointer * const ptr ) noexcept;
    
 private:
-   volatile std::uint64_t           a;
-   volatile std::uint64_t           b;
+   volatile std::uint64_t           a  = 0;
+   volatile std::uint64_t           b  = 0;
    /**
     * size of wrap pointer might become an issue
     * if GHz increase drastically or if this runs
@@ -95,8 +100,8 @@ private:
     * TODO, get these set correctly if we do eventually
     * wrap an unsigned 64 int.
     */
-   volatile std::uint64_t    wrap_a;
-   volatile std::uint64_t    wrap_b;
-   const    size_t           max_cap;
+   volatile wrap_t    wrap_a  = 0;
+   volatile wrap_t    wrap_b  = 0;
+   const    std::size_t      max_cap;
 };
 #endif /* END _POINTER_HPP_ */

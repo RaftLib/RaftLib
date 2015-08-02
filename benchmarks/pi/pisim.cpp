@@ -25,6 +25,7 @@
 #include <raft>
 #include <raftio>
 #include <raftrandom>
+#include <cmath>
 /** command args package **/
 #include <cmd>
 
@@ -38,7 +39,7 @@ public:
       output.addPort< T >( "pi" );
    }
 
-   virtual ~pisim() = default;
+   virtual ~pisim(){};
 
    virtual raft::kstatus run()
    {
@@ -46,10 +47,10 @@ public:
       T y;
       input[ "x" ].pop( x );
       input[ "y" ].pop( y );
-      if( ( x * x ) + ( y * y ) <= 1 )
+      if( std::islessequal( ( x * x ) + ( y * y ),  static_cast< T >( 1 ) ) )
       {
          successes++;
-         const auto out( 4 * ( static_cast< T >( successes ) / 
+         const T out( 4 * ( static_cast< T >( successes ) / 
                                static_cast< T >( throws ) ) );
          output[ "pi" ].push( out );
       }

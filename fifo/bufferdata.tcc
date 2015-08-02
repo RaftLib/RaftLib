@@ -112,6 +112,8 @@ template < class T,
 
       (this)->src_kernel = other->src_kernel;
       (this)->dst_kernel = other->dst_kernel;
+      
+      (this)->is_valid = other->is_valid;
 
       /** buffer is already alloc'd, copy **/
       std::memcpy( (void*)(this)->store /* dst */,

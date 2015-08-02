@@ -51,53 +51,95 @@ public:
     * items currently in the queue.
     * @return size_t
     */
-   virtual std::size_t   size()
-   {
-      auto * const buff_ptr( dm.get() );
-TOP:      
-      const auto   wrap_write( Pointer::wrapIndicator( buff_ptr->write_pt  ) ),
-                   wrap_read(  Pointer::wrapIndicator( buff_ptr->read_pt   ) );
-
-      const auto   wpt( Pointer::val( buff_ptr->write_pt ) ), 
-                   rpt( Pointer::val( buff_ptr->read_pt  ) );
-      if( __builtin_expect( (wpt == rpt), 0 ) )
+   virtual std::size_t   size() noexcept
+   {  
+      for( ;; )
       {
-         /** expect most of the time to be full **/
-         if( __builtin_expect( (wrap_read < wrap_write), 1 ) )
+         dm.enterBuffer( dm::size );
+         if( dm.notResizing() )
          {
-            return( buff_ptr->max_cap );
-         }
-         else if( wrap_read > wrap_write )
-         {
-            /**
-             * TODO, this condition is momentary, however there
-             * is a better way to fix this with atomic operations...
-             * or on second thought benchmarking shows the atomic
-             * operations slows the queue down drastically so, perhaps
-             * this is in fact the best of all possible returns (see Leibniz or Candide 
-             * for further info).
-             */
-            std::this_thread::yield();
-            __builtin_prefetch( buff_ptr, 0, 3 );
-            goto TOP;
-         }
-         else
-         {
+            auto * const buff_ptr( dm.get() );
+TOP:      
+            const auto   wrap_write( Pointer::wrapIndicator( buff_ptr->write_pt  ) ),
+                         wrap_read(  Pointer::wrapIndicator( buff_ptr->read_pt   ) );
+
+            const auto   wpt( Pointer::val( buff_ptr->write_pt ) ), 
+                         rpt( Pointer::val( buff_ptr->read_pt  ) );
+            if( __builtin_expect( (wpt == rpt), 0 ) )
+            {
+               /** expect most of the time to be full **/
+               if( __builtin_expect( (wrap_read < wrap_write), 1 ) )
+               {
+                  dm.exitBuffer( dm::size );
+                  return( buff_ptr->max_cap );
+               }
+               else if( wrap_read > wrap_write )
+               {
+                  /**
+                   * TODO, this condition is momentary, however there
+                   * is a better way to fix this with atomic operations...
+                   * or on second thought benchmarking shows the atomic
+                   * operations slows the queue down drastically so, perhaps
+                   * this is in fact the best of all possible returns (see 
+                   * Leibniz or Candide for further info).
+                   */
+                  std::this_thread::yield();
+                  __builtin_prefetch( buff_ptr, 0, 3 );
+                  goto TOP;
+               }
+               else
+               {
+                  dm.exitBuffer( dm::size );
+                  return( 0 );
+               }
+            }
+            else if( rpt < wpt )
+            {
+               dm.exitBuffer( dm::size );
+               return( wpt - rpt );
+            }
+            else if( rpt > wpt )
+            {
+               dm.exitBuffer( dm::size );
+               return( buff_ptr->max_cap - rpt + wpt ); 
+            }
+            dm.exitBuffer( dm::size );
             return( 0 );
          }
-      }
-      else if( rpt < wpt )
-      {
-         return( wpt - rpt );
-      }
-      else if( rpt > wpt )
-      {
-         return( buff_ptr->max_cap - rpt + wpt ); 
-      }
-      return( 0 );
+         dm.exitBuffer( dm::size );
+      } /** end for **/
+      return( 0 ); /** keep some compilers happy **/
    }
 
+
+   /**
+    * invalidate - used by producer thread to label this
+    * queue as invalid.  Could be for many differing reasons,
+    * however the bottom line is that once empty, this queue
+    * will receive no extra data and the receiver must
+    * do something to deal with this type of behavior
+    * if more data is requested.
+    */
+   virtual void invalidate()
+   {
+      auto * const ptr( dm.get() );
+      ptr->is_valid = false;
+      return;
+   }
    
+   /**
+    * is_invalid - called by the consumer thread to check 
+    * if this queue is in fact valid.  This is typically 
+    * only called if the queue is empty or if the consumer
+    * is asking for more data than is currently available.
+    * @return bool - true if invalid
+    */
+   virtual bool is_invalid()
+   {
+      auto * const ptr( dm.get() );
+      return( not ptr->is_valid );
+   }
+
 
    /**
     * space_avail - returns the amount of space currently
@@ -363,9 +405,6 @@ protected:
     */
    virtual void local_allocate( void **ptr )
    {
-#ifndef NOPREEMPT
-      std::uint8_t blocked( 0 );
-#endif
       for(;;)
       {
          dm.enterBuffer( dm::allocate );
@@ -373,24 +412,6 @@ protected:
          {
             break;
          }
-#ifndef NOPREEMPT         
-         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT && dm.notResizing() )
-         {
-            
-            auto * const k( dm.get()->src_kernel );
-            auto ret_val( setRunningState( k ) );
-            if( ret_val == 0 /* not returning from scheduler */ )
-            {
-               /** pre-empt back to scheduler **/
-               preempt( k );
-            }
-            else
-            {
-               /** reset blocked, keep trying **/
-               blocked = 0;
-            }
-         }
-#endif       
          dm.exitBuffer( dm::allocate );
          /** else, spin **/
 #ifdef NICE      
@@ -654,9 +675,6 @@ protected:
    virtual void 
    local_pop( void *ptr, raft::signal *signal )
    {
-#ifndef NOPREEMPT   
-      std::uint8_t blocked( 0 );
-#endif      
       for(;;)
       {
          dm.enterBuffer( dm::pop );
@@ -666,45 +684,23 @@ protected:
             {
                break;
             }
-            else if( (this)->is_invalid() && size() == 0 )
+            else if( size() == 0 && (this)->is_invalid() )
             { 
                throw ClosedPortAccessException( 
                   "Accessing closed port with pop call, exiting!!" );
             }
          }
-         dm.exitBuffer( dm::pop );
-#ifndef NOPREEMPT         
-         if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
+         else
          {
-            
-            auto * const k( dm.get()->src_kernel );
-            auto ret_val( setRunningState( k ) );
-            if( ret_val == 0 /* not returning from scheduler */ )
-            {
-               /** pre-empt back to scheduler **/
-               preempt( k );
-            }
-            else
-            {
-               /** reset blocked, keep trying **/
-               blocked = 0;
-            }
-         }
-#endif         
+            dm.exitBuffer( dm::pop );
 #ifdef NICE      
-         std::this_thread::yield();
+            std::this_thread::yield();
 #endif        
-         if( read_stats.blocked == 0 )
-         {   
-            read_stats.blocked  = 1;
+            if( read_stats.blocked == 0 )
+            {   
+               read_stats.blocked  = 1;
+            }
          }
-#if __x86_64
-         __asm__ volatile("\
-           pause"
-           :
-           :
-           : );
-#endif           
       }
       auto * const buff_ptr( dm.get() );
       const std::size_t read_index( Pointer::val( buff_ptr->read_pt ) );

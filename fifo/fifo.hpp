@@ -381,7 +381,7 @@ public:
     * do something to deal with this type of behavior
     * if more data is requested.
     */
-   void invalidate();
+   virtual void invalidate() = 0;
    
    /**
     * is_invalid - called by the consumer thread to check 
@@ -390,7 +390,7 @@ public:
     * is asking for more data than is currently available.
     * @return bool - true if invalid
     */
-   bool is_invalid();
+   virtual bool is_invalid() = 0;
 protected:
    /**
     * set_src_kernel - sets teh protected source
@@ -512,8 +512,6 @@ protected:
                                   const std::size_t n_items,
                                   std::size_t &curr_pointer_loc ) = 0;
 
-   /** valid - set to true at start **/
-   volatile bool valid = true;
    
    /**
     * needed to keep as a friend for signalling access 

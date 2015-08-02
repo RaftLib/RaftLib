@@ -102,7 +102,9 @@ template < class T > struct DataBase
    T                       *store         = nullptr;
    Signal                  *signal        = nullptr;
    bool                    external_alloc = false;
-   
+   /** variable set by scheduler, used for shutdown **/
+   bool                    is_valid       = true;
+
    /** sizes, might need to define a local type **/
    std::size_t             length_store;
    std::size_t             length_signal;

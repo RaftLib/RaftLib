@@ -28,15 +28,23 @@
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
 
-namespace dm{
+namespace dm
+{
+using key_t = std::uint8_t;
 /**
  * access_key - each one of these is to be used as a 
  * key for  buffer access functions.  Everything <= 
  * push is expected to be a write type function, everything
  * else is expected to be a read type operation.
  */
-enum access_key : int { allocate = 0, allocate_range, push, 
-                        recycle, pop, peek, N };
+enum access_key : key_t { allocate       = 0, 
+                          allocate_range = 1, 
+                          push           = 3, 
+                          recycle        = 4, 
+                          pop            = 5, 
+                          peek           = 6, 
+                          size           = 7,
+                          N };
 }
 
 template < class T, 
@@ -95,6 +103,10 @@ public:
                return( false );
             }
          }
+         if( checking_size not_eq 0 )
+         {
+            return( false );
+         }
          return( true );
       };
 
@@ -122,13 +134,17 @@ public:
          return( rpt < wpt );
       };
       
+      auto *old_buffer( get() );
       for(;;)
       {
          /** check to see if program is done **/
-         if( __builtin_expect( exit_buffer, 0 ) )
+         if( exit_buffer /** comes from allocator **/ or
+             ! old_buffer->is_valid  /** comes indirectly from scheduler **/ )
          {
             /** get rid of newly allocated buff, don't need **/
             delete( new_buffer );
+            resizing = false;
+            std::this_thread::yield();
             return;
          }
          /** set resizing global flag **/
@@ -146,7 +162,6 @@ public:
          std::this_thread::yield();
       }
       /** nobody should have outstanding references to the old buff **/
-      auto *old_buffer( get() );
       new_buffer->copyFrom( old_buffer );
       set( new_buffer );
       delete( old_buffer );
@@ -183,7 +198,7 @@ public:
    void exitBuffer( const dm::access_key key ) noexcept
    {
       /** see lambda below **/
-      set_helper( key, 0 );
+      set_helper( key, static_cast< dm::key_t >( 0 ) );
    }
 
    /**
@@ -205,23 +220,59 @@ private:
    
    struct ThreadAccess
    {
-      union{
+      union
+      {
          std::uint64_t whole = 0; /** just in case, default zero **/
-         std::uint8_t  flag[ 8 ];
+         dm::key_t     flag[ 8 ];
       };
       std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
    } __attribute__((aligned(64))) volatile thread_access[ 2 ];
-   
+  
+   std::atomic< std::uint64_t >  checking_size = { 0 };
+
    inline void set_helper( const dm::access_key key, 
-                           const int val ) noexcept
+                           const dm::key_t      val ) noexcept
    {
-      if( (int) key <= (int) dm::push )
+      switch( key )
       {
-         thread_access[ 0 ].flag[ (int) key ] = val;
-      }
-      else
-      {
-         thread_access[ 1 ].flag[ (int) key ] = val;
+         case( dm::allocate ):
+         {
+            thread_access[ 0 ].flag[ dm::allocate ] = val;
+         }
+         break;
+         case( dm::allocate_range ):
+         {
+            thread_access[ 0 ].flag[ dm::allocate_range ] = val;
+         }
+         break;
+         case( dm::push ):
+         {
+            thread_access[ 0 ].flag[ dm::push ] = val;
+         }
+         break;
+         case( dm::recycle ):
+         {
+            thread_access[ 1 ].flag[ dm::recycle ] = val;
+         }
+         break;
+         case( dm::pop ):
+         {
+            thread_access[ 1 ].flag[ dm::pop ] = val;
+         }
+         break;
+         case( dm::peek ):
+         {
+            thread_access[ 1 ].flag[ dm::peek ] = val;
+         }
+         break;
+         case( dm::size ):
+         {
+            /** this one has to be atomic, multiple updaters **/
+            checking_size = val; 
+         }
+         break;
+         default:
+            assert( false );
       }
       return;
    }
