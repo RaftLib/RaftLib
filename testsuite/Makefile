@@ -18,7 +18,7 @@ endif
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1 
-LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl $(RT) -lm 
+LDLIBS  = $(STATIC)  -lstdc++ -lraft `pkg-config --libs gsl` $(RT) -lm 
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
       join lambdatest allocate_s foreach peekrange gamma uniform \

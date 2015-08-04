@@ -20,34 +20,26 @@
 #include "pointer.hpp"
 #include <thread>
 #include <unistd.h>
-Pointer::Pointer(const size_t cap ) : a( 0 ),
-                                      b( 0 ),
-                                      wrap_a( 0 ),
-                                      wrap_b( 0 ),
-                                      max_cap( cap )
+Pointer::Pointer(const std::size_t cap ) : max_cap( cap )
 {
 }
 
 Pointer::Pointer(const std::size_t cap, 
-                 const std::int8_t wrap_set ) : a( 0 ),
-                                      b( 0 ),
-                                      wrap_a( wrap_set  ),
-                                      wrap_b( wrap_set  ),
-                                      max_cap( cap )
+                 const wrap_t wrap_set ) : wrap_a( wrap_set  ),
+                                           wrap_b( wrap_set  ),
+                                           max_cap( cap )
 {}
 
-Pointer::Pointer( Pointer *other, const size_t new_cap ) :  wrap_a( 0 ),
-                                                            wrap_b( 0 ),
-                                                            max_cap( new_cap )
-                                                           
+Pointer::Pointer( Pointer * const other, 
+                  const std::size_t new_cap ) : max_cap( new_cap )
 {
    const auto val(  Pointer::val( other ) );
    a = val;
    b = val;
 }
 
-size_t 
-Pointer::val( Pointer *ptr )
+std::size_t 
+Pointer::val( Pointer * const ptr ) noexcept
 {
    struct{
       std::uint64_t a;
@@ -56,12 +48,12 @@ Pointer::val( Pointer *ptr )
    do{
       copy.a = ptr->a;
       copy.b = ptr->b;
-   }while( copy.a ^ copy.b );
+   }while( copy.a not_eq copy.b );
    return( copy.b );
 }
 
 void
-Pointer::inc( Pointer *ptr )
+Pointer::inc( Pointer * const ptr ) noexcept
 {
    ptr->a = ( ptr->a + 1 ) % ptr->max_cap;
    ptr->b = ( ptr->b + 1 ) % ptr->max_cap;
@@ -73,7 +65,8 @@ Pointer::inc( Pointer *ptr )
 }
 
 void
-Pointer::incBy( const size_t in, Pointer *ptr )
+Pointer::incBy( const std::size_t in, 
+                Pointer * const ptr ) noexcept
 {
    ptr->a = ( ptr->a + in ) % ptr->max_cap;
    ptr->b = ( ptr->b + in ) % ptr->max_cap;
@@ -84,8 +77,8 @@ Pointer::incBy( const size_t in, Pointer *ptr )
    }
 }
 
-size_t 
-Pointer::wrapIndicator( Pointer *ptr )
+std::size_t 
+Pointer::wrapIndicator( Pointer * const ptr ) noexcept
 {
    struct{
       std::uint64_t a;
@@ -94,6 +87,6 @@ Pointer::wrapIndicator( Pointer *ptr )
    do{
       copy.a = ptr->wrap_a;
       copy.b = ptr->wrap_b;
-   }while( copy.a ^ copy.b );
+   }while( copy.a not_eq copy.b );
    return( copy.b );
 }
