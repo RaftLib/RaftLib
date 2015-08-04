@@ -1,12 +1,9 @@
 
 =============
 ### Pre-requisites
-####OS X
-Compiler: Intel icc or GNU GCC 4.8+
-Libraries: <a href="http://goo.gl/gchdSw">GNU GSL</a> and <a href="http://goo.gl/tI1NGf">Scotch</a>
-####Linux
-Compiler: c++11 capable 
-Libraries: <a href="http://goo.gl/gchdSw">GNU GSL</a> and <a href="http://goo.gl/tI1NGf">Scotch</a>
+####Linux & OS X
+Compiler: Clang, Intel icc or GNU GCC 4.8+
+Libraries: <a href="http://goo.gl/gchdSw">GNU GSL</a>
 
 ### Install
 Once the pre-requisite libraries are installed
