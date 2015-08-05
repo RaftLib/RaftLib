@@ -1,0 +1,8 @@
+This directory contains the subset of the OpenSSL library that implements the
+SHA1 functionality used by dedup.
+
+The code has been extracted from OpenSSL v0.9.8j and is covered by the OpenSSL
+license and the original SSLeay license. See the LICENSE files for details.
+
+- Christian Bienia
+
