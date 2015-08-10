@@ -84,7 +84,6 @@ TOP:
                    * Leibniz or Candide for further info).
                    */
                   std::this_thread::yield();
-                  __builtin_prefetch( buff_ptr, 0, 3 );
                   goto TOP;
                }
                else
