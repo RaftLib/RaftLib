@@ -683,7 +683,7 @@ protected:
             {
                break;
             }
-            else if( size() == 0 && (this)->is_invalid() )
+            else if( (this)->is_invalid() && size() == 0 )
             { 
                throw ClosedPortAccessException( 
                   "Accessing closed port with pop call, exiting!!" );
