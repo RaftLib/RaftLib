@@ -35,6 +35,7 @@
 #include "stdalloc.hpp"
 #include "mapbase.hpp"
 #include "poolschedule.hpp"
+#include "basicparallel.hpp"
 
 class Map : public MapBase
 {
@@ -49,9 +50,15 @@ public:
     */
    virtual ~Map();
    
-
+   /** 
+    * FIXME, the graph tools need to take more than
+    * function, we're wasting time by traversing
+    * the graph twice....will take awhile with big
+    * graphs.
+    */
    template< class scheduler = simple_schedule, 
-             class allocator = dynalloc > 
+             class allocator = dynalloc,
+             class parallelism_monitor = basic_parallel > 
       void exe()
    {
       for( auto * const submap : sub_maps )
@@ -74,22 +81,34 @@ public:
 
       scheduler sched( (*this) );
       sched.init();
+      
       /** launch scheduler in thread **/
       std::thread sched_thread( [&](){
          sched.start();
+      });
+
+      volatile bool exit_para( false );
+      /** launch parallelism monitor **/
+      parallelism_monitor pm( (*this), exit_para );
+      std::thread parallel_mon( [&](){
+         pm.start();
       });
       /** join scheduler first **/
       sched_thread.join();
       /** scheduler done, cleanup alloc **/
       exit_alloc = true;
       mem_thread.join();
+      /** no more need to duplicate kernels **/
+      exit_para = true;
+      parallel_mon.join();
+
       /** all fifo's deallocated when alloc goes out of scope **/
       return; 
    }
 
 
 protected:
-  
+
    /**
     * checkEdges - runs a breadth first search through the graph
     * to look for disconnected edges.
@@ -116,10 +135,16 @@ protected:
     */
    void printEdges( std::set< raft::kernel* > &source_k );
    
+   
 
-
+   /** 
+    * TODO, refactor basic_parallel base class to match the
+    * all caps base class coding style
+    */
+   friend class basic_parallel;
    friend class Schedule;
    friend class Allocate;
+
 };
 
 #endif /* END _MAP_HPP_ */

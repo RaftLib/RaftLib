@@ -40,10 +40,15 @@
 #include "portiterator.hpp"
 /** needed for friending below **/
 class MapBase;
+class roundrobin;
+class basic_parallel;
 
 /** need to pre-declare this **/
-namespace raft{
+namespace raft
+{
    class kernel;
+   template < class T, class method > class join;
+   template < class T, class method > class split;
 }
 
 
@@ -108,14 +113,14 @@ public:
     * @param n_ports - const std::size_t 
     */
    template < class T >
-   bool addPorts( const std::size_t n_ports = 0 )
+   bool addInPlacePorts( const std::size_t n_ports )
    {
       T *existing_buff_t( reinterpret_cast< T* >( alloc_ptr ) );
       std::size_t length( alloc_ptr_length / sizeof( T ) );
       const std::size_t inc( length / n_ports );
       const std::size_t adder( length % n_ports );
 
-      for( std::size_t index( 0 ); index < n_ports; index++ )
+      for( auto index( 0 ); index < n_ports; index++ )
       {
          const std::size_t start_index( index * inc );
          PortInfo pi( typeid( T ), 
@@ -126,6 +131,8 @@ public:
          const std::string name( std::to_string( index ) );
          pi.my_name   = name;
          (this)->initializeConstMap< T >( pi );
+         (this)->initializeSplit< T >( pi );
+         (this)->initializeJoin< T >( pi );
          portmap.map.insert( std::make_pair( name, pi ) );
       }
       return( true );
@@ -205,7 +212,12 @@ protected:
       pi.const_map[ Type::SharedMemory ]->insert(
          std::make_pair( false /** no instrumentation **/,
                          RingBuffer< T, Type::SharedMemory >::make_new_fifo ) );
-      /** no instrumentation version defined yet **/
+      /**
+       * NOTE: If you define more port resource types, they have
+       * to be defined here...otherwise the allocator won't be
+       * able to allocate the correct type, size, etc. for the
+       * port..and well, it'll be sad.
+       */
       return;
    }
 
@@ -216,9 +228,15 @@ protected:
     */
    template < class T > void initializeSplit( PortInfo &pi )
    {
-      //FIXME, needs to be implemented
-      //pi.split_func = static_cast< split_factory_t* >( raft::kernel::make< raft::split< T > >() ); 
+      pi.split_func = 
+         []() -> raft::kernel*
+         {
+            return(  new raft::split< T, roundrobin >()  );
+         };
+      return;
    }
+
+
 
    /**
     * initializeJoin - pre-allocate join kernels...saves
@@ -229,7 +247,12 @@ protected:
     */
    template < class T > void initializeJoin( PortInfo &pi )
    {
-      //pi.join_func = static_cast< join_factory_t* >( raft::kernel::make< raft::join< T > >() );
+      pi.join_func =
+         []() -> raft::kernel*
+         {
+            return(  new raft::join< T, roundrobin >() );
+         };
+      return;
    }
    
    /**
@@ -274,6 +297,8 @@ protected:
    
    /** we need some friends **/
    friend class MapBase;
+   friend class Map;
    friend class GraphTools; 
+   friend class basic_parallel;
 };
 #endif /* END _PORT_HPP_ */

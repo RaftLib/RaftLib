@@ -6,7 +6,7 @@
 #include "optdef.hpp"
 
 
-Schedule::Schedule( Map &map ) : map_ref( map )
+Schedule::Schedule( Map &map ) : kernel_set( map.all_kernels )
 {
    //TODO, see if we want to keep this 
    handlers.addHandler( raft::quit, Schedule::quitHandler ); 
@@ -20,10 +20,7 @@ Schedule::~Schedule()
 void
 Schedule::init()
 {
-   for( raft::kernel *kern : map_ref.all_kernels )
-   {
-      (this)->scheduleKernel( kern );
-   }
+   /** default, do nothing **/
 }
 
 
@@ -91,10 +88,14 @@ Schedule::checkSystemSignal( raft::kernel * const kernel,
 }
 
 bool
-Schedule::scheduleKernel( raft::kernel *kernel )
+Schedule::scheduleKernel( raft::kernel * const kernel )
 {
-   /** does nothing **/
-   return( false );
+   assert( kernel != nullptr );
+   /** lock mutex, add to set, unlock mutex **/
+   std::lock_guard< std::mutex > lock( kernel_set_mutex );
+   auto ret_val( kernel_set.insert( kernel ) );
+   //TODO, add appropriate exception instead of this
+   return( ret_val.second ); 
 }
 
 
@@ -136,13 +137,13 @@ Schedule::kernelHasNoInputPorts( raft::kernel *kernel )
 
 bool
 Schedule::kernelRun( raft::kernel * const kernel,
-                      volatile bool       &finished,
-                      jmp_buf             *gotostate,
-                      jmp_buf             *kernel_state )
+                     volatile bool       &finished,
+                     jmp_buf             *gotostate,
+                     jmp_buf             *kernel_state )
 {
    if( kernelHasInputData( kernel ) )
    {
-      const auto sig_status = kernel->run();
+      const auto sig_status( kernel->run() );
       if( sig_status == raft::stop )
       {
          invalidateOutputPorts( kernel );

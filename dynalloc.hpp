@@ -31,6 +31,9 @@ public:
 
    virtual void run();
 
+protected:
+   virtual void allocate( PortInfo &a, PortInfo &b, void *data );
+
 private:
    static std::size_t hash( PortInfo &a, PortInfo &b );
 };

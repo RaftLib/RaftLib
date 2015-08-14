@@ -24,6 +24,7 @@
 #include "port.hpp"
 #include "fifo.hpp"
 
+/** FIXME, it's relativly easy to do zero copy....so implement **/
 class splitmethod 
 {
 public:

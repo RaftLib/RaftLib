@@ -94,6 +94,14 @@ public:
                     edge_func func,
                     void *data = nullptr,
                     bool connected_error = false );
+
+
+
+   static void
+   BFS( std::set< raft::kernel* > &source_kernels,
+        vertex_func                 func,
+        void                        *data );
+
 private:
    /**
     * BFS - breadth first search helper function, performs
@@ -107,8 +115,7 @@ private:
     * @param q/stack - container with source kernels
     * @param s       - all
     */
-    //FIXME - you need to finish this, then fix the rest
-    //of the related stuff in the morning!!
+    //FIXME - you need to finish this
    static void __BFS( std::queue< raft::kernel* > &q,
                       std::set<   raft::kernel* > &s,
                       edge_func                   func,

@@ -18,11 +18,12 @@ endif
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DRDTSCP=1 
-LDLIBS  = $(STATIC)  -lstdc++ -lraft `pkg-config --libs gsl` $(RT) -lm 
+LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl -lgslcblas $(RT) -lm 
 
 EXE = allocate portTypeException dynallocate stdlibsupport split \
       join lambdatest allocate_s foreach peekrange gamma uniform \
-      gaussian exponential partitionTest iterator sequential
+      gaussian exponential partitionTest iterator sequential \
+      parallel
 
 OBS = $(addsuffix .o, $(EXE))
 
@@ -45,7 +46,7 @@ exponential: exponential.o
 partitionTest: partitionTest.o
 iterator: iterator.o
 sequential: sequential.o
-
+parallel: parallel.o
 .PHONY: clean
 clean:
 	rm -rf $(EXE) $(OBS) intelremotemonfifo* *.dwarf lldb

@@ -70,7 +70,6 @@ stdalloc::run()
     * NOTE: we'll keep this thread running in future versions 
     * to dynamically update buffer size 
     */
-
    while( ! exit_alloc )
    {
       std::chrono::milliseconds dura( 2 );

@@ -55,28 +55,115 @@ Map::checkEdges( std::set< raft::kernel* > &source_k )
     * errors.
     */
    GraphTools::BFS( source_k, 
-                    []( const PortInfo &a, const PortInfo &b, void *data ){ return; },
+                    []( PortInfo &a, PortInfo &b, void *data ){ return; },
                     nullptr,
                     true );
    return;
 }
 
+/**
+   void insert( raft::kernel &a,  PortInfo &a_out, 
+                raft::kernel &b,  PortInfo &b_in,
+                raft::kernel &i,  PortInfo &i_in, PortInfo &i_out );
+**/
 void 
 Map::enableDuplication( std::set< raft::kernel* > &source_k )
 {
-
+    /** don't have to do this but it makes it far more apparent where it comes from **/
+    void * const kernel_ptr( reinterpret_cast< void* >( &all_kernels ) );
+    using kernel_ptr_t = 
+      typename std::remove_reference< decltype( all_kernels ) >::type;
+    /** need to grab impl of Lengauer and Tarjan dominators, use for SESE **/
+    /** in the interim, restrict to kernels that are simple to duplicate **/
     GraphTools::BFS( source_k,
-                     []( const PortInfo &a, const PortInfo &b, void *data )
+                     []( PortInfo &a, PortInfo &b, void *data )
                      {
+                        auto * const all_k( reinterpret_cast< kernel_ptr_t* >( data ) );  
                         if( a.out_of_order && b.out_of_order )
                         {
-                            /** TODO, finish thought **/
+                           /** case of inline kernel **/
+                           if( b.my_kernel->input.count() == 1 and 
+                               b.my_kernel->output.count() == 1 and 
+                               a.my_kernel->dup_candidate  )
+                           {
+                              auto *kernel_a( a.my_kernel );
+                              assert( kernel_a->input.count() == 1 );
+                              auto &port_info_front( kernel_a->input.getPortInfo() );
+                              auto *front( port_info_front.other_kernel );
+                              auto &front_port_info( front->output.getPortInfo() );
+                              /**
+                               * front -> kernel_a goes to
+                               * front -> split -> kernel_a 
+                               */
+                              auto *split( 
+                                 static_cast< raft::kernel* >( 
+                                    port_info_front.split_func() ) );
+                              all_k->insert( split );
+                              MapBase::insert( front,    front_port_info,
+                                               kernel_a, port_info_front,
+                                               split );
+
+                              assert( kernel_a->output.count() == 1 );
+
+                              /** 
+                               * now we need the port info from the input 
+                               * port on back 
+                               **/
+
+                              /**
+                               * kernel_a -> back goes to
+                               * kernel_a -> join -> back 
+                               */
+                              auto *join( static_cast< raft::kernel* >( a.join_func() ) );
+                              all_k->insert( join );
+                              MapBase::insert( a.my_kernel, a,
+                                               b.my_kernel, b,
+                                               join );
+                              /** 
+                               * finally set the flag to the scheduler
+                               * so that the parallel map manager can
+                               * pick it up an use it.
+                               */
+                              a.my_kernel->dup_enabled = true; 
+                           }
+                           /** parallalizable source, single output no inputs**/
+                           else if( a.my_kernel->input.count() == 0 and
+                                    a.my_kernel->output.count() == 1 )
+                           {
+                              auto *join( static_cast< raft::kernel* >( a.join_func() ) );
+                              all_k->insert( join );
+                              MapBase::insert( a.my_kernel, a,
+                                               b.my_kernel, b,
+                                               join );
+                              a.my_kernel->dup_enabled = true; 
+                           }
+                           /** parallelizable sink, single input, no outputs **/
+                           else if( b.my_kernel->input.count() == 1 and
+                                    b.my_kernel->output.count() == 0 )
+                           {
+                              auto *split( 
+                                 static_cast< raft::kernel* >( b.split_func() ) );
+                              all_k->insert( split );
+                              MapBase::insert( a.my_kernel, a,
+                                               b.my_kernel, b,
+                                               split );
+                              b.my_kernel->dup_enabled = true;
+                           }
+                           /** 
+                            * flag as candidate if the connecting
+                            * kernel only has one input port.
+                            */
+                           else if( b.my_kernel->input.count() == 1 )
+                           {
+                              /** simply flag as a candidate **/
+                              b.my_kernel->dup_candidate = true;
+                           }
+                              
                         }
                      },
-                     nullptr,
+                     kernel_ptr,
                      false );
 }
-
 
 void
 Map::printEdges( std::set< raft::kernel* > &source_k )

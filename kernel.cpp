@@ -28,6 +28,11 @@ kernel::get_id()
    return( kernel_id );
 }
 
+std::size_t
+kernel::addPort()
+{
+   return( 0 );
+}
 
 //std::string
 //kernel::getName()

@@ -23,6 +23,8 @@
 #include "signalvars.hpp"
 #include "systemsignalhandler.hpp"
 #include "rafttypes.hpp"
+#include <set>
+#include <mutex>
 
 namespace raft {
    class kernel;
@@ -57,7 +59,7 @@ public:
   
    /** 
     * init - call to pre-process all kernels, this function
-    * is called by the map object
+    * is called by the map object befure calling start.
     */
    virtual void init();
    
@@ -76,6 +78,19 @@ public:
                           volatile bool       &finished,
                           jmp_buf             *gotostate    = nullptr,
                           jmp_buf             *kernel_state = nullptr  );
+   
+   /**
+    * scheduleKernel - adds the kernel "kernel" to the
+    * schedule, ensures that it is run.  Other than
+    * that there are no guarantees for its execution.
+    * It is purely virtual in its implementation.  Before
+    * you drop in a kernel, it better be ready to go..all
+    * allocations should be complete.
+    * @param kernel - raft::kernel*
+    * @return  bool  - returns false if the kernel is
+    * already scheduled.
+    */
+   bool scheduleKernel( raft::kernel *kernel );
 protected:
   
    /**
@@ -108,16 +123,6 @@ protected:
    
    
    static void invalidateOutputPorts( raft::kernel *kernel );
-   /**
-    * scheduleKernel - adds the kernel "kernel" to the
-    * schedule, ensures that it is run.  Other than
-    * that there are no guarantees for its execution.
-    * It is purely virtual in its implementation.
-    * @param kernel - raft::kernel*
-    * @return  bool  - returns false if the kernel is
-    * already scheduled.
-    */
-   virtual bool scheduleKernel( raft::kernel *kernel );
 
    /** 
     * kernelHasInputData - check each input port for available
@@ -139,15 +144,17 @@ protected:
     */
    static bool kernelHasNoInputPorts( raft::kernel *kernel );
 
-
-   
-   
    /**
     * signal handlers
     */
    SystemSignalHandler handlers;
-
+   
+   /** mutex for set, since we're adding kernels from multiple threads **/
+   std::mutex                 kernel_set_mutex;
+   /** kernel set **/
+   std::set< raft::kernel* > &kernel_set;
+      
 private:
-   Map &map_ref;
+//   Map &map_ref;
 };
 #endif /* END _SCHEDULE_HPP_ */

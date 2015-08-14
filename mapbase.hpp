@@ -43,6 +43,7 @@
 #include "allocate.hpp"
 #include "dynalloc.hpp"
 #include "stdalloc.hpp"
+#include "basicparallel.hpp"
 
 /**
  * kernel_pair_t - struct to be returned by mapbase link functions,
@@ -381,9 +382,12 @@ protected:
     * @param b_info - PortInfo struct for kernel b
     * @throws PortTypeMismatchException
     */
-   void join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
-              raft::kernel &b, const std::string name_b, PortInfo &b_info );
+   static void join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
+                     raft::kernel &b, const std::string name_b, PortInfo &b_info );
    
+   static void insert( raft::kernel *a,  PortInfo &a_out, 
+                       raft::kernel *b,  PortInfo &b_in,
+                       raft::kernel *i );
 
    /** need to keep source kernels **/
    std::set< raft::kernel* > source_kernels;

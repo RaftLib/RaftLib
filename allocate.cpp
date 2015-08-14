@@ -82,3 +82,9 @@ Allocate::initialize( PortInfo * const src,
    /** NOTE: this list simply speeds up the monitoring if we want it **/
    allocated_fifo.insert( fifo ); 
 }
+
+//void 
+//Allocate::allocate( PortInfo &a, PortInfo &b, void *data )
+//{
+//   assert( false );
+//}

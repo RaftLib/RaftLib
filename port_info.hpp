@@ -76,6 +76,28 @@ struct PortInfo
       existing_buffer= other.existing_buffer;
       nitems         = other.nitems;
       start_index    = other.start_index;
+      split_func      = other.split_func;
+      join_func       = other.join_func;
+   }
+   
+   PortInfo( PortInfo &&other ) : 
+      fifo_a            ( std::move( other.fifo_a)),
+      fifo_b            ( std::move( other.fifo_b)),
+      type              ( std::move(  other.type ) ),
+      const_map         ( std::move( other.const_map)),
+      split_func        ( std::move( other.split_func)),
+      join_func         ( std::move( other.join_func)),
+      my_kernel         ( std::move( other.my_kernel)),
+      my_name           ( std::move( other.my_name)),
+      other_kernel      ( std::move( other.other_kernel)),
+      other_name        ( std::move( other.other_name)),
+      use_my_allocator  ( std::move( other.use_my_allocator )),
+      out_of_order      ( std::move( other.out_of_order)),
+      existing_buffer   ( std::move( other.existing_buffer)),
+      nitems            ( std::move( other.nitems)),
+      start_index       ( std::move( other.start_index))
+   {
+      /** nothing to do here **/
    }
 
    virtual ~PortInfo()
@@ -140,8 +162,8 @@ struct PortInfo
     * destroyed unless they're used...they'll of course
     * be destroyed upon program termination.
     */
-   split_factory_t   *split_func      = nullptr;
-   join_factory_t    *join_func       = nullptr;
+   split_factory_t   split_func      = nullptr;
+   join_factory_t    join_func       = nullptr;
 
    raft::kernel     *my_kernel       = nullptr;
    std::string       my_name         = "";
@@ -155,7 +177,6 @@ struct PortInfo
    void             *existing_buffer = nullptr;
    std::size_t       nitems          = 0;
    std::size_t       start_index     = 0;
-
 
    
 };

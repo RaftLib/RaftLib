@@ -31,7 +31,7 @@ public:
                                                       nitems * sizeof( T ) )
    {
       /** if nports == 0, then runtime will specify **/
-      output.addPorts< T >( nports ); 
+      output.addInPlacePorts< T >( nports ); 
       /** no input ports since we're using the existing allocation **/
    }
    

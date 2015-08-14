@@ -26,10 +26,10 @@
 #include <cstdint>
 #include <cmath>
 #include <cstddef>
+#include <type_traits>
 
 namespace raft
 {
-using statfloat_t = double;
 
 template < typename T > class streamingstat
 {
@@ -46,26 +46,33 @@ public:
 
    /**
     * mean - returns the mean of the population seen
-    * as a statfloat_t type (currently a double)
-    * @return statfloat_t
+    * as a F type (currently a double)
+    * @return F
     */
-   statfloat_t mean()
+   template <  typename F,
+               typename std::enable_if< 
+                        std::is_floating_point< F >::value >::type* = nullptr > 
+   F mean()
    {
-      return( (double) sum / (double) N );
+      return( static_cast< F >( sum ) / static_cast< F >( N ) );
    }
 
    /** 
    * std - returns estimate of the standard deviation for
    * the population seen so far.
-   * @return statfloat_t - streaming mean
+   * @return F - streaming mean
    */
-   statfloat_t std()
+   template <  typename F,
+               typename std::enable_if< 
+                        std::is_floating_point< F >::value >::type* = nullptr > 
+   F std()
    {
-      const statfloat_t a( (statfloat_t) sum_square / (statfloat_t) N );
-      const statfloat_t b( (statfloat_t) sum / (statfloat_t) N );
-      const statfloat_t b_squared( b * b );
+      const F a(  sum_square / (F) N );
+      const F b( (F) sum / (F) N );
+      const F b_squared( b * b );
       return( std::sqrt( a - b_squared ) );
    }
+   
    
    /**
     * update - updates the streaming statistics within this
@@ -75,9 +82,15 @@ public:
    void update( const T value )
    {
       sum        += value;
+      /** 
+       * if we were to get lots of power of two's for value, then
+       * adding a check for them might shave a new nanoseconds per
+       * op...but not worth it unless we can ensure that.
+       */
       sum_square += (value * value);
-      N          += 1;
+      N++;
    }
+   
 
    /**
     * reset - does the obious, resets the stats saved
@@ -85,15 +98,15 @@ public:
     */
    void reset()
    {
-      sum        = (T) 0;
-      sum_square = (T) 0;
+      sum        = static_cast< T >( 0 );
+      sum_square = static_cast< T >( 0 );
       N          = 0;
    }
 
 private:
-   T  sum            = ( T ) 0;
-   T  sum_square     = ( T ) 0;
-   std::size_t N     = 0;
+   T               sum        = static_cast< T >( 0 );
+   T               sum_square = static_cast< T >( 0 );
+   std::uintmax_t  N          = 0;
 };
 
 } /** end namespace raft **/

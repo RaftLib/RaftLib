@@ -250,9 +250,12 @@ protected:
     */
    virtual T draw()
    {
-      return( (T)( (this)->mean + gsl_ran_gaussian_ziggurat( (this)->rng,
-                                                             (this)->sigma ) ) );
+      return( 
+         static_cast< T > ( (this)->mean + 
+                              gsl_ran_gaussian_ziggurat( (this)->rng,
+                                                         (this)->sigma ) ) );
    }
+
 private:
    const double mean;
    const double sigma;
@@ -270,6 +273,21 @@ public:
                                                   delta( delta )
    {
    }
+   
+   /** TODO, fix me...needs to check other.current for even div **/
+   random_variate( const random_variate &other )
+      : randomx< T >( other.count,
+                      dummy,
+                      0 ),
+        min( other.min ),
+        max( other.max ),
+        delta( other.delta ),
+        current( other.current )
+   {
+   
+   }
+
+   CLONE();
 
    random_variate(   const T min,
                      const T max,

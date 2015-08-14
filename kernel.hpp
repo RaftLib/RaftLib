@@ -33,6 +33,8 @@
 class MapBase;
 class Schedule;
 class kernel_container;
+class Map;
+class basic_parallel;
 
 #ifndef CLONE
 namespace raft
@@ -42,10 +44,12 @@ namespace raft
 
 #define CLONE() \
 virtual raft::kernel* clone()\
-{\
-   return( new typename std::remove_reference< decltype( *this ) >::type( ( *(\
+{ \
+   auto *ptr( \
+      new typename std::remove_reference< decltype( *this ) >::type( ( *(\
    (typename std::decay< decltype( *this ) >::type * ) \
    this ) ) ) );\
+   return( ptr );\
 }
 #endif
 
@@ -99,6 +103,11 @@ public:
    std::size_t get_id();
 protected:
    /**
+    * 
+    */
+   virtual std::size_t addPort();
+
+   /**
     * PORTS - input and output, use these to interact with the
     * outside world.
     */
@@ -107,10 +116,12 @@ protected:
  
 
    friend class ::MapBase;
+   friend class ::Map;
    friend class ::Schedule;
    friend class ::GraphTools;
    friend class ::kernel_container;   
-   
+   friend class ::basic_parallel;
+
    /**
     * NOTE: doesn't need to be atomic since only one thread
     * will have responsibility to to create new compute 
@@ -119,7 +130,9 @@ protected:
    static std::size_t kernel_count;
 
 private:
-
+   /** TODO, replace dup with bit vector **/
+   bool   dup_enabled   = false;
+   bool   dup_candidate = false;
    const  std::size_t kernel_id;
 };
 } /** end namespace raft */

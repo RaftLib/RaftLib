@@ -33,7 +33,8 @@ PortIterator::PortIterator( portmap_t *port_map ) : port_map( port_map )
    //port_map->map_mutex.lock();
 }
 
-PortIterator::PortIterator( portmap_t *port_map, const std::size_t index ) : 
+PortIterator::PortIterator( portmap_t *port_map, 
+                            const std::size_t index ) : 
                                                     port_map( port_map ),
                                                     map_index( index )
 {

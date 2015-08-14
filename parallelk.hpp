@@ -37,21 +37,17 @@ public:
 
    virtual ~parallel_k() = default;
 
-   /**
-    * addPort - we only add on ports to one side
-    * when auto-parallelizing so we only need one
-    * of these functions. 
-    */
-   virtual void addPort() = 0;
 protected:
    /** 
     * addPort - adds a port, either to the input or 
     * output depending on what the sub-class type is
     */
    template < class T >
-      void addPortTo( Port &port )
+      std::size_t addPortTo( Port &port )
    {
-      port.addPort< T >( std::to_string( port_name_index++ ) );
+      const auto portid( port_name_index++ );
+      port.addPort< T >( std::to_string( portid ) );
+      return( portid );
    }
 
 

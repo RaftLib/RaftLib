@@ -57,6 +57,18 @@ dynalloc::hash( PortInfo &a, PortInfo &b )
    return( u.all );
 }
 
+void 
+dynalloc::allocate( PortInfo &a, PortInfo &b, void *data )
+{
+   instr_map_t *func_map( a.const_map[ Type::Heap ] );
+   auto test_func( (*func_map)[ false ] );
+   FIFO *fifo( test_func( 64 /* items */, 
+                          16 /* align */, 
+                          nullptr ) );
+   (this)->initialize( &a, &b, fifo );
+   return;
+}
+
 void
 dynalloc::run()
 {

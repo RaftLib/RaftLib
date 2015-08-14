@@ -24,7 +24,10 @@
 #include <utility>
 #include <cstdint>
 #include <cstddef>
+#include <cmath>
 
+namespace raft
+{
 class stat
 {
 public:
@@ -152,11 +155,11 @@ public:
       c_type max( std::numeric_limits< c_type >::min() );
       for( const auto val : c )
       {
-         if( val < min )
+         if( std::isless( val, min ) )
          {
             min = val;
          }
-         if( val > max )
+         if( std::isgreater( val, max ) )
          {
             max = val;
          }
@@ -189,11 +192,11 @@ public:
       c_type max( std::numeric_limits< c_type >::min() );
       for( const auto val : c )
       {
-         if( val < min )
+         if( std::isless( val, min ) )
          {
             min = val;
          }
-         if( val > max )
+         if( std::isgreater( val, max ) )
          {
             max = val;
          }
@@ -237,11 +240,11 @@ public:
       c_type max( std::numeric_limits< c_type >::min() );
       for( const auto val : c )
       {
-         if( val < min )
+         if( std::isless( val,  min ) )
          {
             min = val;
          }
-         if( val > max )
+         if( std::isgreater( val,  max ) )
          {
             max = val;
          }
@@ -255,4 +258,5 @@ public:
       return;
    }
 };
+}
 #endif /* END _STAT_TCC_ */

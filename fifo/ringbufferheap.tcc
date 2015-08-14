@@ -84,7 +84,6 @@ TOP:
                    * Leibniz or Candide for further info).
                    */
                   std::this_thread::yield();
-                  __builtin_prefetch( buff_ptr, 0, 3 );
                   goto TOP;
                }
                else
@@ -684,7 +683,7 @@ protected:
             {
                break;
             }
-            else if( size() == 0 && (this)->is_invalid() )
+            else if( (this)->is_invalid() && size() == 0 )
             { 
                throw ClosedPortAccessException( 
                   "Accessing closed port with pop call, exiting!!" );

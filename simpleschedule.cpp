@@ -37,13 +37,6 @@ simple_schedule::~simple_schedule()
    /** note: kernels are deleted by the map! **/
 }
 
-bool
-simple_schedule::scheduleKernel( raft::kernel *kernel )
-{
-   assert( kernel != nullptr );
-   kernel_map.push_back( kernel ); 
-   return( true );
-}
 
 void
 simple_schedule::start()
@@ -54,15 +47,17 @@ simple_schedule::start()
       bool        finished = false;
    };
 
-   std::vector< thread_info_t > thread_map( kernel_map.size() );
+   std::vector< thread_info_t > thread_map( kernel_set.size() );
    
 
-   for( std::size_t index( 0 ); index < kernel_map.size(); index++ )
+   std::size_t index( 0 );
+   for( auto * const k : kernel_set )
    {
       thread_map[ index ].th = 
          new std::thread( simple_run, 
-                          kernel_map[ index ]                      /* kernel ptr  */,
+                          k,
                           std::ref( thread_map[ index ].finished ) /* finished ref */);
+      index++;
    }
 
    bool keep_going( true );

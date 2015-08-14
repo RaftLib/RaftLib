@@ -82,6 +82,9 @@ protected:
                     PortInfo * const dst, 
                     FIFO * const fifo );
 
+   
+   virtual void allocate( PortInfo &a, PortInfo &b, void *data ) = 0;
+
    /**
     * setReady - call within the implemented run function to signal
     * that the initial allocations have been completed.

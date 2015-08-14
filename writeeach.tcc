@@ -131,9 +131,9 @@ public:
       return( raft::proceed );
    }
 protected:
-   virtual void addPort()
+   virtual std::size_t  addPort()
    {
-      addPortTo< T >( input );
+      return( (this)->addPortTo< T >( input ) );
    }
 
 private:

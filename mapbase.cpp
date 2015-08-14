@@ -63,4 +63,17 @@ MapBase::join( raft::kernel &a, const std::string name_a, PortInfo &a_info,
    b_info.other_kernel = &a;
    b_info.other_name   = name_a;
 }
+   
+void 
+MapBase::insert( raft::kernel *a,  PortInfo &a_out, 
+                 raft::kernel *b,  PortInfo &b_in,
+                 raft::kernel *i)
+{
+   PortInfo &i_in( i->input.getPortInfoFor( "0" ) ),
+            &i_out( i->output.getPortInfoFor( "0" ) );
+   join( *a, a_out.my_name, a_out,
+         *i, i_in.my_name, i_in );
+   join( *i, i_out.my_name, i_out,
+         *b, b_in.my_name, b_in );
+}
 

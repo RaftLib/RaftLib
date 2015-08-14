@@ -25,8 +25,7 @@
 
 namespace raft
 {
-   /* defined in ./parallelk.hpp */
-   class parallel_k;
+   class kernel;
 }
 /* defined in fifo/fifo.hpp */
 class FIFO;
@@ -39,6 +38,6 @@ using instr_map_t =  std::map< bool, std::function< FIFO* ( std::size_t /** n_it
                                                             std::size_t /** alignof **/,
                                                             void*   /** data struct **/ ) > >;
 
-using split_factory_t = std::function< raft::parallel_k*() >;
-using join_factory_t  = std::function< raft::parallel_k*() >;
+using split_factory_t = std::function< raft::kernel*() >;
+using join_factory_t  = std::function< raft::kernel*() >;
 #endif /* END _PORT_INFO_TYPES_HPP_ */

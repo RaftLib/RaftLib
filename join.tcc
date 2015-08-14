@@ -21,9 +21,7 @@
 #define _JOIN_TCC_  1
 #include <raft>
 #include <cstddef>
-#include "splitmethod.hpp"
-#include "roundrobin.hpp"
-#include "parallelk.hpp"
+
 
 namespace raft{
 template < class T, class method = roundrobin  > class join : public raft::parallel_k
@@ -34,7 +32,7 @@ public:
       output.addPort< T >( "0" );
       for( auto it( 0 ); it < num_ports; it++ )
       {
-         addPortTo< T >( input );
+         addPort();
       }
    }
 
@@ -58,9 +56,9 @@ public:
       return( raft::proceed );
    }
    
-   virtual void addPort()
+   virtual std::size_t  addPort()
    {
-      addPortTo< T >( input );
+      return( (this)->addPortTo< T >( input ) );
    }
 
 protected:

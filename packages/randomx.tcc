@@ -105,11 +105,12 @@ protected:
    /** 
     * addPort - implementation of addPort from parallel_k
     */
-   virtual void addPort()
+
+   virtual std::size_t  addPort()
    {
-      addPortTo< T >( output );
+      return( (this)->addPortTo< T >( output ) );
    }
-private: 
+   
    std::size_t count = 0;
 };
 
