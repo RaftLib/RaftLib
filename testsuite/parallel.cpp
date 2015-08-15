@@ -28,12 +28,12 @@
  int
  main( int argc, char **argv )
  {
-   int count( 1001 );
+   int count( 1000 );
    if( argc == 2 )
    {
       count = atoi( argv[ 1 ] );
    }
-   std::ofstream ofs( "/dev/null" );
+   std::ofstream ofs( "/tmp/log" );
    using gen   = raft::random_variate< std::int32_t, raft::sequential >;
    using p_gen = raft::print< std::int32_t  , '\n' >;
    raft::map.link< order::out >(

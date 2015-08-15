@@ -23,7 +23,7 @@
 #include <utility>
 #include <string>
 #include <sstream>
-#include <mutex>
+#include <pthread.h>
 
 #include "common.hpp"
 #include "portmap_t.hpp"
@@ -31,7 +31,7 @@
 #include "graphtools.hpp"
 #include "port_info.hpp"
 #include "kernel.hpp"
-
+#include "pthreadwrap.h"
 void
 GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                  edge_func func,
@@ -100,9 +100,10 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
    {
       auto *k( queue.front() );
       queue.pop();
+      if( k == nullptr ) break;
       /** iterate over all out-edges **/
       /** 1) get lock **/
-      std::lock_guard< std::mutex > lock( k->output.portmap.map_mutex );
+      pthread_mutex_lock_d( &k->output.portmap.mutex_map, __FILE__, __LINE__ );
       /** 2) get map **/
       std::map< std::string, PortInfo > &map_of_ports( k->output.portmap.map );
       for( auto &port : map_of_ports )
@@ -123,6 +124,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
                common::printClassName( *k ) <<  
                   "[ \"" <<
                   source.my_name << " \"], please fix and recompile.";
+            pthread_mutex_unlock( &k->output.portmap.mutex_map );
             throw PortException( ss.str() );
          }
          /** if the dst kernel hasn't been visited, visit it **/
@@ -132,6 +134,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
             visited_set.insert( source.other_kernel ); 
          }
       }
+      pthread_mutex_unlock( &k->output.portmap.mutex_map );
    }
    return;
 }
@@ -145,10 +148,11 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
    while( queue.size() > 0 )
    {
       auto *source( queue.front() );
+      if( source == nullptr ) break;
       queue.pop();
       /** iterate over all out-edges **/
       /** 1) get lock **/
-      std::lock_guard< std::mutex > lock( source->output.portmap.map_mutex );
+      pthread_mutex_lock_d( &(source->output.portmap.mutex_map), __FILE__, __LINE__);
       /** 2) get map **/
       std::map< std::string, PortInfo > &map_of_ports( source->output.portmap.map );
       /** 3) visit kernel **/
@@ -168,6 +172,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
             }
          }
       }
+      pthread_mutex_unlock( &(source->output.portmap.mutex_map) );
    }
    return;
 }

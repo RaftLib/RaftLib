@@ -57,17 +57,6 @@ dynalloc::hash( PortInfo &a, PortInfo &b )
    return( u.all );
 }
 
-void 
-dynalloc::allocate( PortInfo &a, PortInfo &b, void *data )
-{
-   instr_map_t *func_map( a.const_map[ Type::Heap ] );
-   auto test_func( (*func_map)[ false ] );
-   FIFO *fifo( test_func( 64 /* items */, 
-                          16 /* align */, 
-                          nullptr ) );
-   (this)->initialize( &a, &b, fifo );
-   return;
-}
 
 void
 dynalloc::run()
@@ -98,10 +87,11 @@ dynalloc::run()
       (this)->initialize( &a, &b, fifo );
    };
 
-   /** BEGIN TEST DATA **/
-   GraphTools::BFS( (this)->source_kernels,
-                    alloc_func );
-   
+   /** acquire source kernels **/
+   auto &container( (this)->source_kernels.acquire() );
+   GraphTools::BFS( container, alloc_func );
+   (this)->source_kernels.release();
+
    (this)->setReady();
    std::map< std::size_t, int > size_map;
    
@@ -136,8 +126,11 @@ dynalloc::run()
       /** monitor fifo's **/
       std::chrono::microseconds dura( 100 );
       std::this_thread::sleep_for( dura );
-      GraphTools::BFS( (this)->source_kernels ,
-                       mon_func );
+     
+      auto &container( (this)->source_kernels.acquire() );
+      GraphTools::BFS( container, mon_func );
+      (this)->source_kernels.release();
+      
    }
    return;
 }

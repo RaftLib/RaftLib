@@ -36,7 +36,17 @@ public:
    virtual void start(); 
    
 protected:
+   void handleSchedule( raft::kernel * const kernel ); 
+                                
    static void simple_run( raft::kernel * const kernel,
                            volatile bool        &finished );
+   struct thread_info_t
+   {
+      std::thread *th         = nullptr;
+      bool         finished   = false;
+   };
+   
+   pthread_mutex_t               thread_map_mutex;
+   std::vector< thread_info_t* > thread_map;
 };
 #endif /* END _SIMPLESSCHEDULE_HPP_ */

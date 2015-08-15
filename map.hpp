@@ -25,6 +25,7 @@
 #include <thread>
 #include <sstream>
 
+#include "kernelkeeper.tcc"
 #include "portexception.hpp"
 #include "schedule.hpp"
 #include "simpleschedule.hpp"
@@ -36,6 +37,7 @@
 #include "mapbase.hpp"
 #include "poolschedule.hpp"
 #include "basicparallel.hpp"
+#include "noparallel.hpp"
 
 class Map : public MapBase
 {
@@ -56,20 +58,24 @@ public:
     * the graph twice....will take awhile with big
     * graphs.
     */
-   template< class scheduler = simple_schedule, 
-             class allocator = dynalloc,
+   template< class scheduler           = simple_schedule, 
+             class allocator           = dynalloc,
              class parallelism_monitor = basic_parallel > 
       void exe()
    {
       for( auto * const submap : sub_maps )
       {
-         all_kernels.insert( submap->all_kernels.begin(),
-                             submap->all_kernels.end()   );
+         auto &container( all_kernels.acquire() );
+         auto &subcontainer( submap->all_kernels.acquire() );  
+         container.insert( subcontainer.begin(),
+                           subcontainer.end()   );
+         all_kernels.release();
+         submap->all_kernels.release();
       }
       /** check types, ensure all are linked **/
       checkEdges( source_kernels );
       /** adds in split/join kernels **/
-      enableDuplication( source_kernels );
+      enableDuplication( source_kernels, all_kernels );
       volatile bool exit_alloc( false );
       allocator alloc( (*this), exit_alloc );
       /** launch allocator in a thread **/
@@ -89,7 +95,10 @@ public:
 
       volatile bool exit_para( false );
       /** launch parallelism monitor **/
-      parallelism_monitor pm( (*this), exit_para );
+      parallelism_monitor pm( (*this)     /** ref to this    **/, 
+                              alloc       /** allocator      **/,
+                              sched       /** scheduler      **/,
+                              exit_para   /** exit parameter **/);
       std::thread parallel_mon( [&](){
          pm.start();
       });
@@ -115,7 +124,7 @@ protected:
     * @param   source_k - std::set< raft::kernel* >
     * @throws PortException - thrown if an unconnected edge is found.
     */
-   void checkEdges( std::set< raft::kernel* > &source_k );
+   void checkEdges( kernelkeeper &source_k );
 
    /**
     * enableDuplication - add split / join kernels where needed, 
@@ -124,18 +133,8 @@ protected:
     * not be implemented in the future.
     * @param    source_k - std::set< raft::kernel* > with sources
     */
-   void enableDuplication( std::set< raft::kernel* > &source_k );
+   void enableDuplication( kernelkeeper &source, kernelkeeper &all );
 
-   /**
-    * printEdges - print a nice pretty picture using graphviz
-    * of the current layout, future versions will pop up a 
-    * window and display the topology as a 3-d graph, but we'll
-    * save that till everything is relatively stable.
-    * @param source_k, &std::set< raft::kernel* >
-    */
-   void printEdges( std::set< raft::kernel* > &source_k );
-   
-   
 
    /** 
     * TODO, refactor basic_parallel base class to match the

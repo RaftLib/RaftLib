@@ -24,6 +24,8 @@
 #include "kernel.hpp"
 #include "port_info.hpp"
 #include "fifo.hpp"
+#include "allocate.hpp"
+#include "schedule.hpp"
 #include <set>
 #include <iostream>
 
@@ -46,17 +48,22 @@ struct stats
 class basic_parallel
 {
 public:
-   basic_parallel( Map &map, volatile bool &exit_para );
+   basic_parallel( Map &map, 
+                   Allocate &alloc,
+                   Schedule &sched,
+                   volatile bool &exit_para );
 
    virtual ~basic_parallel() = default;
-   
    virtual void start();
 
+   
 protected:
    /** both convenience structs, hold exactly what the names say **/
-   std::set< raft::kernel* > &source_kernels;
-   std::set< raft::kernel* > &all_kernels;
-   volatile bool &exit_para;
+   kernelkeeper   &source_kernels;
+   kernelkeeper   &all_kernels;
+   Allocate       &alloc;
+   Schedule       &sched;
+   volatile bool  &exit_para;
 };
 
 #endif /* END _BASICPARALLEL_HPP_ */

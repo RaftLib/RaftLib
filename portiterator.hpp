@@ -32,26 +32,29 @@ class FIFO;
 class PortIterator : public std::iterator< std::forward_iterator_tag, FIFO >
 {
 public:
-   PortIterator( portmap_t *port_map );
+   PortIterator( portmap_t * const port_map );
    
-   PortIterator( portmap_t *port_map, const std::size_t index );
+   PortIterator( portmap_t * const port_map, const std::size_t index );
 
    PortIterator( const PortIterator &it );
 
    virtual ~PortIterator();
 
-   PortIterator& operator++();
+   PortIterator& operator++() noexcept;
    
-   bool operator==(const PortIterator& rhs); 
-   bool operator!=(const PortIterator& rhs);
-   FIFO& operator*();
+   bool operator==(const PortIterator& rhs) noexcept; 
+   bool operator!=(const PortIterator& rhs) noexcept;
+   FIFO& operator*() noexcept;
 
 private:
-   static void initKeyMap( portmap_t *port_map, std::vector< std::string > &key_map );
+   static inline
+   void initKeyMap( portmap_t * const port_map, 
+                    std::vector< std::string > &key_map ) noexcept;
    
    portmap_t * const               port_map;
    std::vector< std::string >      key_map;
-   std::size_t                     map_index = 0; 
+   std::size_t                     map_index = 0;
+   bool                            is_end       = false;
 };
 
 #endif /* END _PORTITERATOR_HPP_ */

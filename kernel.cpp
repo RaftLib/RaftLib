@@ -33,6 +33,20 @@ kernel::addPort()
 {
    return( 0 );
 }
+   
+void 
+kernel::lock()
+{
+   /** does nothing, just need a base impl **/
+   return;
+}
+
+void 
+kernel::unlock()
+{
+   /** does nothing, just need a base impl **/
+   return;
+}
 
 //std::string
 //kernel::getName()

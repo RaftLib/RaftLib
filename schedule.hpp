@@ -24,7 +24,7 @@
 #include "systemsignalhandler.hpp"
 #include "rafttypes.hpp"
 #include <set>
-#include <mutex>
+#include "kernelkeeper.tcc"
 
 namespace raft {
    class kernel;
@@ -87,12 +87,10 @@ public:
     * you drop in a kernel, it better be ready to go..all
     * allocations should be complete.
     * @param kernel - raft::kernel*
-    * @return  bool  - returns false if the kernel is
-    * already scheduled.
     */
-   bool scheduleKernel( raft::kernel *kernel );
+   void scheduleKernel( raft::kernel * const kernel );
 protected:
-  
+   virtual void handleSchedule( raft::kernel * const kernel ) = 0; 
    /**
     * checkSystemSignal - check the incomming streams for
     * the param kernel for any system signals, if there 
@@ -149,11 +147,10 @@ protected:
     */
    SystemSignalHandler handlers;
    
-   /** mutex for set, since we're adding kernels from multiple threads **/
-   std::mutex                 kernel_set_mutex;
    /** kernel set **/
-   std::set< raft::kernel* > &kernel_set;
-      
+   kernelkeeper &kernel_set;
+   kernelkeeper &source_kernels;      
+   kernelkeeper &dst_kernels;
 private:
 //   Map &map_ref;
 };

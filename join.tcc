@@ -61,7 +61,17 @@ public:
       return( (this)->addPortTo< T >( input ) );
    }
 
+
 protected:
+   virtual void lock()
+   {
+      lock_helper( input ); 
+   }
+   
+   virtual void unlock()
+   {
+      unlock_helper( input ); 
+   }
 
    method split_func; 
 };

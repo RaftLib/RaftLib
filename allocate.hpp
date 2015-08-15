@@ -25,13 +25,14 @@
 #ifndef _ALLOCATE_HPP_
 #define _ALLOCATE_HPP_  1
 
-
+#include "kernelkeeper.tcc"
 #include "kernel.hpp"
 #include "port_info.hpp"
 #include "fifo.hpp"
 #include <set>
 
 class Map;
+class basic_parallel;
 
 class Allocate
 {
@@ -83,7 +84,7 @@ protected:
                     FIFO * const fifo );
 
    
-   virtual void allocate( PortInfo &a, PortInfo &b, void *data ) = 0;
+   virtual void allocate( PortInfo &a, PortInfo &b, void *data );
 
    /**
     * setReady - call within the implemented run function to signal
@@ -92,8 +93,8 @@ protected:
    void setReady() noexcept;
 
    /** both convenience structs, hold exactly what the names say **/
-   std::set< raft::kernel* > &source_kernels;
-   std::set< raft::kernel* > &all_kernels;
+   kernelkeeper   &source_kernels;
+   kernelkeeper   &all_kernels;
    
    /** 
     * keeps a list of all currently allocated FIFO objects,
@@ -109,5 +110,6 @@ protected:
    volatile bool &exit_alloc;
 private:
    volatile bool ready = false;
+   friend class basic_parallel;
 };
 #endif /* END _ALLOCATE_HPP_ */

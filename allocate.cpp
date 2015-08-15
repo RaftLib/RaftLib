@@ -83,8 +83,15 @@ Allocate::initialize( PortInfo * const src,
    allocated_fifo.insert( fifo ); 
 }
 
-//void 
-//Allocate::allocate( PortInfo &a, PortInfo &b, void *data )
-//{
-//   assert( false );
-//}
+
+void 
+Allocate::allocate( PortInfo &a, PortInfo &b, void *data )
+{
+   instr_map_t *func_map( a.const_map[ Type::Heap ] );
+   auto test_func( (*func_map)[ false ] );
+   FIFO *fifo( test_func( 64 /* items */, 
+                          16 /* align */, 
+                          nullptr ) );
+   (this)->initialize( &a, &b, fifo );
+   return;
+}

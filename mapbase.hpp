@@ -35,6 +35,7 @@
 #include <thread>
 #include <sstream>
 
+#include "kernelkeeper.tcc"
 #include "portexception.hpp"
 #include "schedule.hpp"
 #include "simpleschedule.hpp"
@@ -43,7 +44,6 @@
 #include "allocate.hpp"
 #include "dynalloc.hpp"
 #include "stdalloc.hpp"
-#include "basicparallel.hpp"
 
 /**
  * kernel_pair_t - struct to be returned by mapbase link functions,
@@ -133,14 +133,14 @@ public:
       /** assume each only has a single input / output **/
       if( ! a->input.hasPorts() )
       {
-         source_kernels.insert( a );   
+         source_kernels += a;
       }
       if( ! b->output.hasPorts() )
       {
-         dst_kernels.insert( b );
+         dst_kernels += b;
       }
-      all_kernels.insert( a );
-      all_kernels.insert( b );
+      all_kernels += a;
+      all_kernels += b;
       PortInfo *port_info_a;
       try{ 
          port_info_a =  &(a->output.getPortInfo());
@@ -209,16 +209,15 @@ public:
    {
       if( ! a->input.hasPorts() )
       {
-         source_kernels.insert( a );   
+         source_kernels += a;
       }
       if( ! b->output.hasPorts() )
       {
-         dst_kernels.insert( b );
+         source_kernels += b;
       }
-      all_kernels.insert( a );
-      all_kernels.insert( b );
+      all_kernels += a;
+      all_kernels += b;
       PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
-      
       PortInfo *port_info_b;
       try{
          port_info_b = &(b->input.getPortInfo());
@@ -272,14 +271,14 @@ public:
    {
       if( ! a->input.hasPorts() )
       {
-         source_kernels.insert( a );   
+         source_kernels += a;
       }
       if( ! b->output.hasPorts() )
       {
-         dst_kernels.insert( b );
+         dst_kernels += b;
       }
-      all_kernels.insert( a );
-      all_kernels.insert( b );
+      all_kernels +=  a;
+      all_kernels +=  b;
       PortInfo *port_info_a;
       try{
          port_info_a = &(a->output.getPortInfo() );
@@ -334,14 +333,14 @@ public:
    {
       if( ! a->input.hasPorts() )
       {
-         source_kernels.insert( a );   
+         source_kernels += a;
       }
       if( ! b->output.hasPorts() )
       {
-         dst_kernels.insert( b );
+         dst_kernels += b;
       }
-      all_kernels.insert( a );
-      all_kernels.insert( b );
+      all_kernels += a;
+      all_kernels += b;
       auto &port_info_a( a->output.getPortInfoFor( a_port ) );
       auto &port_info_b( b->input.getPortInfoFor( b_port) );
       
@@ -390,12 +389,17 @@ protected:
                        raft::kernel *i );
 
    /** need to keep source kernels **/
-   std::set< raft::kernel* > source_kernels;
+   kernelkeeper              source_kernels;
    /** dst kernels **/
-   std::set< raft::kernel* > dst_kernels;
+   kernelkeeper              dst_kernels;
    /** and keep a list of all kernels **/
-   std::set< raft::kernel* > all_kernels; 
-   /** flatten these kernels into main map once we run **/
+   kernelkeeper              all_kernels;
+   /** 
+    * FIXME: come up with better solution for enabling online
+    * duplication of submaps as a unit.
+    *
+    * DOES: flatten these kernels into main map once we run 
+    */
    std::vector< MapBase* >   sub_maps;
 
    friend class Map;

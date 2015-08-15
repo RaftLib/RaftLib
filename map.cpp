@@ -39,25 +39,29 @@ Map::Map() : MapBase()
 
 Map::~Map()
 {
-   for( raft::kernel *kern : all_kernels )
+   auto &container( all_kernels.acquire() );
+   for( raft::kernel *kern : container )
    {
       delete( kern );
    }
+   all_kernels.release();
 }
 
 void
-Map::checkEdges( std::set< raft::kernel* > &source_k )
+Map::checkEdges( kernelkeeper &source_k )
 {
+   auto &container( source_k.acquire() );
    /**
     * NOTE: will throw an error that we're not catching here
     * if there are unconnected edges...this is something that
     * a user will have to fix.  Otherwise will return with no
     * errors.
     */
-   GraphTools::BFS( source_k, 
+   GraphTools::BFS( container, 
                     []( PortInfo &a, PortInfo &b, void *data ){ return; },
                     nullptr,
                     true );
+   source_k.release();
    return;
 }
 
@@ -67,12 +71,14 @@ Map::checkEdges( std::set< raft::kernel* > &source_k )
                 raft::kernel &i,  PortInfo &i_in, PortInfo &i_out );
 **/
 void 
-Map::enableDuplication( std::set< raft::kernel* > &source_k )
+Map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
 {
+    auto &source_k( source.acquire() );
+    auto &all_k   ( all.acquire()    );
     /** don't have to do this but it makes it far more apparent where it comes from **/
-    void * const kernel_ptr( reinterpret_cast< void* >( &all_kernels ) );
+    void * const kernel_ptr( reinterpret_cast< void* >( &all_k ) );
     using kernel_ptr_t = 
-      typename std::remove_reference< decltype( all_kernels ) >::type;
+      typename std::remove_reference< decltype( all_k ) >::type;
     /** need to grab impl of Lengauer and Tarjan dominators, use for SESE **/
     /** in the interim, restrict to kernels that are simple to duplicate **/
     GraphTools::BFS( source_k,
@@ -163,58 +169,6 @@ Map::enableDuplication( std::set< raft::kernel* > &source_k )
                      },
                      kernel_ptr,
                      false );
+   source.release();
+   all.release();
 }
-
-void
-Map::printEdges( std::set< raft::kernel* > &source_k )
-{
-   std::stringstream                 gviz_output;
-   std::map< std::string /* kernel name */, 
-             std::size_t /* num */ > gviz_node_map;
-   std::vector< std::string >        gviz_edge_map;
-   std::size_t                       gviz_node_index( 0 );
-   gviz_output << "digraph G{\n";
-   gviz_output << "size=\"10,10\";\n";
-   GraphTools::BFS( source_k,
-                    [&]( const PortInfo &a, const PortInfo &b, void *data )
-                    {
-                        const std::string name_a( common::printClassName( *(a.my_kernel) ) );
-                        const auto ret_val( gviz_node_map.insert( std::make_pair( name_a, gviz_node_index ) ) );
-                        if( ret_val.second /* new kernel */ )
-                        {
-                           gviz_node_index++;
-                        }
-                        const std::string name_b( common::printClassName( *(b.my_kernel) ) );
-                        const auto ret_val_2( gviz_node_map.insert( std::make_pair( name_b, gviz_node_index ) ) );
-                        if( ret_val_2.second /* new kernel */ )
-                        {
-                           gviz_node_index++;
-                        }
-                        std::stringstream ss;
-                        ss << gviz_node_map[ name_a ] << "->" << gviz_node_map[ name_b ] << "[ label=\"" <<
-                           a.my_name << " to " << a.other_name << "\" ]";
-                        gviz_edge_map.push_back( ss.str() );
-                    },
-                    nullptr,
-                    false );
-   for( auto it( gviz_node_map.begin() ); it != gviz_node_map.end(); ++it )
-   {
-      gviz_output << (*it).second << "[label=\"" << (*it).first << "\"];\n";
-   }
-   for( std::string &str : gviz_edge_map )
-   {
-      gviz_output << str << ";\n";
-   }
-   gviz_output << "}";
-   std::cout << gviz_output.str();
-   FILE *pipe( popen( "dot -Teps -oImage.eps", "w" ));
-   assert( pipe != nullptr );
-   const auto buff_size( gviz_output.gcount() + 1 );
-   char *buffer = (char*) malloc( sizeof( char ) * ( buff_size ) );
-   buffer[ buff_size - 1 ] = '\0';
-   std::memcpy( buffer, gviz_output.str().c_str(), buff_size - 1 );
-   fwrite( buffer, sizeof( char ), buff_size, pipe );
-   pclose( pipe );
-   free( buffer );
-}
-

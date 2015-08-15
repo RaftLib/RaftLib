@@ -25,54 +25,54 @@
 #include "map.hpp"
 #include "simpleschedule.hpp"
 #include "rafttypes.hpp"
-
+#include "pthreadwrap.h"
 simple_schedule::simple_schedule( Map &map ) : Schedule( map )
 {
-   /** nothing to do here **/
+   pthread_mutex_init( &thread_map_mutex, nullptr );
 }
 
 
 simple_schedule::~simple_schedule()
 {
-   /** note: kernels are deleted by the map! **/
+   pthread_mutex_lock_d( &thread_map_mutex, __FILE__, __LINE__ );
+   for( auto *ptr : thread_map )
+   {
+      delete( ptr );
+   }
+   thread_map.clear();
+   pthread_mutex_unlock( &thread_map_mutex );
+   pthread_mutex_destroy( &thread_map_mutex );
 }
 
 
 void
 simple_schedule::start()
 {
-   struct thread_info_t
-   {
-      std::thread *th      = nullptr;
-      bool        finished = false;
-   };
-
-   std::vector< thread_info_t > thread_map( kernel_set.size() );
-   
-
-   std::size_t index( 0 );
-   for( auto * const k : kernel_set )
-   {
-      thread_map[ index ].th = 
-         new std::thread( simple_run, 
-                          k,
-                          std::ref( thread_map[ index ].finished ) /* finished ref */);
-      index++;
+   auto &container( kernel_set.acquire() );
+   for( auto * const k : container )
+   {  
+      auto *th_info( new thread_info_t() );
+      th_info->th =  new std::thread( simple_run /** schedule function **/,
+                                      k          /** run what **/,
+                                      std::ref( th_info->finished ) );
+      thread_map.emplace_back( th_info );
    }
+   kernel_set.release();
 
    bool keep_going( true );
    while( keep_going )
    {
+      pthread_mutex_lock_d( &thread_map_mutex, __FILE__, __LINE__ );
       keep_going = false;
-      for( auto  &t_info : thread_map )
+      for( auto  *t_info : thread_map )
       {
-         if( t_info.th != nullptr )
+         if( t_info->th != nullptr )
          {
-            if( t_info.finished )
+            if( t_info->finished )
             {
-               t_info.th->join();
-               delete( t_info.th );
-               t_info.th = nullptr;
+               t_info->th->join();
+               delete( t_info->th );
+               t_info->th = nullptr;
             }
             else /* ! finished */
             {
@@ -80,7 +80,29 @@ simple_schedule::start()
             }
          }
       }
+      pthread_mutex_unlock( &thread_map_mutex );
+      sched_yield();
    }
+   pthread_mutex_unlock( &thread_map_mutex );
+   return;
+}
+
+void
+simple_schedule::handleSchedule( raft::kernel * const kernel )
+{
+      auto *th_info( new thread_info_t() );
+      /** 
+       * thread function takes a reference back to the scheduler
+       * accessible done boolean flag, essentially when the 
+       * kernel is done, it can be rescheduled...and this
+       * handles that.
+       */
+      th_info->th =  new std::thread( simple_run /** schedule function **/,
+                                      kernel     /** run what **/,
+                                      std::ref( th_info->finished ) );
+      pthread_mutex_lock_d( &thread_map_mutex, __FILE__, __LINE__ );
+      thread_map.emplace_back( th_info );
+      pthread_mutex_unlock( &thread_map_mutex );
 }
 
 void

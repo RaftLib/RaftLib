@@ -63,6 +63,15 @@ public:
    }
 
 protected:
+   virtual void lock()
+   {
+      lock_helper( input ); 
+   }
+   
+   virtual void unlock()
+   {
+      unlock_helper( input ); 
+   }
    method split_func;
 };
 } /** end namespace raft **/

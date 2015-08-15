@@ -42,11 +42,11 @@
 class MapBase;
 class roundrobin;
 class basic_parallel;
-
 /** need to pre-declare this **/
 namespace raft
 {
    class kernel;
+   class parallel_k;
    template < class T, class method > class join;
    template < class T, class method > class split;
 }
@@ -131,8 +131,8 @@ public:
          const std::string name( std::to_string( index ) );
          pi.my_name   = name;
          (this)->initializeConstMap< T >( pi );
-         (this)->initializeSplit< T >( pi );
-         (this)->initializeJoin< T >( pi );
+         (this)->initializeSplit<    T >( pi );
+         (this)->initializeJoin<     T >( pi );
          portmap.map.insert( std::make_pair( name, pi ) );
       }
       return( true );
@@ -300,5 +300,6 @@ protected:
    friend class Map;
    friend class GraphTools; 
    friend class basic_parallel;
+   friend class raft::parallel_k;
 };
 #endif /* END _PORT_HPP_ */

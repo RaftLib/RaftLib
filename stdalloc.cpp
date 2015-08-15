@@ -22,7 +22,7 @@
  */
 #include <chrono>
 #include <thread>
-
+#include "kernelkeeper.tcc"
 #include "stdalloc.hpp"
 #include "graphtools.hpp"
 #include "port_info.hpp"
@@ -62,18 +62,9 @@ stdalloc::run()
       assert( fifo != nullptr );
       (this)->initialize( &a, &b, fifo );
    };
-   GraphTools::BFS( (this)->source_kernels,
-                    alloc_func );
-   
+   auto &container( (this)->source_kernels.acquire() );
+   GraphTools::BFS( container, alloc_func );
+   (this)->source_kernels.release();
    (this)->setReady();
-   /** 
-    * NOTE: we'll keep this thread running in future versions 
-    * to dynamically update buffer size 
-    */
-   while( ! exit_alloc )
-   {
-      std::chrono::milliseconds dura( 2 );
-      std::this_thread::sleep_for( dura );
-   }
    return;
 }

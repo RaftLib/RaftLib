@@ -48,7 +48,7 @@ public:
     * @param   gen  - raft::rndgenerator
     * @param   seed - const std::uint64_t
     */
-   randomx( const std::size_t        count,
+   randomx( const std::int64_t       count,
             const raft::rndgenerator gen, 
             const std::uint64_t      seed ) : randombase( gen, seed ),
                                               count( count )
@@ -65,7 +65,7 @@ public:
     * from GNU GSL so feel free to consult their docs
     * here (http://goo.gl/tfElhG).  
     */
-   randomx( const std::size_t        count,
+   randomx( const std::int64_t       count,
             const raft::rndgenerator gen ) : randombase( gen ),
                                              count( count )
    {
@@ -86,7 +86,7 @@ public:
       for( auto &port : output )
       {
          port.template push< T >( std::forward< T >( draw() ) );
-         if( --count == 0 )
+         if( --count <= 0 )
          {
             return( raft::stop );
          }
@@ -111,7 +111,7 @@ protected:
       return( (this)->addPortTo< T >( output ) );
    }
    
-   std::size_t count = 0;
+   std::int64_t count = 0;
 };
 
 }

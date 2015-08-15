@@ -106,6 +106,9 @@ protected:
     * 
     */
    virtual std::size_t addPort();
+   
+   virtual void lock();
+   virtual void unlock();
 
    /**
     * PORTS - input and output, use these to interact with the

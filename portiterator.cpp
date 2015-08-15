@@ -21,23 +21,23 @@
 #include <utility>
 #include <map>
 #include <iostream>
-
+#include <pthread.h>
 #include "port_info.hpp"
 #include "portmap_t.hpp"
 #include "portiterator.hpp"
-
-PortIterator::PortIterator( portmap_t *port_map ) : port_map( port_map )
+#include "pthreadwrap.h"
+PortIterator::PortIterator( portmap_t * const port_map ) : port_map( port_map )
 {
    PortIterator::initKeyMap( port_map, key_map );
-   /** TODO, might should be trylock with error if already lock, same for below **/
-   //port_map->map_mutex.lock();
+   pthread_mutex_lock_d( &(port_map->mutex_map), __FILE__, __LINE__ ); 
 }
 
-PortIterator::PortIterator( portmap_t *port_map, 
+PortIterator::PortIterator( portmap_t * const port_map, 
                             const std::size_t index ) : 
                                                     port_map( port_map ),
                                                     map_index( index )
 {
+   is_end = true;
    PortIterator::initKeyMap( port_map, key_map );
 }
 
@@ -49,19 +49,21 @@ PortIterator::PortIterator( const PortIterator &it ) : port_map( it.port_map ),
 
 PortIterator::~PortIterator()
 {
-   //port_map->map_mutex.unlock();
+   if( is_end )
+   {
+      pthread_mutex_unlock( &(port_map->mutex_map) );
+   }
 }
 
 PortIterator&
-PortIterator::operator++()
+PortIterator::operator++() noexcept
 {
-   //TODO, perhaps throw error if out of bounds here
    map_index++;
    return( (*this) );
 }
 
 bool
-PortIterator::operator==( const PortIterator &rhs )
+PortIterator::operator==( const PortIterator &rhs ) noexcept
 {
    /** 
     * TODO, on a more philosophical note, should this
@@ -72,24 +74,25 @@ PortIterator::operator==( const PortIterator &rhs )
 }
 
 bool 
-PortIterator::operator!=( const PortIterator &rhs )
+PortIterator::operator!=( const PortIterator &rhs ) noexcept
 {
    return( map_index != rhs.map_index );
 }
 
 FIFO&
-PortIterator::operator*()
+PortIterator::operator*() noexcept
 { 
    return(
       (*port_map->map[ key_map[ map_index ] ].getFIFO() ) );
 }
 
 void
-PortIterator::initKeyMap( portmap_t *port_map, std::vector< std::string > &key_map )
+PortIterator::initKeyMap( portmap_t * const port_map, 
+                          std::vector< std::string > &key_map ) noexcept
 {
    std::map< std::string, PortInfo > &map_ref( port_map->map );
    for( const auto &pair : map_ref )
    {
-      key_map.push_back( pair.first );
+      key_map.emplace_back( pair.first );
    }
 }

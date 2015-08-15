@@ -20,15 +20,25 @@
 #ifndef _PORTMAP_T_HPP_
 #define _PORTMAP_T_HPP_  1
 
-#include <mutex>
 #include <map>
 #include <string>
 #include "port_info.hpp"
+#include "pthread.h"
 
 struct portmap_t
 {
+   portmap_t()
+   {
+      pthread_mutex_init( &mutex_map, nullptr );
+   }
+
+   ~portmap_t()
+   {
+      pthread_mutex_destroy( &mutex_map );
+   }
+
    std::map< std::string, PortInfo > map;
-   std::mutex                        map_mutex;
+   pthread_mutex_t                   mutex_map;
 };
 
 #endif /* END _PORTMAP_T_HPP_ */

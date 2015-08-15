@@ -23,9 +23,14 @@
 #include "streamingstat.tcc"
 #include <map>
 
-basic_parallel::basic_parallel( Map &map, volatile bool &exit_para )
+basic_parallel::basic_parallel( Map &map, 
+                                Allocate &alloc,
+                                Schedule &sched,
+                                volatile bool &exit_para )
    : source_kernels( map.source_kernels ),
      all_kernels(    map.all_kernels ),
+     alloc( alloc ),
+     sched( sched ),
      exit_para( exit_para )
 {
    /** nothing to do here, move along **/
@@ -35,14 +40,22 @@ basic_parallel::basic_parallel( Map &map, volatile bool &exit_para )
 void
 basic_parallel::start()
 {
-#if 0
    using hash_t = std::uintptr_t;
    std::map< hash_t, stats > hashmap; 
+   auto count( 0 );
    while( ! exit_para )
    {
-      GraphTools::BFS(  source_kernels, 
-                        [&hashmap]( raft::kernel *kernel, 
-                                    void *data )
+      auto &kernels( source_kernels.acquire() );
+      /** 
+       * since we have to have a lock on the ports
+       * for both BFS and duplication, we'll mark
+       * the kernels inside of BFS and duplicate
+       * outside of it.
+       */
+      std::vector< raft::kernel* > dup_list;
+      GraphTools::BFS(  kernels, 
+                        [&]( raft::kernel *kernel, 
+                                           void *data )
                         { 
                            if( kernel->dup_enabled )
                            {                           
@@ -52,14 +65,17 @@ basic_parallel::start()
                               /** input  stats **/
                               raft::streamingstat< float > in;
                               raft::streamingstat< float > out;
-                              for( auto &input  : kernel->input )
+                              if( kernel->input.hasPorts() )
                               {
-                                 in.update( input.size() / input.capacity() );
+                                 auto &input( kernel->input.getPortInfo() );
+                                 auto *fifo( input.getFIFO() );
+                                 in.update( fifo->size() / fifo->capacity() );
                               }
-                              /** output stats **/
-                              for( auto &output : kernel->output )
+                              if( kernel->output.hasPorts() )
                               {
-                                 out.update( output.size() / output.capacity() );
+                                 auto &output( kernel->output.getPortInfo() );
+                                 auto *fifo( output.getFIFO() );
+                                 out.update( fifo->size() / fifo->capacity() );
                               }
                               /** apply criteria **/
                               if( ( kernel->input.count() == 0 or 
@@ -69,33 +85,79 @@ basic_parallel::start()
                               {
                                  hashmap[ hash ].occ_in++;
                               }
-                              if( hashmap[ hash ].occ_in > 3 )
+                              if( hashmap[ hash ].occ_in > 3 && count < 2 )
                               {
-                                 /** clone **/
-                                 if( kernel->input.count() != 0 )
-                                 {
-                                    auto &port_in( kernel->input.getPortInfo() );
-                                 }
-                                 if( kernel->output.count() != 0 )
-                                 {
-                                    auto *ptr( kernel->clone() );
-                                    auto &port_out( kernel->output.getPortInfo() );
-                                    const auto portid( 
-                                       port_out.other_kernel->addPort() );
-                                    auto &newinport(
-                                       port_out.other_kernel->input.getPortInfoFor( 
-                                          std::to_string( portid ) ) );
-                                    auto &newoutport( ptr->output.getPortInfo() );
-                                    
-                                    //FIXME come back here
-                                 }
+                                 count++;
+                                 dup_list.emplace_back( kernel );
                                  hashmap[ hash ].occ_in = 0;
                               }
                            }
                         },
                         nullptr );
+      source_kernels.release();                  
+      
+      for( auto * kernel : dup_list )
+      {
+         /** 
+          * FIXME, logic below only works for 
+          * single input, single output..intended
+          * to get it working
+          */
+         /** clone **/
+         auto *ptr( kernel->clone() );
+         /** attach ports **/
+         if( kernel->input.count() != 0 )
+         {
+            auto &old_port_in( kernel->input.getPortInfo() );
+            old_port_in.other_kernel->lock();
+            const auto portid( 
+               old_port_in.other_kernel->addPort() );
+            auto &new_other_outport(
+               old_port_in.other_kernel->output.getPortInfoFor(
+                  std::to_string( portid )
+               )
+            );
+            auto &new_port_in( ptr->input.getPortInfo() );
+            /**
+             * connecting a.y -> b.x
+             * new_other_outprt == port y on a
+             * new_port_in      == port x on b
+             */
+            alloc.allocate( new_other_outport,
+                            new_port_in,
+                            nullptr );
+            old_port_in.other_kernel->unlock();
+         }
+         if( kernel->output.count() != 0 )
+         {
+            auto &old_port_out( kernel->output.getPortInfo() );
+            old_port_out.other_kernel->lock();
+            const auto portid( 
+               old_port_out.other_kernel->addPort() );
+            auto &new_other_inport(
+               old_port_out.other_kernel->input.getPortInfoFor( 
+                  std::to_string( portid ) ) );
+
+            auto &newoutport( ptr->output.getPortInfo() );
+            /**
+             * connecting b.y -> c.x
+             * newoutport       == port y on b
+             * new_other_inport == port x on c
+             */
+            alloc.allocate( newoutport, 
+                            new_other_inport,
+                            nullptr );
+
+            old_port_out.other_kernel->unlock();
+         }
+         /** schedule new kernel **/
+         std::cerr << "DUPLICATING!!\n";
+         sched.scheduleKernel( ptr );
+      }
+      
+      
+      dup_list.clear();
       std::chrono::microseconds dura( 100 );
       std::this_thread::sleep_for( dura );
    }
-#endif
 }

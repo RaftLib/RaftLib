@@ -67,6 +67,10 @@ Port::getPortType( const std::string &&port_name )
 FIFO&
 Port::operator[]( const std::string &&port_name )
 {
+   //NOTE: We'll need to add a lock here if later
+   //we intend to remove ports dynamically as well
+   //for the moment however lets just assume we're
+   //only adding them
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
    {

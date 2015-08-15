@@ -6,7 +6,9 @@
 #include "optdef.hpp"
 
 
-Schedule::Schedule( Map &map ) : kernel_set( map.all_kernels )
+Schedule::Schedule( Map &map ) : kernel_set( map.all_kernels ),
+                                 source_kernels( map.source_kernels ),
+                                 dst_kernels( map.dst_kernels )
 {
    //TODO, see if we want to keep this 
    handlers.addHandler( raft::quit, Schedule::quitHandler ); 
@@ -87,15 +89,30 @@ Schedule::checkSystemSignal( raft::kernel * const kernel,
    return( ret_signal );
 }
 
-bool
+void
 Schedule::scheduleKernel( raft::kernel * const kernel )
 {
+   /**
+    * NOTE: The kernel param should be ready to rock,
+    * we just need to add it here.  The data structures
+    * xx_kernels all expect a fully ready kernel, well
+    * the threads monitoring the system do at least and
+    * this is one.  What we need to do to kick off the
+    * execution is add it to the handleSchedule virtual
+    * function which is implemented by each scheduler.
+    */
    assert( kernel != nullptr );
-   /** lock mutex, add to set, unlock mutex **/
-   std::lock_guard< std::mutex > lock( kernel_set_mutex );
-   auto ret_val( kernel_set.insert( kernel ) );
-   //TODO, add appropriate exception instead of this
-   return( ret_val.second ); 
+   if( ! kernel->input.hasPorts() )
+   {
+      source_kernels +=  kernel;
+   }
+   if( ! kernel->output.hasPorts() )
+   {
+      dst_kernels += kernel;
+   }
+   kernel_set += kernel;
+   handleSchedule( kernel );
+   return;
 }
 
 

@@ -21,11 +21,13 @@
 #define _PARALLELK_HPP_  1
 #include <raft>
 #include <cstddef>
+#include "pthread.h"
 
 class Map;
 class Schedule;
 
-namespace raft{
+namespace raft
+{
 
 class parallel_k : public raft::kernel 
 {
@@ -49,7 +51,16 @@ protected:
       port.addPort< T >( std::to_string( portid ) );
       return( portid );
    }
+   
+   void lock_helper( Port &port )
+   {
+      pthread_mutex_lock( &port.portmap.mutex_map ); 
+   }
 
+   void unlock_helper( Port &port )
+   {
+      pthread_mutex_unlock( &port.portmap.mutex_map ); 
+   }
 
    std::size_t  port_name_index = 0; 
    friend class ::Schedule;
