@@ -25,7 +25,7 @@
 #include <cstring>
 #include <sys/stat.h>
 #include <iostream>
-
+#include <array>
 #include <raft>
 
 namespace raft{
@@ -43,7 +43,7 @@ template < std::size_t size = 65536 > struct filechunk
       length = other.length;
    }
 
-   char              buffer[ size ]; 
+   std::array< char, size > buffer;
    std::size_t       start_position;
    std::size_t       length;
 

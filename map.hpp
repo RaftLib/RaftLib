@@ -60,7 +60,7 @@ public:
     */
    template< class scheduler           = simple_schedule, 
              class allocator           = dynalloc,
-             class parallelism_monitor = basic_parallel > 
+             class parallelism_monitor = no_parallel > 
       void exe()
    {
       for( auto * const submap : sub_maps )

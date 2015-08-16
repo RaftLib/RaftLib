@@ -57,6 +57,7 @@ install:
 	cp libraft.a $(PREFIX)/lib/
 	mkdir -p $(PREFIX)/include/raft_dir
 	cp *.hpp $(PREFIX)/include/raft_dir/
+	cp *.h   $(PREFIX)/include/raft_dir/
 	cp *.tcc $(PREFIX)/include/raft_dir/
 	cp ./fifo/*.hpp $(PREFIX)/include/raft_dir/
 	cp ./fifo/*.tcc $(PREFIX)/include/raft_dir/
