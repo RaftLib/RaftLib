@@ -7,10 +7,19 @@ LINUXLIBS 	 = -lrt -lpthread
 LINUXLDFLAGS = -static -static-libgcc -static-libstdc++ 
 endif
 
-CFLAGS   = -Ofast -mtune=native -Wall -std=c99
-CXXFLAGS = -Ofast -mtune=native -Wall -std=c++11 -DRDTSCP=1
+TEST = -O0 -g -DUNITTEST=1 -ggdb -DDEBUG=1
+RELEASE = -Ofast -mtune=native 
+
+ifeq ($(type), test)
+BUILD = $(TEST)
+else
+BUILD = $(RELEASE)
+endif
+
+CFLAGS   = $(BUILD) -Wall -std=c99
+CXXFLAGS = $(BUILD) -Wall -std=c++11 -DRDTSCP=1
 LDFLAGS  = -L./ $(LINUXLDFLAGS)
-LDLIBS   = -lstdc++ -lraft -lgsl  $(LINUXLIBS)
+LDLIBS   = -lstdc++ -lraft -lgsl -lgslcblas -lm $(LINUXLIBS)
 
 EXE      = sumapp readtest singlequeue multapp
 OBJS     = $(addsuffix .o, $(CPPFILES)) $(addsuffix .o, $(EXE))

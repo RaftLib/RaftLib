@@ -25,8 +25,9 @@
 #include <cstring>
 #include <sys/stat.h>
 #include <iostream>
-#include <array>
+#include <cmath>
 #include <raft>
+#include "chunkiterator.tcc"
 
 namespace raft{
 
@@ -43,9 +44,9 @@ template < std::size_t size = 65536 > struct filechunk
       length = other.length;
    }
 
-   std::array< char, size > buffer;
-   std::size_t       start_position;
-   std::size_t       length;
+   char           buffer[ size ];
+   std::size_t    start_position;
+   std::size_t    length;
 
    constexpr static std::size_t getChunkSize()
    {
@@ -56,6 +57,16 @@ template < std::size_t size = 65536 > struct filechunk
    {
       output << c.buffer;
       return( output );
+   }
+
+   chunk_iterator< size > begin() noexcept
+   {
+      return( chunk_iterator< size >( this ) );
+   }
+
+   chunk_iterator< size > end() noexcept
+   {
+      return( chunk_iterator< size >( this, length ) );
    }
 };
 
