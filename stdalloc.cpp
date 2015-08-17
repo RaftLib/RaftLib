@@ -55,8 +55,10 @@ stdalloc::run()
       }
       else
       {
-         fifo = test_func( 4 /** size **/, 
-                           32 /** align **/,
+         /** check for pre-existing alloc size for test purposes **/
+         fifo = test_func( a.fixed_buffer_size != 0 ? 
+                              a.fixed_buffer_size : 4 /** size **/, 
+                           16 /** align **/,
                            nullptr /* data struct **/);
       }
       assert( fifo != nullptr );

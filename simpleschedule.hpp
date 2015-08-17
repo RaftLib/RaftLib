@@ -42,8 +42,9 @@ protected:
    static void* simple_run( void  * data );
    struct thread_data
    {
-      raft::kernel *k;
-      bool         *finished;
+      raft::kernel *k         = nullptr;
+      bool         *finished  = nullptr;
+      int          loc        = -1;
    };
    
    struct thread_info_t

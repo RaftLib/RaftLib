@@ -33,13 +33,13 @@
    {
       count = atoi( argv[ 1 ] );
    }
-   std::ofstream ofs( "/tmp/log" );
+//   std::ofstream ofs( "/tmp/log" );
    using gen   = raft::random_variate< std::int32_t, raft::sequential >;
    using p_gen = raft::print< std::int32_t  , '\n' >;
    raft::map.link< order::out >(
       raft::kernel::make< gen >( 1, 1000, 1 , count ),
-      raft::kernel::make< p_gen >( ofs ) );
+      raft::kernel::make< p_gen >( std::cout ) );
    raft::map.exe();
-   ofs.close();
+//   ofs.close();
    return( EXIT_SUCCESS );
  }

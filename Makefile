@@ -35,7 +35,7 @@ RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
                    simpleschedule stdalloc portiterator dynalloc \
                    roundrobin kernel mapbase submap globalmap \
                    systemsignalhandler poolschedule kernelcontainer \
-                   common basicparallel noparallel
+                   common basicparallel noparallel affinity
 
 COBJS   = $(RBCOBJS) $(LIBFIBERCOBJS) pthreadwrap
 CXXOBJS = $(PACKAGEOBJS) $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)

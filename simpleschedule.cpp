@@ -20,12 +20,19 @@
 #include <cassert>
 #include <functional>
 #include <iostream>
+#include <map>
 
 #include "kernel.hpp"
 #include "map.hpp"
 #include "simpleschedule.hpp"
 #include "rafttypes.hpp"
 #include "pthreadwrap.h"
+#include "affinity.hpp"
+
+#ifdef CORE_ASSIGN
+extern std::map< std::uintptr_t, int > *core_assign;
+#endif
+
 simple_schedule::simple_schedule( Map &map ) : Schedule( map )
 {
    pthread_mutex_init( &thread_map_mutex, nullptr );
@@ -54,6 +61,9 @@ simple_schedule::start()
       /** set up data struct for threads **/
       th_info->data.k = k;
       th_info->data.finished = &(th_info->finished);
+#ifdef CORE_ASSIGN
+      th_info->loc = (*core_assign)[ reinterpret_cast< std::uintptr_t >( k ) ];
+#endif
       pthread_create( &(th_info->th) /** thread **/, 
                       nullptr        /** no attributes **/, 
                       simple_run     /** function **/,
@@ -113,7 +123,6 @@ simple_schedule::handleSchedule( raft::kernel * const kernel )
       pthread_mutex_lock_d( &thread_map_mutex, __FILE__, __LINE__ );
       thread_map.emplace_back( th_info );
       pthread_mutex_unlock( &thread_map_mutex );
-      thread_map.emplace_back( th_info );
       return;
 }
 
@@ -121,6 +130,10 @@ void*
 simple_schedule::simple_run( void * data ) 
 {
    auto *thread_d( reinterpret_cast< thread_data* >( data ) );
+   if( thread_d->loc != -1 )
+   {
+      affinity::set( thread_d->loc );
+   }
    while( ! *(thread_d->finished) )
    {
       Schedule::kernelRun( thread_d->k, *(thread_d->finished) );

@@ -41,7 +41,8 @@ void
 basic_parallel::start()
 {
    using hash_t = std::uintptr_t;
-   std::map< hash_t, stats > hashmap; 
+   std::map< hash_t, stats > hashmap;
+   //FIXME, need to add the code that'll limit this without a count
    auto count( 0 );
    while( ! exit_para )
    {
@@ -151,7 +152,6 @@ basic_parallel::start()
             old_port_out.other_kernel->unlock();
          }
          /** schedule new kernel **/
-         std::cerr << "DUPLICATING!!\n";
          sched.scheduleKernel( ptr );
       }
       

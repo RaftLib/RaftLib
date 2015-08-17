@@ -82,8 +82,8 @@ public:
    }
 
 private:
-   raft::kernel *src;
-   raft::kernel *dst;
+   raft::kernel *src = nullptr;
+   raft::kernel *dst = nullptr;
 };
 
 
@@ -128,7 +128,9 @@ public:
     * @return  kernel_pair_t - references to src, dst kernels.
     */
    template < order::spec t = order::in >
-      kernel_pair_t link( raft::kernel *a, raft::kernel *b )
+      kernel_pair_t link( raft::kernel *a, 
+                          raft::kernel *b,
+                          const std::size_t buffer = 0 )
    {
       /** assume each only has a single input / output **/
       if( ! a->input.hasPorts() )
@@ -156,6 +158,7 @@ public:
          
          throw AmbiguousPortAssignmentException( ss.str() );
       }
+      port_info_a->fixed_buffer_size = buffer;
       PortInfo *port_info_b;
       try{
          port_info_b = &(b->input.getPortInfo());
@@ -169,7 +172,8 @@ public:
             "has more than a single port.";
          throw AmbiguousPortAssignmentException( ss.str() );
       }
-      
+      port_info_b->fixed_buffer_size = buffer;
+
       join( *a, port_info_a->my_name, *port_info_a, 
             *b, port_info_b->my_name, *port_info_b );
       switch( t )
@@ -205,7 +209,10 @@ public:
     * @return  kernel_pair_t - references to src, dst kernels.
     */
    template < order::spec t = order::in > 
-      kernel_pair_t link( raft::kernel *a, const std::string  a_port, raft::kernel *b )
+      kernel_pair_t link( raft::kernel *a, 
+                          const std::string  a_port, 
+                          raft::kernel *b,
+                          const std::size_t buffer = 0 )
    {
       if( ! a->input.hasPorts() )
       {
@@ -218,6 +225,7 @@ public:
       all_kernels += a;
       all_kernels += b;
       PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
+      port_info_a.fixed_buffer_size = buffer;
       PortInfo *port_info_b;
       try{
          port_info_b = &(b->input.getPortInfo());
@@ -231,6 +239,7 @@ public:
             "has more than a single port.";
          throw AmbiguousPortAssignmentException( ss.str() );
       }
+      port_info_b->fixed_buffer_size = buffer;
       join( *a, a_port , port_info_a, 
             *b, port_info_b->my_name, *port_info_b );
       switch( t )
@@ -267,7 +276,10 @@ public:
     * @return  kernel_pair_t - references to src, dst kernels.
     */
    template < order::spec t = order::in >
-      kernel_pair_t link( raft::kernel *a, raft::kernel *b, const std::string b_port )
+      kernel_pair_t link( raft::kernel *a, 
+                          raft::kernel *b, 
+                          const std::string b_port,
+                          const std::size_t buffer = 0 )
    {
       if( ! a->input.hasPorts() )
       {
@@ -292,8 +304,10 @@ public:
             "has more than a single port.";
          throw AmbiguousPortAssignmentException( ss.str() );
       }
+      port_info_a->fixed_buffer_size = buffer;
       
       PortInfo &port_info_b( b->input.getPortInfoFor( b_port) );
+      port_info_b.fixed_buffer_size = buffer;
       
       join( *a, port_info_a->my_name, *port_info_a, 
             *b, b_port, port_info_b );
@@ -328,8 +342,11 @@ public:
     * @return  kernel_pair_t - references to src, dst kernels.
     */
    template < order::spec t = order::in >
-      kernel_pair_t link( raft::kernel *a, const std::string a_port, 
-                          raft::kernel *b, const std::string b_port )
+      kernel_pair_t link( raft::kernel *a, 
+                          const std::string a_port, 
+                          raft::kernel *b, 
+                          const std::string b_port,
+                          const std::size_t buffer = 0 )
    {
       if( ! a->input.hasPorts() )
       {
@@ -342,7 +359,9 @@ public:
       all_kernels += a;
       all_kernels += b;
       auto &port_info_a( a->output.getPortInfoFor( a_port ) );
+      port_info_a.fixed_buffer_size = buffer;
       auto &port_info_b( b->input.getPortInfoFor( b_port) );
+      port_info_b.fixed_buffer_size = buffer;
       
       join( *a, a_port, port_info_a, 
             *b, b_port, port_info_b );

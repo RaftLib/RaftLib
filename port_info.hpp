@@ -78,6 +78,7 @@ struct PortInfo
       start_index    = other.start_index;
       split_func      = other.split_func;
       join_func       = other.join_func;
+      fixed_buffer_size = other.fixed_buffer_size;
    }
    
    PortInfo( PortInfo &&other ) : 
@@ -95,7 +96,8 @@ struct PortInfo
       out_of_order      ( std::move( other.out_of_order)),
       existing_buffer   ( std::move( other.existing_buffer)),
       nitems            ( std::move( other.nitems)),
-      start_index       ( std::move( other.start_index))
+      start_index       ( std::move( other.start_index)),
+      fixed_buffer_size ( std::move( fixed_buffer_size ))
    {
       /** nothing to do here **/
    }
@@ -177,7 +179,6 @@ struct PortInfo
    void             *existing_buffer = nullptr;
    std::size_t       nitems          = 0;
    std::size_t       start_index     = 0;
-
-   
+   std::size_t       fixed_buffer_size = 0;   
 };
 #endif /* END _PORT_INFO_HPP_ */

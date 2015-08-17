@@ -36,9 +36,6 @@ main( int argc, char **argv )
   
    const auto num_threads( atoi( argv[ 3 ] ) );
 
-   std::cout << "Searching for: " << search_term << "\n";
-   std::cout << "In filename: " << file << "\n";
-   std::cout << "Thread count: " << num_threads << "\n";
 
    int fd( open( file.c_str(), O_RDONLY ) );
    if( fd < 0 )
