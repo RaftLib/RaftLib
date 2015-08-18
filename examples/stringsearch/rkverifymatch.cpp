@@ -54,16 +54,14 @@ rkverifymatch::run()
    auto &port( input[ "input" ] );
    auto &out( output[ "output" ] );
    const auto avail( port.size() );
-   FIFO::pop_range_t< hit_t > range( avail );
-   port.pop_range< hit_t >( range, avail );
-   for( auto &hit : range )
+   auto range( port.peek_range< hit_t >( avail ) ); 
+   for( auto i( 0 ); i < avail; i++ )
    {
       auto &m( out.allocate< match_t >() );
-      //out.push< match_t >( hit.first ); 
       if( verify_match( filebuffer, 
                         filebuffer_size, 
                         searchterm, 
-                        hit.first, 
+                        range[ i ], 
                         m ) )
       {
          out.send();
@@ -73,6 +71,7 @@ rkverifymatch::run()
          out.deallocate();
       }
    }
+   port.recycle( avail );
    return( raft::proceed );
 }
 

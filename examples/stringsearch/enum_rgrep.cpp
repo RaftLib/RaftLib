@@ -29,11 +29,13 @@ extern Clock *system_clock;
 int
 main( int argc, char **argv )
 {
+
+   core_assign = new std::map< std::uintptr_t, int >();
    std::default_random_engine generator;
    const auto maxcore(  sysconf( _SC_NPROCESSORS_CONF ) );
    std::uniform_int_distribution< int > distribution( 0 , maxcore );
    auto getcore( std::bind( distribution, generator ) );
-
+   
    const auto num_threads( 5 );
    
    if( argc != 3 )
@@ -133,6 +135,7 @@ main( int argc, char **argv )
                               filefinish, 
                               std::to_string( index ),
                               buff_size[ assign_index++ ] );
+               assigncore( rbk[ index ] );
             }
             
             const auto start( system_clock->getTime() );

@@ -19,6 +19,7 @@ std::map< std::uintptr_t, int > *core_assign = nullptr;
 #include <iterator>
 #include <fstream>
 #include <random>
+#include <iomanip>
 
 #include "searchdefs.hpp"
 #include "search.tcc"
@@ -30,13 +31,13 @@ main( int argc, char **argv )
 {
    core_assign = new std::map< std::uintptr_t, int >();
    std::default_random_engine generator;
-   const auto maxcore(  sysconf(_SC_NPROCESSORS_ONLN) );
+   const auto maxcore(  sysconf( _SC_NPROCESSORS_CONF ) );
    std::uniform_int_distribution< int > distribution( 0 , maxcore );
    auto getcore( std::bind( distribution, generator ) );
 
-   const auto num_threads( maxcore - 4 );
+
    
-   if( argc != 4 )
+   if( argc != 3 )
    {  
       std::cerr << "usage: ./rgrep <SEARCH TERM> <TEXT FILE>\n";
       exit( EXIT_SUCCESS );
@@ -44,6 +45,13 @@ main( int argc, char **argv )
    
    const std::string search_term( argv[ 1 ] );
    const std::string file( argv[ 2 ] );
+   
+   auto assigncore( [&]( raft::kernel *k ) -> void
+   {
+      (*core_assign)[ reinterpret_cast< std::uintptr_t >( k ) ] = 
+         getcore();
+      return;
+   } );
   
 
 
@@ -84,77 +92,89 @@ main( int argc, char **argv )
       perror( "Failed to give memory advise\n" );
       exit( EXIT_FAILURE );
    }
+   
+   std::ofstream results( "rk_resultslog.csv" );
+   /** now we need to iterate over all combinations of buffer sizes **/
 
-   
-   /** set up complete enumeration of cores **/
-   auto coreset( raft::range( 0, num_threads + 2, 1 ) );
-   
-   std::vector< raft::hit_t > total_hits;
-
-   //auto kern_start( 
-   //raft::map.link( 
-   //   raft::kernel::make< raft::filereader< raft::chunk_t > >( file, 
-   //                                                      num_threads,
-   //                                                      search_term.length() ),
-   //   raft::kernel::make< raft::search< raft::rabinkarp > >( search_term ) ) );
-
-   auto *foreach( 
-      raft::kernel::make< raft::for_each< char > >( buffer, st.st_size, num_threads ) );
-   
-   std::vector< raft::kernel* > rbk( num_threads );
-   
-   
-   for( auto index( 0 ); index < num_threads; index++ )
+   for( auto num_threads( 1 ); num_threads < 10; num_threads++ )
    {
-      rbk[ index ] = raft::kernel::make< 
-         raft::search< raft::rabinkarp > >( search_term );
-      raft::map.link( foreach, std::to_string( index ), rbk[ index ] );
-   }
-   
-   std::vector< raft::kernel* > rbkverify( num_cores );
-   for( index = 0; index < num_threads; index++ ) 
+   std::vector< std::size_t > buff_size( num_threads + 2 );
+   std::fill( buff_size.begin(), buff_size.end(), 4 );
+   const int max_buff_size( 4096 );
+   for( auto &curr_buff : buff_size )
    {
-      rbkverify[ index ] = 
-         raft::kernel::make< raft::rkverifymatch >( buffer, st.st_size, search_term );
-      raft::map.link( rbk[ index ], rbkverify[ index ] );
+      for( auto &curr_size( curr_buff ); curr_size < max_buff_size; curr_size += 16 )
+      {
+         int repeat( 2 );
+         while( repeat-- )
+         {
+            auto assign_index( 0 );
+            Map localmap;
+            core_assign = new std::map< std::uintptr_t, int >();
+            std::vector< raft::match_t > total_hits;
+            auto *foreach( 
+               raft::kernel::make< 
+                  raft::for_each< char > >( buffer, st.st_size, num_threads ) );
+            assigncore( foreach ); 
+            std::vector< raft::kernel* > rbk( num_threads );
+            for( auto index( 0 ); index < num_threads; index++ )
+            {
+               rbk[ index ] = raft::kernel::make< 
+                  raft::search< raft::rabinkarp > >( search_term );
+               localmap.link( foreach, std::to_string( index ), 
+                              rbk[ index ],
+                              buff_size[ assign_index++ ] );
+               assigncore( rbk[ index ] );
+            }
+            std::vector< raft::kernel* > rbkverify( num_threads );
+            for( auto index = 0; index < num_threads; index++ ) 
+            {
+               rbkverify[ index ] = 
+                  raft::kernel::make< raft::rkverifymatch >( buffer, st.st_size, search_term );
+               localmap.link( rbk[ index ], 
+                              rbkverify[ index ],
+                              buff_size[ assign_index ++ ] );
+               assigncore( rbk[ index ] );
+            }
+            auto *filefinish(
+               raft::kernel::make< raft::write_each< raft::match_t > >(
+                  std::back_inserter( total_hits ), num_threads ) );
+            assigncore( filefinish );
+            for( auto index( 0 ); index < num_threads; index++ )
+            {
+               localmap.link( rbkverify[ index ], 
+                               filefinish, 
+                               std::to_string( index ) );
+            }
+            
+            
+            const auto start( system_clock->getTime() );
+            localmap.exe();
+            const auto end( system_clock->getTime() );
+            for( const auto &pair : (*core_assign) )
+            {
+               results << pair.second << ", ";
+            }
+            for( const auto s : buff_size )
+            {
+               results << s << ", ";
+            }
+            results << std::setprecision( 10 );
+            results << ( end - start ) << "\n";
+
+            std::ofstream ofs("/dev/null");
+            for( auto &val : total_hits )
+            {
+               ofs << val << "\n";
+            }
+            ofs.close();
+            delete( core_assign );
+         }
+      }
+   } 
    }
-   
-
-
-   auto *filefinish(
-      raft::kernel::make< raft::write_each< raft::hit_t > >(
-         std::back_inserter( total_hits ), num_threads ) );
-
-   for( auto index( 0 ); index < num_threads; index++ )
-   {
-      raft::map.link( rbkverify[ index ], 
-                      filefinish, 
-                      std::to_string( index ) );
-   }
-   
-
-   //auto kern_mid(
-   //raft::map.link(
-   //   &(kern_start.dst),
-   //   raft::kernel::make< raft::rkverifymatch >( file, search_term ) ) ); 
-   //   
-
-   //raft::map.link( 
-   //   &(kern_mid.dst),
-   //   raft::kernel::make< 
-   //      raft::write_each< raft::match_t > >( 
-   //         std::back_inserter( total_hits ) ) );
-   
-   raft::map.exe();
-
-   //std::ofstream ofs("/dev/null");
-   std::cout << "Hits: " << total_hits.size() << "\n";
-   for( raft::hit_t &val : total_hits )
-   {
-      std::cout << val << "\n"; 
-      //": " << val.seg << "\n";
-   }
+   results.flush();
+   results.close();
    munmap( buffer, st.st_size );
-   delete( core_assign );
    return( EXIT_SUCCESS );
 }

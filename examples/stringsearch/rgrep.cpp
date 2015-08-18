@@ -93,7 +93,7 @@ main( int argc, char **argv )
    for( auto index( 0 ); index < num_threads; index++ )
    {
       rbk[ index ] = raft::kernel::make< 
-         raft::search< raft::boyermoore> >( search_term );
+         raft::search< raft::ahocorasick > >( search_term );
       raft::map.link( foreach, std::to_string( index ), rbk[ index ] );
    }
    
@@ -133,10 +133,9 @@ main( int argc, char **argv )
 
    //std::ofstream ofs("/dev/null");
    std::cout << "Hits: " << total_hits.size() << "\n";
-   for( raft::hit_t &val : total_hits )
+   for( const raft::hit_t val : total_hits )
    {
-      std::cout << val << "\n"; 
-      //": " << val.seg << "\n";
+      std::cout << val << "\n";
    }
    munmap( buffer, st.st_size );
    return( EXIT_SUCCESS );

@@ -27,6 +27,7 @@
 #include <raft>
 #include <raftio>
 #include "searchdefs.hpp"
+#include "rkverifymatch.hpp"
 
 namespace raft
 {

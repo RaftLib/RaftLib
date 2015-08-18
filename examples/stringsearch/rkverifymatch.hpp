@@ -29,44 +29,42 @@
 
 namespace raft{
 
-#if 0
-struct match_t
-{
-   match_t()
-   {
-   }
-
-   match_t( const char * const filebuffer, 
-            const std::size_t match_pos,
-            const std::size_t match_length )
-   {
-      const auto end( std::min( match_length, ( buff_length - 1 ) ) );
-      seg[ end + 1 ] = '\0';
-      for( std::size_t i( 0 ); i < end; i++ )
-      {
-         seg[ i ] = filebuffer[ match_pos + i ];
-      }
-      seg_length = end;
-      hit_pos = match_pos;
-   }
-
-   match_t( const match_t &other )
-   {  
-      const char *s( other.seg );
-      for( char *i( seg ); *s != '\0'; ++s, ++i )
-      {
-         *i = *s;
-      }
-      seg_length = other.seg_length;
-      hit_pos    = other.hit_pos;
-   }
-
-   static const std::size_t buff_length = 32;
-   char seg[ match_t::buff_length ];
-   std::size_t seg_length = 0;
-   std::size_t hit_pos    = 0;
-};
-#endif
+//struct match_t
+//{
+//   match_t()
+//   {
+//   }
+//
+//   match_t( const char * const filebuffer, 
+//            const std::size_t match_pos,
+//            const std::size_t match_length )
+//   {
+//      const auto end( std::min( match_length, ( buff_length - 1 ) ) );
+//      seg[ end + 1 ] = '\0';
+//      for( std::size_t i( 0 ); i < end; i++ )
+//      {
+//         seg[ i ] = filebuffer[ match_pos + i ];
+//      }
+//      seg_length = end;
+//      hit_pos = match_pos;
+//   }
+//
+//   match_t( const match_t &other )
+//   {  
+//      const char *s( other.seg );
+//      for( char *i( seg ); *s != '\0'; ++s, ++i )
+//      {
+//         *i = *s;
+//      }
+//      seg_length = other.seg_length;
+//      hit_pos    = other.hit_pos;
+//   }
+//
+//   static const std::size_t buff_length = 32;
+//   char seg[ match_t::buff_length ];
+//   std::size_t seg_length = 0;
+//   std::size_t hit_pos    = 0;
+//};
 
 class rkverifymatch : public kernel
 {
@@ -85,7 +83,6 @@ private:
    char * const filebuffer            = nullptr;
    std::size_t filebuffer_size = 0;
    /** functions **/
-
    static bool verify_match( const char * const buffer,
                              const std::size_t buff_size,
                              const std::string &term, 
