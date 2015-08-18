@@ -1,10 +1,10 @@
-CC  ?= gcc
-CXX ?= g++
+CC  ?= clang
+CXX ?= clang++
 AR  ?= ar
 
 ifneq ($(shell uname -s), Darwin)
-LINUXLIBS 	 = -lrt -lpthread
-LINUXLDFLAGS = -static -static-libgcc -static-libstdc++ 
+LINUXLIBS 	 = -lrt -lpthread #-Wl,--whole-archive -lpthread -Wl,--no-whole-archive
+#LINUXLDFLAGS = -static -static-libgcc -static-libstdc++ 
 endif
 
 TEST = -O0 -g -DUNITTEST=1 -ggdb -DDEBUG=1

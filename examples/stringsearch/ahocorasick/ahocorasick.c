@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <ctype.h>
 
 #include "node.h"
@@ -361,7 +362,7 @@ void ac_automata_display (AC_AUTOMATA_t * thiz, char repcast)
                 switch (repcast)
                 {
                 case 'n':
-                    printf("%ld", sid.rep.number);
+                    printf("%"PRIu64"", sid.rep.number);
                     break;
                 case 's':
                     printf("%s", sid.rep.stringy);

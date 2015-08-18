@@ -1,5 +1,5 @@
-CC    ?= gcc
-CXX   ?= g++
+CC    ?= clang
+CXX   ?= clang++
 AR    ?= ar
 
 PREFIX ?= /usr/local
@@ -12,8 +12,8 @@ DIRINCS = $(PACKAGEDIR) $(RINGBUFFERDIR) ./
 
 ifneq ($(shell uname -s), Darwin)
 RT = -lrt
-STATIC = -DRDTSCP=1 -static -static-libgcc -static-libstdc++
-PTHREAD = -lpthread  
+STATIC = -DRDTSCP=1 #-static -static-libgcc -static-libstdc++
+PTHREAD = -lpthread# -Wl,--whole-archive -lpthread  -Wl,--no-whole-archive
 endif
 
 type =? release
@@ -28,14 +28,15 @@ endif
 
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
-CXXFLAGS =  $(BUILD) -Wall -std=c++11 #-Wstack-protector -fstack-protector-all
+CXXFLAGS =  $(BUILD) -Wall -std=c++11 -DLIBCOMPILE=1 #-Wstack-protector -fstack-protector-all
 
 
 RAFTLIGHTCXXOBJS = allocate map graphtools port portexception schedule \
                    simpleschedule stdalloc portiterator dynalloc \
                    roundrobin kernel mapbase submap globalmap \
                    systemsignalhandler poolschedule kernelcontainer \
-                   common basicparallel noparallel affinity
+                   common basicparallel noparallel affinity \
+                   portmap_t port_info parallelk
 
 COBJS   = $(RBCOBJS) $(LIBFIBERCOBJS) pthreadwrap
 CXXOBJS = $(PACKAGEOBJS) $(RBCXXOBJS) $(RAFTLIGHTCXXOBJS)

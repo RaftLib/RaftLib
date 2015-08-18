@@ -19,9 +19,12 @@
  */
 #ifndef _PARALLELK_HPP_
 #define _PARALLELK_HPP_  1
+#if LIBCOMPILE == 1
+#include "kernel.hpp"
+#else
 #include <raft>
+#endif
 #include <cstddef>
-#include "pthread.h"
 
 class Map;
 class Schedule;
@@ -32,12 +35,11 @@ namespace raft
 class parallel_k : public raft::kernel 
 {
 public:
-   parallel_k()          = default;
+   parallel_k();
    parallel_k( void * const ptr, 
-               const std::size_t nbytes ) : kernel( ptr, nbytes )
-   {}
+               const std::size_t nbytes );
 
-   virtual ~parallel_k() = default;
+   virtual ~parallel_k();
 
 protected:
    /** 
@@ -52,15 +54,9 @@ protected:
       return( portid );
    }
    
-   void lock_helper( Port &port )
-   {
-      pthread_mutex_lock( &port.portmap.mutex_map ); 
-   }
+   void lock_helper( Port &port );
 
-   void unlock_helper( Port &port )
-   {
-      pthread_mutex_unlock( &port.portmap.mutex_map ); 
-   }
+   void unlock_helper( Port &port );
 
    std::size_t  port_name_index = 0; 
    friend class ::Schedule;

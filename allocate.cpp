@@ -43,13 +43,13 @@ Allocate::~Allocate()
 }
 
 void
-Allocate::waitTillReady() noexcept
+Allocate::waitTillReady() 
 {
    while( ! ready );
 }
 
 void
-Allocate::setReady() noexcept
+Allocate::setReady() 
 {
    ready = true;
 }

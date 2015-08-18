@@ -107,7 +107,7 @@ private:
                          const std::uint64_t q ) -> std::int64_t
    {
       std::int64_t t( 0 );
-      for( auto i( 0 ); i < length; i++ )
+      for( std::size_t i( 0 ); i < length; i++ )
       {
          t = ( ( ( t << 8 ) - t ) + text[ i ] ) % q;
       }
@@ -122,7 +122,7 @@ private:
                                               const L l ) 
    {
       H h2( 1 );
-      for( auto i( 1 ); i < l; i++ )
+      for( L i( 1 ); i < l; i++ )
       {
          h2 = ( h2 * d ) % q;
       }

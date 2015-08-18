@@ -23,19 +23,12 @@
 #include <map>
 #include <string>
 #include "port_info.hpp"
-#include "pthread.h"
 
 struct portmap_t
 {
-   portmap_t()
-   {
-      pthread_mutex_init( &mutex_map, nullptr );
-   }
+   portmap_t();
 
-   ~portmap_t()
-   {
-      pthread_mutex_destroy( &mutex_map );
-   }
+   ~portmap_t();
 
    std::map< std::string, PortInfo > map;
    pthread_mutex_t                   mutex_map;

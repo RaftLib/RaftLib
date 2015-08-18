@@ -39,7 +39,7 @@ Pointer::Pointer( Pointer * const other,
 }
 
 std::size_t 
-Pointer::val( Pointer * const ptr ) noexcept
+Pointer::val( Pointer * const ptr ) 
 {
    struct{
       std::uint64_t a;
@@ -53,7 +53,7 @@ Pointer::val( Pointer * const ptr ) noexcept
 }
 
 void
-Pointer::inc( Pointer * const ptr ) noexcept
+Pointer::inc( Pointer * const ptr ) 
 {
    ptr->a = ( ptr->a + 1 ) % ptr->max_cap;
    ptr->b = ( ptr->b + 1 ) % ptr->max_cap;
@@ -66,7 +66,7 @@ Pointer::inc( Pointer * const ptr ) noexcept
 
 void
 Pointer::incBy( const std::size_t in, 
-                Pointer * const ptr ) noexcept
+                Pointer * const ptr ) 
 {
    ptr->a = ( ptr->a + in ) % ptr->max_cap;
    ptr->b = ( ptr->b + in ) % ptr->max_cap;
@@ -78,7 +78,7 @@ Pointer::incBy( const std::size_t in,
 }
 
 std::size_t 
-Pointer::wrapIndicator( Pointer * const ptr ) noexcept
+Pointer::wrapIndicator( Pointer * const ptr ) 
 {
    struct{
       std::uint64_t a;

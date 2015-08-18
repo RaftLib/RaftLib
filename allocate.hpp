@@ -64,7 +64,7 @@ public:
     * waitTillReady - call after initializing the allocate thread, returns
     * when the initial allocation is complete.
     */
-   void waitTillReady() noexcept;
+   void waitTillReady() ;
 
    
 protected:
@@ -90,7 +90,7 @@ protected:
     * setReady - call within the implemented run function to signal
     * that the initial allocations have been completed.
     */
-   void setReady() noexcept;
+   void setReady() ;
 
    /** both convenience structs, hold exactly what the names say **/
    kernelkeeper   &source_kernels;

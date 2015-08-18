@@ -78,7 +78,11 @@ public:
    {
       return( chunk->buffer[ index ] ); 
    }
-
+   
+   std::size_t location()
+   {
+      return( index );
+   }
 private:
    filechunk< size > * const       chunk;
    /** current index iterated with respect to the buffer **/

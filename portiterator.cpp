@@ -56,14 +56,14 @@ PortIterator::~PortIterator()
 }
 
 PortIterator&
-PortIterator::operator++() noexcept
+PortIterator::operator++() 
 {
    map_index++;
    return( (*this) );
 }
 
 bool
-PortIterator::operator==( const PortIterator &rhs ) noexcept
+PortIterator::operator==( const PortIterator &rhs ) 
 {
    /** 
     * TODO, on a more philosophical note, should this
@@ -74,13 +74,13 @@ PortIterator::operator==( const PortIterator &rhs ) noexcept
 }
 
 bool 
-PortIterator::operator!=( const PortIterator &rhs ) noexcept
+PortIterator::operator!=( const PortIterator &rhs ) 
 {
    return( map_index != rhs.map_index );
 }
 
 FIFO&
-PortIterator::operator*() noexcept
+PortIterator::operator*() 
 { 
    return(
       (*port_map->map[ key_map[ map_index ] ].getFIFO() ) );
@@ -88,7 +88,7 @@ PortIterator::operator*() noexcept
 
 void
 PortIterator::initKeyMap( portmap_t * const port_map, 
-                          std::vector< std::string > &key_map ) noexcept
+                          std::vector< std::string > &key_map ) 
 {
    std::map< std::string, PortInfo > &map_ref( port_map->map );
    for( const auto &pair : map_ref )

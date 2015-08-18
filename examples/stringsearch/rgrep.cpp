@@ -16,11 +16,6 @@
 
 #include "searchdefs.hpp"
 #include "search.tcc"
-   
-namespace raft
-{
-   Map map;
-}
 
 int
 main( int argc, char **argv )
@@ -51,11 +46,11 @@ main( int argc, char **argv )
    }
 
    char *buffer = nullptr;
-   //if( posix_memalign( (void**)&buffer, 32, st.st_size ) != 0 )
-   //{
-   //   perror( "Failed to allocate aligned memory\n" );
-   //   exit( EXIT_FAILURE );
-   //}
+   if( posix_memalign( (void**)&buffer, 32, st.st_size ) != 0 )
+   {
+      perror( "Failed to allocate aligned memory\n" );
+      exit( EXIT_FAILURE );
+   }
 
    buffer = (char*) mmap( buffer,
          st.st_size,

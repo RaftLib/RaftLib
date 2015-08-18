@@ -38,6 +38,11 @@
 #include "poolschedule.hpp"
 #include "basicparallel.hpp"
 #include "noparallel.hpp"
+#include "Clock.hpp"
+#include "SystemClock.tcc"
+
+/** lives in clockimpl.cpp **/
+extern Clock *system_clock;
 
 class Map : public MapBase
 {
@@ -59,7 +64,7 @@ public:
     * graphs.
     */
    template< class scheduler           = simple_schedule, 
-             class allocator           = dynalloc,
+             class allocator           = stdalloc,
              class parallelism_monitor = basic_parallel > 
       void exe()
    {
@@ -104,6 +109,7 @@ public:
       });
       /** join scheduler first **/
       sched_thread.join();
+
       /** scheduler done, cleanup alloc **/
       exit_alloc = true;
       mem_thread.join();

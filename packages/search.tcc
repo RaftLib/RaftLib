@@ -45,7 +45,15 @@ public:
 
    virtual raft::kstatus run()
    {
-      
+      auto &input_port( (this)->input[ "in" ] );
+      auto &corpus( input_port.template peek< T >() );
+      for( auto it( se( corpus.begin(), corpus.end() ) );
+         it != corpus.end(); it = se( it, corpus.end() ) )
+      {
+         
+      }
+      input_port.unpeek();
+      input_port.recycle( 1 );
       return( raft::proceed );
    }
 private:

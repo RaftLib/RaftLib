@@ -1,14 +1,14 @@
-CC  ?= gcc
-CXX ?= g++
+CC  ?= clang
+CXX ?= clang++
 AR  ?= ar
 
 ifneq ($(shell uname -s), Darwin)
-LINUXLIBS 	 = -lrt -lpthread
-LINUXLDFLAGS = -static -static-libgcc -static-libstdc++ 
+LINUXLIBS 	 = -lrt -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
+LINUXLDFLAGS = -static #-static-libgcc -static-libstdc++ 
 endif
 
-CFLAGS   = -O1 -Wall -std=c99
-CXXFLAGS = -I./ahocorasick/ -I../../fifo/ -O0 -g -Wall -std=c++11 -DRDTSCP=1
+CFLAGS   = -O3 -mtune=native  -Wall -std=c99
+CXXFLAGS = -I./ahocorasick/ -I../../fifo/ -O3 -mtune=native -Wall -std=c++11 -DRDTSCP=1
 LDFLAGS  = -L./ $(LINUXLDFLAGS)
 LDLIBS   = -lahocorasick -lstdc++ -lraft -lgsl -lgslcblas -lm $(LINUXLIBS)
 

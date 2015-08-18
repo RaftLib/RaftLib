@@ -40,16 +40,16 @@ public:
 
    virtual ~PortIterator();
 
-   PortIterator& operator++() noexcept;
+   PortIterator& operator++() ;
    
-   bool operator==(const PortIterator& rhs) noexcept; 
-   bool operator!=(const PortIterator& rhs) noexcept;
-   FIFO& operator*() noexcept;
+   bool operator==(const PortIterator& rhs) ; 
+   bool operator!=(const PortIterator& rhs) ;
+   FIFO& operator*() ;
 
 private:
    static inline
    void initKeyMap( portmap_t * const port_map, 
-                    std::vector< std::string > &key_map ) noexcept;
+                    std::vector< std::string > &key_map ) ;
    
    portmap_t * const               port_map;
    std::vector< std::string >      key_map;

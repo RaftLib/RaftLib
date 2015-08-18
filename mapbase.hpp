@@ -220,7 +220,7 @@ public:
       }
       if( ! b->output.hasPorts() )
       {
-         source_kernels += b;
+         dst_kernels += b;
       }
       all_kernels += a;
       all_kernels += b;

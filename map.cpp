@@ -39,12 +39,6 @@ Map::Map() : MapBase()
 
 Map::~Map()
 {
-   auto &container( all_kernels.acquire() );
-   for( raft::kernel *kern : container )
-   {
-      delete( kern );
-   }
-   all_kernels.release();
 }
 
 void

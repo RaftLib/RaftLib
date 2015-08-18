@@ -38,74 +38,20 @@ namespace raft{
 
 struct PortInfo
 {
-   PortInfo() : type( typeid(*this) )
-   {
-      /** 
-       * TODO should throw an error if copy constructor isn't used
-       * after this.  
-       */
-   }
+   PortInfo();
 
-   PortInfo( const std::type_info &the_type )  : type( the_type )
-   {
-
-   }
+   PortInfo( const std::type_info &the_type );
    
    PortInfo( const std::type_info &the_type,
              void * const ptr,
              const std::size_t nitems,
-             const std::size_t start_index )  : type( the_type ),
-                                                existing_buffer( ptr ),
-                                                nitems( nitems ),
-                                                start_index( start_index )
-   {
-
-   }
-
-
-   PortInfo( const PortInfo &other ) : type( other.type )
-   {
-      fifo_a         = other.fifo_a;
-      fifo_b         = other.fifo_b;
-      const_map      = other.const_map;
-      my_kernel      = other.my_kernel;
-      my_name        = other.my_name;
-      other_kernel   = other.other_kernel;
-      other_name     = other.other_name;
-      out_of_order   = other.out_of_order;
-      existing_buffer= other.existing_buffer;
-      nitems         = other.nitems;
-      start_index    = other.start_index;
-      split_func      = other.split_func;
-      join_func       = other.join_func;
-      fixed_buffer_size = other.fixed_buffer_size;
-   }
+             const std::size_t start_index );
+                                            
+   PortInfo( const PortInfo &other );
    
-   PortInfo( PortInfo &&other ) : 
-      fifo_a            ( std::move( other.fifo_a)),
-      fifo_b            ( std::move( other.fifo_b)),
-      type              ( std::move(  other.type ) ),
-      const_map         ( std::move( other.const_map)),
-      split_func        ( std::move( other.split_func)),
-      join_func         ( std::move( other.join_func)),
-      my_kernel         ( std::move( other.my_kernel)),
-      my_name           ( std::move( other.my_name)),
-      other_kernel      ( std::move( other.other_kernel)),
-      other_name        ( std::move( other.other_name)),
-      use_my_allocator  ( std::move( other.use_my_allocator )),
-      out_of_order      ( std::move( other.out_of_order)),
-      existing_buffer   ( std::move( other.existing_buffer)),
-      nitems            ( std::move( other.nitems)),
-      start_index       ( std::move( other.start_index)),
-      fixed_buffer_size ( std::move( fixed_buffer_size ))
-   {
-      /** nothing to do here **/
-   }
 
-   virtual ~PortInfo()
-   {
-      /** alloc delete fifo object **/
-   }
+   virtual ~PortInfo();
+
    /**
     * getFIFO - call this function to get a FIFO, lock free but
     * checks to make sure an update isn't occuring.  The ptr returned
@@ -114,32 +60,15 @@ struct PortInfo
     * until the FIFO is fully emptied.
     * @return FIFO*
     */
-   FIFO* getFIFO()
-   {
-      struct{
-         FIFO *a;
-         FIFO *b;
-      }copy = { fifo_a, fifo_b };
-      while( copy.a != copy.b )
-      {
-         copy.a = fifo_a;
-         copy.b = fifo_b;
-      }
-      return( copy.a );
-   }
+   FIFO* getFIFO();
 
    /**
     * setFIFO - call this funciton to set a FIFO, updates both
     * pointers at the same time as opposed to doing it manually
     * @param   in - valid FIFO*, must not be nullptr
     */
-   void setFIFO( FIFO *in )
-   {
-      assert( in != nullptr );
-      fifo_a = in;
-      fifo_b = in;
-   }
-
+   void setFIFO( FIFO *in );
+   
    FIFO            *fifo_a  = nullptr;
    FIFO            *fifo_b  = nullptr;
    /** 

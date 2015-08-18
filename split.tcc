@@ -22,7 +22,6 @@
 #include <string>
 #include <raft>
 
-
 namespace raft {
 template < class T, class method = roundrobin > class split : public raft::parallel_k
 {

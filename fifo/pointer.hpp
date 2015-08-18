@@ -58,14 +58,14 @@ public:
     * many items can be read.
     * @return std::size_t, current 'true' value of the pointer
     */
-   static std::size_t val( Pointer * const ptr ) noexcept;
+   static std::size_t val( Pointer * const ptr ) ;
 
    /**
     * inc - increments the pointer, takes care of wrapping
     * the pointers as well so you don't run off the page
     * @return  std::size_t, current value of pointer after increment
     */
-   static void inc( Pointer * const ptr ) noexcept;
+   static void inc( Pointer * const ptr ) ;
    
    /**
     * incBy - increments the current pointer poisition
@@ -75,7 +75,7 @@ public:
     * @return  std::size_t, current increment after adding 'in'
     */
    static void incBy( const std::size_t in, 
-                      Pointer * const ptr ) noexcept;
+                      Pointer * const ptr ) ;
 
    
    /**
@@ -86,7 +86,7 @@ public:
     * queue size.  
     * @return  std::size_t
     */
-   static std::size_t wrapIndicator( Pointer * const ptr ) noexcept;
+   static std::size_t wrapIndicator( Pointer * const ptr ) ;
    
 private:
    volatile std::uint64_t           a  = 0;

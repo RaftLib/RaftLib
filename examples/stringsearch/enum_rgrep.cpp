@@ -97,62 +97,66 @@ main( int argc, char **argv )
    const int max_buff_size( 4096 );
    for( auto &curr_buff : buff_size )
    {
-      for( auto curr_size( curr_buff ); curr_size < max_buff_size; curr_size++ )
+      for( auto &curr_size( curr_buff ); curr_size < max_buff_size; curr_size += 16 )
       {
-         auto assign_index( 0 );
-         Map localmap;
-         core_assign = new std::map< std::uintptr_t, int >();
-         std::vector< raft::hit_t > total_hits; 
-         auto *foreach( 
-            raft::kernel::make< 
-               raft::for_each< char > >( buffer, st.st_size, num_threads ) );
-         assigncore( foreach ); 
-         std::vector< raft::kernel* > rbk( num_threads );
-         for( auto index( 0 ); index < num_threads; index++ )
+         int repeat( 20 );
+         while( repeat-- )
          {
-            rbk[ index ] = raft::kernel::make< 
-               raft::search< raft::boyermoore> >( search_term );
-            localmap.link( foreach, 
-                           std::to_string( index ), 
-                           rbk[ index ],
-                           buff_size[ assign_index++ ] );
-            assigncore( rbk[ index ] );
-         }
-         
+            auto assign_index( 0 );
+            Map localmap;
+            core_assign = new std::map< std::uintptr_t, int >();
+            std::vector< raft::hit_t > total_hits; 
+            auto *foreach( 
+               raft::kernel::make< 
+                  raft::for_each< char > >( buffer, st.st_size, num_threads ) );
+            assigncore( foreach ); 
+            std::vector< raft::kernel* > rbk( num_threads );
+            for( auto index( 0 ); index < num_threads; index++ )
+            {
+               rbk[ index ] = raft::kernel::make< 
+                  raft::search< raft::boyermoore> >( search_term );
+               localmap.link( foreach, 
+                              std::to_string( index ), 
+                              rbk[ index ],
+                              buff_size[ assign_index++ ] );
+               assigncore( rbk[ index ] );
+            }
+            
 
-         auto *filefinish(
-            raft::kernel::make< raft::write_each< raft::hit_t > >(
-               std::back_inserter( total_hits ), num_threads ) );
-         assigncore( filefinish );
-         for( auto index( 0 ); index < num_threads; index++ )
-         {
-            localmap.link( rbk[ index ], 
-                           filefinish, 
-                           std::to_string( index ),
-                           buff_size[ assign_index++ ] );
+            auto *filefinish(
+               raft::kernel::make< raft::write_each< raft::hit_t > >(
+                  std::back_inserter( total_hits ), num_threads ) );
+            assigncore( filefinish );
+            for( auto index( 0 ); index < num_threads; index++ )
+            {
+               localmap.link( rbk[ index ], 
+                              filefinish, 
+                              std::to_string( index ),
+                              buff_size[ assign_index++ ] );
+            }
+            
+            const auto start( system_clock->getTime() );
+            localmap.exe();
+            const auto end( system_clock->getTime() );
+            for( const auto &pair : (*core_assign) )
+            {
+               results << pair.second << ", ";
+            }
+            for( const auto s : buff_size )
+            {
+               results << s << ", ";
+            }
+            results << std::setprecision( 10 );
+            results << ( end - start ) << "\n";
+            std::ofstream ofs("/dev/null");
+            for( raft::hit_t &val : total_hits )
+            {
+               ofs << val << "\n"; 
+            }
+            ofs.close();
+            delete( core_assign );
+            std::cout << "*\n";
          }
-         
-         const auto start( system_clock->getTime() );
-         localmap.exe();
-         const auto end( system_clock->getTime() );
-         for( const auto &pair : (*core_assign) )
-         {
-            results << pair.second << ", ";
-         }
-         for( const auto s : buff_size )
-         {
-            results << s << ", ";
-         }
-         results << std::setprecision( 10 );
-         results << ( end - start ) << "\n";
-         std::ofstream ofs("/dev/null");
-         std::cout << "Hits: " << total_hits.size() << "\n";
-         for( raft::hit_t &val : total_hits )
-         {
-            ofs << val << "\n"; 
-         }
-         ofs.close();
-         delete( core_assign );
       }
    }
    results.flush();

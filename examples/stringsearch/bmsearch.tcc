@@ -49,7 +49,7 @@ public:
    virtual raft::kstatus run() 
    {
       auto &in_port( input[ "in" ] );
-      const std::int64_t n( in_port.size() );
+      const auto n( in_port.size() );
       if( m > n )
       {
          return( raft::stop );

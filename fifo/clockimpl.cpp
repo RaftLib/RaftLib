@@ -21,4 +21,4 @@
 #include "Clock.hpp"
 #include "SystemClock.tcc"
 
- Clock *system_clock = new SystemClock< System >();
+Clock *system_clock = new SystemClock< System >( );

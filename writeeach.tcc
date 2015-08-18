@@ -59,10 +59,9 @@ template< class iterator_type >
             {
                (*insert_position) = alldata[ index ];
                /** hope the iterator defined overloaded ++ **/
-               insert_position++;
-               __builtin_prefetch( &insert_position, 1, 3 );
+               ++insert_position;
             }
-            port.recycle( avail_data );
+            port.recycle( alldata.size() );
          }
       }
       return;

@@ -1,5 +1,5 @@
-CC  ?= gcc
-CXX ?= g++
+CC  ?= clang
+CXX ?= clang++
 AR  ?= ar
 
 ifneq ($(shell uname -s), Darwin)
