@@ -22,6 +22,11 @@
 #include "common.hpp"
 #include "streamingstat.tcc"
 #include <map>
+#include <fstream>
+#include <iomanip>
+
+
+extern Clock *system_clock;
 
 basic_parallel::basic_parallel( Map &map, 
                                 Allocate &alloc,
@@ -40,6 +45,7 @@ basic_parallel::basic_parallel( Map &map,
 void
 basic_parallel::start()
 {
+   std::vector< double > eventtime;
    using hash_t = std::uintptr_t;
    std::map< hash_t, stats > hashmap;
    //FIXME, need to add the code that'll limit this without a count
@@ -105,6 +111,7 @@ basic_parallel::start()
           * to get it working
           */
          /** clone **/
+         eventtime.emplace_back( system_clock->getTime() );
          auto *ptr( kernel->clone() );
          /** attach ports **/
          if( kernel->input.count() != 0 )
@@ -160,4 +167,13 @@ basic_parallel::start()
       std::chrono::microseconds dura( 100 );
       std::this_thread::sleep_for( dura );
    }
+   std::ofstream qev( "/tmp/parallelevents.csv" );
+   for( const auto event : eventtime )
+   {
+      qev << std::setprecision( 10 );
+      qev << "P" << ", " << event << "\n";
+   }
+   qev.flush();
+   qev.close();
+   return;
 }

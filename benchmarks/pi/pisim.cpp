@@ -93,8 +93,10 @@ main( int argc, char **argv )
    raft::map.link( raft::kernel::make< rndgen >( 0.0, 1.0, count ),
                    &kernels.getDst(), "y" );
 
+   std::ofstream ofs( "/dev/null" );
    raft::map.link( &kernels.getDst(),
-                   raft::kernel::make< print >() ); 
+                   raft::kernel::make< print >( ofs ) ); 
    raft::map.exe();
+   ofs.close();
    return( EXIT_SUCCESS );
 }

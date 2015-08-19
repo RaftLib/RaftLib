@@ -61,6 +61,7 @@ dynalloc::hash( PortInfo &a, PortInfo &b )
 void
 dynalloc::run()
 {
+   std::vector< double > eventtime;
    auto alloc_func = [&]( PortInfo &a, PortInfo &b, void *data )
    {
       assert( a.type == b.type );
@@ -79,7 +80,7 @@ dynalloc::run()
       }
       else
       {
-         fifo = test_func( 64 /* items */, 
+         fifo = test_func( 4 /* items */, 
                            16 /* align */, 
                            nullptr );
       }
@@ -101,15 +102,17 @@ dynalloc::run()
 
    auto mon_func = [&]( PortInfo &a, PortInfo &b, void *data ) -> void
    {
-      const float ratio( 0.75 );
       const auto hash_val( dynalloc::hash( a, b ) );
       /** TODO, the values might wrap if no monitoring on **/
       const auto realized_ratio( a.getFIFO()->get_frac_write_blocked() );
+      const float ratio( 0.10 );
       if( realized_ratio >= ratio )
       {
          const auto curr_count( size_map[ hash_val ]++ );
-         if( curr_count  == 2 )
+         if( curr_count  > 0 )
          {
+            std::cout << "FOO: " << realized_ratio << "\n";
+            eventtime.push_back( system_clock->getTime() );
             /** get initializer function **/
             auto * const buff_ptr( a.getFIFO() );
             const auto cap( buff_ptr->capacity() );
@@ -131,5 +134,13 @@ dynalloc::run()
       (this)->source_kernels.release();
             
    }
+   std::ofstream qev( "/tmp/queueevents.csv" );
+   for( const auto event : eventtime )
+   {
+      qev << std::setprecision( 10 );
+      qev << "P" << ", " << event << "\n";
+   }
+   qev.flush();
+   qev.close();
    return;
 }
