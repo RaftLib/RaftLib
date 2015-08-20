@@ -53,6 +53,7 @@ basic_parallel::start()
    while( ! exit_para )
    {
       auto &kernels( source_kernels.acquire() );
+      eventtime.emplace_back( system_clock->getTime() );
       /** 
        * since we have to have a lock on the ports
        * for both BFS and duplication, we'll mark

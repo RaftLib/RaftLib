@@ -111,8 +111,6 @@ dynalloc::run()
          const auto curr_count( size_map[ hash_val ]++ );
          if( curr_count  > 0 )
          {
-            std::cout << "FOO: " << realized_ratio << "\n";
-            eventtime.push_back( system_clock->getTime() );
             /** get initializer function **/
             auto * const buff_ptr( a.getFIFO() );
             const auto cap( buff_ptr->capacity() );
@@ -130,6 +128,7 @@ dynalloc::run()
       std::this_thread::sleep_for( dura );
      
       auto &container( (this)->source_kernels.acquire() );
+      eventtime.push_back( system_clock->getTime() );
       GraphTools::BFS( container, mon_func );
       (this)->source_kernels.release();
             
@@ -138,7 +137,7 @@ dynalloc::run()
    for( const auto event : eventtime )
    {
       qev << std::setprecision( 10 );
-      qev << "P" << ", " << event << "\n";
+      qev << "Q" << ", " << event << "\n";
    }
    qev.flush();
    qev.close();

@@ -65,7 +65,7 @@ public:
     */
    template< class scheduler           = simple_schedule, 
              class allocator           = dynalloc,
-             class parallelism_monitor = no_parallel > 
+             class parallelism_monitor = basic_parallel > 
       void exe()
    {
       for( auto * const submap : sub_maps )
@@ -80,7 +80,7 @@ public:
       /** check types, ensure all are linked **/
       checkEdges( source_kernels );
       /** adds in split/join kernels **/
-      //enableDuplication( source_kernels, all_kernels );
+      enableDuplication( source_kernels, all_kernels );
       volatile bool exit_alloc( false );
       allocator alloc( (*this), exit_alloc );
       /** launch allocator in a thread **/
@@ -100,13 +100,13 @@ public:
 
       volatile bool exit_para( false );
       /** launch parallelism monitor **/
-      //parallelism_monitor pm( (*this)     /** ref to this    **/, 
-      //                        alloc       /** allocator      **/,
-      //                        sched       /** scheduler      **/,
-      //                        exit_para   /** exit parameter **/);
-      //std::thread parallel_mon( [&](){
-      //   pm.start();
-      //});
+      parallelism_monitor pm( (*this)     /** ref to this    **/, 
+                              alloc       /** allocator      **/,
+                              sched       /** scheduler      **/,
+                              exit_para   /** exit parameter **/);
+      std::thread parallel_mon( [&](){
+         pm.start();
+      });
       /** join scheduler first **/
       sched_thread.join();
 
@@ -114,8 +114,8 @@ public:
       exit_alloc = true;
       mem_thread.join();
       /** no more need to duplicate kernels **/
-      //exit_para = true;
-      //parallel_mon.join();
+      exit_para = true;
+      parallel_mon.join();
 
       /** all fifo's deallocated when alloc goes out of scope **/
       return; 
