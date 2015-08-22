@@ -1,6 +1,6 @@
-CC  ?= gcc
-CXX ?= g++
-AR  ?= ar
+CC  = clang
+CXX = clang++
+AR  = ar
 
 ifneq ($(shell uname -s), Darwin)
 STATIC = -static -static-libgcc -static-libstdc++
