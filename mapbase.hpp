@@ -63,7 +63,7 @@ public:
    {
    }
    
-   kernel_pair_t& operator == ( kernel_pair_t &&other )
+   kernel_pair_t& operator= ( kernel_pair_t &other )
    {
       src = other.src;
       dst = other.dst;
@@ -115,7 +115,7 @@ public:
     * which basically do the exact same thing.  The template function
     * takes a single param order::spec which is exactly as the name
     * implies, the order of the queue linking the two kernels.  The
-    * verious functions are needed to specify different ordering types
+    * various functions are needed to specify different ordering types
     * each of these will be commented seperately below.  This function
     * assumes that Kernel 'a' has only a single output and raft::kernel 'b' has
     * only a single input otherwise an exception will be thrown.
@@ -138,6 +138,14 @@ public:
       {
          dst_kernels.insert( b );
       }
+
+	  if (dst_kernels.find(a) != dst_kernels.end()) {
+			  dst_kernels.erase(a);
+	  }
+	  if (source_kernels.find(b) != source_kernels.end()) {
+			  source_kernels.erase(b);
+	  }
+
       all_kernels.insert( a );
       all_kernels.insert( b );
       PortInfo *port_info_a;
@@ -214,6 +222,14 @@ public:
       {
          dst_kernels.insert( b );
       }
+
+	  if (dst_kernels.find(a) != dst_kernels.end()) {
+			  dst_kernels.erase(a);
+	  }
+	  if (source_kernels.find(b) != source_kernels.end()) {
+			  source_kernels.erase(b);
+	  }
+
       all_kernels.insert( a );
       all_kernels.insert( b );
       PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
@@ -277,6 +293,14 @@ public:
       {
          dst_kernels.insert( b );
       }
+
+	  if (dst_kernels.find(a) != dst_kernels.end()) {
+			  dst_kernels.erase(a);
+	  }
+	  if (source_kernels.find(b) != source_kernels.end()) {
+			  source_kernels.erase(b);
+	  }
+
       all_kernels.insert( a );
       all_kernels.insert( b );
       PortInfo *port_info_a;
@@ -339,6 +363,14 @@ public:
       {
          dst_kernels.insert( b );
       }
+
+	  if (dst_kernels.find(a) != dst_kernels.end()) {
+			  dst_kernels.erase(a);
+	  }
+	  if (source_kernels.find(b) != source_kernels.end()) {
+			  source_kernels.erase(b);
+	  }
+
       all_kernels.insert( a );
       all_kernels.insert( b );
       auto &port_info_a( a->output.getPortInfoFor( a_port ) );
