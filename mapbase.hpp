@@ -2,8 +2,8 @@
  * mapbase.hpp - Base map object.  The general idea
  * is that the map object will contain everything needed
  * to construct a streaming topology.  There are two
- * sub-classes.  One is the final "map" topolgoy, the other
- * is the kernel map topolgoy.  The "kernel map" varient
+ * sub-classes.  One is the final "map" topology, the other
+ * is the kernel map topology.  The "kernel map" variant
  * has no exe functions nor map checking functions.  It is 
  * assumed that the "kernel map" derivative is contained
  * within a kernel which might have several sub "kernels" 
@@ -64,7 +64,7 @@ public:
    {
    }
    
-   kernel_pair_t& operator == ( kernel_pair_t &&other )
+   kernel_pair_t& operator= ( kernel_pair_t& other )
    {
       src = other.src;
       dst = other.dst;
@@ -116,8 +116,8 @@ public:
     * which basically do the exact same thing.  The template function
     * takes a single param order::spec which is exactly as the name
     * implies, the order of the queue linking the two kernels.  The
-    * verious functions are needed to specify different ordering types
-    * each of these will be commented seperately below.  This function
+    * various functions are needed to specify different ordering types
+    * each of these will be commented separately below.  This function
     * assumes that Kernel 'a' has only a single output and raft::kernel 'b' has
     * only a single input otherwise an exception will be thrown.
     * @param   a - raft::kernel*, src kernel
@@ -141,6 +141,14 @@ public:
       {
          dst_kernels += b;
       }
+
+      if (dst_kernels.find(a) != dst_kernels.end()) {
+         dst_kernels.erase(a);
+      }
+      if (source_kernels.find(b) != source_kernels.end()) {
+         source_kernels.erase(b);
+      }
+
       all_kernels += a;
       all_kernels += b;
       PortInfo *port_info_a;
@@ -222,6 +230,14 @@ public:
       {
          dst_kernels += b;
       }
+
+      if (dst_kernels.find(a) != dst_kernels.end()) {
+         dst_kernels.erase(a);
+      }
+      if (source_kernels.find(b) != source_kernels.end()) {
+         source_kernels.erase(b);
+      }
+
       all_kernels += a;
       all_kernels += b;
       PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
@@ -289,6 +305,14 @@ public:
       {
          dst_kernels += b;
       }
+
+      if (dst_kernels.find(a) != dst_kernels.end()) {
+         dst_kernels.erase(a);
+      }
+      if (source_kernels.find(b) != source_kernels.end()) {
+         source_kernels.erase(b);
+      }
+
       all_kernels +=  a;
       all_kernels +=  b;
       PortInfo *port_info_a;
@@ -356,6 +380,14 @@ public:
       {
          dst_kernels += b;
       }
+
+      if (dst_kernels.find(a) != dst_kernels.end()) {
+         dst_kernels.erase(a);
+      }
+      if (source_kernels.find(b) != source_kernels.end()) {
+         source_kernels.erase(b);
+      }
+
       all_kernels += a;
       all_kernels += b;
       auto &port_info_a( a->output.getPortInfoFor( a_port ) );
