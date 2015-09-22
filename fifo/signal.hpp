@@ -21,7 +21,11 @@
 #define _SIGNAL_HPP_  1
 #include <cstddef>
 #include "signalvars.hpp"
-
+/**
+ * TODO, add templated signal so that the user
+ * can define tuple-like structures based on 
+ * their own needs.
+ */
 namespace Buffer
 {
 struct Signal
@@ -34,7 +38,7 @@ struct Signal
 
    operator raft::signal ();
 
-   std::size_t getindex();
+   std::size_t getindex() noexcept;
 
    raft::signal sig   = raft::none;
    std::size_t  index = 0;

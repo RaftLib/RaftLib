@@ -51,7 +51,7 @@ Signal::operator raft::signal ()
 }
 
 std::size_t 
-Signal::getindex()
+Signal::getindex() noexcept
 {
    return( index );
 }

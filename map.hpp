@@ -80,7 +80,7 @@ public:
       /** check types, ensure all are linked **/
       checkEdges( source_kernels );
       /** adds in split/join kernels **/
-      enableDuplication( source_kernels, all_kernels );
+      //enableDuplication( source_kernels, all_kernels );
       volatile bool exit_alloc( false );
       allocator alloc( (*this), exit_alloc );
       /** launch allocator in a thread **/

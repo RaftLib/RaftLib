@@ -39,15 +39,14 @@ public:
 
    virtual raft::kstatus run()
    {
-      /** TODO, add code to do multi-item inserts **/
-      raft::signal signal;
       auto &output_port( input[ "0" ] );
-      T &item( output_port.template peek< T >( &signal ) );
+      const auto avail( output_port.size() );
+      auto range( output_port.template peek_range< T >( avail ) );
       /** split funtion selects a fifo using the appropriate split method **/
-      if( split_func.send( item, signal, output ) )
+      if( split_func.send( range, output ) )
       {
          /* recycle item */
-         output_port.recycle( 1 );
+         output_port.recycle( avail );
       }
       else
       {

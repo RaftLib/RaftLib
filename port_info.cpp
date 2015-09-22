@@ -52,7 +52,7 @@ PortInfo::getFIFO()
       FIFO *a;
       FIFO *b;
    }copy = { fifo_a, fifo_b };
-   while( copy.a != copy.b )
+   while( copy.a not_eq copy.b )
    {
       copy.a = fifo_a;
       copy.b = fifo_b;
@@ -61,7 +61,7 @@ PortInfo::getFIFO()
 }
 
 void 
-PortInfo::setFIFO( FIFO *in )
+PortInfo::setFIFO( FIFO * const in )
 {
    assert( in != nullptr );
    fifo_a = in;

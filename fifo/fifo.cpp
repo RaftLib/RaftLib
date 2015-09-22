@@ -24,6 +24,10 @@ FIFO::FIFO()
 
 }
 
+FIFO::~FIFO()
+{
+}
+
 void
 FIFO::get_zero_read_stats( Blocked &copy )
 {

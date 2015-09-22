@@ -62,15 +62,12 @@ Allocate::initialize( PortInfo * const src,
    assert( fifo != nullptr );
    assert( dst  != nullptr );
    assert( src  != nullptr );
-   if( src != nullptr )
+   if( src->getFIFO() not_eq nullptr )
    {
-      if( src->getFIFO() != nullptr )
-      {
       throw PortDoubleInitializeException( 
          "Source port \"" + src->my_name + "\" already initialized!" );
-      }
    }
-   if( dst != nullptr && dst->getFIFO() != nullptr )
+   if( dst->getFIFO() not_eq  nullptr )
    {
       throw PortDoubleInitializeException( 
          "Destination port \"" + dst->my_name +  "\" already initialized!" );
@@ -87,11 +84,22 @@ Allocate::initialize( PortInfo * const src,
 void 
 Allocate::allocate( PortInfo &a, PortInfo &b, void *data )
 {
-   instr_map_t *func_map( a.const_map[ Type::Heap ] );
+   FIFO *fifo( nullptr );
+   instr_map_t * const func_map( a.const_map[ Type::Heap ] );
    auto test_func( (*func_map)[ false ] );
-   FIFO *fifo( test_func( 64 /* items */, 
-                          16 /* align */, 
-                          nullptr ) );
-   (this)->initialize( &a, &b, fifo );
+   
+   if( a.existing_buffer != nullptr )
+   {
+      fifo = test_func( a.nitems, 
+                        a.start_index,
+                        a.existing_buffer );
+   }
+   else
+   {
+      fifo = test_func( INITIAL_ALLOC_SIZE    /* items */, 
+                        ALLOC_ALIGN_WIDTH     /* align */, 
+                        nullptr );
+   }
+   initialize( &a, &b, fifo );
    return;
 }

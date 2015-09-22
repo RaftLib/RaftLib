@@ -71,4 +71,9 @@ class NoMoreDataException : public PortException
 public:
    NoMoreDataException( const std::string message );
 };
+class PortAlreadyExists : public PortException
+{
+public:
+   PortAlreadyExists( const std::string message );
+};
 #endif /* END _PORTEXCEPTION_HPP_ */

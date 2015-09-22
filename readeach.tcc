@@ -33,11 +33,12 @@
 #include <typeinfo>
 
 #include <raft>
+#include "split.tcc"
 
 namespace raft{
 
 template < class T, std::size_t N = 1 > class read_each : 
-   public parallel_k
+   public raft::split< T > 
 {
 
 typedef typename std::list< T >::iterator           it_list;
@@ -55,6 +56,7 @@ template< class iterator_type >
          {
             return( true );
          }
+         //TODO, replace this with the equivalent from split.tcc
          port.push< T >( (*begin) );
          begin++;
       }
@@ -113,12 +115,12 @@ const std::map< std::size_t,
 
 public:
    template < class iterator_type > 
-   read_each( iterator_type &&begin, iterator_type &&end ) : 
+   read_each( iterator_type &&begin, iterator_type &&end ) :
+      split< T >(),
       it_begin_ptr( &begin ),
       it_end_ptr( &end )                                                         
    {     
-      addPortTo< T >( output );
-
+      /** NOTE, single output port is added by split< T > sub-class **/
       /** 
        * hacky way of getting the right iterator type for the ptr
        * pehaps change if I can figure out how to do without having
@@ -139,7 +141,7 @@ public:
 
    virtual raft::kstatus run()
    {
-      if( inc_func( it_begin_ptr, it_end_ptr, output ) )
+      if( inc_func( it_begin_ptr, it_end_ptr, (this)->output ) )
       {
          return( raft::stop );
       }
@@ -149,7 +151,7 @@ public:
 protected:
    virtual std::size_t  addPort()
    {
-      return( (this)->addPortTo< T >( output ) );
+      return( (this)->template addPortTo< T >( (this)->output ) );
    }
 
 private:

@@ -38,6 +38,8 @@
 #include "port_info_types.hpp"
 #include "portmap_t.hpp"
 #include "portiterator.hpp"
+#include "portexception.hpp"
+
 /** needed for friending below **/
 class MapBase;
 class roundrobin;
@@ -87,7 +89,7 @@ public:
     * @return  bool
     */
    template < class T >
-   bool addPort( const std::string &&port_name )
+   void addPort( const std::string &&port_name )
    {
       /**
        * we'll have to make a port info object first and pass it by copy
@@ -95,15 +97,21 @@ public:
        * right now this will work and it doesn't necessarily have to
        * be performant since its only executed once.
        */
-       PortInfo pi( typeid( T ) );
-       pi.my_kernel = kernel;
-       pi.my_name   = port_name;
-       (this)->initializeConstMap<T>( pi );
-       (this)->initializeSplit< T >( pi );
-       (this)->initializeJoin< T >( pi );
-      const auto ret_val( portmap.map.insert( std::make_pair( port_name, 
-                                                          pi ) ) );
-      return( ret_val.second );
+      PortInfo pi( typeid( T ) );
+      pi.my_kernel = kernel;
+      pi.my_name   = port_name;
+      (this)->initializeConstMap<T>( pi );
+      (this)->initializeSplit< T >( pi );
+      (this)->initializeJoin< T >( pi );
+      const auto ret_val( 
+                  portmap.map.insert( std::make_pair( port_name, 
+                                                      pi ) ) );
+      
+      if( not ret_val.second )
+      {
+         throw PortAlreadyExists( "FATAL ERROR: port \"" + port_name + "\" already exists!" );
+      }
+      return;
    }
 
    /** 
@@ -302,4 +310,7 @@ protected:
    friend class basic_parallel;
    friend class raft::parallel_k;
 };
+
+
+
 #endif /* END _PORT_HPP_ */

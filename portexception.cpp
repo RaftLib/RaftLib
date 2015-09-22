@@ -64,3 +64,8 @@ NoMoreDataException::NoMoreDataException(
    const std::string message ) : PortException( message )
 {
 }
+
+PortAlreadyExists::PortAlreadyExists(
+   const std::string message ) : PortException( message )
+{
+}

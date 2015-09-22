@@ -62,7 +62,7 @@ install:
 	cp *.tcc $(PREFIX)/include/raft_dir/
 	cp ./fifo/*.hpp $(PREFIX)/include/raft_dir/
 	cp ./fifo/*.tcc $(PREFIX)/include/raft_dir/
-	cp ./packages/* $(PREFIX)/include/raft_dir/
+	cp -r ./packages/* $(PREFIX)/include/raft_dir/
 	cp raft $(PREFIX)/include/
 	cp raftio $(PREFIX)/include/
 	cp raftrandom $(PREFIX)/include/

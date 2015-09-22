@@ -58,7 +58,7 @@ public:
    /**
     * ~FIFO - default destructor
     */
-   virtual ~FIFO() = default;
+   virtual ~FIFO();
 
    /**
     * size - returns the current size of this FIFO
@@ -196,8 +196,8 @@ public:
    template < class T > 
    void push( T &&item, const raft::signal signal = raft::none )
    {
-      /** TODO, think about changing this **/
-      void *ptr( (void*) &item );
+      /** TODO, think about changing this, erasing type is always ugly  **/
+      void *ptr( reinterpret_cast< void* >(  &item ) );
       /** call blocks till element is written and released to queue **/
       local_push( ptr, signal );
       return;
@@ -219,8 +219,8 @@ public:
                   iterator_type end,
                   const raft::signal signal = raft::none )
    {
-      void *begin_ptr( (void*)&begin );
-      void *end_ptr  ( (void*)&end   );
+      void *begin_ptr( reinterpret_cast< void* >( &begin ) );
+      void *end_ptr  ( reinterpret_cast< void* >( &end   ) );
       local_insert( begin_ptr, end_ptr, signal, typeid( iterator_type ).hash_code() );
       return;
    }
@@ -235,7 +235,7 @@ public:
    template< class T >
    void pop( T &item, raft::signal *signal = nullptr )
    {
-      void *ptr( (void*)&item );
+      void *ptr( reinterpret_cast< void* >( &item ) );
       local_pop( ptr, signal );
       return;
    }
@@ -296,14 +296,14 @@ public:
    auto  peek_range( const std::size_t n ) -> 
       autorelease< T, peekrange >
    {
-      void *ptr;
-      void *sig;
+      void *ptr = nullptr;
+      void *sig = nullptr;
       std::size_t curr_pointer_loc( 0 );
       local_peek_range( &ptr, &sig, n, curr_pointer_loc );
       return( autorelease< T, peekrange >( 
          (*this),
          reinterpret_cast< T * const >( ptr ),
-         *reinterpret_cast< Buffer::Signal* >( sig ),
+         reinterpret_cast< Buffer::Signal* >( sig ),
          curr_pointer_loc,
          n ) );
    }

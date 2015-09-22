@@ -67,7 +67,7 @@ struct PortInfo
     * pointers at the same time as opposed to doing it manually
     * @param   in - valid FIFO*, must not be nullptr
     */
-   void setFIFO( FIFO *in );
+   void setFIFO( FIFO * const in );
    
    FIFO            *fifo_a  = nullptr;
    FIFO            *fifo_b  = nullptr;

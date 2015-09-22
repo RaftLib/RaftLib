@@ -41,9 +41,9 @@ namespace raft{
 template < class T > class write_each : public parallel_k
 {
 
-typedef typename std::back_insert_iterator< std::list< T > >           it_list;
-typedef typename std::back_insert_iterator< std::vector< T > >         it_vect;
-typedef typename std::back_insert_iterator< std::deque< T > >          it_deq;
+using it_list = std::back_insert_iterator< std::list< T > >;
+using it_vect = std::back_insert_iterator< std::vector< T > >;
+using it_deq  = std::back_insert_iterator< std::deque< T > >;
 
 template< class iterator_type > 
    static void inc_helper( iterator_type &insert_position, Port &port_list )
@@ -57,7 +57,7 @@ template< class iterator_type >
             auto alldata( port.peek_range< T >( avail_data ) );
             for( std::size_t index( 0 ); index < alldata.size(); index++ )
             {
-               (*insert_position) = alldata[ index ];
+               (*insert_position) = alldata[ index ].ele;
                /** hope the iterator defined overloaded ++ **/
                ++insert_position;
             }

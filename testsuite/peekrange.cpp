@@ -22,7 +22,7 @@ public:
          auto range( port.template peek_range< T >( 5 ) );
          for( int i( 0 ); i < 5; i++ )
          {
-            std::cout << " " << range[ i ];
+            std::cout << " " << range[ i ].ele;
          }
       } 
       catch( NoMoreDataException &ex )

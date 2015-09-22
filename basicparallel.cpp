@@ -22,8 +22,6 @@
 #include "common.hpp"
 #include "streamingstat.tcc"
 #include <map>
-#include <fstream>
-#include <iomanip>
 
 
 extern Clock *system_clock;

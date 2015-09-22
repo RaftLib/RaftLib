@@ -28,6 +28,10 @@
 #include "dynalloc.hpp"
 #include "Clock.hpp"
 
+#ifndef INITIAL_ALLOC_SIZE
+#warn   "Initial alloc size must be defined in allocate.hpp"
+#endif
+
 extern Clock *system_clock;
 
 dynalloc::dynalloc( Map &map, volatile bool &exit_alloc ) : 
@@ -63,28 +67,8 @@ dynalloc::run()
 {
    auto alloc_func = [&]( PortInfo &a, PortInfo &b, void *data )
    {
-      assert( a.type == b.type );
-      /** assume everyone needs a heap for the moment to get working **/
-      instr_map_t *func_map( a.const_map[ Type::Heap ] );
-      FIFO *fifo( nullptr );
-      auto test_func( (*func_map)[ false ] );
-      /**
-       * TODO, fix this one.
-       */
-      if( a.existing_buffer != nullptr )
-      {
-         fifo = test_func( a.nitems,
-                           a.start_index,
-                           a.existing_buffer );
-      }
-      else
-      {
-         fifo = test_func( 4 /* items */, 
-                           16 /* align */, 
-                           nullptr );
-      }
-      assert( fifo != nullptr );
-      (this)->initialize( &a, &b, fifo );
+      /** same alloc for all, inherit from base alloc **/
+      (this)->allocate( a, b, data );
    };
 
    /** acquire source kernels **/
@@ -104,7 +88,7 @@ dynalloc::run()
       const auto hash_val( dynalloc::hash( a, b ) );
       /** TODO, the values might wrap if no monitoring on **/
       const auto realized_ratio( a.getFIFO()->get_frac_write_blocked() );
-      const float ratio( 0.10 );
+      const auto ratio( 0.5 );
       if( realized_ratio >= ratio )
       {
          const auto curr_count( size_map[ hash_val ]++ );
@@ -113,7 +97,7 @@ dynalloc::run()
             /** get initializer function **/
             auto * const buff_ptr( a.getFIFO() );
             const auto cap( buff_ptr->capacity() );
-            buff_ptr->resize( cap * 2, 16, exit_alloc );
+            buff_ptr->resize( cap * 2, ALLOC_ALIGN_WIDTH, exit_alloc );
             size_map[ hash_val ] = 0;
          }
       }

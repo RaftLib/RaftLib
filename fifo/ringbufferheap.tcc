@@ -629,9 +629,8 @@ protected:
                                const raft::signal &signal, 
                                const std::size_t iterator_type )
    {
-   typedef typename std::list< T >::iterator   it_list;
-   typedef typename std::vector< T >::iterator it_vec;
-   
+   using it_list = typename std::list< T >::iterator;
+   using it_vec  = typename std::vector< T >::iterator; 
 
       
    const std::map< std::size_t, 
@@ -853,7 +852,7 @@ protected:
       auto * const buff_ptr( dm.get() );
       const auto cpl( Pointer::val( buff_ptr->read_pt ) );
       curr_pointer_loc = cpl; 
-      *sig =  (void*) &buff_ptr->signal[ cpl ];
+      *sig =  reinterpret_cast< void* >(  &buff_ptr->signal[ cpl ] );
       *ptr =  buff_ptr->store;
       return;
    }

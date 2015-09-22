@@ -64,7 +64,7 @@ public:
    {
    }
    
-   kernel_pair_t& operator= ( kernel_pair_t& other )
+   kernel_pair_t& operator = ( const kernel_pair_t &other )
    {
       src = other.src;
       dst = other.dst;
@@ -142,12 +142,6 @@ public:
          dst_kernels += b;
       }
 
-      if (dst_kernels.find(a) != dst_kernels.end()) {
-         dst_kernels.erase(a);
-      }
-      if (source_kernels.find(b) != source_kernels.end()) {
-         source_kernels.erase(b);
-      }
 
       all_kernels += a;
       all_kernels += b;
@@ -231,12 +225,6 @@ public:
          dst_kernels += b;
       }
 
-      if (dst_kernels.find(a) != dst_kernels.end()) {
-         dst_kernels.erase(a);
-      }
-      if (source_kernels.find(b) != source_kernels.end()) {
-         source_kernels.erase(b);
-      }
 
       all_kernels += a;
       all_kernels += b;
@@ -306,12 +294,6 @@ public:
          dst_kernels += b;
       }
 
-      if (dst_kernels.find(a) != dst_kernels.end()) {
-         dst_kernels.erase(a);
-      }
-      if (source_kernels.find(b) != source_kernels.end()) {
-         source_kernels.erase(b);
-      }
 
       all_kernels +=  a;
       all_kernels +=  b;
@@ -379,13 +361,6 @@ public:
       if( ! b->output.hasPorts() )
       {
          dst_kernels += b;
-      }
-
-      if (dst_kernels.find(a) != dst_kernels.end()) {
-         dst_kernels.erase(a);
-      }
-      if (source_kernels.find(b) != source_kernels.end()) {
-         source_kernels.erase(b);
       }
 
       all_kernels += a;

@@ -26,6 +26,8 @@
 #ifndef _AUTORELEASE_TCC_
 #define _AUTORELEASE_TCC_  1
 
+#include "autoreleasebase.hpp"
+
 template< class T > using pop_range_t = std::vector< std::pair< T , raft::signal > >;
 
 enum autotype { allocatetype, 
@@ -33,14 +35,15 @@ enum autotype { allocatetype,
                 peekrange,
                 allocaterange };
 
-template< class T, autotype type = poptype > class autorelease
+template< class T, autotype type = poptype > class autorelease : public autoreleasebase
 {
 public:
    /**
     * constructor,only used by the fifo
     * @param fifo - FIFO&, current fifo that the object points to
     */
-   autorelease( FIFO &fifo ) : fifo( fifo ),
+   autorelease( FIFO &fifo ) : autoreleasebase(),
+                               fifo( fifo ),
                                item( fifo.peek< T >( &signal ) )
    {}
    /** copy constructor **/
@@ -102,14 +105,15 @@ private:
    bool         copied = false;
 };
 
-template < class T > class autorelease< T, peekrange >
+template < class T > class autorelease< T, peekrange > : public autoreleasebase
 {
 public:
    autorelease( FIFO             &fifo, 
                    T * const      queue,
-                Buffer::Signal   &sig,
+                Buffer::Signal   * const sig,
                 const std::size_t curr_read_ptr,
-                const std::size_t n_items ) : fifo( fifo ),
+                const std::size_t n_items ) : autoreleasebase(),
+                                              fifo( fifo ),
                                               queue( queue ),
                                               signal( sig ),
                                               crp  ( curr_read_ptr ),
@@ -120,6 +124,7 @@ public:
    }
 
    autorelease( const autorelease< T, peekrange > &other ) : 
+      autoreleasebase(),
       fifo( other.fifo ),
       queue( other.queue ),
       signal( other.signal ),
@@ -138,7 +143,7 @@ public:
       }
    }
 
-   T& operator []( const std::size_t index )
+   autopair< T > operator []( const std::size_t index )
    {
       if( index >= n_items )
       {
@@ -150,18 +155,18 @@ public:
       else
       {
          std::size_t ptr_val( (index + crp) % queue_size );
-         return( queue[ ptr_val ] );
+         return( std::move( autopair< T >( queue[ ptr_val ], signal[ ptr_val ] ) ) );
       }
    }
 
-   raft::signal& sig()
-   {
-      return( signal.sig() );
-   }
-
+   /**
+    * getindex - returns index for foreach constructs,
+    * future versions will deprecate this for all types
+    * but that one.
+    */
    std::size_t getindex()
    {
-      return( signal.getindex() );
+      return( signal[ 0 ] .getindex() );
    }
 
    std::size_t size() const
@@ -172,8 +177,9 @@ public:
    /** TODO, build iterator for this **/
 private:
    FIFO             &fifo;
-   T  *  const       queue;
-   Buffer::Signal   &signal;
+   T  *  const            queue;
+   Buffer::Signal * const signal;
+   /** current read pointer **/
    const std::size_t crp;
    const std::size_t n_items;
    const std::size_t queue_size;
@@ -181,7 +187,7 @@ private:
 };
 
 
-template < class T > class autorelease< T, allocatetype >
+template < class T > class autorelease< T, allocatetype > : public autoreleasebase
 {
 public:
    

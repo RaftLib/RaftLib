@@ -50,7 +50,8 @@ public:
    virtual bool  hasPorts() = 0;
    /**
     * begin - returns a forward iterator to the port list,
-    * implementations should be thread safe.
+    * implementations should be thread safe so that auto-
+    * parallelized code can function properly.
     * @return PortIterator - points to first port, not 
     * in alphabetical or necessarily any order.
     */
