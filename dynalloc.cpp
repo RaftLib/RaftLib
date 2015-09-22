@@ -61,7 +61,6 @@ dynalloc::hash( PortInfo &a, PortInfo &b )
 void
 dynalloc::run()
 {
-   std::vector< double > eventtime;
    auto alloc_func = [&]( PortInfo &a, PortInfo &b, void *data )
    {
       assert( a.type == b.type );
@@ -128,18 +127,9 @@ dynalloc::run()
       std::this_thread::sleep_for( dura );
      
       auto &container( (this)->source_kernels.acquire() );
-      eventtime.push_back( system_clock->getTime() );
       GraphTools::BFS( container, mon_func );
       (this)->source_kernels.release();
             
    }
-   std::ofstream qev( "/tmp/queueevents.csv" );
-   for( const auto event : eventtime )
-   {
-      qev << std::setprecision( 10 );
-      qev << "Q" << ", " << event << "\n";
-   }
-   qev.flush();
-   qev.close();
    return;
 }
