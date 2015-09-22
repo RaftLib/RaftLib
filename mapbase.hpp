@@ -63,7 +63,7 @@ public:
    {
    }
    
-   kernel_pair_t& operator= ( kernel_pair_t &other )
+   kernel_pair_t& operator= ( const kernel_pair_t &other )
    {
       src = other.src;
       dst = other.dst;
