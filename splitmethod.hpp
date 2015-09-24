@@ -72,7 +72,8 @@ public:
       auto * const fifo( select_fifo( outputs, sendtype ) );
       if( fifo != nullptr )
       {
-         const auto space_avail( fifo->space_avail() );
+         const auto space_avail( 
+            std::min( fifo->space_avail(), range.size() ) );
          for( auto i( 0 ); i < space_avail; i++ )
          {
             fifo->push( range[ i ].ele, range[ i ].sig ); 
