@@ -17,7 +17,7 @@ PTHREAD = -lpthread# -Wl,--whole-archive -lpthread  -Wl,--no-whole-archive
 endif
 
 type =? release
-TEST = -O0 -g 
+TEST = -O0 -g3 -ggdb 
 RELEASE = -Ofast -mtune=native
 
 ifeq ($(type), test)

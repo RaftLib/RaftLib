@@ -87,15 +87,18 @@ private:
          /** TODO, make exception for here **/
          assert( false );
       }
-      /** multiple port type case **/
-      std::size_t input_index(  0 );
-      std::size_t output_index( 0 );
-      AddPorts< PORTSM... >::add( input_index,
-                                  input_max, 
-                                  input /* ports */, 
-                                  output_index,
-                                  output_max, 
-                                  output /* ports */);
+      else
+      {
+         /** multiple port type case **/
+         std::size_t input_index(  0 );
+         std::size_t output_index( 0 );
+         AddPorts< PORTSM... >::add( input_index,
+                                     input_max, 
+                                     input /* ports */, 
+                                     output_index,
+                                     output_max, 
+                                     output /* ports */);
+      }
    }
 
 

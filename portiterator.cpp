@@ -29,7 +29,7 @@
 PortIterator::PortIterator( portmap_t * const port_map ) : port_map( port_map )
 {
    PortIterator::initKeyMap( port_map, key_map );
-   pthread_mutex_lock_d( &(port_map->mutex_map), __FILE__, __LINE__ ); 
+   //pthread_mutex_lock_d( &(port_map->mutex_map), __FILE__, __LINE__ ); 
 }
 
 PortIterator::PortIterator( portmap_t * const port_map, 
@@ -51,7 +51,7 @@ PortIterator::~PortIterator()
 {
    if( is_end )
    {
-      pthread_mutex_unlock( &(port_map->mutex_map) );
+     // pthread_mutex_unlock( &(port_map->mutex_map) );
    }
 }
 
