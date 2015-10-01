@@ -26,8 +26,10 @@
 #include <vector>
 #include <sstream>
 #include <map>
+#include <utility>
 #include <functional>
 #include <cassert>
+#include <type_traits>
 #include <stdexcept>
 #include "bufferdata.tcc"
 #include "blocked.hpp"
@@ -90,11 +92,25 @@ public:
     * using it, they can call the deallocate function.
     * @return  T&
     */
-   template < class T > T& allocate()
+   template < class T,
+              typename std::enable_if< std::is_pod< T >::value >::type* = nullptr > T& allocate()
    {
       void *ptr( nullptr );
       /** call blocks till an element is available **/
       local_allocate( &ptr );
+      return( *( reinterpret_cast< T* >( ptr ) ) );
+   }
+   
+   template < class T,
+              class ... Args,
+              typename std::enable_if< 
+               std::is_object< T >::value >::type* = nullptr > T& 
+               allocate( Args&&... params )
+   {
+      void *ptr( nullptr );
+      /** call blocks till an element is available **/
+      local_allocate( &ptr );
+      T * __attribute__((__unused__))  const temp( new (ptr) T( std::forward< Args >( params )... ) );
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
 

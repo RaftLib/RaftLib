@@ -38,12 +38,12 @@
 namespace raft{
 
 template < class T, std::size_t N = 1 > class read_each : 
-   public raft::split< T > 
+   public raft::parallel_k 
 {
 
 typedef typename std::list< T >::iterator           it_list;
 typedef typename std::vector< T >::iterator         it_vect;
-typedef typename std::array< T, N >::iterator          it_arr;
+typedef typename std::array< T, N >::iterator       it_arr;
 typedef typename std::deque< T >::iterator          it_deq;
 typedef typename std::forward_list< T >::iterator   it_forlist;
 
@@ -116,11 +116,13 @@ const std::map< std::size_t,
 public:
    template < class iterator_type > 
    read_each( iterator_type &&begin, iterator_type &&end ) :
-      split< T >(),
+      //split< T >(),
+      parallel_k(),
       it_begin_ptr( &begin ),
       it_end_ptr( &end )                                                         
    {     
       /** NOTE, single output port is added by split< T > sub-class **/
+      addPortTo< T >( output );
       /** 
        * hacky way of getting the right iterator type for the ptr
        * pehaps change if I can figure out how to do without having
@@ -128,7 +130,7 @@ public:
        * param
        */
        const auto ret_val( func_map.find( typeid( iterator_type ).hash_code() ) );
-       if( ret_val != func_map.end() )
+       if( ret_val not_eq func_map.end() )
        {
           inc_func = (*ret_val).second; 
        }
