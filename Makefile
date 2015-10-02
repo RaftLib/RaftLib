@@ -1,5 +1,5 @@
-CC    = clang
-CXX   = clang++
+CC    ?= clang
+CXX   ?= clang++
 AR    = ar
 
 PREFIX ?= /usr/local

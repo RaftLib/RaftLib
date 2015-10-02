@@ -88,11 +88,11 @@ dynalloc::run()
       const auto hash_val( dynalloc::hash( a, b ) );
       /** TODO, the values might wrap if no monitoring on **/
       const auto realized_ratio( a.getFIFO()->get_frac_write_blocked() );
-      const auto ratio( 0.5 );
+      const auto ratio( 0.8 );
       if( realized_ratio >= ratio )
       {
          const auto curr_count( size_map[ hash_val ]++ );
-         if( curr_count  > 0 )
+         if( curr_count  > 2 )
          {
             /** get initializer function **/
             auto * const buff_ptr( a.getFIFO() );
@@ -107,7 +107,7 @@ dynalloc::run()
    while( ! exit_alloc )
    {
       /** monitor fifo's **/
-      std::chrono::microseconds dura( 100 );
+      std::chrono::microseconds dura( 3000 );
       std::this_thread::sleep_for( dura );
      
       auto &container( (this)->source_kernels.acquire() );

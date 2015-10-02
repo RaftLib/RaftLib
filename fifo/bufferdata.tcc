@@ -26,7 +26,7 @@
 #include <thread>
 #include <cinttypes>
 #include <iostream>
-
+#include <sys/mman.h>
 #include "shm.hpp"
 #include "signalvars.hpp"
 #include "pointer.hpp"
@@ -82,7 +82,7 @@ template < class T,
          exit( EXIT_FAILURE );
       }
       
-      //posix_madvise( (this)->store, (this)->length_store,  POSIX_MADV_WILLNEED );
+      posix_madvise( (this)->store, (this)->length_store,  POSIX_MADV_SEQUENTIAL );
 
       errno = 0;
       (this)->signal = (Signal*)       calloc( (this)->max_cap,
