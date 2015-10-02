@@ -16,7 +16,7 @@ else
 BUILD = $(RELEASE)
 endif
 
-EXTRA = -DHAVE_VIDEOINPUT=HAVE_DSHOW
+EXTRA =
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) $(EXTRA) `pkg-config --cflags opencv` -Wall -std=c++11 -DRDTSCP=1 -I../
