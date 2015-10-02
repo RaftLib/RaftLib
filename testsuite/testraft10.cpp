@@ -51,6 +51,7 @@ public:
    {
       auto &frame( input[ "0" ].template peek< cvm >() );
       cv::imshow( "cam", frame );
+      cv::waitKey(1);
       /** decrement count within frame so it'll deallocate before recycle **/
       frame.release();
       input[ "0" ].recycle();
