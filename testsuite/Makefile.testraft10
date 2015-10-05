@@ -8,7 +8,7 @@ RT =  -lrt -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 endif
 
 TEST = -O0 -g3 -DUNITTEST=1 -ggdb -DDEBUG=1
-RELEASE = -Ofast -mtune=native 
+RELEASE = -Ofast -mtune=native
 
 ifeq ($(type), test)
 BUILD = $(TEST)
@@ -22,7 +22,7 @@ CFLAGS   =  $(BUILD) -Wall -std=c99
 CXXFLAGS =  $(BUILD) $(EXTRA) `pkg-config --cflags opencv` -Wall -std=c++11 -DRDTSCP=1 -I../
 LDLIBS  = $(STATIC)  `pkg-config --libs opencv` -lstdc++ -lraft -lgsl -lgslcblas $(RT) -lm 
 
-EXE = testraft10 
+EXE = testraft10 testraft11
 
 OBS = $(addsuffix .o, $(EXE))
 

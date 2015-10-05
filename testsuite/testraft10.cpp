@@ -11,7 +11,7 @@ template < class T > class source : public raft::kernel
 public:
    source()
    {
-      output.addPort< cvm >( "0" );
+      output.addPort< T >( "0" );
       if( not stream1.isOpened() ) 
       { 
          std::cout << "cannot open camera\n";
@@ -23,7 +23,7 @@ public:
 
    virtual raft::kstatus run()
    {
-      auto &frame( output[ "0" ].template allocate< cvm >() );
+      auto &frame( output[ "0" ].template allocate< T >() );
       stream1.read( frame );
       output[ "0" ].send();
       return( raft::proceed );
@@ -42,21 +42,21 @@ template < class T > class display : public raft::kernel
 public:
    display()          
    {
-      input.addPort< cvm >( "0" );
+      input.addPort< T >( "0" );
    }
    
    virtual ~display() = default;
    
    virtual raft::kstatus run()
    {
-      auto &frame( input[ "0" ].template peek< cvm >() );
+      auto &frame( input[ "0" ].template peek< T >() );
       cv::imshow( "cam", frame );
       cv::waitKey(1);
       /** decrement count within frame so it'll deallocate before recycle **/
       frame.release();
       input[ "0" ].recycle();
       frames++;
-      if( frames % 1000  == 0 )
+      if( frames % 200 == 0 )
       {
          end = system_clock->getTime();
          const auto fps( frames / (end - start) );
