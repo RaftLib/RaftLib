@@ -132,7 +132,7 @@ pool_schedule::start()
             }
          }
          in_buff.unpeek();
-         in_buff.recycle( 1 );
+         in_buff.recycle( rcvd_cmd, 1 );
       }
    }
 

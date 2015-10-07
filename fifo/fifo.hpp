@@ -93,7 +93,8 @@ public:
     * @return  T&
     */
    template < class T,
-              typename std::enable_if< std::is_pod< T >::value >::type* = nullptr > T& allocate()
+              typename std::enable_if< 
+                  std::is_pod< T >::value >::type* = nullptr > T& allocate()
    {
       void *ptr( nullptr );
       /** call blocks till an element is available **/
@@ -104,7 +105,8 @@ public:
    template < class T,
               class ... Args,
               typename std::enable_if< 
-               std::is_object< T >::value >::type* = nullptr > T& 
+               std::is_object< T >::value and not 
+               std::is_fundamental< T >::value >::type* = nullptr > T& 
                allocate( Args&&... params )
    {
       void *ptr( nullptr );
@@ -337,8 +339,30 @@ public:
     *
     * @param   range - const std::size_t
     */
-   virtual void recycle( const std::size_t range = 1 ) = 0;
+   template < class T,
+              typename std::enable_if< 
+                  std::is_pod< T >::value >::type* = nullptr >
+   void recycle( const T &t, const std::size_t range = 1 )
+   {
+      local_recycle( range ); 
+   }
+   
+   template < class T,
+              typename std::enable_if< 
+               std::is_object< T >::value and not
+               std::is_fundamental< T >::value >::type* = nullptr >
+   void recycle( const T &t, const std::size_t range = 1 )
+   {
+      recyclefunc f( []( void *ptr )
+      {
+         T *ptr_cast( reinterpret_cast< T* >( ptr ) );
+         ptr_cast->~T();
+      } );
+      local_recycle( range, f );
+   }
 
+   
+   
    /**
     * get_zero_read_stats - sets the param variable to the 
     * current blocked stats and then sets the current vars 
@@ -408,6 +432,10 @@ public:
     */
    virtual bool is_invalid() = 0;
 protected:
+
+   using recyclefunc = 
+      std::function< void ( void* ) >;
+   
    /**
     * set_src_kernel - sets teh protected source
     * kernel for this fifo, necessary for preemption,
@@ -527,6 +555,16 @@ protected:
                                   void **sig,
                                   const std::size_t n_items,
                                   std::size_t &curr_pointer_loc ) = 0;
+   
+   /**
+    * local_recycle - called by template recycle function
+    * after calling destructor (for non-POD types).
+    * @param range - std::size_t
+    */
+   virtual void local_recycle( const std::size_t range ) = 0;
+   
+   virtual void local_recycle( const std::size_t range, 
+                               recyclefunc       func ) = 0;
 
    
    /**

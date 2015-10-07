@@ -23,7 +23,7 @@ LDLIBS  = $(STATIC)  -lstdc++ -lraft -lgsl -lgslcblas $(RT) -lm
 EXE = allocate portTypeException dynallocate stdlibsupport split \
       join lambdatest allocate_s foreach peekrange gamma uniform \
       gaussian exponential partitionTest iterator sequential \
-      parallel
+      parallel peek
 
 OBS = $(addsuffix .o, $(EXE))
 
@@ -47,6 +47,7 @@ partitionTest: partitionTest.o
 iterator: iterator.o
 sequential: sequential.o
 parallel: parallel.o
+peek: peek.o
 
 .PHONY: clean
 clean:

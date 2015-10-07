@@ -24,6 +24,13 @@
 #include "optdef.hpp"
 #include "scheduleconst.hpp"
 
+#ifndef NICE
+#define NICE 1
+#else
+#undef NICE
+#define NICE 1
+#endif
+
 #ifndef NOPREEMPT
 #define NOPREEMPT
 #endif
@@ -230,7 +237,7 @@ TOP:
     * removes range items from the buffer, ignores
     * them without the copy overhead.
     */
-   virtual void recycle( std::size_t range = 1 )
+   virtual void local_recycle( std::size_t range )
    {
       if( range == 0 )
       {
@@ -276,6 +283,68 @@ TOP:
             dm.exitBuffer( dm::recycle );
          }
          auto * const buff_ptr( dm.get() );
+         Pointer::inc( buff_ptr->read_pt );
+         dm.exitBuffer( dm::recycle );
+      }while( --range > 0 );
+      return;
+   }
+   
+   
+   /**
+    * removes range items from the buffer, ignores
+    * them without the copy overhead.
+    */
+   virtual void local_recycle( std::size_t range,
+                               FIFO::recyclefunc func )
+   {
+      if( range == 0 )
+      {
+         /** do nothing **/
+         return;
+      }
+      do{ /** at least one to remove **/
+#ifndef NOPREEMPT
+         std::uint8_t blocked( 0 );
+#endif
+         for( ;; )
+         {
+            dm.enterBuffer( dm::recycle );
+            if( dm.notResizing() )
+            {
+               if( (this)->size() > 0 )
+               {
+                  break;
+               }
+               else if( (this)->is_invalid() && size() == 0 )
+               {
+                  dm.exitBuffer( dm::recycle );
+                  return;
+               }
+#ifndef NOPREEMPT
+               else if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
+               {
+                  auto * const k( dm.get()->dst_kernel );
+                  const auto ret_val( setRunningState( k ) );
+                  if( ret_val == 0 /* not returning from scheduler */ )
+                  {
+                     /** pre-empt back to scheduler **/
+                     preempt( k );
+                  }
+                  else
+                  {
+                     /** reset blocked, keep trying **/
+                     blocked = 0;
+                  }
+               }
+#endif               
+            }
+            dm.exitBuffer( dm::recycle );
+         }
+         auto * const buff_ptr( dm.get() );
+         const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
+         auto *ptr = 
+            reinterpret_cast< void* >( &( buff_ptr->store[ read_index ] ) );
+         func( ptr );
          Pointer::inc( buff_ptr->read_pt );
          dm.exitBuffer( dm::recycle );
       }while( --range > 0 );

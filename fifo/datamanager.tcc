@@ -157,6 +157,10 @@ public:
             {
                break;
             }
+
+#ifdef   PEEKTEST
+            std::cerr << "Peek Loop\n";
+#endif
          }
          resizing = false;
          std::this_thread::yield();

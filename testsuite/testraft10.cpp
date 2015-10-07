@@ -5,13 +5,12 @@
 
 using cvm= typename cv::Mat;
 
-
 template < class T > class source : public raft::kernel
 {
 public:
    source()
    {
-      output.addPort< T >( "0" );
+      output.addPort< cvm >( "0" );
       if( not stream1.isOpened() ) 
       { 
          std::cout << "cannot open camera\n";
@@ -23,7 +22,7 @@ public:
 
    virtual raft::kstatus run()
    {
-      auto &frame( output[ "0" ].template allocate< T >() );
+      auto &frame( output[ "0" ].template allocate< cvm >() );
       stream1.read( frame );
       output[ "0" ].send();
       return( raft::proceed );
@@ -42,19 +41,18 @@ template < class T > class display : public raft::kernel
 public:
    display()          
    {
-      input.addPort< T >( "0" );
+      input.addPort< cvm >( "0" );
    }
    
    virtual ~display() = default;
    
    virtual raft::kstatus run()
    {
-      auto &frame( input[ "0" ].template peek< T >() );
+      auto &frame( input[ "0" ].template peek< cvm >() );
       cv::imshow( "cam", frame );
-      cv::waitKey(1);
       /** decrement count within frame so it'll deallocate before recycle **/
-      frame.release();
-      input[ "0" ].recycle();
+      input[ "0" ].unpeek();
+      input[ "0" ].recycle( frame );
       frames++;
       if( frames % 200 == 0 )
       {
@@ -64,7 +62,6 @@ public:
       }
       return( raft::proceed );
    }
-  
 };
 
 extern Clock *system_clock;

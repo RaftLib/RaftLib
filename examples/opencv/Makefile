@@ -22,14 +22,14 @@ CFLAGS   =  $(BUILD) -Wall -std=c99
 CXXFLAGS =  $(BUILD) $(EXTRA) `pkg-config --cflags opencv` -Wall -std=c++11 -DRDTSCP=1 -I../
 LDLIBS  = $(STATIC)  `pkg-config --libs opencv` -lstdc++ -lraft -lgsl -lgslcblas $(RT) -lm 
 
-EXE = testraft10 
+EXE = contours
 
 OBS = $(addsuffix .o, $(EXE))
 
 
 all: $(EXE)
 
-testraft10: testraft10.o
+contours: contours.o
 
 .PHONY: clean
 clean:

@@ -58,11 +58,12 @@ public:
       cv::Canny( img_in, 
                  out, 
                  thresh, 
-                 thresh*2, 
+                 thresh * 2, 
                  3 
            );
-      img_in.release();
-      input[ "0" ].recycle();
+
+      input[ "0" ].unpeek();
+      input[ "0" ].recycle( img_in );
       output[ "0" ].send();
       return( raft::proceed );
    }
@@ -94,6 +95,8 @@ public:
                         cv::Point() );
       out = cv::Mat::zeros( img_in.size(), 
                             CV_8UC3 );
+      input[ "0" ].unpeek();
+      input[ "0" ].recycle( img_in );
       for( auto i( 0 ); std::isless( i, contours.size() ); i++ )
       {
          cv::Scalar color( 
@@ -110,8 +113,6 @@ public:
                            cv::Point() 
                          );
       }
-      img_in.release();
-      input[ "0" ].recycle();
       output[ "0" ].send();
       return( raft::proceed );
    }
@@ -140,9 +141,8 @@ public:
    {
       auto &frame( input[ "0" ].template peek< cvm >() );
       cv::imshow( "cam", frame );
-      /** decrement count within frame so it'll deallocate before recycle **/
-      frame.release();
-      input[ "0" ].recycle();
+      input[ "0" ].unpeek();
+      input[ "0" ].recycle( frame );
       frames++;
       if( frames % 200 == 0 )
       {
@@ -152,7 +152,6 @@ public:
       }
       return( raft::proceed );
    }
-  
 };
 
 extern Clock *system_clock;

@@ -81,7 +81,7 @@ public:
       auto &data( input_port.template peek< T >() );
       *((this)->ofs) << data << delim;
       input_port.unpeek();
-      input_port.recycle( 1 );
+      input_port.recycle( data /** won't touch data **/, 1 );
       return( raft::proceed );
    }
 };
@@ -112,7 +112,7 @@ public:
       auto &data( input_port.template peek< T >() );
       *((this)->ofs) << data;
       input_port.unpeek();
-      input_port.recycle( 1 );
+      input_port.recycle( data /** won't touch data **/,  1 );
       return( raft::proceed );
    }
 };
