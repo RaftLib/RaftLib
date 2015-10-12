@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['type',['type',['../struct_port_info.html#a669818f0fde1da7b4a294c46e08d5980',1,'PortInfo']]]
+  ['rng',['rng',['../classraft_1_1randombase.html#a0e76811a01930066c262f9cecfd684b9',1,'raft::randombase']]]
 ];

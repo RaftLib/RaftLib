@@ -1,0 +1,19 @@
+digraph "kernel_container::getInputQueue"
+{
+ // INTERACTIVE_SVG=YES
+  bgcolor="transparent";
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="kernel_container::getInput\lQueue",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="kernel_container::container_run",height=0.2,width=0.4,color="black",URL="$classkernel__container.html#a89f9b11119d9ab0e8c64215bf50856f0"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="pool_schedule::pool\l_schedule",height=0.2,width=0.4,color="black",URL="$classpool__schedule.html#a11da62ac9c7b4ea203198ac3bb7babb4"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="pool_schedule::container\l_min_input",height=0.2,width=0.4,color="black",URL="$classpool__schedule.html#a962f811570635fb9a9ec13c1bbcf2923"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="pool_schedule::scheduleKernel",height=0.2,width=0.4,color="black",URL="$classpool__schedule.html#aa5ec97e860a94aa17f33a0562fe942ce"];
+  Node4 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="pool_schedule::start",height=0.2,width=0.4,color="black",URL="$classpool__schedule.html#ab67558a44404e42ba032f799c0f424a7"];
+}

@@ -1,14 +1,9 @@
 var searchData=
 [
-  ['callhandler',['callHandler',['../class_system_signal_handler.html#ac66db8af116e4f887706e58acb0781bb',1,'SystemSignalHandler']]],
-  ['capacity',['capacity',['../class_f_i_f_o.html#a64565d7156f6796ff14c3033387043b1',1,'FIFO']]],
-  ['checkedges',['checkEdges',['../class_map.html#a169e829c0c306563ae4d65dd6942a595',1,'Map']]],
-  ['checksystemsignal',['checkSystemSignal',['../class_schedule.html#a85de3d48407aa378ccc86a4a4206b32a',1,'Schedule']]],
-  ['clock',['Clock',['../class_clock.html',1,'Clock'],['../class_clock.html#adbc370eb6b5f8d01645cf440188160a8',1,'Clock::Clock()']]],
-  ['clone',['clone',['../classraft_1_1kernel.html#a71bfffbbb3d40949e19be32e3d8f467f',1,'raft::kernel']]],
-  ['close',['Close',['../class_s_h_m.html#a4c9d70e7a7a8cfdfb9d052a7f8842747',1,'SHM']]],
-  ['closedportaccessexception',['ClosedPortAccessException',['../class_closed_port_access_exception.html',1,'']]],
-  ['const_5fmap',['const_map',['../struct_port_info.html#a714592b5ab1fa47b599903639b102a66',1,'PortInfo']]],
-  ['container',['container',['../classpool__schedule.html#a7dfafeb2e492b3c9990906f6faf18958',1,'pool_schedule']]],
-  ['count',['count',['../class_port.html#a33562ea87ac7e83a32441da40cbd9279',1,'Port']]]
+  ['bad_5fshm_5falloc',['bad_shm_alloc',['../classbad__shm__alloc.html',1,'bad_shm_alloc'],['../classbad__shm__alloc.html#a99a0af63093ee42b887c7cba382fdebd',1,'bad_shm_alloc::bad_shm_alloc()']]],
+  ['basic_5fparallel',['basic_parallel',['../classbasic__parallel.html',1,'basic_parallel'],['../class_map.html#a901ac6fe1c35f3c114cf9e83f75dde0c',1,'Map::basic_parallel()'],['../classbasic__parallel.html#a6f8a4933fb29d6f4c60ebb3e934b192e',1,'basic_parallel::basic_parallel()']]],
+  ['begin',['begin',['../class_port.html#abf4d86026b67f6c02db3e3abb0f2e8b4',1,'Port::begin()'],['../class_port_base.html#afc54c92e3b9d1967e8a8c7e74d7507d3',1,'PortBase::begin()']]],
+  ['bfs',['BFS',['../class_graph_tools.html#ade51007699cbd681c1a37946609c46ee',1,'GraphTools::BFS(std::set&lt; raft::kernel * &gt; &amp;source_kernels, edge_func func, void *data=nullptr, bool connected_error=false)'],['../class_graph_tools.html#afc9c2852a351fe8b1a881b5d8b6c97f5',1,'GraphTools::BFS(std::vector&lt; raft::kernel * &gt; &amp;source_kernels, edge_func func, void *data=nullptr, bool connected_error=false)']]],
+  ['blocked',['Blocked',['../union_blocked.html',1,'']]],
+  ['buffer',['Buffer',['../namespace_buffer.html',1,'']]]
 ];

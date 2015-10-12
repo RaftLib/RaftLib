@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['n_5fthreads',['n_threads',['../classpool__schedule.html#adc11766f8ff9a29b21318bfcf81c815d',1,'pool_schedule']]]
+  ['kernel',['kernel',['../class_port.html#ac17060db235459adaab87cdccb605884',1,'Port::kernel()'],['../structsched__cmd__t.html#a8f78af789430b7661f52de7365abcdbc',1,'sched_cmd_t::kernel()']]],
+  ['kernel_5fcount',['kernel_count',['../classraft_1_1kernel.html#a98e05f7418c208e28b9112e92df7eccf',1,'raft::kernel']]],
+  ['kernel_5fset',['kernel_set',['../class_schedule.html#a1a448b0d48e656f94db65a70cedd8eed',1,'Schedule']]]
 ];

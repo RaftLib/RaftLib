@@ -1,0 +1,17 @@
+digraph "Allocate::initialize"
+{
+ // INTERACTIVE_SVG=YES
+  bgcolor="transparent";
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Allocate::initialize",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="PortInfo::getFIFO",height=0.2,width=0.4,color="black",URL="$struct_port_info.html#a483d162fbe356e07381c6c5cfccb4f48"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="PortInfo::setFIFO",height=0.2,width=0.4,color="black",URL="$struct_port_info.html#a43a57cd624dcc44ccd9dcaba1d07a000"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="FIFO::set_src_kernel",height=0.2,width=0.4,color="black",URL="$class_f_i_f_o.html#aa9c1f679b4e2585047af2c09a2518209"];
+  Node1 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="FIFO::set_dst_kernel",height=0.2,width=0.4,color="black",URL="$class_f_i_f_o.html#a11422695c75c05ad2c60e662553f2667"];
+}

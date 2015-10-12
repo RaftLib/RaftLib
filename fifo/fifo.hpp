@@ -328,15 +328,24 @@ public:
    /**
     * unpeek - call after peek to let the runtime know that 
     * all references to the returned value are no longer in
-    * use.e
+    * use. Keeps the memory location in a valid state for that
+    * input port, i.e., it doesn't release the memory location
+    * so that the next call to peek will return the same 
+    * exact location. A call to recycle will release the memory,
+    * or invalidate it.
     */
    virtual void unpeek() = 0;
 
    /** 
     * recycle - so you want to ignore some items from the
     * input stream without ever even looking at them, then
-    * this is the function for you.  
-    *
+    * this is the function for you. It is also used with the
+    * peek call in order to invalidate or free memory to the
+    * queue so that the next peek or pop operation will see a
+    * a different location. 
+    * @param   t - refernce to object or type of object to be 
+    * recycled, can be null or invalid since this function will
+    * never access it.
     * @param   range - const std::size_t
     */
    template < class T,
