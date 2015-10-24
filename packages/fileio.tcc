@@ -29,6 +29,13 @@
 #include <raft>
 #include "chunkiterator.tcc"
 
+
+/**
+ * FIXME: needs to have to copy function implemenented
+ * so that each port has the option of receiving copies
+ * of the transfered data.
+ */
+
 namespace raft{
 
 enum readertype : std::int32_t { chunk, fasta };
@@ -68,6 +75,12 @@ template < std::size_t size = 65536 > struct filechunk
    {
       return( chunk_iterator< size >( this, length ) );
    }
+
+   inline char operator []( const std::size_t n )
+   {
+      assert( n > 0  && n < size );
+      return( buffer[ n ] );
+   }
 };
 
 
@@ -77,7 +90,7 @@ template < class chunktype = filechunk< 65536 >,
 public:
    filereader( const std::string &&inputfile, 
                const std::size_t n_output_ports = 1,
-               const std::size_t chunk_offset = 0 )
+               const std::size_t chunk_offset = 0 ) : chunk_offset( chunk_offset )
    {
       for( auto index( 0 ); index < n_output_ports; index++ )
       {
@@ -116,6 +129,14 @@ public:
          if( port.space_avail() )
          {
             auto &chunk( port.template allocate< chunktype  >() );
+            if( init )
+            {
+               fseek( fp, - (chunk_offset+1), SEEK_CUR );
+            }
+            else
+            {
+               init = true;
+            }
             chunk.start_position = ftell( fp );
             const auto chunksize( chunktype::getChunkSize() );
             const auto num_read(  
@@ -126,8 +147,7 @@ public:
                ( iterations - output.count() /* num ports */ ) > 0 ? 
                   raft::none : 
                   raft::eof );
-            
-            if( --iterations <= 0 )
+            if( --iterations < 0 )
             {  
                return( raft::stop );
             }
@@ -140,6 +160,8 @@ public:
    FILE           *fp         = nullptr;
    std::streamsize length     = 0;
    std::int64_t    iterations = 0;
+   bool            init       = false;
+   std::size_t     chunk_offset;
 };
 
 } /* end namespace raft */

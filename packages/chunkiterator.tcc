@@ -63,26 +63,71 @@ public:
       index++;
       return( (*this) );
    }
+
+   template < typename T, 
+              typename 
+               std::enable_if< std::is_integral< T >::value >::type* = nullptr >
+   chunk_iterator& operator += ( const T val )
+   {
+      index += val;
+      return( *this );
+   }
+
+   template < typename T, 
+              typename 
+               std::enable_if< std::is_integral< T >::value >::type* = nullptr >
+   inline
+   chunk_iterator& operator - ( const T val )
+   {
+      index -= val;
+      assert( index >= 0 );
+      return( *this );
+   }
+
+   inline chunk_iterator operator = ( chunk_iterator &&other )
+   {
+      index = other.index;
+      auto *ptr = const_cast< filechunk< size >* >( chunk );
+      ptr = other.chunk;
+      is_end = other.is_end;
+   }
+
+   inline bool operator <= ( const chunk_iterator &c )
+   {
+      return( index <= c.index );
+   }
    
-   bool operator==(const chunk_iterator& rhs) noexcept
+   inline bool operator < ( const chunk_iterator &c )
+   {
+      return( index < c.index );
+   }
+   
+   inline bool operator == ( const chunk_iterator& rhs ) noexcept
    {
       return( index == rhs.index );
    }
 
-   bool operator!=(const chunk_iterator& rhs) noexcept
+   inline bool operator!=(const chunk_iterator& rhs) noexcept
    {
-      return( index != rhs.chunk->length );
+      return( ( index != rhs.index ) and ( is_end not_eq rhs.is_end ) );
    }
 
-   char operator*() noexcept
+   inline char operator*() noexcept
    {
       return( chunk->buffer[ index ] ); 
    }
    
-   std::size_t location()
+   inline std::size_t location() noexcept
    {
-      return( index );
+      return( index + chunk->start_position );
    }
+
+
+   char operator []( const std::size_t i )
+   {
+      return( (*chunk)[ index + i ] );
+   }
+
 private:
    filechunk< size > * const       chunk;
    /** current index iterated with respect to the buffer **/
