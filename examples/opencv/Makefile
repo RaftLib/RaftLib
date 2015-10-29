@@ -18,9 +18,10 @@ endif
 
 EXTRA =
 
+
 CFLAGS   =  $(BUILD) -Wall -std=c99 
 CXXFLAGS =  $(BUILD) $(EXTRA) `pkg-config --cflags opencv` -Wall -std=c++11 -DRDTSCP=1 -I../
-LDLIBS  = $(STATIC)  `pkg-config --libs opencv` -lstdc++ -lraft -lgsl -lgslcblas $(RT) -lm 
+LDLIBS  = $(STATIC) `pkg-config --libs opencv`  -lstdc++ -lraft -lgsl -lgslcblas $(RT) -lm 
 
 EXE = contours
 

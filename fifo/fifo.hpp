@@ -127,11 +127,15 @@ public:
     * allocate_s - "auto-release" version of allocate,
     * where the action of pushing the memory allocated
     * to the consumer is handled by the returned object
-    * exiting the calling stack frame.
+    * exiting the calling stack frame. There are two functions
+    * here, one that uses the objec constructor type. This
+    * one is for plain old data types.
     * @return autorelease< T, allocatetype >
     */
-   template < class T > auto allocate_s() -> 
-      autorelease< T, allocatetype >
+   template < class T,
+              typename std::enable_if< 
+                  std::is_pod< T >::value >::type* = nullptr > 
+   auto allocate_s() -> autorelease< T, allocatetype >
    {
       void *ptr( nullptr );
       local_allocate( &ptr );
@@ -139,6 +143,33 @@ public:
          reinterpret_cast< T* >( ptr ), (*this) ) );
    }
    
+   /**
+    * allocate_s - "auto-release" version of allocate,
+    * where the action of pushing the memory allocated
+    * to the consumer is handled by the returned object
+    * exiting the calling stack frame. There are two functions
+    * here, one that uses the objec constructor type. This
+    * one is for object types.
+    * @return autorelease< T, allocatetype >
+    */
+   template < class T,
+              class ... Args,
+              typename std::enable_if< 
+               std::is_object< T >::value and not 
+               std::is_fundamental< T >::value >::type* = nullptr > 
+   auto allocate_s( Args&&... params ) -> autorelease< T, allocatetype >
+   {
+      void *ptr( nullptr );
+      /** call blocks till an element is available **/
+      local_allocate( &ptr );
+      T * __attribute__((__unused__)) temp( 
+         new (ptr) T( std::forward< Args >( params )... ) );
+      return( autorelease< T, allocatetype >( 
+         reinterpret_cast< T* >( ptr ), (*this) ) );
+   }
+
+
+
    /** 
     * TODO, fix allocate_range to double buffer properly
     * if not enough mem available 
@@ -192,7 +223,9 @@ public:
     * @param   item -  T&
     * @param   signal -  raft::signal, default raft::none
     */
-   template < class T > 
+   template < class T,
+              typename std::enable_if< 
+                  std::is_pod< T >::value >::type* = nullptr > 
    void push( const T &item, const raft::signal signal = raft::none )
    {
       void *ptr( (void*) &item );
@@ -211,15 +244,71 @@ public:
     * @param   item -  T&&
     * @param   signal -  raft::signal, default raft::none
     */
-   template < class T > 
-   void push( T &&item, const raft::signal signal = raft::none )
+   template < class T,
+              class ... Args,
+              typename std::enable_if< 
+               std::is_object< T >::value and not 
+               std::is_fundamental< T >::value >::type* = nullptr > 
+   void push( const T &item, const raft::signal signal = raft::none )
    {
-      /** TODO, think about changing this, erasing type is always ugly  **/
-      void *ptr( reinterpret_cast< void* >(  &item ) );
+      void *ptr( nullptr );
+      /** call blocks till an element is available **/
+      local_allocate( &ptr );
+      /** call copy constructor **/
+      T * __attribute__((__unused__)) temp( new (ptr) T( item  ) );
+      send( signal );
+   }
+   
+   /**
+    * push - function which takes an object of type T and a 
+    * signal, makes a copy of the object using the copy 
+    * constructor and passes it to the FIFO along with the
+    * signal which is guaranteed to be delivered at the 
+    * same time as the object (if of course the receiving 
+    * object is responding to signals).
+    * @param   item -  T&&
+    * @param   signal -  raft::signal, default raft::none
+    */
+   template < class T,
+              typename std::enable_if< 
+                  std::is_pod< T >::value >::type* = nullptr > 
+   void push( const T &&item, const raft::signal signal = raft::none )
+   {
+      void *ptr( (void*) &item );
       /** call blocks till element is written and released to queue **/
       local_push( ptr, signal );
       return;
    }
+
+
+
+   /**
+    * push - function which takes an object of type T and a 
+    * signal, makes a copy of the object using the copy 
+    * constructor and passes it to the FIFO along with the
+    * signal which is guaranteed to be delivered at the 
+    * same time as the object (if of course the receiving 
+    * object is responding to signals).
+    * @param   item -  T&&
+    * @param   signal -  raft::signal, default raft::none
+    */
+   template < class T,
+              class ... Args,
+              typename std::enable_if< 
+               std::is_object< T >::value and not 
+               std::is_fundamental< T >::value >::type* = nullptr > 
+   void push( const T &&item, const raft::signal signal = raft::none )
+   {
+      void *ptr( nullptr );
+      /** call blocks till an element is available **/
+      local_allocate( &ptr );
+      /** call copy constructor **/
+      T * __attribute__((__unused__)) temp( new (ptr) T( item  ) );
+      send( signal );
+   }
+
+
+
 
    /**
     * insert - inserts the range from begin to end in the FIFO,
@@ -258,14 +347,12 @@ public:
       return;
    }
    
-#if 0
    template< class T >
    auto pop_s() -> autorelease< T, poptype >
    {
       return( autorelease< T, poptype >( (*this) ) );
    }
-#endif
-
+   
    /**
     * pop_range - pops n_items from the buffer into the 
     * std::vector pointed to by pop_range.  There are 
