@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
 
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
     <title>Raft Lib by jonathan-beard</title>
@@ -29,16 +29,19 @@
     <div class="container">
       <section id="main_content">
         <h3>
-<a name="welcome-to-the-raft-c-template-library" class="anchor" href="#welcome-to-the-raft-c-template-library"><span class="octicon octicon-link"></span></a>Welcome to the Raft C++ template library</h3>
+<a id="welcome-to-the-raft-c-template-library" class="anchor" href="#welcome-to-the-raft-c-template-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to the Raft C++ template library</h3>
 
 <h3>
-<a name="current-status" class="anchor" href="#current-status"><span class="octicon octicon-link"></span></a>Current Status</h3>
+<a id="current-status" class="anchor" href="#current-status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Current Status</h3>
 
 <p>The Raft library is currently an alpha release.  The API itself is stable, however the back end
-is subject to updates.  The release is subject to the Apache Version 2.0 license.</p>
+is subject to updates.  The release is subject to the Apache Version 2.0 license. If you are checking
+out the code to develop, please use the main line and create pull request. If you want to 
+develop applications, I suggest using one of the release branches so that you have a stable
+development experience. You can add applications to the main line through subsequent pull requests.</p>
 
 <h3>
-<a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h3>
+<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h3>
 
 <p>To checkout the library do the following:</p>
 
@@ -56,321 +59,35 @@ is build you're basically set save for a few details, which will be laid out wit
 
 <p>To build the example application simply:</p>
 
-<pre><code>$ cd RaftLib/ExampleApps
+<pre><code>$ cd RaftLib/exampleapps
 $ make
 </code></pre>
 
 <h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
 <p>In 2013 Jonathan Beard (<a href="https://github.com/jonathan-beard" class="user-mention">@jonathan-beard</a>) started work on the Raft language.  In the interim,
 and realizing the ubiquity of the C++ language, he started work on a template library that 
 uses the same framework as the full Raft language and run-time system.  This C++ library is 
-the result.</p>
+the result. Since then many have contributed to the theory and code base behind RaftLib (most
+notable is my co-author (<a href="https://github.com/pl53" class="user-mention">@pl53</a>), for a full current contribution list see the GitHub stats page. </p>
 
 <h3>
-<a name="genealogy" class="anchor" href="#genealogy"><span class="octicon octicon-link"></span></a>Genealogy</h3>
+<a id="genealogy" class="anchor" href="#genealogy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Genealogy</h3>
 
 <p>There have been several dozen streaming languages.  Most notable of which is probably StreaMIT.  I've worked on the Auto-Pipe streaming runtime system (both versions 1 and 2) developed at Washington University.  This particular streaming library was developed as a faster way to get started with stream processing by enabling users to stick to a language with which they are already familiar (C++).</p>
 
 <h3>
-<a name="tutorial" class="anchor" href="#tutorial"><span class="octicon octicon-link"></span></a>Tutorial</h3>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h3>
 
-<p>The tutorial could be written two ways.  The first would be to enumerate all the possible functions and configurations.  The second would be to give an example and explain the example as it is presented.  We'll start with the example approach then move to a short directory of useful functions followed by some permutations on the previously mentioned example.</p>
+<p>The main source of documentation is available on the RaftLib wiki page: <a href="https://github.com/jonathan-beard/RaftLib/wik">https://github.com/jonathan-beard/RaftLib/wik</a></p>
 
-<p>First and foremost what is stream processing?  Essentially it is a compute paradigm that envisions perfectly safe, threaded programs (although we'll relax this a bit with locked shared objects, shown much later in the tutorial).  Stream programs themselves are decomposed into compute "kernels" which are connected by communications links called "streams."  As an extremely simple example, take a look at the figure below which has three compute "kernels" (A,B,C) connected by two "streams."</p>
+<p>If you see errors, or want to contribute please feel free to do so. </p>
 
-<p><img src="http://www.cse.wustl.edu/%7Ebeardj/queues.jpg" alt="tandem queue"></p>
+<h3>
+<a id="issues" class="anchor" href="#issues" aria-hidden="true"><span class="octicon octicon-link"></span></a>Issues</h3>
 
-<p>As a concrete example we have a "sum" application which generates a random stream of numbers from two separate threads, sums them in another and finally prints them in yet another thread.  Admittedly this is a bit wasteful in practice, however its a nice dirt simple example. </p>
-
-<div class="highlight highlight-c++"><pre><span class="cp">#include &lt;cassert&gt;</span>
-<span class="cp">#include &lt;iostream&gt;</span>
-<span class="cp">#include &lt;cstdint&gt;</span>
-<span class="cp">#include &lt;cstdlib&gt;</span>
-<span class="cm">/** include the raft header file **/</span>
-<span class="cp">#include &lt;raft&gt;</span>
-
-
-<span class="k">template</span> <span class="o">&lt;</span> <span class="k">typename</span> <span class="n">T</span> <span class="o">&gt;</span> <span class="k">class</span> <span class="nc">Generate</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Kernel</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-   <span class="n">Generate</span><span class="p">(</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">1000</span> <span class="p">)</span> <span class="o">:</span> <span class="n">Kernel</span><span class="p">(),</span>
-                                          <span class="n">count</span><span class="p">(</span> <span class="n">count</span> <span class="p">)</span>
-   <span class="p">{</span>
-      <span class="n">output</span><span class="p">.</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="n">T</span> <span class="o">&gt;</span><span class="p">(</span> <span class="s">"number_stream"</span> <span class="p">);</span>
-   <span class="p">}</span>
-
-   <span class="k">virtual</span> <span class="n">raft</span><span class="o">::</span><span class="n">kstatus</span> <span class="n">run</span><span class="p">()</span>
-   <span class="p">{</span>
-      <span class="k">if</span><span class="p">(</span> <span class="n">count</span><span class="o">--</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">)</span>
-      <span class="p">{</span>
-         <span class="n">output</span><span class="p">[</span> <span class="s">"number_stream"</span> <span class="p">].</span><span class="n">push</span><span class="p">(</span> <span class="n">count</span> <span class="p">);</span>
-         <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">proceed</span> <span class="p">);</span>
-      <span class="p">}</span>
-      <span class="n">output</span><span class="p">[</span> <span class="s">"number_stream"</span> <span class="p">].</span><span class="n">push</span><span class="p">(</span> <span class="n">count</span><span class="p">,</span> <span class="n">raft</span><span class="o">::</span><span class="n">eof</span> <span class="p">);</span>
-      <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">stop</span> <span class="p">);</span>
-   <span class="p">}</span>
-
-<span class="k">private</span><span class="o">:</span>
-   <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="n">count</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="k">template</span><span class="o">&lt;</span> <span class="k">typename</span> <span class="n">A</span><span class="p">,</span> <span class="k">typename</span> <span class="n">B</span><span class="p">,</span> <span class="k">typename</span> <span class="n">C</span> <span class="o">&gt;</span> <span class="k">class</span> <span class="nc">Sum</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Kernel</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-   <span class="n">Sum</span><span class="p">()</span> <span class="o">:</span> <span class="n">Kernel</span><span class="p">()</span>
-   <span class="p">{</span>
-      <span class="n">input</span><span class="p">.</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="n">A</span> <span class="o">&gt;</span><span class="p">(</span> <span class="s">"input_a"</span> <span class="p">);</span>
-      <span class="n">input</span><span class="p">.</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="n">B</span> <span class="o">&gt;</span><span class="p">(</span> <span class="s">"input_b"</span> <span class="p">);</span>
-      <span class="n">output</span><span class="p">.</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="n">C</span>  <span class="o">&gt;</span><span class="p">(</span> <span class="s">"sum"</span> <span class="p">);</span>
-   <span class="p">}</span>
-
-   <span class="k">virtual</span> <span class="n">raft</span><span class="o">::</span><span class="n">kstatus</span> <span class="n">run</span><span class="p">()</span>
-   <span class="p">{</span>
-      <span class="n">A</span> <span class="n">a</span><span class="p">;</span>
-      <span class="n">B</span> <span class="n">b</span><span class="p">;</span>
-      <span class="n">raft</span><span class="o">::</span><span class="n">signal</span>  <span class="n">sig_a</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span>  <span class="p">),</span> <span class="n">sig_b</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span> <span class="p">);</span>
-      <span class="n">input</span><span class="p">[</span> <span class="s">"input_a"</span> <span class="p">].</span><span class="n">pop</span><span class="p">(</span> <span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sig_a</span> <span class="p">);</span>
-      <span class="n">input</span><span class="p">[</span> <span class="s">"input_b"</span> <span class="p">].</span><span class="n">pop</span><span class="p">(</span> <span class="n">b</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sig_b</span> <span class="p">);</span>
-      <span class="n">assert</span><span class="p">(</span> <span class="n">sig_a</span> <span class="o">==</span> <span class="n">sig_b</span> <span class="p">);</span>
-      <span class="n">C</span> <span class="nf">c</span><span class="p">(</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="p">);</span>
-      <span class="n">output</span><span class="p">[</span> <span class="s">"sum"</span> <span class="p">].</span><span class="n">push</span><span class="p">(</span> <span class="n">c</span> <span class="p">,</span> <span class="n">sig_a</span> <span class="p">);</span>
-      <span class="k">if</span><span class="p">(</span> <span class="n">sig_b</span> <span class="o">==</span> <span class="n">raft</span><span class="o">::</span><span class="n">eof</span> <span class="p">)</span>
-      <span class="p">{</span>
-         <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">stop</span> <span class="p">);</span>
-      <span class="p">}</span>
-      <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">proceed</span> <span class="p">);</span>
-   <span class="p">}</span>
-
-<span class="p">};</span>
-
-<span class="k">template</span><span class="o">&lt;</span> <span class="k">typename</span> <span class="n">T</span> <span class="o">&gt;</span> <span class="k">class</span> <span class="nc">Print</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Kernel</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-   <span class="n">Print</span><span class="p">()</span> <span class="o">:</span> <span class="n">Kernel</span><span class="p">()</span>
-   <span class="p">{</span>
-      <span class="n">input</span><span class="p">.</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="n">T</span> <span class="o">&gt;</span><span class="p">(</span> <span class="s">"in"</span> <span class="p">);</span>
-   <span class="p">}</span>
-
-   <span class="k">virtual</span> <span class="n">raft</span><span class="o">::</span><span class="n">kstatus</span> <span class="n">run</span><span class="p">()</span>
-   <span class="p">{</span>
-      <span class="n">T</span> <span class="n">data</span><span class="p">;</span>
-      <span class="n">raft</span><span class="o">::</span><span class="n">signal</span>  <span class="n">signal</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span> <span class="p">);</span>
-      <span class="n">input</span><span class="p">[</span> <span class="s">"in"</span> <span class="p">].</span><span class="n">pop</span><span class="p">(</span> <span class="n">data</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">signal</span> <span class="p">);</span>
-      <span class="n">fprintf</span><span class="p">(</span> <span class="n">stderr</span><span class="p">,</span> <span class="s">"%"</span> <span class="n">PRIu64</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">data</span> <span class="p">);</span>
-      <span class="k">if</span><span class="p">(</span> <span class="n">signal</span> <span class="o">==</span> <span class="n">raft</span><span class="o">::</span><span class="n">eof</span> <span class="p">)</span>
-      <span class="p">{</span>
-         <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">stop</span> <span class="p">);</span>
-      <span class="p">}</span>
-      <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">proceed</span> <span class="p">);</span>
-   <span class="p">}</span>
-<span class="p">};</span>
-
-<span class="kt">int</span>
-<span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span> <span class="p">)</span>
-<span class="p">{</span>
-   <span class="n">Map</span> <span class="n">map</span><span class="p">;</span>
-   <span class="k">auto</span> <span class="n">linked_kernels</span><span class="p">(</span> <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="k">new</span> <span class="n">Generate</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span>
-                                  <span class="k">new</span> <span class="n">Sum</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span>
-                                  <span class="s">"input_a"</span> <span class="p">)</span> <span class="p">);</span>
-   <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="k">new</span> <span class="n">Generate</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span> <span class="o">&amp;</span><span class="p">(</span> <span class="n">linked_kernels</span><span class="p">.</span><span class="n">dst</span> <span class="p">),</span> <span class="s">"input_b"</span> <span class="p">);</span>
-   <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="o">&amp;</span><span class="p">(</span> <span class="n">linked_kernels</span><span class="p">.</span><span class="n">dst</span> <span class="p">),</span> <span class="k">new</span> <span class="n">Print</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">()</span> <span class="p">);</span>
-   <span class="n">map</span><span class="p">.</span><span class="n">exe</span><span class="p">();</span>
-   <span class="k">return</span><span class="p">(</span> <span class="n">EXIT_SUCCESS</span> <span class="p">);</span>
-<span class="p">}</span>
-</pre></div>
-
-<p>The first thing to notice is that all compute kernels extend the class Kernel.  This sets up the "ports"
-that exist for communication between compute kernels.  For each kernel there are multiple ports.  Input
-ports and output ports for each kernel are maintained in a data structure of that name.  When designing 
-a new kernel, the constructor must declare all ports as such:</p>
-
-<div class="highlight highlight-c++"><pre>   <span class="p">[</span><span class="n">input</span> <span class="o">|</span> <span class="n">output</span><span class="p">].</span><span class="n">addPort</span><span class="o">&lt;</span> <span class="p">[</span><span class="n">type</span><span class="p">]</span> <span class="o">&gt;</span><span class="p">(</span> <span class="p">[</span><span class="n">port</span> <span class="n">name</span><span class="p">]</span> <span class="p">);</span>
-</pre></div>
-
-<p>This has two effects, the first registering a type with the port to ensure type safety, and the second
-registering a port with a name so that it can be quickly accessed later.  These ports are constructed
-as lock free first in, first out buffers or "ring-buffers" which enable communication.  The run-time
-system decides on how big the buffer should be and has the option of dynamically monitoring the buffer
-to adjust the size at run-time.  Once ports are declared within the constructor the second function that
-must be declared is <em>run()</em>.  It performs the main work of the kernel, although sub-functions can be 
-declared to compartmentalize code.  As an example:</p>
-
-<div class="highlight highlight-c++"><pre>   <span class="k">virtual</span> <span class="n">raft</span><span class="o">::</span><span class="n">kstatus</span> <span class="n">run</span><span class="p">()</span>
-   <span class="p">{</span>
-      <span class="k">if</span><span class="p">(</span> <span class="p">[</span> <span class="n">some</span> <span class="kt">bool</span> <span class="n">here</span> <span class="p">]</span> <span class="p">)</span>
-      <span class="p">{</span>
-         <span class="n">output</span><span class="p">[</span> <span class="s">"the_port"</span> <span class="p">].</span><span class="n">push</span><span class="p">(</span> <span class="n">count</span> <span class="p">);</span>
-         <span class="cm">/** return raft::proceed to get called again **/</span>
-         <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">proceed</span> <span class="p">);</span>
-      <span class="p">}</span>
-      <span class="cm">/** else **/</span>
-      <span class="cm">/** </span>
-<span class="cm">       * call push with the last item and send a signal that will terminate</span>
-<span class="cm">       * the application such as raft::eof</span>
-<span class="cm">       */</span>
-      <span class="n">output</span><span class="p">[</span> <span class="s">"the_port"</span> <span class="p">].</span><span class="n">push</span><span class="p">(</span> <span class="n">count</span><span class="p">,</span> <span class="n">raft</span><span class="o">::</span><span class="n">eof</span> <span class="p">);</span>
-      <span class="cm">/** return raft::stop to end the calling of this kernel **/</span>
-      <span class="k">return</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">stop</span> <span class="p">);</span>
-   <span class="p">}</span>
-</pre></div>
-
-<p>The run function can be executed in a separate thread or in it's own process depending 
-on how the scheduler schedules it.  In either case, it will be called until it returns
-raft::stop, otherwise raft::proceed should be returned.  Otherwise there is nothing
-really special about the Kernel class.  In future tutorials I'll add an example of how
-the Raft library system an be used with OpenCL with the queue talking directly to
-a kernel running on a GPU.  GPU kernels will have a slightly differing structure, but 
-from the programmers perspective will have similar port semantics as the C++ kernels.</p>
-
-<p>Within the kernel (not just the run function), there are multiple ways to access the input / output
-ports including the following functions:</p>
-
-<div class="highlight highlight-c++"><pre><span class="cm">/**</span>
-<span class="cm"> * allocate - returns a reference to the current tail </span>
-<span class="cm"> * of the queue.  Enables the programmer to perform a</span>
-<span class="cm"> * single copy (i.e., allocating memory directly on the</span>
-<span class="cm"> * stream to use and then release to the downstream </span>
-<span class="cm"> * kernel with the push(signal) function below.</span>
-<span class="cm"> */</span>
-<span class="k">template</span> <span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span> <span class="k">auto</span> <span class="n">allocate</span><span class="p">()</span> <span class="o">-&gt;</span><span class="n">T</span><span class="o">&amp;</span><span class="p">;</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * allocate_range - similar to the single allocate above, allows the programmer</span>
-<span class="cm"> * to allocate multiple items on the queue.  Returns a std::vector of </span>
-<span class="cm"> * references.  Currently the "auto" keyword should be avoided when putting</span>
-<span class="cm"> * this in a for loop, the type contained T should be used as a reference to </span>
-<span class="cm"> * write to these values.  The first param is the number that the user wishes</span>
-<span class="cm"> * to allocate, the second n_ret is set to the value actually allocated.  n_ret</span>
-<span class="cm"> * will only differ if the capacity of the queue is less than n. </span>
-<span class="cm"> */</span>
-<span class="k">template</span> <span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span> <span class="k">auto</span> <span class="n">allocate_range</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">n</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="o">&amp;</span><span class="n">n_ret</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">reference_wrapper</span><span class="o">&lt;</span> <span class="n">T</span> <span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">;</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * push - used after a call to allocate to release these values</span>
-<span class="cm"> * to the stream.  The signal passed is assigned to the last value</span>
-<span class="cm"> * from the allocate call so that it is received inline.</span>
-<span class="cm"> */</span>
-<span class="k">virtual</span> <span class="kt">void</span> <span class="nf">push</span><span class="p">(</span> <span class="k">const</span> <span class="n">raft</span><span class="o">::</span><span class="n">signal</span> <span class="o">=</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span> <span class="p">);</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * push - this version takes a reference (item) which is then copied to </span>
-<span class="cm"> * the current position within the queue.  The signal, if given is </span>
-<span class="cm"> * assigned to that index.</span>
-<span class="cm"> */</span>
-<span class="k">template</span> <span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span> 
-   <span class="kt">void</span> <span class="n">push</span><span class="p">(</span> <span class="n">T</span> <span class="o">&amp;</span><span class="n">item</span><span class="p">,</span> <span class="k">const</span> <span class="n">raft</span><span class="o">::</span><span class="n">signal</span> <span class="n">signal</span> <span class="o">=</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span> <span class="p">);</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * insert - pass an iterator range to the queue, the signal</span>
-<span class="cm"> * if used will assign the signal to the last position (i.e.,</span>
-<span class="cm"> * end() - 1. </span>
-<span class="cm"> */</span>
-<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">iterator_type</span> <span class="o">&gt;</span>
-   <span class="kt">void</span> <span class="n">insert</span><span class="p">(</span>   <span class="n">iterator_type</span> <span class="n">begin</span><span class="p">,</span>
-                  <span class="n">iterator_type</span> <span class="n">end</span><span class="p">,</span>
-                  <span class="k">const</span> <span class="n">raft</span><span class="o">::</span><span class="n">signal</span> <span class="n">signal</span> <span class="o">=</span> <span class="n">raft</span><span class="o">::</span><span class="n">none</span> <span class="p">);</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * pop - pass a reference to an item of type T and the value at</span>
-<span class="cm"> * the head of the queue will be copied to item and the signal</span>
-<span class="cm"> * associated with that position copied.  The item is removed </span>
-<span class="cm"> * from the queue after this call.</span>
-<span class="cm"> */</span>
-<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
-   <span class="kt">void</span> <span class="n">pop</span><span class="p">(</span> <span class="n">T</span> <span class="o">&amp;</span><span class="n">item</span><span class="p">,</span> <span class="n">raft</span><span class="o">::</span><span class="n">signal</span> <span class="o">*</span><span class="n">signal</span> <span class="o">=</span> <span class="k">nullptr</span> <span class="p">);</span>
-
-<span class="cm">/** </span>
-<span class="cm"> * peek - returns the item at the head of the queue with</span>
-<span class="cm"> * type T&amp; but DOES NOT pop the item.  The signal associated</span>
-<span class="cm"> * with this item is returned if it is desired.  A call to </span>
-<span class="cm"> * recycle() after this function will remove the item previously</span>
-<span class="cm"> * returned by peek().</span>
-<span class="cm"> */</span>
-<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
-   <span class="n">T</span><span class="o">&amp;</span> <span class="n">peek</span><span class="p">(</span> <span class="n">raft</span><span class="o">::</span><span class="n">signal</span> <span class="o">*</span><span class="n">signal</span> <span class="o">=</span> <span class="k">nullptr</span> <span class="p">);</span>
-
-<span class="cm">/** </span>
-<span class="cm"> * recycle - removes the item at the head of the queue, or </span>
-<span class="cm"> * number of items specified as range.</span>
-<span class="cm"> */</span>
-<span class="k">virtual</span> <span class="kt">void</span> <span class="nf">recycle</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">range</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">);</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * NOTE: there will be a pop_range function, however its exact form might</span>
-<span class="cm"> * soon change, so it is not listed in this summary.</span>
-<span class="cm"> */</span>
-</pre></div>
-
-<p>To "hook" compute kernels together we need a "Map" object, as in the following example (shamelessly taken
-from the above "sum" example):</p>
-
-<div class="highlight highlight-c++"><pre><span class="kt">int</span>
-<span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span> <span class="p">)</span>
-<span class="p">{</span>
-   <span class="n">Map</span> <span class="n">map</span><span class="p">;</span>
-   <span class="k">auto</span> <span class="n">linked_kernels</span><span class="p">(</span> <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="k">new</span> <span class="n">Generate</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span>
-                                  <span class="k">new</span> <span class="n">Sum</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span>
-                                  <span class="s">"input_a"</span> <span class="p">)</span> <span class="p">);</span>
-   <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="k">new</span> <span class="n">Generate</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">(),</span> <span class="o">&amp;</span><span class="p">(</span> <span class="n">linked_kernels</span><span class="p">.</span><span class="n">dst</span> <span class="p">),</span> <span class="s">"input_b"</span> <span class="p">);</span>
-   <span class="n">map</span><span class="p">.</span><span class="n">link</span><span class="p">(</span> <span class="o">&amp;</span><span class="p">(</span> <span class="n">linked_kernels</span><span class="p">.</span><span class="n">dst</span> <span class="p">),</span> <span class="k">new</span> <span class="n">Print</span><span class="o">&lt;</span> <span class="n">std</span><span class="o">::</span><span class="kt">int64_t</span> <span class="o">&gt;</span><span class="p">()</span> <span class="p">);</span>
-   <span class="n">map</span><span class="p">.</span><span class="n">exe</span><span class="p">();</span>
-   <span class="k">return</span><span class="p">(</span> <span class="n">EXIT_SUCCESS</span> <span class="p">);</span>
-<span class="p">}</span>
-</pre></div>
-
-<p>Using the <em>link()</em> function we can link together compatible combinations of two compute kernels.  Compatible
-ports will have the same type or will be able to be cast to the same type. The <em>link()</em> function returns a
-reference to the functions that are passed as parameters.  This is a convenience so that the programmer can
-instantiate them via the function param with <em>new</em> and use the return values for follow-on <em>link()</em> calls.  This
-function has various forms as follows:</p>
-
-<div class="highlight highlight-c++"><pre><span class="cm">/**</span>
-<span class="cm"> * version 1: Kernel's a &amp; b are assumed to have a single output</span>
-<span class="cm"> * and input port respectively, otherwise an exception is thrown.   </span>
-<span class="cm"> */</span>
-<span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
-      <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span> <span class="p">);</span>
-<span class="cm">/**</span>
-<span class="cm"> * version 2: Kernel a has multiple output ports, but one named _a\_port_, Kernel</span>
-<span class="cm"> * b has a single input port otherwise an exception is thrown.</span>
-<span class="cm"> */</span>
-<span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span> 
-      <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span>  <span class="n">a_port</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span> <span class="p">);</span>
-<span class="cm">/** </span>
-<span class="cm"> * version 3: Kernel a has a single output port (otherwise an exception is thrown,</span>
-<span class="cm"> * Kernel b has multiple input ports with at least one named _b\_port_</span>
-<span class="cm"> */</span>
-<span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
-      <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">b_port</span> <span class="p">);</span>
-<span class="cm">/**</span>
-<span class="cm"> * version 4: both kernels have multiple output ports with at least one named _a\_port_ </span>
-<span class="cm"> * and _b\_port_, otherwise an exception is thrown.</span>
-<span class="cm"> */</span>
-<span class="k">template</span> <span class="o">&lt;</span> <span class="n">order</span><span class="o">::</span><span class="n">spec</span> <span class="n">t</span> <span class="o">=</span> <span class="n">order</span><span class="o">::</span><span class="n">in</span> <span class="o">&gt;</span>
-      <span class="kt">kernel_pair_t</span> <span class="n">link</span><span class="p">(</span> <span class="n">Kernel</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">a_port</span><span class="p">,</span> 
-                          <span class="n">Kernel</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">b_port</span> <span class="p">);</span>
-</pre></div>
-
-<p>Calling link has the effect of connecting Kernel *a to Kernel *b through the 
-specified port (or the only port if none is specified).  This creates a data 
-flow graph of kernels and “streams” through which data passes.  Type checking 
-is also done at this time between ports.  Types are considered compatible if they
-are the same or cast-able.  If types are cast-able then the smallest (narrowest) 
-type of the two is chosen for the port allocation.  The types are cast 
-transparently to the user.  At this point nothing has yet been allocated.<br>
-When the <em>exe()</em> function of Map is called, everything is put into 
-motion.  The data flow graph stored within Map is analyzed for 
-“unconnected” edges, which could indicate compute kernels  which have connected 
-incorrectly, this is in addition to the type checking already 
-performed.  Each compute kernel is “mapped” to a thread or process for 
-execution, the appropriate type of link is automatically allocated by the 
-run-time, finally the scheduler begins executing the data flow graph.<br>
-In the final version two threads monitor the execution schedule and stream 
-status ensuring streams are properly allocated.  Future versions will 
-automatically increase or decrease the parallelism within the data-flow 
-graph (dev version will get this first).  </p>
+<p>Please feel free to comment on any issues by opening an issue on our issues page: <a href="https://github.com/jonathan-beard/RaftLib/issues">https://github.com/jonathan-beard/RaftLib/issues</a></p>
       </section>
     </div>
 
