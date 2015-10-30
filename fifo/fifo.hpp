@@ -101,7 +101,11 @@ public:
       local_allocate( &ptr );
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
-   
+
+#ifndef UNUSED 
+#define UNUSED( x )[&x]{}()
+#endif
+
    template < class T,
               class ... Args,
               typename std::enable_if< 
@@ -112,7 +116,8 @@ public:
       void *ptr( nullptr );
       /** call blocks till an element is available **/
       local_allocate( &ptr );
-      T * __attribute__ ((__unused__)) temp( new (ptr) T( std::forward< Args >( params )... ) );
+      T * __attribute__ (( unused )) temp( new (ptr) T( std::forward< Args >( params )... ) );
+      UNUSED( temp );
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
 
