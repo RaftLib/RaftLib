@@ -18,7 +18,7 @@ endif
 
 type =? release
 TEST = -O0 -g3 -ggdb 
-RELEASE = -fomit-frame-pointer -Ofast -mavx2 -mtune=native
+RELEASE = -fomit-frame-pointer -O3 -mtune=native
 
 ifeq ($(type), test)
 BUILD = $(TEST) $(STATIC) -DDEBUG=1

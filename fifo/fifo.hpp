@@ -112,7 +112,7 @@ public:
       void *ptr( nullptr );
       /** call blocks till an element is available **/
       local_allocate( &ptr );
-      T * __attribute__((__unused__)) temp( new (ptr) T( std::forward< Args >( params )... ) );
+      T * __attribute__ ((__unused__)) temp( new (ptr) T( std::forward< Args >( params )... ) );
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
 
