@@ -89,5 +89,6 @@ main( int argc, char **argv )
       &linked_kernels.getDst(), 
       raft::kernel::make< p_out >() );
    raft::map.exe();
+
    return( EXIT_SUCCESS );
 }
