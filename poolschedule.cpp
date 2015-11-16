@@ -28,7 +28,6 @@
 #include "map.hpp"
 #include "poolschedule.hpp"
 #include "rafttypes.hpp"
-#include "utility.hpp"
 #include "sched_cmd_t.hpp"
 
 pool_schedule::pool_schedule( Map &map ) : Schedule( map ),

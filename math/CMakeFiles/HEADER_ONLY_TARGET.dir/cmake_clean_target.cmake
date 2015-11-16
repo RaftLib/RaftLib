@@ -1,0 +1,3 @@
+file(REMOVE_RECURSE
+  "libHEADER_ONLY_TARGET.a"
+)
