@@ -17,16 +17,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <cassert>
 #include "signaldata.hpp"
-
+/** TODO: come back here and remodel, and well...make these functions do something **/
 raft::signal
-SignalData::get_signal()
+SignalData::get_signal(  const std::thread::id id )
 {
-
+    assert( false );
+    return( static_cast< raft::signal >( 0 ) ); 
 }
 
 void
-SignalData::set_signal( const raft::signal signal )
+SignalData::set_signal( const std::thread::id id, const raft::signal signal )
 {
    
 }

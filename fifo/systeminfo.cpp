@@ -417,6 +417,7 @@ SystemInfo::getSystemProperty( const si::Trait trait )
       return( std::to_string( priority ) );
    }
 #elif __APPLE__
+   using namespace si;
    typedef int mib_t;
    mib_t mib[4];
    std::memset( mib, 0, sizeof( mib_t ) * 4 );
@@ -896,6 +897,7 @@ SystemInfo::getUTSNameInfo( const si::Trait t )
       }
       switch( t )
       {
+         using namespace si;
          case( SystemName ):
          {
             return( std::string( un.sysname ) );     

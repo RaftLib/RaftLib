@@ -22,6 +22,9 @@
 #ifndef _SIGNALDATA_HPP_
 #define _SIGNALDATA_HPP_  1
 
+#include <thread>
+
+#include "signalvars.hpp"
 
 class SignalData
 {
