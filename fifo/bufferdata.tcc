@@ -72,18 +72,34 @@ template < class T,
    Data( const std::size_t max_cap , 
          const std::size_t align = 16 ) : DataBase< T >( max_cap )
    {
-      int ret_val( posix_memalign( (void**)&((this)->store), 
-                                   align, 
-                                   (this)->length_store ) );
+      int ret_val( 0 );
+
+#if (defined __LINUX__) || (defined __APPLE__ )
+      ret_val = posix_memalign( (void**)&((this)->store), 
+                                 align, 
+                                (this)->length_store );
+#elif defined _WINDOWS
+      (this)->store = _aligned_malloc( align, (this)->length_store );
+#else
+      /** 
+       * would use the array allocate, but well...we'd have to 
+       * figure out how to free it
+       */
+      (this)->store = reinterpret_cast< T* >( malloc( (this)->length_store ) );
+#endif
       if( ret_val != 0 )
       {
          std::cerr << "posix_memalign returned error code (" << ret_val << ")";
          std::cerr << " with message: \n" << strerror( ret_val ) << "\n";
          exit( EXIT_FAILURE );
       }
+      assert( (this)->store != nullptr );
       
-      posix_madvise( (this)->store, (this)->length_store,  POSIX_MADV_SEQUENTIAL );
-
+#if (defined __LINUX__) || (defined __APPLE__ )
+      posix_madvise( (this)->store, 
+                     (this)->length_store,  
+                     POSIX_MADV_SEQUENTIAL );
+#endif
       errno = 0;
       (this)->signal = (Signal*)       calloc( (this)->max_cap,
                                                sizeof( Signal ) );
