@@ -78,7 +78,7 @@ template < class T,
       ret_val = posix_memalign( (void**)&((this)->store), 
                                  align, 
                                 (this)->length_store );
-#elif defined _WINDOWS
+#elif 0 //defined _WINDOWS
       (this)->store = _aligned_malloc( align, (this)->length_store );
 #else
       /** 
