@@ -14,10 +14,12 @@ Libraries:
 * Only for partitioning, basic download doesn't need: <a href="http://goo.gl/tI1NGf">Scotch</a>
 
 ### Install
-Once the pre-requisite libraries are installed
-then go to the root RaftLib directory and type
-```
-cmake .
+Once the optional pre-requisite libraries are installed,
+make a build directory (for the instructions below, we'll 
+write [build]).
+```bash
+cd [build]
+cmake ../[build]
 make
 sudo make install
 ```
@@ -30,4 +32,4 @@ cmake file so that we can have similar functionality.
 
 NOTE: still working on cmake/re-arrangeing. CMake basically works
 tested on OS X and Linux. I'll have more time for re-arrangements and
-the sub-modules sometime this week (16 Nov. 2015)
+the sub-modules sometime this week (19 Nov. 2015)
