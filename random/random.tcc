@@ -41,7 +41,8 @@ namespace raft
 {
 
 /** UNIFORM **/
-template< class T, rndtype type = raft::uniform > class random_variate : 
+template< class T, 
+          rndtype type = raft::uniform > class random_variate : 
    public raft::randomx< T >
 {
 public:

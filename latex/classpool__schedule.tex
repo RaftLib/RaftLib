@@ -1,0 +1,179 @@
+\hypertarget{classpool__schedule}{}\section{pool\+\_\+schedule Class Reference}
+\label{classpool__schedule}\index{pool\+\_\+schedule@{pool\+\_\+schedule}}
+Inheritance diagram for pool\+\_\+schedule\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpool__schedule}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classpool__schedule_a11da62ac9c7b4ea203198ac3bb7babb4}{pool\+\_\+schedule} (\hyperlink{class_map}{Map} \&map)
+\item 
+virtual \hyperlink{classpool__schedule_a176ca5ea8ee742192b52660ecccc9290}{$\sim$pool\+\_\+schedule} ()
+\item 
+virtual void \hyperlink{classpool__schedule_ab67558a44404e42ba032f799c0f424a7}{start} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \hyperlink{classpool__schedule_aa5ec97e860a94aa17f33a0562fe942ce}{schedule\+Kernel} (\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$const kernel)
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \hyperlink{classpool__schedule_a962f811570635fb9a9ec13c1bbcf2923}{container\+\_\+min\+\_\+input} (\hyperlink{classkernel__container}{kernel\+\_\+container} $\ast$const a, \hyperlink{classkernel__container}{kernel\+\_\+container} $\ast$const b)
+\item 
+static bool \hyperlink{classpool__schedule_a9cef61efbff4cd4f0b2834fa1d8448cd}{container\+\_\+min\+\_\+output} (\hyperlink{classkernel__container}{kernel\+\_\+container} $\ast$const a, \hyperlink{classkernel__container}{kernel\+\_\+container} $\ast$const b)
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const float \hyperlink{classpool__schedule_ad58df45d8f29a1a696338a2beb058b7c}{diff\+\_\+weight} = .\+20
+\item 
+decltype(std\+::thread\+::hardware\+\_\+concurrency()) const \hyperlink{classpool__schedule_adc11766f8ff9a29b21318bfcf81c815d}{n\+\_\+threads}
+\item 
+std\+::vector$<$ std\+::thread $\ast$ $>$ \hyperlink{classpool__schedule_ae13c48902fd23d0d8747978780731a04}{pool}
+\item 
+std\+::vector$<$ \hyperlink{classkernel__container}{kernel\+\_\+container} $\ast$ $>$ \hyperlink{classpool__schedule_a06a6ffb1893da4d486e309f22fe3d83e}{container}
+\item 
+\hypertarget{classpool__schedule_a91f4b1e58cbbe08986c21d1286f3f98b}{}std\+::size\+\_\+t {\bfseries kernel\+\_\+count} = 0\label{classpool__schedule_a91f4b1e58cbbe08986c21d1286f3f98b}
+
+\item 
+\hypertarget{classpool__schedule_a7255a60e82c01a13c18ae69c8831f288}{}std\+::remove\+\_\+reference$<$ decltype(container.\+end()) $>$\+::type {\bfseries container\+\_\+it}\label{classpool__schedule_a7255a60e82c01a13c18ae69c8831f288}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classpool__schedule_a11da62ac9c7b4ea203198ac3bb7babb4}{}\index{pool\+\_\+schedule@{pool\+\_\+schedule}!pool\+\_\+schedule@{pool\+\_\+schedule}}
+\index{pool\+\_\+schedule@{pool\+\_\+schedule}!pool\+\_\+schedule@{pool\+\_\+schedule}}
+\subsubsection[{pool\+\_\+schedule(\+Map \&map)}]{\setlength{\rightskip}{0pt plus 5cm}pool\+\_\+schedule\+::pool\+\_\+schedule (
+\begin{DoxyParamCaption}
+\item[{{\bf Map} \&}]{map}
+\end{DoxyParamCaption}
+)}\label{classpool__schedule_a11da62ac9c7b4ea203198ac3bb7babb4}
+\hyperlink{classpool__schedule}{pool\+\_\+schedule} -\/ constructor, takes a map object, calling this will launch threads. scheduler itself is also run as a thread. 
+\begin{DoxyParams}{Parameters}
+{\em map} & -\/ \hyperlink{class_map}{Map}\&\\
+\hline
+\end{DoxyParams}
+poolschedule.\+cpp -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Thu Sep 11 15\+:49\+:57 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+I\+S, W\+I\+T\+H\+O\+U\+T W\+A\+R\+R\+A\+N\+T\+I\+E\+S O\+R C\+O\+N\+D\+I\+T\+I\+O\+N\+S O\+F A\+N\+Y K\+I\+N\+D, either express or implied. See the License for the specific language governing permissions and limitations under the License. initialize container objects
+
+initialize threads \hypertarget{classpool__schedule_a176ca5ea8ee742192b52660ecccc9290}{}\index{pool\+\_\+schedule@{pool\+\_\+schedule}!````~pool\+\_\+schedule@{$\sim$pool\+\_\+schedule}}
+\index{````~pool\+\_\+schedule@{$\sim$pool\+\_\+schedule}!pool\+\_\+schedule@{pool\+\_\+schedule}}
+\subsubsection[{$\sim$pool\+\_\+schedule()}]{\setlength{\rightskip}{0pt plus 5cm}pool\+\_\+schedule\+::$\sim$pool\+\_\+schedule (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classpool__schedule_a176ca5ea8ee742192b52660ecccc9290}
+destructor, deletes threads and cleans up container objects. join threads
+
+delete threads
+
+delete containers 
+
+\subsection{Member Function Documentation}
+\hypertarget{classpool__schedule_a962f811570635fb9a9ec13c1bbcf2923}{}\index{pool\+\_\+schedule@{pool\+\_\+schedule}!container\+\_\+min\+\_\+input@{container\+\_\+min\+\_\+input}}
+\index{container\+\_\+min\+\_\+input@{container\+\_\+min\+\_\+input}!pool\+\_\+schedule@{pool\+\_\+schedule}}
+\subsubsection[{container\+\_\+min\+\_\+input(kernel\+\_\+container $\ast$const a, kernel\+\_\+container $\ast$const b)}]{\setlength{\rightskip}{0pt plus 5cm}bool pool\+\_\+schedule\+::container\+\_\+min\+\_\+input (
+\begin{DoxyParamCaption}
+\item[{{\bf kernel\+\_\+container} $\ast$const}]{a, }
+\item[{{\bf kernel\+\_\+container} $\ast$const}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [protected]}}\label{classpool__schedule_a962f811570635fb9a9ec13c1bbcf2923}
+container\+\_\+min -\/ returns true if the input queue of a has fewer items than the input queue of b 
+\begin{DoxyParams}{Parameters}
+{\em a} & -\/ \hyperlink{classkernel__container}{kernel\+\_\+container} $\ast$ const \\
+\hline
+{\em b} & -\/ \hyperlink{classkernel__container}{kernel\+\_\+container} $\ast$ const \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool -\/ true if a-\/$>$qsize() $<$ b-\/$>$qsize() 
+\end{DoxyReturn}
+\hypertarget{classpool__schedule_a9cef61efbff4cd4f0b2834fa1d8448cd}{}\index{pool\+\_\+schedule@{pool\+\_\+schedule}!container\+\_\+min\+\_\+output@{container\+\_\+min\+\_\+output}}
+\index{container\+\_\+min\+\_\+output@{container\+\_\+min\+\_\+output}!pool\+\_\+schedule@{pool\+\_\+schedule}}
+\subsubsection[{container\+\_\+min\+\_\+output(kernel\+\_\+container $\ast$const a, kernel\+\_\+container $\ast$const b)}]{\setlength{\rightskip}{0pt plus 5cm}bool pool\+\_\+schedule\+::container\+\_\+min\+\_\+output (
+\begin{DoxyParamCaption}
+\item[{{\bf kernel\+\_\+container} $\ast$const}]{a, }
+\item[{{\bf kernel\+\_\+container} $\ast$const}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [protected]}}\label{classpool__schedule_a9cef61efbff4cd4f0b2834fa1d8448cd}
+container\+\_\+max -\/ returns true if the output queue of a is greater than b. 
+\begin{DoxyParams}{Parameters}
+{\em a} & -\/ \hyperlink{classkernel__container}{kernel\+\_\+container} $\ast$ const \\
+\hline
+{\em b} & -\/ \hyperlink{classkernel__container}{kernel\+\_\+container} $\ast$ const \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool -\/ true if a-\/$>$outqsize $>$ b-\/$>$qoutsize 
+\end{DoxyReturn}
+\hypertarget{classpool__schedule_aa5ec97e860a94aa17f33a0562fe942ce}{}\index{pool\+\_\+schedule@{pool\+\_\+schedule}!schedule\+Kernel@{schedule\+Kernel}}
+\index{schedule\+Kernel@{schedule\+Kernel}!pool\+\_\+schedule@{pool\+\_\+schedule}}
+\subsubsection[{schedule\+Kernel(raft\+::kernel $\ast$const kernel)}]{\setlength{\rightskip}{0pt plus 5cm}bool pool\+\_\+schedule\+::schedule\+Kernel (
+\begin{DoxyParamCaption}
+\item[{{\bf raft\+::kernel} $\ast$const}]{kernel}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [virtual]}}\label{classpool__schedule_aa5ec97e860a94aa17f33a0562fe942ce}
+B\+E\+G\+I\+N F\+U\+N\+C\+T\+I\+O\+N\+S schedule\+Kernel -\/ override base class function in order to add kernels to the right place. 
+\begin{DoxyParams}{Parameters}
+{\em kernel} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$ \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool -\/ always true 
+\end{DoxyReturn}
+get a container \hypertarget{classpool__schedule_ab67558a44404e42ba032f799c0f424a7}{}\index{pool\+\_\+schedule@{pool\+\_\+schedule}!start@{start}}
+\index{start@{start}!pool\+\_\+schedule@{pool\+\_\+schedule}}
+\subsubsection[{start()}]{\setlength{\rightskip}{0pt plus 5cm}void pool\+\_\+schedule\+::start (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classpool__schedule_ab67558a44404e42ba032f799c0f424a7}
+start -\/ call to start executing map, at this point the mapper sould have checked the topology and everything should be set up for running. we want to get the max queue occupancy
+
+some message exists
+
+remove kernel
+
+all done, shutdown 
+
+Implements \hyperlink{class_schedule_ab6ad5540ecdef6b472b4e8242a47c4ee}{Schedule}.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classpool__schedule_a06a6ffb1893da4d486e309f22fe3d83e}{}\index{pool\+\_\+schedule@{pool\+\_\+schedule}!container@{container}}
+\index{container@{container}!pool\+\_\+schedule@{pool\+\_\+schedule}}
+\subsubsection[{container}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ {\bf kernel\+\_\+container}$\ast$ $>$ pool\+\_\+schedule\+::container\hspace{0.3cm}{\ttfamily [protected]}}\label{classpool__schedule_a06a6ffb1893da4d486e309f22fe3d83e}
+max\+\_\+heap\+\_\+container -\/ sorted by max output-\/queue occupancy \hypertarget{classpool__schedule_ad58df45d8f29a1a696338a2beb058b7c}{}\index{pool\+\_\+schedule@{pool\+\_\+schedule}!diff\+\_\+weight@{diff\+\_\+weight}}
+\index{diff\+\_\+weight@{diff\+\_\+weight}!pool\+\_\+schedule@{pool\+\_\+schedule}}
+\subsubsection[{diff\+\_\+weight}]{\setlength{\rightskip}{0pt plus 5cm}const float pool\+\_\+schedule\+::diff\+\_\+weight = .\+20\hspace{0.3cm}{\ttfamily [protected]}}\label{classpool__schedule_ad58df45d8f29a1a696338a2beb058b7c}
+E\+N\+D F\+U\+N\+C\+T\+I\+O\+N\+S, B\+E\+G\+I\+N V\+A\+R D\+E\+C\+L\+S The thread has to have this much more \char`\"{}work\char`\"{} than the previous thread in order to get moved ot a new thread. Used in \hyperlink{classpool__schedule_ab67558a44404e42ba032f799c0f424a7}{pool\+\_\+schedule\+::start()}. \hypertarget{classpool__schedule_adc11766f8ff9a29b21318bfcf81c815d}{}\index{pool\+\_\+schedule@{pool\+\_\+schedule}!n\+\_\+threads@{n\+\_\+threads}}
+\index{n\+\_\+threads@{n\+\_\+threads}!pool\+\_\+schedule@{pool\+\_\+schedule}}
+\subsubsection[{n\+\_\+threads}]{\setlength{\rightskip}{0pt plus 5cm}decltype( std\+::thread\+::hardware\+\_\+concurrency() ) const pool\+\_\+schedule\+::n\+\_\+threads\hspace{0.3cm}{\ttfamily [protected]}}\label{classpool__schedule_adc11766f8ff9a29b21318bfcf81c815d}
+total \# of hardware supported threads \hypertarget{classpool__schedule_ae13c48902fd23d0d8747978780731a04}{}\index{pool\+\_\+schedule@{pool\+\_\+schedule}!pool@{pool}}
+\index{pool@{pool}!pool\+\_\+schedule@{pool\+\_\+schedule}}
+\subsubsection[{pool}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ std\+::thread$\ast$ $>$ pool\+\_\+schedule\+::pool\hspace{0.3cm}{\ttfamily [protected]}}\label{classpool__schedule_ae13c48902fd23d0d8747978780731a04}
+used as a thread pool 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+poolschedule.\+hpp\item 
+poolschedule.\+cpp\end{DoxyCompactItemize}

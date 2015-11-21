@@ -1,0 +1,249 @@
+\hypertarget{class_map_base}{}\section{Map\+Base Class Reference}
+\label{class_map_base}\index{Map\+Base@{Map\+Base}}
+Inheritance diagram for Map\+Base\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_map_base}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_map_base_a5a923d5b3ececb0407aa934d967ab7b1}{Map\+Base} ()
+\item 
+virtual \hyperlink{class_map_base_a6c62d788746d2161264b84ba66efcfbe}{$\sim$\+Map\+Base} ()
+\item 
+{\footnotesize template$<$order\+::spec t = order\+::in$>$ }\\\hyperlink{classkernel__pair__t}{kernel\+\_\+pair\+\_\+t} \hyperlink{class_map_base_ad98ef02c1651130ad6b565ad156b97c1}{link} (\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$a, \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$b, const std\+::size\+\_\+t buffer=0)
+\item 
+{\footnotesize template$<$order\+::spec t = order\+::in$>$ }\\\hyperlink{classkernel__pair__t}{kernel\+\_\+pair\+\_\+t} \hyperlink{class_map_base_ad982ebf61439a069ed36dc5f756b732a}{link} (\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$a, const std\+::string a\+\_\+port, \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$b, const std\+::size\+\_\+t buffer=0)
+\item 
+{\footnotesize template$<$order\+::spec t = order\+::in$>$ }\\\hyperlink{classkernel__pair__t}{kernel\+\_\+pair\+\_\+t} \hyperlink{class_map_base_a19a0a2f6842a863327920776457c52bf}{link} (\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$a, \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$b, const std\+::string b\+\_\+port, const std\+::size\+\_\+t buffer=0)
+\item 
+{\footnotesize template$<$order\+::spec t = order\+::in$>$ }\\\hyperlink{classkernel__pair__t}{kernel\+\_\+pair\+\_\+t} \hyperlink{class_map_base_af06481b99a96e3c5ae8da88cc8a78e91}{link} (\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$a, const std\+::string a\+\_\+port, \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$b, const std\+::string b\+\_\+port, const std\+::size\+\_\+t buffer=0)
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{class_map_base_a2624d7b81f0078dcc78e524045403e28}{join} (\hyperlink{classraft_1_1kernel}{raft\+::kernel} \&a, const std\+::string name\+\_\+a, \hyperlink{struct_port_info}{Port\+Info} \&a\+\_\+info, \hyperlink{classraft_1_1kernel}{raft\+::kernel} \&b, const std\+::string name\+\_\+b, \hyperlink{struct_port_info}{Port\+Info} \&b\+\_\+info)
+\item 
+\hypertarget{class_map_base_a4c6452a79012d0a98eb6c406e008d87e}{}static void {\bfseries insert} (\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$a, \hyperlink{struct_port_info}{Port\+Info} \&a\+\_\+out, \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$b, \hyperlink{struct_port_info}{Port\+Info} \&b\+\_\+in, \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$i)\label{class_map_base_a4c6452a79012d0a98eb6c406e008d87e}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+kernelkeeper \hyperlink{class_map_base_a2541cb37a237e66fc88129f9f0b02f50}{source\+\_\+kernels}
+\item 
+kernelkeeper \hyperlink{class_map_base_a83bb7ac6b0e80882356946d19da7ce4a}{dst\+\_\+kernels}
+\item 
+kernelkeeper \hyperlink{class_map_base_a2220cd630c5d00708f08d9bc70a48220}{all\+\_\+kernels}
+\item 
+std\+::vector$<$ \hyperlink{class_map_base}{Map\+Base} $\ast$ $>$ \hyperlink{class_map_base_abc4856ed552e77510211851f0a4a02ab}{sub\+\_\+maps}
+\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_map_base_ad2f32e921244459f7cc6d50355429cc6}{}class {\bfseries Map}\label{class_map_base_ad2f32e921244459f7cc6d50355429cc6}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_map_base_a5a923d5b3ececb0407aa934d967ab7b1}{}\index{Map\+Base@{Map\+Base}!Map\+Base@{Map\+Base}}
+\index{Map\+Base@{Map\+Base}!Map\+Base@{Map\+Base}}
+\subsubsection[{Map\+Base()}]{\setlength{\rightskip}{0pt plus 5cm}Map\+Base\+::\+Map\+Base (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{class_map_base_a5a923d5b3ececb0407aa934d967ab7b1}
+\hyperlink{class_map_base}{Map\+Base} -\/ constructor, really doesn\textquotesingle{}t do too much at the monent and doesn\textquotesingle{}t really need to.
+
+mapbase.\+cpp -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Fri Sep 12 10\+:28\+:33 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+I\+S, W\+I\+T\+H\+O\+U\+T W\+A\+R\+R\+A\+N\+T\+I\+E\+S O\+R C\+O\+N\+D\+I\+T\+I\+O\+N\+S O\+F A\+N\+Y K\+I\+N\+D, either express or implied. See the License for the specific language governing permissions and limitations under the License. \hypertarget{class_map_base_a6c62d788746d2161264b84ba66efcfbe}{}\index{Map\+Base@{Map\+Base}!````~Map\+Base@{$\sim$\+Map\+Base}}
+\index{````~Map\+Base@{$\sim$\+Map\+Base}!Map\+Base@{Map\+Base}}
+\subsubsection[{$\sim$\+Map\+Base()}]{\setlength{\rightskip}{0pt plus 5cm}Map\+Base\+::$\sim$\+Map\+Base (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{class_map_base_a6c62d788746d2161264b84ba66efcfbe}
+default destructor 
+
+\subsection{Member Function Documentation}
+\hypertarget{class_map_base_a2624d7b81f0078dcc78e524045403e28}{}\index{Map\+Base@{Map\+Base}!join@{join}}
+\index{join@{join}!Map\+Base@{Map\+Base}}
+\subsubsection[{join(raft\+::kernel \&a, const std\+::string name\+\_\+a, Port\+Info \&a\+\_\+info, raft\+::kernel \&b, const std\+::string name\+\_\+b, Port\+Info \&b\+\_\+info)}]{\setlength{\rightskip}{0pt plus 5cm}void Map\+Base\+::join (
+\begin{DoxyParamCaption}
+\item[{{\bf raft\+::kernel} \&}]{a, }
+\item[{const std\+::string}]{name\+\_\+a, }
+\item[{{\bf Port\+Info} \&}]{a\+\_\+info, }
+\item[{{\bf raft\+::kernel} \&}]{b, }
+\item[{const std\+::string}]{name\+\_\+b, }
+\item[{{\bf Port\+Info} \&}]{b\+\_\+info}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [protected]}}\label{class_map_base_a2624d7b81f0078dcc78e524045403e28}
+join -\/ helper method joins the two ports given the correct information. Essentially the correct information for the \hyperlink{struct_port_info}{Port\+Info} object is set. Type is also checked using the typeid information. If the types aren\textquotesingle{}t the same then an exception is thrown. 
+\begin{DoxyParams}{Parameters}
+{\em a} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}\& \\
+\hline
+{\em name\+\_\+a} & -\/ name for the port on kernel a \\
+\hline
+{\em a\+\_\+info} & -\/ \hyperlink{struct_port_info}{Port\+Info} struct for kernel a \\
+\hline
+{\em b} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}\& \\
+\hline
+{\em name\+\_\+b} & -\/ name for port on kernel b \\
+\hline
+{\em b\+\_\+info} & -\/ \hyperlink{struct_port_info}{Port\+Info} struct for kernel b \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{class_port_type_mismatch_exception}{Port\+Type\+Mismatch\+Exception}} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_map_base_ad98ef02c1651130ad6b565ad156b97c1}{}\index{Map\+Base@{Map\+Base}!link@{link}}
+\index{link@{link}!Map\+Base@{Map\+Base}}
+\subsubsection[{link(raft\+::kernel $\ast$a, raft\+::kernel $\ast$b, const std\+::size\+\_\+t buffer=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$order\+::spec t = order\+::in$>$ {\bf kernel\+\_\+pair\+\_\+t} Map\+Base\+::link (
+\begin{DoxyParamCaption}
+\item[{{\bf raft\+::kernel} $\ast$}]{a, }
+\item[{{\bf raft\+::kernel} $\ast$}]{b, }
+\item[{const std\+::size\+\_\+t}]{buffer = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{class_map_base_ad98ef02c1651130ad6b565ad156b97c1}
+link -\/ this comment goes for the next 4 types of link functions, which basically do the exact same thing. The template function takes a single param order\+::spec which is exactly as the name implies, the order of the queue linking the two kernels. The various functions are needed to specify different ordering types each of these will be commented separately below. This function assumes that Kernel \textquotesingle{}a\textquotesingle{} has only a single output and \hyperlink{classraft_1_1kernel}{raft\+::kernel} \textquotesingle{}b\textquotesingle{} has only a single input otherwise an exception will be thrown. 
+\begin{DoxyParams}{Parameters}
+{\em a} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$, src kernel \\
+\hline
+{\em b} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$, dst kernel \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{class_ambiguous_port_assignment_exception}{Ambiguous\+Port\+Assignment\+Exception}} & -\/ thrown if either src or dst have more than a single port to link. \\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyReturn}{Returns}
+\hyperlink{classkernel__pair__t}{kernel\+\_\+pair\+\_\+t} -\/ references to src, dst kernels. 
+\end{DoxyReturn}
+assume each only has a single input / output \hypertarget{class_map_base_ad982ebf61439a069ed36dc5f756b732a}{}\index{Map\+Base@{Map\+Base}!link@{link}}
+\index{link@{link}!Map\+Base@{Map\+Base}}
+\subsubsection[{link(raft\+::kernel $\ast$a, const std\+::string a\+\_\+port, raft\+::kernel $\ast$b, const std\+::size\+\_\+t buffer=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$order\+::spec t = order\+::in$>$ {\bf kernel\+\_\+pair\+\_\+t} Map\+Base\+::link (
+\begin{DoxyParamCaption}
+\item[{{\bf raft\+::kernel} $\ast$}]{a, }
+\item[{const std\+::string}]{a\+\_\+port, }
+\item[{{\bf raft\+::kernel} $\ast$}]{b, }
+\item[{const std\+::size\+\_\+t}]{buffer = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{class_map_base_ad982ebf61439a069ed36dc5f756b732a}
+link -\/ same as function above save for the following differences\+: kernel a is assumed to have multiple ports and the one we wish to link with \hyperlink{classraft_1_1kernel}{raft\+::kernel} b is a\+\_\+port. \hyperlink{classraft_1_1kernel}{raft\+::kernel} b is assumed to have a single input port to connect otherwise an exception is thrown. 
+\begin{DoxyParams}{Parameters}
+{\em a} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$a, can have multiple ports \\
+\hline
+{\em a\+\_\+port} & -\/ port within \hyperlink{classraft_1_1kernel}{raft\+::kernel} a to link \\
+\hline
+{\em b} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$b, assumed to have only single input. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{class_ambiguous_port_assignment_exception}{Ambiguous\+Port\+Assignment\+Exception}} & -\/ thrown if \hyperlink{classraft_1_1kernel}{raft\+::kernel} b has more than a single input port. \\
+\hline
+{\em \hyperlink{class_port_not_found_exception}{Port\+Not\+Found\+Exception}} & -\/ thrown if \hyperlink{classraft_1_1kernel}{raft\+::kernel} a has no port named a\+\_\+port. \\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyReturn}{Returns}
+\hyperlink{classkernel__pair__t}{kernel\+\_\+pair\+\_\+t} -\/ references to src, dst kernels. 
+\end{DoxyReturn}
+\hypertarget{class_map_base_a19a0a2f6842a863327920776457c52bf}{}\index{Map\+Base@{Map\+Base}!link@{link}}
+\index{link@{link}!Map\+Base@{Map\+Base}}
+\subsubsection[{link(raft\+::kernel $\ast$a, raft\+::kernel $\ast$b, const std\+::string b\+\_\+port, const std\+::size\+\_\+t buffer=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$order\+::spec t = order\+::in$>$ {\bf kernel\+\_\+pair\+\_\+t} Map\+Base\+::link (
+\begin{DoxyParamCaption}
+\item[{{\bf raft\+::kernel} $\ast$}]{a, }
+\item[{{\bf raft\+::kernel} $\ast$}]{b, }
+\item[{const std\+::string}]{b\+\_\+port, }
+\item[{const std\+::size\+\_\+t}]{buffer = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{class_map_base_a19a0a2f6842a863327920776457c52bf}
+link -\/ same as above save for the following differences\+: \hyperlink{classraft_1_1kernel}{raft\+::kernel} a is assumed to have a single output port. \hyperlink{classraft_1_1kernel}{raft\+::kernel} b is assumed to have more than one input port, within one matching the port b\+\_\+port. 
+\begin{DoxyParams}{Parameters}
+{\em a} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$, with more a single output port \\
+\hline
+{\em b} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$, with input port named b\+\_\+port \\
+\hline
+{\em b\+\_\+port} & -\/ const std\+::string, input port name. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{class_ambiguous_port_assignment_exception}{Ambiguous\+Port\+Assignment\+Exception}} & -\/ exception thrown if \hyperlink{classraft_1_1kernel}{raft\+::kernel} a has more than a single output port \\
+\hline
+{\em \hyperlink{class_port_not_found_exception}{Port\+Not\+Found\+Exception}} & -\/ exception thrown if \hyperlink{classraft_1_1kernel}{raft\+::kernel} b has no input port named b\+\_\+port \\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyReturn}{Returns}
+\hyperlink{classkernel__pair__t}{kernel\+\_\+pair\+\_\+t} -\/ references to src, dst kernels. 
+\end{DoxyReturn}
+\hypertarget{class_map_base_af06481b99a96e3c5ae8da88cc8a78e91}{}\index{Map\+Base@{Map\+Base}!link@{link}}
+\index{link@{link}!Map\+Base@{Map\+Base}}
+\subsubsection[{link(raft\+::kernel $\ast$a, const std\+::string a\+\_\+port, raft\+::kernel $\ast$b, const std\+::string b\+\_\+port, const std\+::size\+\_\+t buffer=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$order\+::spec t = order\+::in$>$ {\bf kernel\+\_\+pair\+\_\+t} Map\+Base\+::link (
+\begin{DoxyParamCaption}
+\item[{{\bf raft\+::kernel} $\ast$}]{a, }
+\item[{const std\+::string}]{a\+\_\+port, }
+\item[{{\bf raft\+::kernel} $\ast$}]{b, }
+\item[{const std\+::string}]{b\+\_\+port, }
+\item[{const std\+::size\+\_\+t}]{buffer = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{class_map_base_af06481b99a96e3c5ae8da88cc8a78e91}
+link -\/ same as above save for the following differences\+: \hyperlink{classraft_1_1kernel}{raft\+::kernel} a is assumed to have an output port a\+\_\+port and \hyperlink{classraft_1_1kernel}{raft\+::kernel} b is assumed to have an input port b\+\_\+port. 
+\begin{DoxyParams}{Parameters}
+{\em a} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$, with more a single output port \\
+\hline
+{\em a\+\_\+port} & -\/ const std\+::string, output port name \\
+\hline
+{\em b} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$, with input port named b\+\_\+port \\
+\hline
+{\em b\+\_\+port} & -\/ const std\+::string, input port name. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{class_port_not_found_exception}{Port\+Not\+Found\+Exception}} & -\/ exception thrown if either kernel is missing port a\+\_\+port or b\+\_\+port. \\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyReturn}{Returns}
+\hyperlink{classkernel__pair__t}{kernel\+\_\+pair\+\_\+t} -\/ references to src, dst kernels. 
+\end{DoxyReturn}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{class_map_base_a2220cd630c5d00708f08d9bc70a48220}{}\index{Map\+Base@{Map\+Base}!all\+\_\+kernels@{all\+\_\+kernels}}
+\index{all\+\_\+kernels@{all\+\_\+kernels}!Map\+Base@{Map\+Base}}
+\subsubsection[{all\+\_\+kernels}]{\setlength{\rightskip}{0pt plus 5cm}kernelkeeper Map\+Base\+::all\+\_\+kernels\hspace{0.3cm}{\ttfamily [protected]}}\label{class_map_base_a2220cd630c5d00708f08d9bc70a48220}
+and keep a list of all kernels \hypertarget{class_map_base_a83bb7ac6b0e80882356946d19da7ce4a}{}\index{Map\+Base@{Map\+Base}!dst\+\_\+kernels@{dst\+\_\+kernels}}
+\index{dst\+\_\+kernels@{dst\+\_\+kernels}!Map\+Base@{Map\+Base}}
+\subsubsection[{dst\+\_\+kernels}]{\setlength{\rightskip}{0pt plus 5cm}kernelkeeper Map\+Base\+::dst\+\_\+kernels\hspace{0.3cm}{\ttfamily [protected]}}\label{class_map_base_a83bb7ac6b0e80882356946d19da7ce4a}
+dst kernels \hypertarget{class_map_base_a2541cb37a237e66fc88129f9f0b02f50}{}\index{Map\+Base@{Map\+Base}!source\+\_\+kernels@{source\+\_\+kernels}}
+\index{source\+\_\+kernels@{source\+\_\+kernels}!Map\+Base@{Map\+Base}}
+\subsubsection[{source\+\_\+kernels}]{\setlength{\rightskip}{0pt plus 5cm}kernelkeeper Map\+Base\+::source\+\_\+kernels\hspace{0.3cm}{\ttfamily [protected]}}\label{class_map_base_a2541cb37a237e66fc88129f9f0b02f50}
+need to keep source kernels \hypertarget{class_map_base_abc4856ed552e77510211851f0a4a02ab}{}\index{Map\+Base@{Map\+Base}!sub\+\_\+maps@{sub\+\_\+maps}}
+\index{sub\+\_\+maps@{sub\+\_\+maps}!Map\+Base@{Map\+Base}}
+\subsubsection[{sub\+\_\+maps}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ {\bf Map\+Base}$\ast$ $>$ Map\+Base\+::sub\+\_\+maps\hspace{0.3cm}{\ttfamily [protected]}}\label{class_map_base_abc4856ed552e77510211851f0a4a02ab}
+F\+I\+X\+M\+E\+: come up with better solution for enabling online duplication of submaps as a unit.
+
+D\+O\+E\+S\+: flatten these kernels into main map once we run 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+mapbase.\+hpp\item 
+mapbase.\+cpp\end{DoxyCompactItemize}

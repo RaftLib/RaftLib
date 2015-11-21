@@ -1,0 +1,323 @@
+\hypertarget{class_port}{}\section{Port Class Reference}
+\label{class_port}\index{Port@{Port}}
+Inheritance diagram for Port\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_port}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_port_ac7da4ae14a771d5509e743e98fe0dc05}{Port} (\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$k)
+\item 
+\hyperlink{class_port_a706968dde40372ffd1748d50c258f6b7}{Port} (\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$k, void $\ast$const ptr, const std\+::size\+\_\+t nbytes)
+\item 
+virtual \hyperlink{class_port_afe166c2a6b10ad34d47472a150366bc1}{$\sim$\+Port} ()
+\item 
+{\footnotesize template$<$class T $>$ }\\void \hyperlink{class_port_aeb1c43cc7563ce977ba0bc7b581d2e75}{add\+Port} (const std\+::string \&\&port\+\_\+name)
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \hyperlink{class_port_aaf89e298b9ae64f9c42703c14d9eed0a}{add\+In\+Place\+Ports} (const std\+::size\+\_\+t n\+\_\+ports)
+\item 
+const std\+::type\+\_\+index \& \hyperlink{class_port_af34969d8f5e17ad29233334526d5b77b}{get\+Port\+Type} (const std\+::string \&\&port\+\_\+name)
+\item 
+virtual F\+I\+F\+O \& \hyperlink{class_port_a08cf165426982d83e5a191ba74cc6e5d}{operator\mbox{[}$\,$\mbox{]}} (const std\+::string \&\&port\+\_\+name)
+\item 
+virtual bool \hyperlink{class_port_a7042f5b5c2ab14c9591a4984811a6012}{has\+Ports} ()
+\item 
+virtual \hyperlink{class_port_iterator}{Port\+Iterator} \hyperlink{class_port_abf4d86026b67f6c02db3e3abb0f2e8b4}{begin} ()
+\item 
+virtual \hyperlink{class_port_iterator}{Port\+Iterator} \hyperlink{class_port_aa85be3fb7734863d482bf002e0f0923d}{end} ()
+\item 
+std\+::size\+\_\+t \hyperlink{class_port_a33562ea87ac7e83a32441da40cbd9279}{count} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$class T $>$ }\\void \hyperlink{class_port_a90a9a883b2e10871e7a8dc55ab0077f5}{initialize\+Const\+Map} (\hyperlink{struct_port_info}{Port\+Info} \&pi)
+\item 
+{\footnotesize template$<$class T $>$ }\\void \hyperlink{class_port_a7189f6823a0d240396210a7c317d4803}{initialize\+Split} (\hyperlink{struct_port_info}{Port\+Info} \&pi)
+\item 
+{\footnotesize template$<$class T $>$ }\\void \hyperlink{class_port_a179c9a36189eb621a5874a0741708e59}{initialize\+Join} (\hyperlink{struct_port_info}{Port\+Info} \&pi)
+\item 
+\hyperlink{struct_port_info}{Port\+Info} \& \hyperlink{class_port_a4af1cb062940ca3b83c569f024b9a8d1}{get\+Port\+Info} ()
+\item 
+\hyperlink{struct_port_info}{Port\+Info} \& \hyperlink{class_port_afb426a015195fa9b4b5b1d1200daf8ed}{get\+Port\+Info\+For} (const std\+::string port\+\_\+name)
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structportmap__t}{portmap\+\_\+t} \hyperlink{class_port_a537a8a0c2a47acbf8654f286200aee90}{portmap}
+\item 
+\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ \hyperlink{class_port_ac17060db235459adaab87cdccb605884}{kernel} = nullptr
+\item 
+void $\ast$const \hyperlink{class_port_a78bf16e68f1dd5312f37b4e2806a9cf8}{alloc\+\_\+ptr} = nullptr
+\item 
+const std\+::size\+\_\+t \hyperlink{class_port_a98d2e7e0e570e082465c692083300fa9}{alloc\+\_\+ptr\+\_\+length} = 0
+\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{class_port_aed45534b6a99d5630dcfa9eedbe023fc}{Map\+Base}
+\item 
+\hypertarget{class_port_ad2f32e921244459f7cc6d50355429cc6}{}class {\bfseries Map}\label{class_port_ad2f32e921244459f7cc6d50355429cc6}
+
+\item 
+\hypertarget{class_port_a60770fd1bd2e4378b64b8bb78b3af209}{}class {\bfseries Graph\+Tools}\label{class_port_a60770fd1bd2e4378b64b8bb78b3af209}
+
+\item 
+\hypertarget{class_port_a901ac6fe1c35f3c114cf9e83f75dde0c}{}class {\bfseries basic\+\_\+parallel}\label{class_port_a901ac6fe1c35f3c114cf9e83f75dde0c}
+
+\item 
+\hypertarget{class_port_abf9ffb5a15eb9623a47ea7e488ae112b}{}class {\bfseries raft\+::parallel\+\_\+k}\label{class_port_abf9ffb5a15eb9623a47ea7e488ae112b}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_port_ac7da4ae14a771d5509e743e98fe0dc05}{}\index{Port@{Port}!Port@{Port}}
+\index{Port@{Port}!Port@{Port}}
+\subsubsection[{Port(raft\+::kernel $\ast$k)}]{\setlength{\rightskip}{0pt plus 5cm}Port\+::\+Port (
+\begin{DoxyParamCaption}
+\item[{{\bf raft\+::kernel} $\ast$}]{k}
+\end{DoxyParamCaption}
+)}\label{class_port_ac7da4ae14a771d5509e743e98fe0dc05}
+\hyperlink{class_port}{Port} -\/ constructor used to construct a standard port object, needs a reference to the parent kernel for the port\+\_\+info struct 
+\begin{DoxyParams}{Parameters}
+{\em k} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$\\
+\hline
+\end{DoxyParams}
+port.\+cpp -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Thu Aug 28 09\+:55\+:47 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+I\+S, W\+I\+T\+H\+O\+U\+T W\+A\+R\+R\+A\+N\+T\+I\+E\+S O\+R C\+O\+N\+D\+I\+T\+I\+O\+N\+S O\+F A\+N\+Y K\+I\+N\+D, either express or implied. See the License for the specific language governing permissions and limitations under the License. \hypertarget{class_port_a706968dde40372ffd1748d50c258f6b7}{}\index{Port@{Port}!Port@{Port}}
+\index{Port@{Port}!Port@{Port}}
+\subsubsection[{Port(raft\+::kernel $\ast$k, void $\ast$const ptr, const std\+::size\+\_\+t nbytes)}]{\setlength{\rightskip}{0pt plus 5cm}Port\+::\+Port (
+\begin{DoxyParamCaption}
+\item[{{\bf raft\+::kernel} $\ast$}]{k, }
+\item[{void $\ast$const}]{ptr, }
+\item[{const std\+::size\+\_\+t}]{nbytes}
+\end{DoxyParamCaption}
+)}\label{class_port_a706968dde40372ffd1748d50c258f6b7}
+\hyperlink{class_port}{Port} -\/ constructor used to construct a port with pre-\/allocated memory, useful for things like array distribution and reduction 
+\begin{DoxyParams}{Parameters}
+{\em k} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$ \\
+\hline
+{\em ptr} & -\/ void$\ast$ \\
+\hline
+{\em nbytes} & -\/ const std\+::size\+\_\+t length in bytes \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_port_afe166c2a6b10ad34d47472a150366bc1}{}\index{Port@{Port}!````~Port@{$\sim$\+Port}}
+\index{````~Port@{$\sim$\+Port}!Port@{Port}}
+\subsubsection[{$\sim$\+Port()}]{\setlength{\rightskip}{0pt plus 5cm}Port\+::$\sim$\+Port (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{class_port_afe166c2a6b10ad34d47472a150366bc1}
+$\sim$\+Port -\/ destructor, deletes the F\+I\+F\+O that was given when the object was initalized. the port map is allocated on the heap so the port\+\_\+info destructor is called
+
+\subsection{Member Function Documentation}
+\hypertarget{class_port_aaf89e298b9ae64f9c42703c14d9eed0a}{}\index{Port@{Port}!add\+In\+Place\+Ports@{add\+In\+Place\+Ports}}
+\index{add\+In\+Place\+Ports@{add\+In\+Place\+Ports}!Port@{Port}}
+\subsubsection[{add\+In\+Place\+Ports(const std\+::size\+\_\+t n\+\_\+ports)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class T $>$ bool Port\+::add\+In\+Place\+Ports (
+\begin{DoxyParamCaption}
+\item[{const std\+::size\+\_\+t}]{n\+\_\+ports}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{class_port_aaf89e298b9ae64f9c42703c14d9eed0a}
+add\+Ports -\/ add ports for an existing buffer, basically allocate buffers in place. These also won\textquotesingle{}t be able to be resized. 
+\begin{DoxyParams}{Parameters}
+{\em n\+\_\+ports} & -\/ const std\+::size\+\_\+t \\
+\hline
+\end{DoxyParams}
+pointer \hypertarget{class_port_aeb1c43cc7563ce977ba0bc7b581d2e75}{}\index{Port@{Port}!add\+Port@{add\+Port}}
+\index{add\+Port@{add\+Port}!Port@{Port}}
+\subsubsection[{add\+Port(const std\+::string \&\&port\+\_\+name)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class T $>$ void Port\+::add\+Port (
+\begin{DoxyParamCaption}
+\item[{const std\+::string \&\&}]{port\+\_\+name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{class_port_aeb1c43cc7563ce977ba0bc7b581d2e75}
+add\+Port -\/ adds and initializes a port for the name given. Function returns true if added, false if not. Main reason for returning false would be that the port already exists. 
+\begin{DoxyParams}{Parameters}
+{\em port\+\_\+name} & -\/ const std\+::string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool 
+\end{DoxyReturn}
+we\textquotesingle{}ll have to make a port info object first and pass it by copy to the portmap. Perhaps re-\/work later with pointers, but for right now this will work and it doesn\textquotesingle{}t necessarily have to be performant since its only executed once.\hypertarget{class_port_abf4d86026b67f6c02db3e3abb0f2e8b4}{}\index{Port@{Port}!begin@{begin}}
+\index{begin@{begin}!Port@{Port}}
+\subsubsection[{begin()}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Port\+Iterator} Port\+::begin (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{class_port_abf4d86026b67f6c02db3e3abb0f2e8b4}
+begin -\/ get the beginning port. \begin{DoxyReturn}{Returns}
+\hyperlink{class_port_iterator}{Port\+Iterator} 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{class_port_base_afc54c92e3b9d1967e8a8c7e74d7507d3}{Port\+Base}.
+
+\hypertarget{class_port_a33562ea87ac7e83a32441da40cbd9279}{}\index{Port@{Port}!count@{count}}
+\index{count@{count}!Port@{Port}}
+\subsubsection[{count()}]{\setlength{\rightskip}{0pt plus 5cm}std\+::size\+\_\+t Port\+::count (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{class_port_a33562ea87ac7e83a32441da40cbd9279}
+count -\/ get the total number of fifos within this port container \begin{DoxyReturn}{Returns}
+std\+::size\+\_\+t 
+\end{DoxyReturn}
+\hypertarget{class_port_aa85be3fb7734863d482bf002e0f0923d}{}\index{Port@{Port}!end@{end}}
+\index{end@{end}!Port@{Port}}
+\subsubsection[{end()}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Port\+Iterator} Port\+::end (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{class_port_aa85be3fb7734863d482bf002e0f0923d}
+end -\/ get the end port \begin{DoxyReturn}{Returns}
+\hyperlink{class_port_iterator}{Port\+Iterator} 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{class_port_base_a50427e7a1beea0d5111ccc81ee418178}{Port\+Base}.
+
+\hypertarget{class_port_a4af1cb062940ca3b83c569f024b9a8d1}{}\index{Port@{Port}!get\+Port\+Info@{get\+Port\+Info}}
+\index{get\+Port\+Info@{get\+Port\+Info}!Port@{Port}}
+\subsubsection[{get\+Port\+Info()}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Port\+Info} \& Port\+::get\+Port\+Info (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}\label{class_port_a4af1cb062940ca3b83c569f024b9a8d1}
+get\+Port\+Info -\/ returns the \hyperlink{struct_port_info}{Port\+Info} struct for a kernel if we expect it to have a single port. If there\textquotesingle{}s more than one port this function throws an exception. \begin{DoxyReturn}{Returns}
+std\+::pair$<$ std\+::string, Port\+Info\& $>$ 
+\end{DoxyReturn}
+T\+O\+D\+O\+: extract kernel name to go here too \hypertarget{class_port_afb426a015195fa9b4b5b1d1200daf8ed}{}\index{Port@{Port}!get\+Port\+Info\+For@{get\+Port\+Info\+For}}
+\index{get\+Port\+Info\+For@{get\+Port\+Info\+For}!Port@{Port}}
+\subsubsection[{get\+Port\+Info\+For(const std\+::string port\+\_\+name)}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Port\+Info} \& Port\+::get\+Port\+Info\+For (
+\begin{DoxyParamCaption}
+\item[{const std\+::string}]{port\+\_\+name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}\label{class_port_afb426a015195fa9b4b5b1d1200daf8ed}
+get\+Port\+Info\+For -\/ gets port information for the param port throws an exception if the port doesn\textquotesingle{}t exist. 
+\begin{DoxyParams}{Parameters}
+{\em port\+\_\+name} & -\/ const std\+::string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\hyperlink{struct_port_info}{Port\+Info}\& 
+\end{DoxyReturn}
+\hypertarget{class_port_af34969d8f5e17ad29233334526d5b77b}{}\index{Port@{Port}!get\+Port\+Type@{get\+Port\+Type}}
+\index{get\+Port\+Type@{get\+Port\+Type}!Port@{Port}}
+\subsubsection[{get\+Port\+Type(const std\+::string \&\&port\+\_\+name)}]{\setlength{\rightskip}{0pt plus 5cm}const std\+::type\+\_\+index \& Port\+::get\+Port\+Type (
+\begin{DoxyParamCaption}
+\item[{const std\+::string \&\&}]{port\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{class_port_af34969d8f5e17ad29233334526d5b77b}
+get\+Port\+Type -\/ input the port name, and get the hash for the type of the port. This function is useful for checking the streaming graph to make sure all the ports that are \char`\"{}dynamically\char`\"{} created do in fact have compatible types. 
+\begin{DoxyParams}{Parameters}
+{\em port\+\_\+name} & -\/ const std\+::string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+const type\+\_\+index\& 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{class_port_not_found_exception}{Port\+Not\+Found\+Exception}} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_port_a7042f5b5c2ab14c9591a4984811a6012}{}\index{Port@{Port}!has\+Ports@{has\+Ports}}
+\index{has\+Ports@{has\+Ports}!Port@{Port}}
+\subsubsection[{has\+Ports()}]{\setlength{\rightskip}{0pt plus 5cm}bool Port\+::has\+Ports (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{class_port_a7042f5b5c2ab14c9591a4984811a6012}
+has\+Ports -\/ returns true if any ports exists, false otherwise. \begin{DoxyReturn}{Returns}
+bool 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{class_port_base_a29870b5e201f46a806d2269d7f4635dc}{Port\+Base}.
+
+\hypertarget{class_port_a90a9a883b2e10871e7a8dc55ab0077f5}{}\index{Port@{Port}!initialize\+Const\+Map@{initialize\+Const\+Map}}
+\index{initialize\+Const\+Map@{initialize\+Const\+Map}!Port@{Port}}
+\subsubsection[{initialize\+Const\+Map(\+Port\+Info \&pi)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class T $>$ void Port\+::initialize\+Const\+Map (
+\begin{DoxyParamCaption}
+\item[{{\bf Port\+Info} \&}]{pi}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}\label{class_port_a90a9a883b2e10871e7a8dc55ab0077f5}
+initialize\+Const\+Map -\/ hack to get around the inability to otherwise initialize a template function where later we don\textquotesingle{}t have the template parameter. N\+O\+T\+E\+: this is a biggy, if we have more F\+I\+F\+O types in the future (i.\+e., sub-\/classes of F\+I\+F\+O) then we must create an entry here otherwise bad things will happen. 
+\begin{DoxyParams}{Parameters}
+{\em pi} & -\/ \hyperlink{struct_port_info}{Port\+Info}\& \\
+\hline
+\end{DoxyParams}
+no instrumentation
+
+yes instrumentation
+
+no instrumentation
+
+N\+O\+T\+E\+: If you define more port resource types, they have to be defined here...otherwise the allocator won\textquotesingle{}t be able to allocate the correct type, size, etc. for the port..and well, it\textquotesingle{}ll be sad.\hypertarget{class_port_a179c9a36189eb621a5874a0741708e59}{}\index{Port@{Port}!initialize\+Join@{initialize\+Join}}
+\index{initialize\+Join@{initialize\+Join}!Port@{Port}}
+\subsubsection[{initialize\+Join(\+Port\+Info \&pi)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class T $>$ void Port\+::initialize\+Join (
+\begin{DoxyParamCaption}
+\item[{{\bf Port\+Info} \&}]{pi}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}\label{class_port_a179c9a36189eb621a5874a0741708e59}
+initialize\+Join -\/ pre-\/allocate join kernels...saves allocation time later, takes up minimal space and all that is needed when these are actually used is to allocate memory for the ports which is done by the \hypertarget{class_port_a7189f6823a0d240396210a7c317d4803}{}\index{Port@{Port}!initialize\+Split@{initialize\+Split}}
+\index{initialize\+Split@{initialize\+Split}!Port@{Port}}
+\subsubsection[{initialize\+Split(\+Port\+Info \&pi)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class T $>$ void Port\+::initialize\+Split (
+\begin{DoxyParamCaption}
+\item[{{\bf Port\+Info} \&}]{pi}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}\label{class_port_a7189f6823a0d240396210a7c317d4803}
+initialize\+Split -\/ pre-\/allocate split kernels...saves allocation time later, then all that is needed is to hook them up, and allocate memory for the ports. \hypertarget{class_port_a08cf165426982d83e5a191ba74cc6e5d}{}\index{Port@{Port}!operator\mbox{[}$\,$\mbox{]}@{operator[]}}
+\index{operator\mbox{[}$\,$\mbox{]}@{operator[]}!Port@{Port}}
+\subsubsection[{operator[](const std\+::string \&\&port\+\_\+name)}]{\setlength{\rightskip}{0pt plus 5cm}F\+I\+F\+O \& Port\+::operator\mbox{[}$\,$\mbox{]} (
+\begin{DoxyParamCaption}
+\item[{const std\+::string \&\&}]{port\+\_\+name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{class_port_a08cf165426982d83e5a191ba74cc6e5d}
+operator\mbox{[}\mbox{]} -\/ input the port name and get a port if it exists. 
+
+Implements \hyperlink{class_port_base_ad034502b053f3cd7939d651b2d72cd0a}{Port\+Base}.
+
+
+
+\subsection{Friends And Related Function Documentation}
+\hypertarget{class_port_aed45534b6a99d5630dcfa9eedbe023fc}{}\index{Port@{Port}!Map\+Base@{Map\+Base}}
+\index{Map\+Base@{Map\+Base}!Port@{Port}}
+\subsubsection[{Map\+Base}]{\setlength{\rightskip}{0pt plus 5cm}friend class {\bf Map\+Base}\hspace{0.3cm}{\ttfamily [friend]}}\label{class_port_aed45534b6a99d5630dcfa9eedbe023fc}
+we need some friends 
+
+\subsection{Member Data Documentation}
+\hypertarget{class_port_a78bf16e68f1dd5312f37b4e2806a9cf8}{}\index{Port@{Port}!alloc\+\_\+ptr@{alloc\+\_\+ptr}}
+\index{alloc\+\_\+ptr@{alloc\+\_\+ptr}!Port@{Port}}
+\subsubsection[{alloc\+\_\+ptr}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ const Port\+::alloc\+\_\+ptr = nullptr\hspace{0.3cm}{\ttfamily [protected]}}\label{class_port_a78bf16e68f1dd5312f37b4e2806a9cf8}
+ptr used for in-\/place allocations, will not be deleted by the map, also should not be modified by the map either. \hypertarget{class_port_a98d2e7e0e570e082465c692083300fa9}{}\index{Port@{Port}!alloc\+\_\+ptr\+\_\+length@{alloc\+\_\+ptr\+\_\+length}}
+\index{alloc\+\_\+ptr\+\_\+length@{alloc\+\_\+ptr\+\_\+length}!Port@{Port}}
+\subsubsection[{alloc\+\_\+ptr\+\_\+length}]{\setlength{\rightskip}{0pt plus 5cm}const std\+::size\+\_\+t Port\+::alloc\+\_\+ptr\+\_\+length = 0\hspace{0.3cm}{\ttfamily [protected]}}\label{class_port_a98d2e7e0e570e082465c692083300fa9}
+alloc\+\_\+ptr\+\_\+length -\/ length of alloc\+\_\+ptr in bytes. \hypertarget{class_port_ac17060db235459adaab87cdccb605884}{}\index{Port@{Port}!kernel@{kernel}}
+\index{kernel@{kernel}!Port@{Port}}
+\subsubsection[{kernel}]{\setlength{\rightskip}{0pt plus 5cm}{\bf raft\+::kernel}$\ast$ Port\+::kernel = nullptr\hspace{0.3cm}{\ttfamily [protected]}}\label{class_port_ac17060db235459adaab87cdccb605884}
+parent kernel that owns this port \hypertarget{class_port_a537a8a0c2a47acbf8654f286200aee90}{}\index{Port@{Port}!portmap@{portmap}}
+\index{portmap@{portmap}!Port@{Port}}
+\subsubsection[{portmap}]{\setlength{\rightskip}{0pt plus 5cm}{\bf portmap\+\_\+t} Port\+::portmap\hspace{0.3cm}{\ttfamily [protected]}}\label{class_port_a537a8a0c2a47acbf8654f286200aee90}
+portmap -\/ container struct with all ports. The mutex should be locked before accessing this structure 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+port.\+hpp\item 
+port.\+cpp\end{DoxyCompactItemize}

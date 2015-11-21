@@ -11,11 +11,16 @@ include_directories (   "${CMAKE_SOURCE_DIR}"
                         "${CMAKE_SOURCE_DIR}/random"
                     )
 
+#option( BUILD_RANDOM_NUMBER_GEN  "Build the random number generation support" OFF)
+
+#add_custom_command( OUTPUT ${CMAKE_SOURCE_DIR}/dependencies/mathlib
+#                    COMMAND perl 
 add_definitions( -DLIBCOMPILE=1 )
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS} -O0 -g3 -std=c++11")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS} -O3 -std=c++11")
 
 file(GLOB_RECURSE FIFO_SRC_FILES ${PROJECT_SOURCE_DIR}/fifo/*.cpp)
+file(GLOB_RECURSE RANDOM_SRC_FILES ${PROJECT_SOURCE_DIR}/random/*.cpp)
 
 add_library(raft allocate.cpp map.cpp graphtools.cpp port.cpp 
             portexception.cpp schedule.cpp simpleschedule.cpp
@@ -24,7 +29,7 @@ add_library(raft allocate.cpp map.cpp graphtools.cpp port.cpp
             globalmap.cpp systemsignalhandler.cpp poolschedule.cpp 
             kernelcontainer.cpp common.cpp basicparallel.cpp 
             noparallel.cpp affinity.cpp portmap_t.cpp port_info.cpp
-            parallelk.cpp ${FIFO_SRC_FILES} 
+            parallelk.cpp ${FIFO_SRC_FILES} ${RANDOM_SRC_FILES}
             fifo/getrandom.c pthreadwrap.c )
 
 set( RAFTDIR ${CMAKE_INSTALL_PREFIX}/include/raft_dir ) 
@@ -58,7 +63,8 @@ fifo/ringbufferheap.tcc
 fifo/ringbufferinfinite.tcc
 fifo/sample.tcc
 fifo/sampletype.tcc
-
+random/random.tcc
+random/randomx.tcc
                )
 
 foreach( TEMPL ${TEMPLATES} )
@@ -93,6 +99,7 @@ fifo/systeminfo.hpp
 fifo/systemsignalfifo.hpp
 fifo/units.hpp
 fifo/getrandom.h 
+random/randombase.hpp
              )
 
 foreach( HEADER ${HEADERS} )

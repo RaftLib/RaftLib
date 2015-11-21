@@ -1,0 +1,128 @@
+\hypertarget{classkernel__container}{}\section{kernel\+\_\+container Class Reference}
+\label{classkernel__container}\index{kernel\+\_\+container@{kernel\+\_\+container}}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classkernel__container_aaa8403088c93fca461e37158069d91b5}{}using {\bfseries buffer} = Ring\+Buffer$<$ \hyperlink{structsched__cmd__t}{sched\+\_\+cmd\+\_\+t}, Type\+::\+Ring\+Buffer\+Type\+::\+Heap, false $>$\label{classkernel__container_aaa8403088c93fca461e37158069d91b5}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classkernel__container_a273d59eff9b9e269f1f9b231abc37b83}{kernel\+\_\+container} ()
+\item 
+\hyperlink{classkernel__container_a6d97cddd3d2f015166485afad9c71ff5}{kernel\+\_\+container} (const std\+::size\+\_\+t N)
+\item 
+\hyperlink{classkernel__container_acec164e3f4c6f37f4791c90c24514b34}{$\sim$kernel\+\_\+container} ()
+\item 
+buffer \& \hyperlink{classkernel__container_abcbec3854917b37bd6421b6b8ed2c2c0}{get\+Input\+Queue} ()
+\item 
+buffer \& \hyperlink{classkernel__container_a64384e258fee9b664d164eb50baf33df}{get\+Output\+Queue} ()
+\item 
+std\+::size\+\_\+t \hyperlink{classkernel__container_a358a15b772f1b7dfa57bd733fc78fcaa}{size} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{classkernel__container_a89f9b11119d9ab0e8c64215bf50856f0}{container\+\_\+run} (\hyperlink{classkernel__container}{kernel\+\_\+container} \&container)
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classkernel__container_a273d59eff9b9e269f1f9b231abc37b83}{}\index{kernel\+\_\+container@{kernel\+\_\+container}!kernel\+\_\+container@{kernel\+\_\+container}}
+\index{kernel\+\_\+container@{kernel\+\_\+container}!kernel\+\_\+container@{kernel\+\_\+container}}
+\subsubsection[{kernel\+\_\+container()}]{\setlength{\rightskip}{0pt plus 5cm}kernel\+\_\+container\+::kernel\+\_\+container (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classkernel__container_a273d59eff9b9e269f1f9b231abc37b83}
+\hyperlink{classkernel__container}{kernel\+\_\+container} -\/ default constructor, initializes all above pointers.
+
+kernelcontainer.\+cpp -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sun Mar 22 09\+:13\+:32 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+I\+S, W\+I\+T\+H\+O\+U\+T W\+A\+R\+R\+A\+N\+T\+I\+E\+S O\+R C\+O\+N\+D\+I\+T\+I\+O\+N\+S O\+F A\+N\+Y K\+I\+N\+D, either express or implied. See the License for the specific language governing permissions and limitations under the License. \hypertarget{classkernel__container_a6d97cddd3d2f015166485afad9c71ff5}{}\index{kernel\+\_\+container@{kernel\+\_\+container}!kernel\+\_\+container@{kernel\+\_\+container}}
+\index{kernel\+\_\+container@{kernel\+\_\+container}!kernel\+\_\+container@{kernel\+\_\+container}}
+\subsubsection[{kernel\+\_\+container(const std\+::size\+\_\+t N)}]{\setlength{\rightskip}{0pt plus 5cm}kernel\+\_\+container\+::kernel\+\_\+container (
+\begin{DoxyParamCaption}
+\item[{const std\+::size\+\_\+t}]{N}
+\end{DoxyParamCaption}
+)}\label{classkernel__container_a6d97cddd3d2f015166485afad9c71ff5}
+\hyperlink{classkernel__container}{kernel\+\_\+container} -\/ constructor, initializes all above pointers. 
+\begin{DoxyParams}{Parameters}
+{\em N} & -\/ const std\+::size\+\_\+t, default size of buffer \\
+\hline
+\end{DoxyParams}
+\hypertarget{classkernel__container_acec164e3f4c6f37f4791c90c24514b34}{}\index{kernel\+\_\+container@{kernel\+\_\+container}!````~kernel\+\_\+container@{$\sim$kernel\+\_\+container}}
+\index{````~kernel\+\_\+container@{$\sim$kernel\+\_\+container}!kernel\+\_\+container@{kernel\+\_\+container}}
+\subsubsection[{$\sim$kernel\+\_\+container()}]{\setlength{\rightskip}{0pt plus 5cm}kernel\+\_\+container\+::$\sim$kernel\+\_\+container (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classkernel__container_acec164e3f4c6f37f4791c90c24514b34}
+default destructor, cleans up all pointers 
+
+\subsection{Member Function Documentation}
+\hypertarget{classkernel__container_a89f9b11119d9ab0e8c64215bf50856f0}{}\index{kernel\+\_\+container@{kernel\+\_\+container}!container\+\_\+run@{container\+\_\+run}}
+\index{container\+\_\+run@{container\+\_\+run}!kernel\+\_\+container@{kernel\+\_\+container}}
+\subsubsection[{container\+\_\+run(kernel\+\_\+container \&container)}]{\setlength{\rightskip}{0pt plus 5cm}void kernel\+\_\+container\+::container\+\_\+run (
+\begin{DoxyParamCaption}
+\item[{{\bf kernel\+\_\+container} \&}]{container}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classkernel__container_a89f9b11119d9ab0e8c64215bf50856f0}
+container\+\_\+run -\/ function to be used by a thread which is called until the appropriate signal is sent (defined in \hyperlink{sched__cmd__t_8hpp_source}{sched\+\_\+cmd\+\_\+t.\+hpp}. 
+\begin{DoxyParams}{Parameters}
+{\em container} & -\/ \hyperlink{classkernel__container}{kernel\+\_\+container}\& \\
+\hline
+\end{DoxyParams}
+clean-\/up buffer and recycle head of F\+I\+F\+O
+
+just in case, a sanity check here
+
+try these kernels again
+
+after this it\textquotesingle{}ll longjmp to the running state \hypertarget{classkernel__container_abcbec3854917b37bd6421b6b8ed2c2c0}{}\index{kernel\+\_\+container@{kernel\+\_\+container}!get\+Input\+Queue@{get\+Input\+Queue}}
+\index{get\+Input\+Queue@{get\+Input\+Queue}!kernel\+\_\+container@{kernel\+\_\+container}}
+\subsubsection[{get\+Input\+Queue()}]{\setlength{\rightskip}{0pt plus 5cm}kernel\+\_\+container\+::buffer \& kernel\+\_\+container\+::get\+Input\+Queue (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classkernel__container_abcbec3854917b37bd6421b6b8ed2c2c0}
+get\+Input -\/ get input F\+I\+F\+O \begin{DoxyReturn}{Returns}
+buffer\& 
+\end{DoxyReturn}
+\hypertarget{classkernel__container_a64384e258fee9b664d164eb50baf33df}{}\index{kernel\+\_\+container@{kernel\+\_\+container}!get\+Output\+Queue@{get\+Output\+Queue}}
+\index{get\+Output\+Queue@{get\+Output\+Queue}!kernel\+\_\+container@{kernel\+\_\+container}}
+\subsubsection[{get\+Output\+Queue()}]{\setlength{\rightskip}{0pt plus 5cm}kernel\+\_\+container\+::buffer \& kernel\+\_\+container\+::get\+Output\+Queue (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classkernel__container_a64384e258fee9b664d164eb50baf33df}
+get\+Output\+Queue \begin{DoxyReturn}{Returns}
+buffer\& 
+\end{DoxyReturn}
+\hypertarget{classkernel__container_a358a15b772f1b7dfa57bd733fc78fcaa}{}\index{kernel\+\_\+container@{kernel\+\_\+container}!size@{size}}
+\index{size@{size}!kernel\+\_\+container@{kernel\+\_\+container}}
+\subsubsection[{size()}]{\setlength{\rightskip}{0pt plus 5cm}std\+::size\+\_\+t kernel\+\_\+container\+::size (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classkernel__container_a358a15b772f1b7dfa57bd733fc78fcaa}
+size -\/ returns the number of items currently scheduled for this container. \begin{DoxyReturn}{Returns}
+std\+::size\+\_\+t, number of items 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+kernelcontainer.\+hpp\item 
+kernelcontainer.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,75 @@
+\hypertarget{class_graph_tools}{}\section{Graph\+Tools Class Reference}
+\label{class_graph_tools}\index{Graph\+Tools@{Graph\+Tools}}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{class_graph_tools_ade51007699cbd681c1a37946609c46ee}{B\+F\+S} (std\+::set$<$ \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ $>$ \&source\+\_\+kernels, edge\+\_\+func func, void $\ast$data=nullptr, bool connected\+\_\+error=false)
+\item 
+static void \hyperlink{class_graph_tools_afc9c2852a351fe8b1a881b5d8b6c97f5}{B\+F\+S} (std\+::vector$<$ \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ $>$ \&source\+\_\+kernels, edge\+\_\+func func, void $\ast$data=nullptr, bool connected\+\_\+error=false)
+\item 
+\hypertarget{class_graph_tools_a4223eca1b9bdb5b2b551f79b1faa155f}{}static void {\bfseries B\+F\+S} (std\+::set$<$ \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ $>$ \&source\+\_\+kernels, vertex\+\_\+func func, void $\ast$data)\label{class_graph_tools_a4223eca1b9bdb5b2b551f79b1faa155f}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_graph_tools_ade51007699cbd681c1a37946609c46ee}{}\index{Graph\+Tools@{Graph\+Tools}!B\+F\+S@{B\+F\+S}}
+\index{B\+F\+S@{B\+F\+S}!Graph\+Tools@{Graph\+Tools}}
+\subsubsection[{B\+F\+S(std\+::set$<$ raft\+::kernel $\ast$ $>$ \&source\+\_\+kernels, edge\+\_\+func func, void $\ast$data=nullptr, bool connected\+\_\+error=false)}]{\setlength{\rightskip}{0pt plus 5cm}void Graph\+Tools\+::\+B\+F\+S (
+\begin{DoxyParamCaption}
+\item[{std\+::set$<$ {\bf raft\+::kernel} $\ast$ $>$ \&}]{source\+\_\+kernels, }
+\item[{edge\+\_\+func}]{func, }
+\item[{void $\ast$}]{data = {\ttfamily nullptr}, }
+\item[{bool}]{connected\+\_\+error = {\ttfamily false}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{class_graph_tools_ade51007699cbd681c1a37946609c46ee}
+B\+F\+S -\/ perform a breadth first search of the graph given by \textquotesingle{}source\+\_\+kernels\textquotesingle{}. The function \textquotesingle{}func\textquotesingle{} matches the typedef above and is called on each edge of the graph exactly once. For state between calls, the user can define a data struct and pass it via the void ptr data which is passed to the func. 
+\begin{DoxyParams}{Parameters}
+{\em source\+\_\+kernels} & -\/ set of source kernels. \\
+\hline
+{\em func} & -\/ edge\+\_\+func, funciton to be called \\
+\hline
+{\em data} & -\/ void$\ast$, data struct for persistent state \\
+\hline
+{\em connected\+\_\+error,throw} & an error if not connected\\
+\hline
+\end{DoxyParams}
+graphtools.\+cpp -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sat Sep 20 13\+:15\+:09 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+I\+S, W\+I\+T\+H\+O\+U\+T W\+A\+R\+R\+A\+N\+T\+I\+E\+S O\+R C\+O\+N\+D\+I\+T\+I\+O\+N\+S O\+F A\+N\+Y K\+I\+N\+D, either express or implied. See the License for the specific language governing permissions and limitations under the License. \hypertarget{class_graph_tools_afc9c2852a351fe8b1a881b5d8b6c97f5}{}\index{Graph\+Tools@{Graph\+Tools}!B\+F\+S@{B\+F\+S}}
+\index{B\+F\+S@{B\+F\+S}!Graph\+Tools@{Graph\+Tools}}
+\subsubsection[{B\+F\+S(std\+::vector$<$ raft\+::kernel $\ast$ $>$ \&source\+\_\+kernels, edge\+\_\+func func, void $\ast$data=nullptr, bool connected\+\_\+error=false)}]{\setlength{\rightskip}{0pt plus 5cm}void Graph\+Tools\+::\+B\+F\+S (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ {\bf raft\+::kernel} $\ast$ $>$ \&}]{source\+\_\+kernels, }
+\item[{edge\+\_\+func}]{func, }
+\item[{void $\ast$}]{data = {\ttfamily nullptr}, }
+\item[{bool}]{connected\+\_\+error = {\ttfamily false}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{class_graph_tools_afc9c2852a351fe8b1a881b5d8b6c97f5}
+B\+F\+S -\/ perform a breadth first search of the graph given by \textquotesingle{}source\+\_\+kernels\textquotesingle{}. The function \textquotesingle{}func\textquotesingle{} matches the typedef above and is called on each edge of the graph exactly once. For state between calls, the user can define a data struct and pass it via the void ptr data which is passed to the func. 
+\begin{DoxyParams}{Parameters}
+{\em source\+\_\+kernels} & -\/ set of source kernels. \\
+\hline
+{\em func} & -\/ edge\+\_\+func, funciton to be called \\
+\hline
+{\em data} & -\/ void$\ast$, data struct for persistent state \\
+\hline
+{\em connected\+\_\+error,throw} & an error if not connected \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+graphtools.\+hpp\item 
+graphtools.\+cpp\end{DoxyCompactItemize}

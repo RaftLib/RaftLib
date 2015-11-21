@@ -1,0 +1,49 @@
+\hypertarget{classdynalloc}{}\section{dynalloc Class Reference}
+\label{classdynalloc}\index{dynalloc@{dynalloc}}
+Inheritance diagram for dynalloc\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classdynalloc}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classdynalloc_ab72cea1f01078056cfa6dfa8295c76e0}{}{\bfseries dynalloc} (\hyperlink{class_map}{Map} \&map, volatile bool \&\hyperlink{class_allocate_a4d10076b88ab1297c89b8a05e117b510}{exit\+\_\+alloc})\label{classdynalloc_ab72cea1f01078056cfa6dfa8295c76e0}
+
+\item 
+virtual void \hyperlink{classdynalloc_a2a52b86ec09bd6dd52e49062137b2e37}{run} ()
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classdynalloc_a2a52b86ec09bd6dd52e49062137b2e37}{}\index{dynalloc@{dynalloc}!run@{run}}
+\index{run@{run}!dynalloc@{dynalloc}}
+\subsubsection[{run()}]{\setlength{\rightskip}{0pt plus 5cm}void dynalloc\+::run (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classdynalloc_a2a52b86ec09bd6dd52e49062137b2e37}
+run -\/ implement this function to create a new allocator, will be run inside a thread so exits when done but if run-\/time monitoring is desired then this is the place to do it. same alloc for all, inherit from base alloc
+
+acquire source kernels
+
+make this a fixed quantity right now, if size $>$ .75\% at montor interval three times or more then increase size.
+
+T\+O\+D\+O, the values might wrap if no monitoring on
+
+get initializer function
+
+start monitor loop
+
+monitor fifo\textquotesingle{}s 
+
+Implements \hyperlink{class_allocate_a44f9b51c382fec159233609e21b9d272}{Allocate}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+dynalloc.\+hpp\item 
+dynalloc.\+cpp\end{DoxyCompactItemize}

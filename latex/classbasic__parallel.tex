@@ -1,0 +1,79 @@
+\hypertarget{classbasic__parallel}{}\section{basic\+\_\+parallel Class Reference}
+\label{classbasic__parallel}\index{basic\+\_\+parallel@{basic\+\_\+parallel}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classbasic__parallel_a6f8a4933fb29d6f4c60ebb3e934b192e}{basic\+\_\+parallel} (\hyperlink{class_map}{Map} \&map, \hyperlink{class_allocate}{Allocate} \&alloc, \hyperlink{class_schedule}{Schedule} \&sched, volatile bool \&exit\+\_\+para)
+\item 
+virtual void \hyperlink{classbasic__parallel_a85ea2560d40ad50482468e39d626a52b}{start} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+kernelkeeper \& \hyperlink{classbasic__parallel_a969b8832b2f6eaea5e985d4582d9e4dc}{source\+\_\+kernels}
+\item 
+\hypertarget{classbasic__parallel_a028feb03732d5fef0e9d184ddc18ce7b}{}kernelkeeper \& {\bfseries all\+\_\+kernels}\label{classbasic__parallel_a028feb03732d5fef0e9d184ddc18ce7b}
+
+\item 
+\hypertarget{classbasic__parallel_aab09daae41a9d218568115be037a8357}{}\hyperlink{class_allocate}{Allocate} \& {\bfseries alloc}\label{classbasic__parallel_aab09daae41a9d218568115be037a8357}
+
+\item 
+\hypertarget{classbasic__parallel_a9124d0bfd5d75277ddd44fb59814435a}{}\hyperlink{class_schedule}{Schedule} \& {\bfseries sched}\label{classbasic__parallel_a9124d0bfd5d75277ddd44fb59814435a}
+
+\item 
+\hypertarget{classbasic__parallel_ac648d03dceed09e7834d656f561da33b}{}volatile bool \& {\bfseries exit\+\_\+para}\label{classbasic__parallel_ac648d03dceed09e7834d656f561da33b}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classbasic__parallel_a6f8a4933fb29d6f4c60ebb3e934b192e}{}\index{basic\+\_\+parallel@{basic\+\_\+parallel}!basic\+\_\+parallel@{basic\+\_\+parallel}}
+\index{basic\+\_\+parallel@{basic\+\_\+parallel}!basic\+\_\+parallel@{basic\+\_\+parallel}}
+\subsubsection[{basic\+\_\+parallel(\+Map \&map, Allocate \&alloc, Schedule \&sched, volatile bool \&exit\+\_\+para)}]{\setlength{\rightskip}{0pt plus 5cm}basic\+\_\+parallel\+::basic\+\_\+parallel (
+\begin{DoxyParamCaption}
+\item[{{\bf Map} \&}]{map, }
+\item[{{\bf Allocate} \&}]{alloc, }
+\item[{{\bf Schedule} \&}]{sched, }
+\item[{volatile bool \&}]{exit\+\_\+para}
+\end{DoxyParamCaption}
+)}\label{classbasic__parallel_a6f8a4933fb29d6f4c60ebb3e934b192e}
+nothing to do here, move along 
+
+\subsection{Member Function Documentation}
+\hypertarget{classbasic__parallel_a85ea2560d40ad50482468e39d626a52b}{}\index{basic\+\_\+parallel@{basic\+\_\+parallel}!start@{start}}
+\index{start@{start}!basic\+\_\+parallel@{basic\+\_\+parallel}}
+\subsubsection[{start()}]{\setlength{\rightskip}{0pt plus 5cm}void basic\+\_\+parallel\+::start (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classbasic__parallel_a85ea2560d40ad50482468e39d626a52b}
+since we have to have a lock on the ports for both B\+F\+S and duplication, we\textquotesingle{}ll mark the kernels inside of B\+F\+S and duplicate outside of it.
+
+start checking stats
+
+input stats
+
+apply criteria
+
+F\+I\+X\+M\+E, logic below only works for single input, single output..intended to get it working
+
+clone
+
+attach ports
+
+connecting a.\+y -\/$>$ b.\+x new\+\_\+other\+\_\+outprt == port y on a new\+\_\+port\+\_\+in == port x on b
+
+connecting b.\+y -\/$>$ c.\+x newoutport == port y on b new\+\_\+other\+\_\+inport == port x on c
+
+schedule new kernel 
+
+\subsection{Member Data Documentation}
+\hypertarget{classbasic__parallel_a969b8832b2f6eaea5e985d4582d9e4dc}{}\index{basic\+\_\+parallel@{basic\+\_\+parallel}!source\+\_\+kernels@{source\+\_\+kernels}}
+\index{source\+\_\+kernels@{source\+\_\+kernels}!basic\+\_\+parallel@{basic\+\_\+parallel}}
+\subsubsection[{source\+\_\+kernels}]{\setlength{\rightskip}{0pt plus 5cm}kernelkeeper\& basic\+\_\+parallel\+::source\+\_\+kernels\hspace{0.3cm}{\ttfamily [protected]}}\label{classbasic__parallel_a969b8832b2f6eaea5e985d4582d9e4dc}
+both convenience structs, hold exactly what the names say 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+basicparallel.\+hpp\item 
+basicparallel.\+cpp\end{DoxyCompactItemize}

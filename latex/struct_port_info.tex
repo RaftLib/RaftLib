@@ -1,0 +1,123 @@
+\hypertarget{struct_port_info}{}\section{Port\+Info Struct Reference}
+\label{struct_port_info}\index{Port\+Info@{Port\+Info}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{struct_port_info_ada6f27ee68c0d489ad5a8ef41a990628}{}{\bfseries Port\+Info} (const std\+::type\+\_\+info \&the\+\_\+type)\label{struct_port_info_ada6f27ee68c0d489ad5a8ef41a990628}
+
+\item 
+\hypertarget{struct_port_info_a8a74d623dea1deab1d26920ece808dff}{}{\bfseries Port\+Info} (const std\+::type\+\_\+info \&the\+\_\+type, void $\ast$const ptr, const std\+::size\+\_\+t nitems, const std\+::size\+\_\+t start\+\_\+index)\label{struct_port_info_a8a74d623dea1deab1d26920ece808dff}
+
+\item 
+\hypertarget{struct_port_info_a8756457c158ca06d189b08b4b8fe3a12}{}{\bfseries Port\+Info} (const \hyperlink{struct_port_info}{Port\+Info} \&other)\label{struct_port_info_a8756457c158ca06d189b08b4b8fe3a12}
+
+\item 
+virtual \hyperlink{struct_port_info_a36e5aca1b7b20aace809490cebbc2d72}{$\sim$\+Port\+Info} ()
+\item 
+F\+I\+F\+O $\ast$ \hyperlink{struct_port_info_a483d162fbe356e07381c6c5cfccb4f48}{get\+F\+I\+F\+O} ()
+\item 
+void \hyperlink{struct_port_info_a43a57cd624dcc44ccd9dcaba1d07a000}{set\+F\+I\+F\+O} (F\+I\+F\+O $\ast$const in)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{struct_port_info_af8148dcb4b8e6d355dbce4de10cc10cd}{}F\+I\+F\+O $\ast$ {\bfseries fifo\+\_\+a} = nullptr\label{struct_port_info_af8148dcb4b8e6d355dbce4de10cc10cd}
+
+\item 
+\hypertarget{struct_port_info_a071d6f3662fd14dc6b3d12913eecd4ad}{}F\+I\+F\+O $\ast$ {\bfseries fifo\+\_\+b} = nullptr\label{struct_port_info_a071d6f3662fd14dc6b3d12913eecd4ad}
+
+\item 
+std\+::type\+\_\+index \hyperlink{struct_port_info_a669818f0fde1da7b4a294c46e08d5980}{type}
+\item 
+std\+::map$<$ Type\+::\+Ring\+Buffer\+Type, instr\+\_\+map\+\_\+t $\ast$ $>$ \hyperlink{struct_port_info_a714592b5ab1fa47b599903639b102a66}{const\+\_\+map}
+\item 
+split\+\_\+factory\+\_\+t \hyperlink{struct_port_info_a6b7e8758b84288a4378233251252be77}{split\+\_\+func} = nullptr
+\item 
+\hypertarget{struct_port_info_a79c530d0df178e81f8ced267162463ba}{}join\+\_\+factory\+\_\+t {\bfseries join\+\_\+func} = nullptr\label{struct_port_info_a79c530d0df178e81f8ced267162463ba}
+
+\item 
+\hypertarget{struct_port_info_a52680ae480484d347333615eb2100633}{}\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ {\bfseries my\+\_\+kernel} = nullptr\label{struct_port_info_a52680ae480484d347333615eb2100633}
+
+\item 
+\hypertarget{struct_port_info_a52b0d512d88e2a2ca9efc2e6d3195526}{}std\+::string {\bfseries my\+\_\+name} = \char`\"{}\char`\"{}\label{struct_port_info_a52b0d512d88e2a2ca9efc2e6d3195526}
+
+\item 
+\hypertarget{struct_port_info_a68948477f69bccb9a273a02eaae782d4}{}\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ {\bfseries other\+\_\+kernel} = nullptr\label{struct_port_info_a68948477f69bccb9a273a02eaae782d4}
+
+\item 
+\hypertarget{struct_port_info_a5a51ce33a630378cea7ef141efd41b95}{}std\+::string {\bfseries other\+\_\+name} = \char`\"{}\char`\"{}\label{struct_port_info_a5a51ce33a630378cea7ef141efd41b95}
+
+\item 
+bool \hyperlink{struct_port_info_a5da81ef07f28858445aa768700948cf2}{use\+\_\+my\+\_\+allocator} = false
+\item 
+\hypertarget{struct_port_info_ab63be643334befc42faef10a88af0f43}{}bool {\bfseries out\+\_\+of\+\_\+order} = false\label{struct_port_info_ab63be643334befc42faef10a88af0f43}
+
+\item 
+\hypertarget{struct_port_info_a18efecff2a108ef02f05e1ba140d8b07}{}void $\ast$ {\bfseries existing\+\_\+buffer} = nullptr\label{struct_port_info_a18efecff2a108ef02f05e1ba140d8b07}
+
+\item 
+\hypertarget{struct_port_info_a66ca647fbbb03cc60a7058c98407a26b}{}std\+::size\+\_\+t {\bfseries nitems} = 0\label{struct_port_info_a66ca647fbbb03cc60a7058c98407a26b}
+
+\item 
+\hypertarget{struct_port_info_aa21049cabf3bcc11580f05c247e7e5b0}{}std\+::size\+\_\+t {\bfseries start\+\_\+index} = 0\label{struct_port_info_aa21049cabf3bcc11580f05c247e7e5b0}
+
+\item 
+\hypertarget{struct_port_info_a3265b4628f68dc00a0c43f6fade694ca}{}std\+::size\+\_\+t {\bfseries fixed\+\_\+buffer\+\_\+size} = 0\label{struct_port_info_a3265b4628f68dc00a0c43f6fade694ca}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{struct_port_info_a36e5aca1b7b20aace809490cebbc2d72}{}\index{Port\+Info@{Port\+Info}!````~Port\+Info@{$\sim$\+Port\+Info}}
+\index{````~Port\+Info@{$\sim$\+Port\+Info}!Port\+Info@{Port\+Info}}
+\subsubsection[{$\sim$\+Port\+Info()}]{\setlength{\rightskip}{0pt plus 5cm}Port\+Info\+::$\sim$\+Port\+Info (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{struct_port_info_a36e5aca1b7b20aace809490cebbc2d72}
+alloc delete fifo object 
+
+\subsection{Member Function Documentation}
+\hypertarget{struct_port_info_a483d162fbe356e07381c6c5cfccb4f48}{}\index{Port\+Info@{Port\+Info}!get\+F\+I\+F\+O@{get\+F\+I\+F\+O}}
+\index{get\+F\+I\+F\+O@{get\+F\+I\+F\+O}!Port\+Info@{Port\+Info}}
+\subsubsection[{get\+F\+I\+F\+O()}]{\setlength{\rightskip}{0pt plus 5cm}F\+I\+F\+O $\ast$ Port\+Info\+::get\+F\+I\+F\+O (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{struct_port_info_a483d162fbe356e07381c6c5cfccb4f48}
+get\+F\+I\+F\+O -\/ call this function to get a F\+I\+F\+O, lock free but checks to make sure an update isn\textquotesingle{}t occuring. The ptr returned will be fine to use even if an update occurs while the ptr is in use since it won\textquotesingle{}t be deleted from the receiving end until the F\+I\+F\+O is fully emptied. \begin{DoxyReturn}{Returns}
+F\+I\+F\+O$\ast$ 
+\end{DoxyReturn}
+\hypertarget{struct_port_info_a43a57cd624dcc44ccd9dcaba1d07a000}{}\index{Port\+Info@{Port\+Info}!set\+F\+I\+F\+O@{set\+F\+I\+F\+O}}
+\index{set\+F\+I\+F\+O@{set\+F\+I\+F\+O}!Port\+Info@{Port\+Info}}
+\subsubsection[{set\+F\+I\+F\+O(\+F\+I\+F\+O $\ast$const in)}]{\setlength{\rightskip}{0pt plus 5cm}void Port\+Info\+::set\+F\+I\+F\+O (
+\begin{DoxyParamCaption}
+\item[{F\+I\+F\+O $\ast$const}]{in}
+\end{DoxyParamCaption}
+)}\label{struct_port_info_a43a57cd624dcc44ccd9dcaba1d07a000}
+set\+F\+I\+F\+O -\/ call this funciton to set a F\+I\+F\+O, updates both pointers at the same time as opposed to doing it manually 
+\begin{DoxyParams}{Parameters}
+{\em in} & -\/ valid F\+I\+F\+O$\ast$, must not be nullptr \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{struct_port_info_a714592b5ab1fa47b599903639b102a66}{}\index{Port\+Info@{Port\+Info}!const\+\_\+map@{const\+\_\+map}}
+\index{const\+\_\+map@{const\+\_\+map}!Port\+Info@{Port\+Info}}
+\subsubsection[{const\+\_\+map}]{\setlength{\rightskip}{0pt plus 5cm}std\+::map$<$ Type\+::\+Ring\+Buffer\+Type , instr\+\_\+map\+\_\+t$\ast$ $>$ Port\+Info\+::const\+\_\+map}\label{struct_port_info_a714592b5ab1fa47b599903639b102a66}
+const\+\_\+map -\/ stores \char`\"{}builder\char`\"{} objects for each of the currenty implemented ring buffer types so that when the mapper is allocating ring buffers it may allocate one with the proper type. The first key is self explanatory for the most part, storing the ring buffer type. The second internal map key is \char`\"{}instrumented\char`\"{} vs. not. \hypertarget{struct_port_info_a6b7e8758b84288a4378233251252be77}{}\index{Port\+Info@{Port\+Info}!split\+\_\+func@{split\+\_\+func}}
+\index{split\+\_\+func@{split\+\_\+func}!Port\+Info@{Port\+Info}}
+\subsubsection[{split\+\_\+func}]{\setlength{\rightskip}{0pt plus 5cm}split\+\_\+factory\+\_\+t Port\+Info\+::split\+\_\+func = nullptr}\label{struct_port_info_a6b7e8758b84288a4378233251252be77}
+N\+O\+T\+E\+: These are allocated by the run-\/time but not destroyed unless they\textquotesingle{}re used...they\textquotesingle{}ll of course be destroyed upon program termination. \hypertarget{struct_port_info_a669818f0fde1da7b4a294c46e08d5980}{}\index{Port\+Info@{Port\+Info}!type@{type}}
+\index{type@{type}!Port\+Info@{Port\+Info}}
+\subsubsection[{type}]{\setlength{\rightskip}{0pt plus 5cm}std\+::type\+\_\+index Port\+Info\+::type}\label{struct_port_info_a669818f0fde1da7b4a294c46e08d5980}
+the type of the port. regardless of if the buffer itself is impplemented or not. \hypertarget{struct_port_info_a5da81ef07f28858445aa768700948cf2}{}\index{Port\+Info@{Port\+Info}!use\+\_\+my\+\_\+allocator@{use\+\_\+my\+\_\+allocator}}
+\index{use\+\_\+my\+\_\+allocator@{use\+\_\+my\+\_\+allocator}!Port\+Info@{Port\+Info}}
+\subsubsection[{use\+\_\+my\+\_\+allocator}]{\setlength{\rightskip}{0pt plus 5cm}bool Port\+Info\+::use\+\_\+my\+\_\+allocator = false}\label{struct_port_info_a5da81ef07f28858445aa768700948cf2}
+runtime settings 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+port\+\_\+info.\+hpp\item 
+port\+\_\+info.\+cpp\end{DoxyCompactItemize}

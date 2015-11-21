@@ -1,0 +1,148 @@
+\hypertarget{classraft_1_1kernel}{}\section{raft\+:\+:kernel Class Reference}
+\label{classraft_1_1kernel}\index{raft\+::kernel@{raft\+::kernel}}
+Inheritance diagram for raft\+:\+:kernel\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classraft_1_1kernel}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classraft_1_1kernel_a57aa6c7842f594d1522fb1c127fc4588}{kernel} ()
+\item 
+\hyperlink{classraft_1_1kernel_a8c275f04f04b99d77fc4639a053112c8}{kernel} (void $\ast$const ptr, const std\+::size\+\_\+t nbytes)
+\item 
+virtual raft\+::kstatus \hyperlink{classraft_1_1kernel_a05094286d7577360fb1b91c91fc05901}{run} ()=0
+\item 
+virtual \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ \hyperlink{classraft_1_1kernel_a71bfffbbb3d40949e19be32e3d8f467f}{clone} ()
+\item 
+\hypertarget{classraft_1_1kernel_a2376ee5c5d413955db3f017fb707a6df}{}std\+::size\+\_\+t {\bfseries get\+\_\+id} ()\label{classraft_1_1kernel_a2376ee5c5d413955db3f017fb707a6df}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classraft_1_1kernel_adc0c9673065432e5613cc424ae44ddc6}{}{\footnotesize template$<$class T , class... Args$>$ }\\static \hyperlink{classraft_1_1kernel}{kernel} $\ast$ {\bfseries make} (Args \&\&...params)\label{classraft_1_1kernel_adc0c9673065432e5613cc424ae44ddc6}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classraft_1_1kernel_ab206ff6ee1b729ab8875e181cbef227f}{}virtual std\+::size\+\_\+t {\bfseries add\+Port} ()\label{classraft_1_1kernel_ab206ff6ee1b729ab8875e181cbef227f}
+
+\item 
+virtual void \hyperlink{classraft_1_1kernel_abd7f3bf1f689840f7d61f472f520c258}{lock} ()
+\item 
+virtual void \hyperlink{classraft_1_1kernel_a7966dcabb0ed65ac52f6f78918256861}{unlock} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_port}{Port} \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input} = \{ this \}
+\item 
+\hypertarget{classraft_1_1kernel_a1c65cc76ecaa8880ba527e5a146ca4ba}{}\hyperlink{class_port}{Port} {\bfseries output} = \{ this \}\label{classraft_1_1kernel_a1c65cc76ecaa8880ba527e5a146ca4ba}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static std\+::size\+\_\+t \hyperlink{classraft_1_1kernel_a98e05f7418c208e28b9112e92df7eccf}{kernel\+\_\+count}
+\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classraft_1_1kernel_a1045638a7591b3c72cd145fc541d6478}{}class {\bfseries \+::\+Map\+Base}\label{classraft_1_1kernel_a1045638a7591b3c72cd145fc541d6478}
+
+\item 
+\hypertarget{classraft_1_1kernel_a126c9d6caad2646cb2c25898b955c79a}{}class {\bfseries \+::\+Map}\label{classraft_1_1kernel_a126c9d6caad2646cb2c25898b955c79a}
+
+\item 
+\hypertarget{classraft_1_1kernel_a59b0d31ff28240338a2b6e682030ca3c}{}class {\bfseries \+::\+Schedule}\label{classraft_1_1kernel_a59b0d31ff28240338a2b6e682030ca3c}
+
+\item 
+\hypertarget{classraft_1_1kernel_a24755791643232aebfeedaa4ff0ecf03}{}class {\bfseries \+::\+Graph\+Tools}\label{classraft_1_1kernel_a24755791643232aebfeedaa4ff0ecf03}
+
+\item 
+\hypertarget{classraft_1_1kernel_aa3a6c191bed2aef9502f837b67e786b2}{}class {\bfseries \+::kernel\+\_\+container}\label{classraft_1_1kernel_aa3a6c191bed2aef9502f837b67e786b2}
+
+\item 
+\hypertarget{classraft_1_1kernel_ae75d52e84ecfc11bcaa43dd9fe149a2f}{}class {\bfseries \+::basic\+\_\+parallel}\label{classraft_1_1kernel_ae75d52e84ecfc11bcaa43dd9fe149a2f}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classraft_1_1kernel_a57aa6c7842f594d1522fb1c127fc4588}{}\index{raft\+::kernel@{raft\+::kernel}!kernel@{kernel}}
+\index{kernel@{kernel}!raft\+::kernel@{raft\+::kernel}}
+\subsubsection[{kernel()}]{\setlength{\rightskip}{0pt plus 5cm}kernel\+::kernel (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classraft_1_1kernel_a57aa6c7842f594d1522fb1c127fc4588}
+default constructor
+
+default \hypertarget{classraft_1_1kernel_a8c275f04f04b99d77fc4639a053112c8}{}\index{raft\+::kernel@{raft\+::kernel}!kernel@{kernel}}
+\index{kernel@{kernel}!raft\+::kernel@{raft\+::kernel}}
+\subsubsection[{kernel(void $\ast$const ptr, const std\+::size\+\_\+t nbytes)}]{\setlength{\rightskip}{0pt plus 5cm}kernel\+::kernel (
+\begin{DoxyParamCaption}
+\item[{void $\ast$const}]{ptr, }
+\item[{const std\+::size\+\_\+t}]{nbytes}
+\end{DoxyParamCaption}
+)}\label{classraft_1_1kernel_a8c275f04f04b99d77fc4639a053112c8}
+in-\/place allocation
+
+existing memory 
+
+\subsection{Member Function Documentation}
+\hypertarget{classraft_1_1kernel_a71bfffbbb3d40949e19be32e3d8f467f}{}\index{raft\+::kernel@{raft\+::kernel}!clone@{clone}}
+\index{clone@{clone}!raft\+::kernel@{raft\+::kernel}}
+\subsubsection[{clone()}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf raft\+::kernel}$\ast$ raft\+::kernel\+::clone (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}\label{classraft_1_1kernel_a71bfffbbb3d40949e19be32e3d8f467f}
+clone -\/ used for parallelization of kernels, if necessary sub-\/kernels should include an appropriate copy constructor so all class member variables can be set. 
+\begin{DoxyParams}{Parameters}
+{\em other,T\&} & -\/ reference to object to be cloned \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+kernel$\ast$ -\/ takes base type, however is same as allocated by copy constructor for T. 
+\end{DoxyReturn}
+\hypertarget{classraft_1_1kernel_abd7f3bf1f689840f7d61f472f520c258}{}\index{raft\+::kernel@{raft\+::kernel}!lock@{lock}}
+\index{lock@{lock}!raft\+::kernel@{raft\+::kernel}}
+\subsubsection[{lock()}]{\setlength{\rightskip}{0pt plus 5cm}void kernel\+::lock (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [virtual]}}\label{classraft_1_1kernel_abd7f3bf1f689840f7d61f472f520c258}
+does nothing, just need a base impl \hypertarget{classraft_1_1kernel_a05094286d7577360fb1b91c91fc05901}{}\index{raft\+::kernel@{raft\+::kernel}!run@{run}}
+\index{run@{run}!raft\+::kernel@{raft\+::kernel}}
+\subsubsection[{run()=0}]{\setlength{\rightskip}{0pt plus 5cm}virtual raft\+::kstatus raft\+::kernel\+::run (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}\label{classraft_1_1kernel_a05094286d7577360fb1b91c91fc05901}
+run -\/ function to be extended for the actual execution. Code can be executed outside of the run function, i.\+e., with any function call, however the scheduler will only call the run function so it must initiate any follow-\/on behavior desired by the user. \hypertarget{classraft_1_1kernel_a7966dcabb0ed65ac52f6f78918256861}{}\index{raft\+::kernel@{raft\+::kernel}!unlock@{unlock}}
+\index{unlock@{unlock}!raft\+::kernel@{raft\+::kernel}}
+\subsubsection[{unlock()}]{\setlength{\rightskip}{0pt plus 5cm}void kernel\+::unlock (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [virtual]}}\label{classraft_1_1kernel_a7966dcabb0ed65ac52f6f78918256861}
+does nothing, just need a base impl 
+
+\subsection{Member Data Documentation}
+\hypertarget{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{}\index{raft\+::kernel@{raft\+::kernel}!input@{input}}
+\index{input@{input}!raft\+::kernel@{raft\+::kernel}}
+\subsubsection[{input}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Port} raft\+::kernel\+::input = \{ this \}\hspace{0.3cm}{\ttfamily [protected]}}\label{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}
+P\+O\+R\+T\+S -\/ input and output, use these to interact with the outside world. \hypertarget{classraft_1_1kernel_a98e05f7418c208e28b9112e92df7eccf}{}\index{raft\+::kernel@{raft\+::kernel}!kernel\+\_\+count@{kernel\+\_\+count}}
+\index{kernel\+\_\+count@{kernel\+\_\+count}!raft\+::kernel@{raft\+::kernel}}
+\subsubsection[{kernel\+\_\+count}]{\setlength{\rightskip}{0pt plus 5cm}std\+::size\+\_\+t kernel\+::kernel\+\_\+count\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [protected]}}\label{classraft_1_1kernel_a98e05f7418c208e28b9112e92df7eccf}
+N\+O\+T\+E\+: doesn\textquotesingle{}t need to be atomic since only one thread will have responsibility to to create new compute kernels. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+kernel.\+hpp\item 
+kernel.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,54 @@
+\hypertarget{class_partition}{}\section{Partition Class Reference}
+\label{class_partition}\index{Partition@{Partition}}
+
+
+{\ttfamily \#include $<$partition\+\_\+old.\+hpp$>$}
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$class Container , class Mapping\+Container $>$ }\\static void \hyperlink{class_partition_a60481d98fd1958b78250241e6e2a011f}{simple} (Container \&c, Mapping\+Container \&mapping, const std\+::size\+\_\+t cores)
+\item 
+{\footnotesize template$<$class Container , class Mapping\+Container $>$ }\\static void \hyperlink{class_partition_aeb39bcc732a88f06288b38e1b1c29978}{utilization\+\_\+weighted} (Container \&c, Mapping\+Container \&mapping, const std\+::size\+\_\+t cores)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+partition.\+hpp -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Tue Mar 10 13\+:23\+:12 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+I\+S, W\+I\+T\+H\+O\+U\+T W\+A\+R\+R\+A\+N\+T\+I\+E\+S O\+R C\+O\+N\+D\+I\+T\+I\+O\+N\+S O\+F A\+N\+Y K\+I\+N\+D, either express or implied. See the License for the specific language governing permissions and limitations under the License.\+T\+O\+D\+O, might bring this lib into Raft\+Lib 
+
+\subsection{Member Function Documentation}
+\hypertarget{class_partition_a60481d98fd1958b78250241e6e2a011f}{}\index{Partition@{Partition}!simple@{simple}}
+\index{simple@{simple}!Partition@{Partition}}
+\subsubsection[{simple(\+Container \&c, Mapping\+Container \&mapping, const std\+::size\+\_\+t cores)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Container , class Mapping\+Container $>$ static void Partition\+::simple (
+\begin{DoxyParamCaption}
+\item[{Container \&}]{c, }
+\item[{Mapping\+Container \&}]{mapping, }
+\item[{const std\+::size\+\_\+t}]{cores}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{class_partition_a60481d98fd1958b78250241e6e2a011f}
+simple weight to start \hypertarget{class_partition_aeb39bcc732a88f06288b38e1b1c29978}{}\index{Partition@{Partition}!utilization\+\_\+weighted@{utilization\+\_\+weighted}}
+\index{utilization\+\_\+weighted@{utilization\+\_\+weighted}!Partition@{Partition}}
+\subsubsection[{utilization\+\_\+weighted(\+Container \&c, Mapping\+Container \&mapping, const std\+::size\+\_\+t cores)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Container , class Mapping\+Container $>$ static void Partition\+::utilization\+\_\+weighted (
+\begin{DoxyParamCaption}
+\item[{Container \&}]{c, }
+\item[{Mapping\+Container \&}]{mapping, }
+\item[{const std\+::size\+\_\+t}]{cores}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{class_partition_aeb39bcc732a88f06288b38e1b1c29978}
+else use queue weights 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+partition\+\_\+old.\+hpp\end{DoxyCompactItemize}
