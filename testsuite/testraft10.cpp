@@ -2,6 +2,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 #include <raft>
+#include <thread>
 
 using cvm= typename cv::Mat;
 
@@ -66,7 +67,8 @@ public:
 
 extern Clock *system_clock;
 
-int main() 
+int 
+main( int argc, char **argv ) 
 {
    cv::namedWindow( "cam", cv::WINDOW_NORMAL );
    raft::map.link( 

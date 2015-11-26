@@ -54,16 +54,22 @@ main( int argc, char **argv )
                     wrong_t, 
                     send_t >;
    using p_out = raft::print< send_t, '\n' >;
-
    auto linked_kernels( 
       raft::map.link( raft::kernel::make< gen >( 1,count ),
                       raft::kernel::make< sum >(), "input_a" ) );
+   try{
    raft::map.link( 
       raft::kernel::make< gen >( 1,count ),
       &linked_kernels.getDst(), "input_b"  );
+   }
+   catch( PortTypeMismatchException &ex )
+   {
+    //yippy, we threw the right exception
+    return( EXIT_SUCCESS );
+   }
    raft::map.link( 
       &linked_kernels.getDst(), 
       raft::kernel::make< p_out >() );
-   raft::map.exe();
-   return( EXIT_SUCCESS );
+    raft::map.exe();
+   return( EXIT_FAILURE );
 }

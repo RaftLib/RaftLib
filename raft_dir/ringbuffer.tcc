@@ -1,0 +1,479 @@
+/**
+ * ringbuffer.tcc - 
+ * @author: Jonathan Beard
+ * @version: Wed Apr 16 14:18:43 2014
+ * 
+ * Copyright 2014 Jonathan Beard
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * Notes:  When using monitoring, the cycle counter is the most accurate for
+ * Linux / Unix platforms.  It is really not suited to OS X's mach_absolute_time()
+ * function since it is so slow relative to the movement of data, the 
+ * results returned for high throughput systems are simply not accurate
+ * on that platform.
+ */
+#ifndef _RINGBUFFER_TCC_
+#define _RINGBUFFER_TCC_  1
+
+#include <array>
+#include <cstdlib>
+#include <thread>
+#include <cstring>
+#include <cstdint>
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <utility>
+#include <cstddef>
+
+#include "ringbufferbase.tcc"
+#include "ringbuffertypes.hpp"
+#include "SystemClock.tcc"
+#include "sample.tcc"
+#include "meansampletype.tcc"
+#include "arrivalratesampletype.tcc"
+#include "departureratesampletype.tcc"
+
+extern Clock *system_clock;
+
+/**
+ * RingBuffer, default type is a heap.  This version
+ * has no "monitor" thread, but does have the ability
+ * to query queue size which can be quite useful for 
+ * some monitoring tasks. 
+ */
+template < class T, 
+           Type::RingBufferType type = Type::Heap, 
+           bool monitor = false >  class RingBuffer : 
+               public RingBufferBase< T, type >
+{
+public:
+   /**
+    * RingBuffer - default constructor, initializes basic
+    * data structures.
+    */
+   RingBuffer( const std::size_t n, 
+               const std::size_t align = 16 ) : 
+      RingBufferBase< T, type >()
+   {
+      (this)->dm.set( new Buffer::Data<T, type >( n, align ) );
+      
+   }
+   
+   /**
+    * RingBuffer - default constructor, initializes basic
+    * data structures.
+    */
+   RingBuffer( void * const      ptr, 
+               const std::size_t length,
+               const std::size_t start_position ) : 
+      RingBufferBase< T, type >()
+   {
+      T *ptrcast = reinterpret_cast< T* >( ptr );
+      (this)->dm.set( new Buffer::Data<T, type >( ptrcast, length, start_position ) );
+   }
+
+   virtual ~RingBuffer()
+   {
+      /** TODO, might need to get a lock here **/
+      /** might have bad behavior if we double delete **/
+      delete( (this)->dm.get() );
+   }
+
+   /**
+    * make_new_fifo - builder function to dynamically
+    * allocate FIFO's at the time of execution.  The
+    * first two parameters are self explanatory.  The
+    * data ptr is a data struct that is dependent on the
+    * type of FIFO being built.  In there really is no
+    * data necessary so it is expacted to be set to nullptr
+    * @param   n_items - std::size_t
+    * @param   align   - memory alignment
+    * @return  FIFO*
+    */
+   static FIFO* make_new_fifo( std::size_t n_items,
+                               std::size_t align,
+                               void * const data )
+   {
+      if( data != nullptr )
+      {
+         return( new RingBuffer< T, 
+                                 Type::Heap, 
+                                 false >( data, 
+                                          n_items, 
+                                          align /** actually start pos, redesign **/) );
+      }
+      else
+      {
+         return( new RingBuffer< T, 
+                                 Type::Heap, 
+                                 false >( n_items, align ) ); 
+      }
+   }
+
+   virtual void resize( const std::size_t size,
+                        const std::size_t align,
+                        volatile bool &exit_alloc )
+   {
+      if( (this)->dm.is_resizeable() )
+      {
+         (this)->dm.resize( 
+            new Buffer::Data< T, type >( size, align ), exit_alloc );
+      }
+      /** else, not resizeable..just return **/
+      return;
+   }
+   
+   virtual float get_frac_write_blocked()
+   {
+      const auto copy( (this)->write_stats );
+      (this)->write_stats.all = 0;
+      if( copy.blocked == 0 || copy.count == 0 )
+      {
+         return( 0.0 );
+      }
+      return( (float) copy.blocked / (float) copy.count );
+   }
+};
+
+
+/**
+ * RingBufferBaseMonitor - encapsulates logic for a queue with
+ * monitoring enabled.
+ */
+template< class T, 
+          Type::RingBufferType type > class RingBufferBaseMonitor : 
+            public RingBufferBase< T, type >
+{
+public:
+   RingBufferBaseMonitor( const std::size_t n,
+                          const std::size_t align ) : 
+            RingBufferBase< T, type >(),
+            monitor( nullptr ),
+            term( false )
+   {
+      (this)->dm.set( new Buffer::Data<T, 
+                                      Type::Heap >( n, align ) );
+
+      /** add monitor types immediately after construction **/
+      sample_master.registerSample( new MeanSampleType< T, type >() );
+      sample_master.registerSample( new ArrivalRateSampleType< T, type >() );
+      sample_master.registerSample( new DepartureRateSampleType< T, type > () );
+      (this)->monitor = new std::thread( Sample< T, type >::run, 
+                                         std::ref( *(this)      /** buffer **/ ),
+                                         std::ref( (this)->term /** term bool **/ ),
+                                         std::ref( (this)->sample_master ) );
+
+   }
+
+   void  monitor_off()
+   {
+      (this)->term = true;
+   }
+
+   virtual ~RingBufferBaseMonitor()
+   {
+      (this)->term = true;
+      monitor->join();
+      delete( monitor );
+      monitor = nullptr;
+      delete( (this)->dm.get() );
+   }
+
+   std::ostream&
+   printQueueData( std::ostream &stream )
+   {
+      stream << sample_master.printAllData( '\n' );
+      return( stream );
+   }
+
+   virtual void resize( const std::size_t size,
+                        const std::size_t align,
+                        volatile bool &exit_alloc )
+   {
+      if( (this)->dm.is_resizeable() )
+      {
+         (this)->dm.resize( 
+            new Buffer::Data< T, type >( size, align ), exit_alloc );
+      }
+      /** else, not resizeable..just return **/
+      return;
+   }
+   
+   virtual float get_frac_write_blocked()
+   {
+      const auto copy( (this)->write_stats );
+      (this)->write_stats.all = 0;
+      if( copy.blocked == 0 || copy.count == 0 )
+      {
+         return( 0.0 );
+      }
+      return( (float) copy.blocked / (float) copy.count );
+   }
+protected:
+   std::thread       *monitor;
+   volatile bool      term;
+   Sample< T, type >  sample_master;
+};
+
+template< class T > class RingBuffer< T, 
+                                      Type::Heap,
+                                      true /* monitor */ > :
+      public RingBufferBaseMonitor< T, Type::Heap >
+{
+public:
+   /**
+    * RingBuffer - default constructor, initializes basic
+    * data structures.
+    */
+   RingBuffer( const std::size_t n, 
+               const std::size_t align = 16) : 
+                  RingBufferBaseMonitor< T, Type::Heap >( n, align)
+   {
+      /** nothing really to do **/
+   }
+   
+   virtual ~RingBuffer()
+   {
+      /** nothing really to do **/
+   }
+   
+   static FIFO* make_new_fifo( std::size_t n_items,
+                               std::size_t align,
+                               void *data )
+   {
+      assert( data == nullptr );
+      return( new RingBuffer< T, Type::Heap, true >( n_items, align ) ); 
+   }
+};
+
+/** specialization for dummy one **/
+template< class T > class RingBuffer< T, 
+                                      Type::Infinite,
+                                      true /* monitor */ > :
+      public RingBufferBaseMonitor< T, Type::Infinite >
+{
+public:
+   /**
+    * RingBuffer - default constructor, initializes basic
+    * data structures.
+    */
+   RingBuffer( const std::size_t n, const std::size_t align = 16 ) : 
+      RingBufferBaseMonitor< T, Type::Infinite >( 1, align )
+   {
+   }
+   virtual ~RingBuffer()
+   {
+      /** nothing really to do **/
+   }
+
+   static FIFO* make_new_fifo( std::size_t n_items,
+                               std::size_t align,
+                               void *data )
+   {
+      assert( data == nullptr );
+      return( new RingBuffer< T, Type::Infinite, true >( n_items, align ) ); 
+   }
+};
+
+/** specialization for dummy with no instrumentation **/
+template < class T > class RingBuffer < T,
+                                        Type::Infinite,
+                                        false > : 
+               public RingBufferBase< T, Type::Infinite >
+{
+public:
+   /**
+    * RingBuffer - default constructor, initializes basic
+    * data structures.
+    */
+   RingBuffer( const std::size_t n, const std::size_t align = 16 ) : 
+      RingBufferBase< T, Type::Infinite >()
+   {
+      (this)->dm.set( new Buffer::Data<T, Type::Heap >( 1, 16 ) );
+   }
+
+   virtual ~RingBuffer()
+   {
+      delete( (this)->dm.get() );
+   }
+
+   /**
+    * make_new_fifo - builder function to dynamically
+    * allocate FIFO's at the time of execution.  The
+    * first two parameters are self explanatory.  The
+    * data ptr is a data struct that is dependent on the
+    * type of FIFO being built.  In there really is no
+    * data necessary so it is expacted to be set to nullptr
+    * @param   n_items - std::size_t
+    * @param   align   - memory alignment
+    * @return  FIFO*
+    */
+   static FIFO* make_new_fifo( std::size_t n_items,
+                               std::size_t align,
+                               void *data )
+   {
+      assert( data == nullptr );
+      return( new RingBuffer< T, Type::Infinite, false >( n_items, align ) ); 
+   }
+   
+   virtual void resize( const std::size_t size,
+                        const std::size_t align,
+                        bool  &exit_alloc )
+   {
+      assert( false );
+      /** TODO, implement me **/
+   }
+   
+   virtual float get_frac_write_blocked()
+   {
+      /** TODO, implement me **/
+      assert( false );
+   }
+
+};
+
+
+/** 
+ * SharedMemory 
+ */
+template< class T > class RingBuffer< T, 
+                                      Type::SharedMemory, 
+                                      false > :
+                            public RingBufferBase< T, Type::SharedMemory >
+{
+public:
+   RingBuffer( const std::size_t      nitems,
+               const std::string key,
+               Direction         dir,
+               const std::size_t      alignment = 16 ) : 
+               RingBufferBase< T, Type::SharedMemory >(),
+                                              shm_key( key )
+   {
+      (this)->dm.set( 
+         new Buffer::Data< T, 
+                           Type::SharedMemory >( nitems, key, dir, alignment ) );
+   }
+
+   virtual ~RingBuffer()
+   {
+      delete( (this)->dm.get() );      
+   }
+  
+   struct Data
+   {
+      const std::string key;
+      Direction   dir;
+   };
+
+   /**
+    * make_new_fifo - builder function to dynamically
+    * allocate FIFO's at the time of execution.  The
+    * first two parameters are self explanatory.  The
+    * data ptr is a data struct that is dependent on the
+    * type of FIFO being built.  In there really is no
+    * data necessary so it is expacted to be set to nullptr
+    * @param   n_items - std::size_t
+    * @param   align   - memory alignment
+    * @return  FIFO*
+    */
+   static FIFO* make_new_fifo( std::size_t n_items,
+                               std::size_t align,
+                               void *data )
+   {
+      auto *data_ptr( reinterpret_cast< Data* >( data ) );
+      return( new RingBuffer< T, Type::SharedMemory, false >( n_items, 
+                                                              data_ptr->key,
+                                                              data_ptr->dir,
+                                                              align ) ); 
+   }
+   
+   virtual void resize( const std::size_t size,
+                        const std::size_t align,
+                        volatile bool &exit_alloc )
+   {
+      assert( false );
+      /** TODO, implement me **/
+   }
+
+   virtual float get_frac_write_blocked()
+   {
+      assert( false );
+      return( 0.0 );
+   }
+
+protected:
+   const  std::string shm_key;
+};
+
+
+/**
+ * TCP w/ multiplexing
+ */
+template <class T> class RingBuffer< T,
+                                     Type::TCP,
+                                     false /* no monitoring yet */ > :
+                                       public RingBufferBase< T, Type::Heap >
+{
+public:
+   RingBuffer( const std::size_t      nitems,
+               const std::string dns_name,
+               Direction         dir,
+               const std::size_t      alignment = 16 ) : 
+                  RingBufferBase< T, 
+                                  Type::Heap >()
+   {
+      //TODO, fill in stuff here
+   }
+
+   virtual ~RingBuffer()
+   {
+
+   }
+   
+   struct Data
+   {
+      Direction   dir;
+      std::string dns_name;
+   };
+
+   static FIFO* make_new_fifo( const std::size_t n,
+                               const std::size_t align,
+                               void *data )
+   {
+      auto *cast_data( 
+         reinterpret_cast< RingBuffer< T, Type::TCP, false >::Data* >( data ) );
+
+      return( new RingBuffer< T, Type::TCP, false >(n /** n_items **/,
+                                                    cast_data->dns_name,
+                                                    cast_data->dir,
+                                                    align ) );
+   }
+   
+   virtual void resize( const std::size_t size,
+                        const std::size_t align,
+                        volatile bool &exit_alloc )
+   {
+      assert( false );
+      /** TODO implement me **/
+   }
+   
+   virtual float get_frac_write_blocked()
+   {
+      assert( false );
+      return( 0.0 );
+   }
+protected:
+};
+#endif /* END _RINGBUFFER_TCC_ */

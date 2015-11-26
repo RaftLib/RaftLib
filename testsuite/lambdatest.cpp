@@ -32,5 +32,5 @@ main( int argc, char **argv )
       kernel::make< print< int, '\n' > >() );
    map.exe();
 
-   return( EXIT_FAILURE );
+   return( EXIT_SUCCESS );
 }

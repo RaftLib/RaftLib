@@ -22,5 +22,5 @@ main( int argc, char **argv )
    raft::map.link( &kernels.getDst(), 
                    raft::kernel::make< print >() );
    raft::map.exe();
-   return( EXIT_FAILURE );
+   return( EXIT_SUCCESS );
 }

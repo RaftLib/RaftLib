@@ -21,5 +21,5 @@ main( int argc, char **argv )
    map.link( &kernels.getDst(), 
              kernel::make< print< std::int64_t, '\n' > >() );
    map.exe();
-   return( EXIT_FAILURE );
+   return( EXIT_SUCCESS );
 }
