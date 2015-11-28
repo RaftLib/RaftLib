@@ -39,6 +39,7 @@ addons:
  apt:
     sources:
       - ubuntu-toolchain-r-test
+      - george-edison55-cmake-3.x
       - llvm-toolchain-precise
     packages:
 # ensure these match GCC_VERSION
@@ -52,6 +53,7 @@ addons:
       - libcloog-isl-dev
       - libcloog-isl4
       - cmake
+      - build-essential
       - wget
       - libtool
 
