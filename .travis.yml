@@ -20,6 +20,8 @@ cache:
 env:
     global:
         - GCC_VERSION=5
+        - CXXFLAGS=-std=c++11
+        - CFLAGS=-std=c99
 
 branches:
     only:
@@ -30,7 +32,7 @@ before_install:
             export CC=/usr/bin/clang-3.7 CXX=/usr/bin/clang++-3.7;
             C=clang;
         else
-            export CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 ;
+            export CC=/usr/bin/gcc-${GCC_VERSION} CXX=/usr/bin/g++-${GCC_VERSION};
             C=gcc;
         fi
 
