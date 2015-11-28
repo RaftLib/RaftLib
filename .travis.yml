@@ -47,11 +47,9 @@ addons:
       - g++-5
       - clang-3.7
       - binutils
-      - gsl
-      - gsl-dev
+      - libgsl0-dev
+      - libgsl0ldbl
       - gawk
-      - libcloog-isl-dev
-      - libcloog-isl4
       - cmake
       - build-essential
       - wget
