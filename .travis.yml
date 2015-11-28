@@ -14,12 +14,10 @@ cache:
   apt:
   ccache:
   directories:
-    - $HOME/cmake-3.4.0-Linux-x86_64
 
 env:
     global:
         - GCC_VERSION=5
-        - CMAKE_VERSION=3.4.0-Linux-x86_64
         - CXXFLAGS=-std=c++11
         - CFLAGS=-std=c99
 
@@ -59,12 +57,9 @@ addons:
 before_script:
     - echo $LANG
     - echo $LC_ALL
-    -   if [ ! -d "$HOME/cmake-${CMAKE_VERSION}/bin" ]; then
-            wget --no-check-certificate https://cmake.org/files/v3.4/cmake-${CMAKE_VERSION}.tar.gz -O - | tar -zxf -;
-        fi
     - mkdir build
     - cd build
-    - $HOME/cmake-${CMAKE_VERSION}/bin/cmake ..
+    - cmake ..
 
 
 
