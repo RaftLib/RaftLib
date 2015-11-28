@@ -62,6 +62,7 @@ SystemInfo::getSystemProperty( const si::Trait trait )
       long val( 0 );
       switch( trait )
       {
+        using namespace si;
          case( LevelOneICacheSize ):
          {
             if( (val = sysconf( _SC_LEVEL1_ICACHE_SIZE ) ) == -1 )
