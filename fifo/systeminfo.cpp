@@ -58,6 +58,7 @@ SystemInfo::getSystemProperty( const si::Trait trait )
 #if __linux
    if( trait < 15 )
    {
+      using namespace si;
       errno = 0;
       long val( 0 );
       switch( trait )
