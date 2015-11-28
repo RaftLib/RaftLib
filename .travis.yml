@@ -1,25 +1,72 @@
+## container build, no sudo
+sudo: false
+
 language: cpp 
+
 compiler: 
     - gcc 
     - clang
+
+os:
+    - linux
+
+cache:
+  apt:
+  ccache:
+  directories:
+    - $HOME/binutils
+
+
+env:
+    global:
+        - GCC_VERSION=5
 branches:
     only:
         - master
 
 before_install:
+    - if [ ${CC} == "clang" ]; then
+      export CC=/usr/bin/clang-3.7 CXX=/usr/bin/clang++-3.7;
+      C=clang;
+    else
+      export CC=/usr/bin/gcc-${GCC_VERSION} CXX=/usr/bin/g++-${GCC_VERSION} ;
+      C=gcc;
+    fi
+
+
+addons:
+ apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise
+    packages:
+# ensure these match GCC_VERSION
+      - gcc-5
+      - g++-5
+      - clang-3.7
+      - binutils
+      - gsl
+      - gsl-dev
+      - cmake
+      - wget
+      - libtool
+
 
 before_script:
+    -   if [ ! -d "$HOME/binutils/bin" ]; then
+            wget http://ftp.gnu.org/gnu/binutils/binutils-2.25.1.tar.gz -O - | tar -jxf -;
+            cd binutils-2.25.1;
+            ./configure --prefix=${HOME}/binutils;
+            make -j 4;
+            make install;
+        fi
+    - export PATH=$PATH:${HOME}/binutils/bin
     - echo $LANG
     - echo $LC_ALL
-    - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update && sudo apt-get -y upgrade && sudo apt-get install -y libgsl0-dev libgsl0ldbl; fi
-    - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install gsl && brew link --force gsl; fi
     - mkdir build
     - cd build
     - cmake ..
 
+
+
 script: make
-
-
-os:
-    - linux
-    - osx
