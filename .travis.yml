@@ -60,7 +60,7 @@ before_script:
     - echo $LANG
     - echo $LC_ALL
     -   if [ ! -d "$HOME/cmake-3.4.0-Linux-x86_64/bin" ]; then
-            wget --no-check-certificate https://cmake.org/files/v3.4/cmake-3.4.0-Linux-x86_64.tar.gz -O - | tar -jxf -;
+            wget --no-check-certificate https://cmake.org/files/v3.4/cmake-3.4.0-Linux-x86_64.tar.gz -O - | tar -zxf -;
         fi
 
 
