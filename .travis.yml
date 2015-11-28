@@ -48,20 +48,15 @@ addons:
       - binutils
       - gsl
       - gsl-dev
+      - gawk
+      - libcloog-isl-dev
+      - libcloog-isl4
       - cmake
       - wget
       - libtool
 
 
 before_script:
-  - if [ ! -d "$HOME/binutils/bin" ]; then
-       wget http://ftp.gnu.org/gnu/binutils/binutils-2.25.tar.bz2 -O - | tar -jxf -;
-       cd binutils-2.25;
-       ./configure --prefix=${HOME}/binutils;
-       make -j 4;
-       make install;
-    fi
-    - export PATH=$PATH:${HOME}/binutils/bin
     - echo $LANG
     - echo $LC_ALL
     - mkdir build
