@@ -10,9 +10,9 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
 # start check for RT libs
 # var CMAKE_RT_LIBS will default to "" on non-unix platforms
 ##
-if( not UNIX )
+if( not CMAKE_HOST_UNIX )
     set( CMAKE_RT_LIBS "" )
-else( not UNIX )
+else( not CMAKE_HOST_UNIX )
 find_library( RT_LIBRARY
               NAMES rt
               PATHS
@@ -27,7 +27,7 @@ else()
     set( CMAKE_RT_LIBS "" )
 endif()
 mark_as_advanced( RT_LIBRARY CMAKE_RT_LIBS )
-endif( not UNIX )
+endif( not CMAKE_HOST_UNIX )
 ## end check for RT libs
 
 include_directories(  ${GSL_INCLUDE_DIRS} )
