@@ -56,14 +56,13 @@ std::string
 SystemInfo::getSystemProperty( const si::Trait trait )
 {
 #if __linux
+   using namespace si;
    if( trait < 15 )
    {
-      using namespace si;
       errno = 0;
       long val( 0 );
       switch( trait )
       {
-        using namespace si;
          case( LevelOneICacheSize ):
          {
             if( (val = sysconf( _SC_LEVEL1_ICACHE_SIZE ) ) == -1 )
