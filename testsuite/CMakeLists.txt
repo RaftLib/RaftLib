@@ -1,5 +1,5 @@
 find_package( GSL COMPONENTS gsl gslcblas )
-
+find_package( Threads )
 set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
      join lambdatest allocate_s foreach peekrange gamma uniform 
      gaussian exponential partitionTest iteratort sequential 
@@ -9,7 +9,7 @@ include_directories(  ${GSL_INCLUDE_DIRS} )
 
 foreach( APP ${TESTAPPS} )
  add_executable( ${APP} "${APP}.cpp" )
- target_link_libraries( ${APP} raft  ${GSL_LIBRARIES} )
+ target_link_libraries( ${APP} raft  ${GSL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 endforeach( APP ${TESTAPPS} )
 
 ##
