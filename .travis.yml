@@ -56,12 +56,13 @@ addons:
 
 before_script:
     - wget --no-check-certificate  https://cmake.org/files/v3.4/cmake-3.4.0-Linux-x86_64.tar.gz -O /tmp/cmake.tar.gz
-    - tar -zxf /tmp/cmake.tar.gz
+    - tar -zxf /tmp/cmake-3.4.0-Linux-x86_64.tar.gz
+    - export PATH=$PATH:$PWD/cmake-3.4.0-Linux-x86_64/bin/
     - echo $LANG
     - echo $LC_ALL
     - mkdir build
     - cd build
-    - /tmp/cmake-3.4*/bin/cmake ..
+    - cmake ..
 
 
 
