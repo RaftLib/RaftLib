@@ -67,5 +67,5 @@ before_script:
 
 
 script:
-    - ${CC} --version ; ${CXX} --version
+    - ${CC} --version ; ${CXX} --version; cmake --version
     - make -j 4 && make test
