@@ -51,7 +51,7 @@ if( COMPILER_SUPPORTS_C99 )
 else()
  message( FATAL_ERROR "The compiler ${CMAKE_C_COMPILER} has no c99 support. Please use a newer compiler" )
 endif()
-add_definitions( -DLIBCOMPILE=1  -DRDTSCP=1 )
+add_definitions( "-DLIBCOMPILE=1  -DRDTSCP=1" )
 
 
 file(GLOB_RECURSE FIFO_SRC_FILES ${PROJECT_SOURCE_DIR}/fifo/*.cpp)
