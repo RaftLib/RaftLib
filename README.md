@@ -6,11 +6,13 @@
 [![Build Status](https://travis-ci.org/jonathan-beard/RaftLib.svg?branch=master)](https://travis-ci.org/jonathan-beard/RaftLib)
 
 ### Pre-requisites
+
 ####OS X
 Compiler: Clang, GNU GCC 4.8+, or Intel icc
 Libraries: 
 * Only for random number generators <a href="http://goo.gl/gchdSw">GNU GSL</a> 
 * Only for partitioning, basic download doesn't need: <a href="http://goo.gl/tI1NGf">Scotch</a>
+
 ####Linux
 Compiler: c++11 capable 
 Libraries: 
