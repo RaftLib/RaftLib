@@ -262,6 +262,9 @@ private:
                shl      $32, %%rdx              \n\
                orq      %%rax, %%rdx            \n\
                movq     %%rdx, %[prev]"
+#else
+             "\
+                nop"
 #endif
                :
                /*outputs here*/
