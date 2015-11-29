@@ -57,7 +57,7 @@ before_script:
     - export PATH=$PWD/cmake-3.4.0-Linux-x86_64/bin/:$PATH
     - wget --no-check-certificate http://llvm.org/releases/3.7.0/clang+llvm-3.7.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz;
     - tar -xf clang+llvm-3.7.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-    - export PATH=$PWD/clang+llvm-3.7.0-x86_64-linux-gnu-ubuntu-14.04:$PATH
+    - export PATH=$PWD/clang+llvm-3.7.0-x86_64-linux-gnu-ubuntu-14.04/bin:$PATH
     - echo $LANG
     - echo $LC_ALL
     - mkdir build
