@@ -284,7 +284,7 @@ SystemInfo::getSystemProperty( const si::Trait trait )
    }
    else if( SystemName <= trait && trait <= MachineName )
    {
-      return( si::getUTSNameInfo( trait ) );
+      return( SystemInfo::getUTSNameInfo( trait ) );
    }
    else if( UpTime <= trait && trait <= MemoryUnit )
    {
