@@ -332,6 +332,9 @@ private:
                subq     %%rcx, %%rax            \n\
                movq     %%rax, %[diff]          \n\
                movq     %%rdx, %[prev]"
+#else
+               "\
+                    noop"
 #endif
                   :
                   /*outputs here*/
