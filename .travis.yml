@@ -26,10 +26,7 @@ branches:
         - master
 
 before_install:
-    -   if [ ${CC} == "clang" ]; then
-            export CC=/usr/bin/clang-3.7 CXX=/usr/bin/clang++-3.7;
-            C=clang;
-        else
+    -   if [ ${CC} != "clang" ]; then
             export CC=/usr/bin/gcc-${GCC_VERSION} CXX=/usr/bin/g++-${GCC_VERSION};
             C=gcc;
         fi
@@ -44,13 +41,13 @@ addons:
 # ensure these match GCC_VERSION
       - gcc-5
       - g++-5
-      - clang-3.7
       - binutils
       - libgsl0-dev
       - libgsl0ldbl
       - gawk
       - build-essential
       - wget
+      - xz-utils
       - libtool
 
 
@@ -58,6 +55,9 @@ before_script:
     - wget --no-check-certificate  https://cmake.org/files/v3.4/cmake-3.4.0-Linux-x86_64.tar.gz
     - tar -zxf cmake-3.4.0-Linux-x86_64.tar.gz
     - export PATH=$PWD/cmake-3.4.0-Linux-x86_64/bin/:$PATH
+    - wget --no-check-certificate http://llvm.org/releases/3.7.0/clang+llvm-3.7.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz;
+    - tar -xf clang+llvm-3.7.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+    - export PATH=$PWD/clang+llvm-3.7.0-x86_64-linux-gnu-ubuntu-14.04:$PATH
     - echo $LANG
     - echo $LC_ALL
     - mkdir build
