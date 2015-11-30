@@ -25,7 +25,7 @@
 #include "port_info.hpp"
 #include "portmap_t.hpp"
 #include "portiterator.hpp"
-#include "pthreadwrap.h"
+
 PortIterator::PortIterator( portmap_t * const port_map ) : port_map( port_map )
 {
    PortIterator::initKeyMap( port_map, key_map );

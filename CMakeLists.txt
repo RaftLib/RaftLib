@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
 project(RaftLib)
 set( version 0.7a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
@@ -50,8 +50,15 @@ if( COMPILER_SUPPORTS_C99 )
 else()
  message( FATAL_ERROR "The compiler ${CMAKE_C_COMPILER} has no c99 support. Please use a newer compiler" )
 endif()
+
+
+set( CXX_STANDARD ON )
+set( C_STANDARD ON )
+
 add_definitions( -DLIBCOMPILE=1  -DRDTSCP=1 )
 
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g3")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g3")
 
 file(GLOB_RECURSE FIFO_SRC_FILES ${PROJECT_SOURCE_DIR}/fifo/*.cpp)
 file(GLOB_RECURSE RANDOM_SRC_FILES ${PROJECT_SOURCE_DIR}/random/*.cpp)
@@ -62,9 +69,9 @@ add_library(raft allocate.cpp map.cpp graphtools.cpp port.cpp
             roundrobin.cpp kernel.cpp mapbase.cpp submap.cpp 
             globalmap.cpp systemsignalhandler.cpp poolschedule.cpp 
             kernelcontainer.cpp common.cpp basicparallel.cpp 
-            noparallel.cpp affinity.cpp portmap_t.cpp port_info.cpp
+            noparallel.cpp affinity.cpp port_info.cpp
             parallelk.cpp ${FIFO_SRC_FILES} ${RANDOM_SRC_FILES}
-            fifo/getrandom.c pthreadwrap.c )
+            fifo/getrandom.c )
 
 set( RAFTDIR_NAME "raft_dir" )
 set( RAFTDIR ${CMAKE_INSTALL_PREFIX}/include/${RAFTDIR_NAME} ) 

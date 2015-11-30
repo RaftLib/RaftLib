@@ -1,6 +1,7 @@
 #include <cstddef>
+#include <mutex>
 #include "parallelk.hpp"
-#include "pthreadwrap.h"
+
 using namespace raft;
 
 parallel_k::parallel_k()
@@ -23,11 +24,16 @@ parallel_k::~parallel_k()
 void 
 parallel_k::lock_helper( Port &port )
 {
-   pthread_mutex_lock( &port.portmap.mutex_map ); 
+   while( not port.portmap.mutex_map.try_lock() )
+   {
+      std::this_thread::yield();
+   }
+   //lock acquired
+   return;
 }
 
 void 
 parallel_k::unlock_helper( Port &port )
 {
-   pthread_mutex_unlock( &port.portmap.mutex_map ); 
+   port.portmap.mutex_map.unlock(); 
 }

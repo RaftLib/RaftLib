@@ -21,12 +21,13 @@
 #include <functional>
 #include <iostream>
 #include <map>
+#include <cmath>
+#include <chrono>
 
 #include "kernel.hpp"
 #include "map.hpp"
 #include "simpleschedule.hpp"
 #include "rafttypes.hpp"
-#include "pthreadwrap.h"
 #include "affinity.hpp"
 
 #ifdef CORE_ASSIGN
@@ -35,19 +36,17 @@ extern std::map< std::uintptr_t, int > *core_assign;
 
 simple_schedule::simple_schedule( Map &map ) : Schedule( map )
 {
-   pthread_mutex_init( &thread_map_mutex, nullptr );
 }
 
 
 simple_schedule::~simple_schedule()
 {
-   pthread_mutex_lock_d( &thread_map_mutex, __FILE__, __LINE__ );
-   for( decltype( thread_map.size() ) index( 0 ); index < thread_map.size(); index++ )
+   std::lock_guard<std::mutex> guard( thread_map_mutex );
+   for( auto *th_info : thread_map )
    {
-      delete( thread_map[ index ] );
+      delete( th_info );
+      th_info = nullptr;
    }
-   pthread_mutex_unlock( &thread_map_mutex );
-   pthread_mutex_destroy( &thread_map_mutex );
 }
 
 
@@ -57,17 +56,10 @@ simple_schedule::start()
    auto &container( kernel_set.acquire() );
    for( auto * const k : container )
    {  
-      auto *th_info( new thread_info_t() );
-      /** set up data struct for threads **/
-      th_info->data.k = k;
-      th_info->data.finished = &(th_info->finished);
+      auto * const th_info( new thread_info_t( k ) );
 #ifdef CORE_ASSIGN
       th_info->loc = (*core_assign)[ reinterpret_cast< std::uintptr_t >( k ) ];
 #endif
-      pthread_create( &(th_info->th) /** thread **/, 
-                      nullptr        /** no attributes **/, 
-                      simple_run     /** function **/,
-                      reinterpret_cast< void* >( &(th_info->data) ) );
       thread_map.emplace_back( th_info );
    }
    kernel_set.release();
@@ -75,7 +67,11 @@ simple_schedule::start()
    bool keep_going( true );
    while( keep_going )
    {
-      pthread_mutex_lock_d( &thread_map_mutex, __FILE__, __LINE__ );
+      while( not thread_map_mutex.try_lock() )
+      {
+         std::this_thread::yield();
+      }     
+      //exit, we have a lock
       keep_going = false;
       for( auto  *t_info : thread_map )
       {
@@ -88,7 +84,7 @@ simple_schedule::start()
                 * need to delete these entries...especially since we have
                 * a lock on the list now 
                 */
-               pthread_join( t_info->th, nullptr );
+               t_info->th.join();
                t_info->term = true;
             }
             else /* ! finished */
@@ -97,46 +93,52 @@ simple_schedule::start()
             }
          }
       }
-      pthread_mutex_unlock( &thread_map_mutex );
-      sched_yield();
+      //if we're here we have a lock and need to unlock
+      thread_map_mutex.unlock();
+      /**
+       * NOTE: added to keep from having to unlock these so frequently
+       * might need to make the interval adjustable dep. on app
+       */
+      std::chrono::milliseconds dura( 3 );
+      std::this_thread::sleep_for( dura );
    }
-   pthread_mutex_unlock( &thread_map_mutex );
    return;
 }
 
 void
 simple_schedule::handleSchedule( raft::kernel * const kernel )
 {
-      auto *th_info( new thread_info_t() );
+      /** 
+       * TODO: lets add the affinity dynamically here
+       */
+      auto * const th_info( new thread_info_t( kernel ) );
       /** 
        * thread function takes a reference back to the scheduler
        * accessible done boolean flag, essentially when the 
        * kernel is done, it can be rescheduled...and this
        * handles that.
        */
-      th_info->data.k = kernel;
-      th_info->data.finished = &(th_info->finished);
-      pthread_create( &(th_info->th) /** thread **/, 
-                      nullptr        /** no attributes **/, 
-                      simple_run     /** function **/,
-                      reinterpret_cast< void* >( &(th_info->data) ) );
-      pthread_mutex_lock_d( &thread_map_mutex, __FILE__, __LINE__ );
+      while( not thread_map_mutex.try_lock() )
+      {
+         std::this_thread::yield();
+      }
       thread_map.emplace_back( th_info );
-      pthread_mutex_unlock( &thread_map_mutex );
+      /** we got here, unlock **/
+      thread_map_mutex.unlock();
       return;
 }
 
-void*
+void
 simple_schedule::simple_run( void * data ) 
 {
-   auto *thread_d( reinterpret_cast< thread_data* >( data ) );
+   auto * const thread_d( reinterpret_cast< thread_data* >( data ) );
    if( thread_d->loc != -1 )
    {
+      /** call does nothing if not available **/
       affinity::set( thread_d->loc );
    }
-   while( ! *(thread_d->finished) )
+   while( not *(thread_d->finished) )
    {
       Schedule::kernelRun( thread_d->k, *(thread_d->finished) );
    }
-   pthread_exit( nullptr );
 }

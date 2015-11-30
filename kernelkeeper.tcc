@@ -23,11 +23,10 @@
 #include <set>
 #include <cstdio>
 #include <cstdlib>
-#include <pthread.h>
+#include <thread>
 #include <type_traits>
 #include <functional>
 #include <cassert>
-#include "pthreadwrap.h"
 #include <cstring>
 
 namespace raft
@@ -38,18 +37,14 @@ namespace raft
 template< class CONTAINER, class CONTAINERTYPE > class keeper
 {
 private:
-   pthread_mutex_t   mutex;
+   std::mutex        mutex;
+   std::thread::id   owner_id;
    CONTAINER         container;
 
 public:
-   keeper()
-   {
-      pthread_mutex_init( &mutex, nullptr );   
-   }
-   virtual ~keeper()
-   {
-      pthread_mutex_destroy( &mutex );
-   }
+   keeper() = default;
+
+   virtual ~keeper() = default;
 
    //FIXME: this will only work for sets, add specializations for others
    //based on insert function
@@ -69,25 +64,22 @@ public:
 
    CONTAINER& acquire()
    {
-      const auto ret_val( pthread_mutex_lock_d( &mutex, __FILE__, __LINE__) );
-      if( ret_val != 0 )
+      //spin until we can get a lock
+      while( not mutex.try_lock() )
       {
-         std::fprintf( stderr, "Container failed to get lock: %s\n",
-            std::strerror( ret_val ) );
-         assert( false );
+         //it's polite to yield
+         std::this_thread::yield();
       }
+      //we have a lock, get id
+      owner_id = std::this_thread::get_id();
       return( container );
    }
 
    void release()
    {
-      const auto ret_val( pthread_mutex_unlock( &mutex ) );
-      if( ret_val != 0 )
-      {
-         std::fprintf( stderr, "Container failed to unlock: %s\n",
-            std::strerror( ret_val ) );
-         assert( false );
-      }
+      const auto caller_id( std::this_thread::get_id() );
+      assert( caller_id == owner_id );
+      mutex.unlock();
       return;
    }
    

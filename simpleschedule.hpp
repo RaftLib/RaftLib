@@ -20,7 +20,7 @@
 #ifndef _SIMPLESSCHEDULE_HPP_
 #define _SIMPLESSCHEDULE_HPP_  1
 #include <vector>
-#include <pthread.h>
+#include <thread>
 
 class Map;
 namespace raft{
@@ -39,9 +39,13 @@ public:
 protected:
    void handleSchedule( raft::kernel * const kernel ); 
                                 
-   static void* simple_run( void  * data );
+   static void simple_run( void  *data );
    struct thread_data
    {
+      thread_data( raft::kernel * const k,
+                   bool *fin ) : k( k ),
+                                 finished( fin ){}
+
       raft::kernel *k         = nullptr;
       bool         *finished  = nullptr;
       int          loc        = -1;
@@ -49,14 +53,21 @@ protected:
    
    struct thread_info_t
    {
-      pthread_t      th;
+      thread_info_t( raft::kernel * const kernel ) : data( kernel, 
+                                                           &finished ),
+                                     th( simple_run,
+                                         reinterpret_cast< void* >( &data ) )
+      {
+      }
+
       bool           finished = false;
       bool           term     = false;
       thread_data    data;
+      std::thread    th;
    };
 
    
-   pthread_mutex_t               thread_map_mutex;
+   std::mutex                    thread_map_mutex;
    std::vector< thread_info_t* > thread_map;
 };
 #endif /* END _SIMPLESSCHEDULE_HPP_ */

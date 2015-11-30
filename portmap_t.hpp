@@ -22,16 +22,16 @@
 
 #include <map>
 #include <string>
+#include <mutex>
 #include "port_info.hpp"
 
 struct portmap_t
 {
-   portmap_t();
-
-   ~portmap_t();
+   portmap_t() = default;
+   virtual ~portmap_t() = default;
 
    std::map< std::string, PortInfo > map;
-   pthread_mutex_t                   mutex_map;
+   std::mutex                        mutex_map;
 };
 
 #endif /* END _PORTMAP_T_HPP_ */
