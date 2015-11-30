@@ -28,6 +28,7 @@
 #include <functional>
 #include <cassert>
 #include <cstring>
+#include <mutex>
 
 namespace raft
 {
