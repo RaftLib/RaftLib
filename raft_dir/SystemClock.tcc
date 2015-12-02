@@ -26,9 +26,9 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <unistd.h>
 #include <pthread.h>
 #include "Clock.hpp"
-#include <unistd.h>
 
 #ifdef __APPLE__
 #include <mach/mach.h>

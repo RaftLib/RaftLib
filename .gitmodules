@@ -1,0 +1,6 @@
+[submodule "boost-dep/config"]
+	path = boost-dep/config
+	url = https://github.com/boostorg/config.git
+[submodule "boost-dep/core"]
+	path = boost-dep/core
+	url = https://github.com/boostorg/core.git

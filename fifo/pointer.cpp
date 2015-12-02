@@ -17,9 +17,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <cstdint>
+#include <cstddef>
 #include "pointer.hpp"
-#include <thread>
-#include <unistd.h>
 Pointer::Pointer(const std::size_t cap ) : max_cap( cap )
 {
 }

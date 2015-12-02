@@ -19,12 +19,16 @@ find_package( Boost )
 if( Boost_FOUND )
 include_directories( ${Boost_INCLUDE_DIRS} )
 else( Boost_FOUND )
-message( INFO " Initializing sub-module boost-core: ${PROJECT_SOURCE_DIR}/core/" )
-execute_process( COMMAND git-submodule init ./core/ 
-                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} )
-execute_process( COMMAND git submodule update 
-                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} )
-include_directories( ${CMAKE_SOURCE_DIR}/core/include )
+set( BOOSTDIR ${PROJECT_SOURCE_DIR}/boost-dep )
+set( BOOST_MODULES config core )
+foreach( BMODULE ${BOOST_MODULES} )
+ message( INFO " Initializing sub-module boost-${BMODULE} from git repo!" )
+ execute_process( COMMAND git-submodule init 
+                  WORKING_DIRECTORY ${BOOSTDIR}/${BMODULE} )
+ execute_process( COMMAND git submodule update 
+                  WORKING_DIRECTORY ${BOOSTDIR}/${BMODULE} )
+ include_directories( ${BOOSTDIR}/${BMODULE}/include )
+endforeach( BMODULE ${BOOST_MODULES} )
 endif( Boost_FOUND )
 ##
 # Set up unit tests
