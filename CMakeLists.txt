@@ -12,6 +12,21 @@ include_directories (   "${CMAKE_SOURCE_DIR}"
                         "${CMAKE_SOURCE_DIR}/random"
                     )
 ##
+# we need boost to demangle names, might use
+# for random numbers too
+##
+find_package( Boost )
+if( Boost_FOUND )
+include_directories( ${Boost_INCLUDE_DIRS} )
+else( Boost_FOUND )
+message( INFO " Initializing sub-module boost-core: ${PROJECT_SOURCE_DIR}/core/" )
+execute_process( COMMAND git-submodule init ./core/ 
+                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} )
+execute_process( COMMAND git submodule update 
+                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} )
+include_directories( ${CMAKE_SOURCE_DIR}/core/include )
+endif( Boost_FOUND )
+##
 # Set up unit tests
 ##
 add_subdirectory( testsuite )

@@ -24,7 +24,6 @@
 #include <sstream>
 #include <iostream>
 
-#include <cxxabi.h>
 #include "fifo.hpp"
 #include "kernel.hpp"
 #include "port.hpp"
