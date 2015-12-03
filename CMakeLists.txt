@@ -42,6 +42,7 @@ endforeach( TEST ${TESTAPPS} )
 #add_custom_command( OUTPUT ${CMAKE_SOURCE_DIR}/dependencies/mathlib
 #                    COMMAND perl
 
+if( UNIX )
 ##
 # Check for CXX11 or greater
 ##
@@ -52,7 +53,6 @@ if( COMPILER_SUPPORTS_CXX11 )
 else()
  message( FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a newer compiler" )
 endif()
-
 ##
 # Check for c99 or greater
 ##
@@ -63,10 +63,11 @@ if( COMPILER_SUPPORTS_C99 )
 else()
  message( FATAL_ERROR "The compiler ${CMAKE_C_COMPILER} has no c99 support. Please use a newer compiler" )
 endif()
-
-
 set( CXX_STANDARD ON )
 set( C_STANDARD ON )
+endif( UNIX )
+
+
 
 add_definitions( -DLIBCOMPILE=1  -DRDTSCP=1 )
 

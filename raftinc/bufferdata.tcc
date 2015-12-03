@@ -27,14 +27,15 @@
 #include <cinttypes>
 #include <iostream>
 #include <sys/mman.h>
-#include "shm.hpp"
 #include "signalvars.hpp"
 #include "pointer.hpp"
 #include "ringbuffertypes.hpp"
-
 #include "signal.hpp"
-
 #include "database.tcc"
+
+#if BUILDSHM
+#include "shm.hpp"
+#endif
 
 namespace Buffer
 {
@@ -160,6 +161,7 @@ template < class T,
 
 }; /** end heap **/
 
+#if BUILDSHM
 template < class T > struct Data< T, Type::SharedMemory > : 
    public DataBase< T > 
 {
@@ -330,5 +332,6 @@ template < class T > struct Data< T, Type::SharedMemory > :
    const std::string signal_key;  
    const std::string ptr_key; 
 };
-}
+#endif //END BUILDSHM
+} //end namespace Buffer
 #endif /* END _BUFFERDATA_TCC_ */
