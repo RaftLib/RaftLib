@@ -26,13 +26,11 @@
 
 #include "graphtools.hpp"
 #include "dynalloc.hpp"
-#include "Clock.hpp"
 
 #ifndef INITIAL_ALLOC_SIZE
 #warn   "Initial alloc size must be defined in allocate.hpp"
 #endif
 
-extern Clock *system_clock;
 
 dynalloc::dynalloc( Map &map, volatile bool &exit_alloc ) : 
    Allocate( map, exit_alloc )

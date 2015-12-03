@@ -16,12 +16,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
- * Notes:  When using monitoring, the cycle counter is the most accurate for
- * Linux / Unix platforms.  It is really not suited to OS X's mach_absolute_time()
- * function since it is so slow relative to the movement of data, the 
- * results returned for high throughput systems are simply not accurate
- * on that platform.
  */
 #ifndef _RINGBUFFER_TCC_
 #define _RINGBUFFER_TCC_  1
@@ -39,13 +33,11 @@
 
 #include "ringbufferbase.tcc"
 #include "ringbuffertypes.hpp"
-#include "SystemClock.tcc"
-#include "sample.tcc"
-#include "meansampletype.tcc"
-#include "arrivalratesampletype.tcc"
-#include "departureratesampletype.tcc"
+//#include "sample.tcc"
+//#include "meansampletype.tcc"
+//#include "arrivalratesampletype.tcc"
+//#include "departureratesampletype.tcc"
 
-extern Clock *system_clock;
 
 /**
  * RingBuffer, default type is a heap.  This version
@@ -160,20 +152,19 @@ public:
    RingBufferBaseMonitor( const std::size_t n,
                           const std::size_t align ) : 
             RingBufferBase< T, type >(),
-            monitor( nullptr ),
             term( false )
    {
       (this)->dm.set( new Buffer::Data<T, 
                                       Type::Heap >( n, align ) );
 
       /** add monitor types immediately after construction **/
-      sample_master.registerSample( new MeanSampleType< T, type >() );
-      sample_master.registerSample( new ArrivalRateSampleType< T, type >() );
-      sample_master.registerSample( new DepartureRateSampleType< T, type > () );
-      (this)->monitor = new std::thread( Sample< T, type >::run, 
-                                         std::ref( *(this)      /** buffer **/ ),
-                                         std::ref( (this)->term /** term bool **/ ),
-                                         std::ref( (this)->sample_master ) );
+      //sample_master.registerSample( new MeanSampleType< T, type >() );
+      //sample_master.registerSample( new ArrivalRateSampleType< T, type >() );
+      //sample_master.registerSample( new DepartureRateSampleType< T, type > () );
+      //(this)->monitor = new std::thread( Sample< T, type >::run, 
+      //                                   std::ref( *(this)      /** buffer **/ ),
+      //                                   std::ref( (this)->term /** term bool **/ ),
+      //                                   std::ref( (this)->sample_master ) );
 
    }
 
@@ -185,16 +176,16 @@ public:
    virtual ~RingBufferBaseMonitor()
    {
       (this)->term = true;
-      monitor->join();
-      delete( monitor );
-      monitor = nullptr;
+      //monitor->join();
+      //delete( monitor );
+      //monitor = nullptr;
       delete( (this)->dm.get() );
    }
 
    std::ostream&
    printQueueData( std::ostream &stream )
    {
-      stream << sample_master.printAllData( '\n' );
+      //stream << sample_master.printAllData( '\n' );
       return( stream );
    }
 
@@ -222,9 +213,9 @@ public:
       return( (float) copy.blocked / (float) copy.count );
    }
 protected:
-   std::thread       *monitor;
+   //std::thread       *monitor;
    volatile bool      term;
-   Sample< T, type >  sample_master;
+   //Sample< T, type >  sample_master;
 };
 
 template< class T > class RingBuffer< T, 

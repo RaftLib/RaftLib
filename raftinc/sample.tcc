@@ -29,7 +29,6 @@
 #include "sampletype.tcc"
 #include "resolution.hpp"
 
-extern Clock *system_clock;
 
 template < class T, Type::RingBufferType type > class Sample
 {

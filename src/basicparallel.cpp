@@ -24,7 +24,6 @@
 #include <map>
 
 
-extern Clock *system_clock;
 
 basic_parallel::basic_parallel( Map &map, 
                                 Allocate &alloc,

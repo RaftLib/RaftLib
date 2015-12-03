@@ -28,7 +28,6 @@
 #include <iostream>
 #include <cstddef>
 
-#include "Clock.hpp"
 #include "pointer.hpp"
 #include "ringbuffertypes.hpp"
 #include "signalvars.hpp"

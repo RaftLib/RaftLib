@@ -43,7 +43,7 @@ virtual ~SampleType() = default;
 virtual void sample( RingBufferBase< T, type >     &buffer,
                      bool                          &global_blocked ) = 0;
 virtual void accept( volatile bool &converged ) = 0;
-virtual void setFrameWidth( const sclock_t frame_width )
+virtual void setFrameWidth( const double  frame_width )
 {
    (this)->frame_width = frame_width;
 }
@@ -59,7 +59,7 @@ protected:
 virtual std::string printHeader() = 0;
 virtual std::string printData( Unit unit = Unit::Byte )   = 0;
 
-sclock_t frame_width;
+double frame_width;
 
 };
 

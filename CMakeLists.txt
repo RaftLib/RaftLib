@@ -3,14 +3,8 @@ project(RaftLib)
 set( version 0.7a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-include(${CMAKE_SOURCE_DIR}/cmake/InstallConfig.cmake)
-
-
-include_directories (   "${CMAKE_SOURCE_DIR}" 
-                        "${CMAKE_SOURCE_DIR}/fifo"
-                        "${CMAKE_SOURCE_DIR}/math"
-                        "${CMAKE_SOURCE_DIR}/random"
-                    )
+include_directories ( ${PROJECT_SOURCE_DIR}/raftinc )
+include_directories ( ${PROJECT_SOURCE_DIR} )
 ##
 # we need boost to demangle names, might use
 # for random numbers too
@@ -79,104 +73,39 @@ add_definitions( -DLIBCOMPILE=1  -DRDTSCP=1 )
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g3")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g3")
 
-file(GLOB_RECURSE FIFO_SRC_FILES ${PROJECT_SOURCE_DIR}/fifo/*.cpp)
-file(GLOB_RECURSE RANDOM_SRC_FILES ${PROJECT_SOURCE_DIR}/random/*.cpp)
+file(GLOB_RECURSE CPP_SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE C_SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.c)
 
-add_library(raft allocate.cpp map.cpp graphtools.cpp port.cpp 
-            portexception.cpp schedule.cpp simpleschedule.cpp
-            stdalloc.cpp portiterator.cpp dynalloc.cpp
-            roundrobin.cpp kernel.cpp mapbase.cpp submap.cpp 
-            globalmap.cpp systemsignalhandler.cpp poolschedule.cpp 
-            kernelcontainer.cpp common.cpp basicparallel.cpp 
-            noparallel.cpp affinity.cpp port_info.cpp
-            parallelk.cpp ${FIFO_SRC_FILES} ${RANDOM_SRC_FILES}
-            fifo/getrandom.c )
+add_library(raft ${CPP_SRC_FILES} ${C_SRC_FILES} )  
 
-set( RAFTDIR_NAME "raft_dir" )
+##
+# we could just copy the dir over, but
+# this way takes care of permissions too
+##
+set( RAFTDIR_NAME "raftinc" )
 set( RAFTDIR ${CMAKE_INSTALL_PREFIX}/include/${RAFTDIR_NAME} ) 
-file( MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/${RAFTDIR_NAME} )
 
-#set_property( DIRECTORY 
-#              ${CMAKE_SOURCE_DIR}/${RAFTDIR_NAME}
-#              PROPERTY
-#              ADDITIONAL_MAKE_CLEAN_FILES )
 
+
+##
+# create raftinc dir in includes
+##
 install( DIRECTORY DESTINATION ${RAFTDIR} )
 
-set( TEMPLATES foreach.tcc join.tcc lambdak.tcc readeach.tcc 
-               reduce.tcc split.tcc writeeach.tcc
-               math/dct.tcc math/filter.tcc math/raftmath.tcc 
-               math/raftmath.tcc math/stat.tcc math/streamingstat.tcc
-               packages/chunkiterator.tcc
-packages/fastaread.tcc
-packages/fileio.tcc
-packages/parse.tcc
-packages/print.tcc
-packages/search.tcc
-fifo/SystemClock.tcc
-fifo/arrivalratesampletype.tcc
-fifo/autorelease.tcc
-fifo/bufferdata.tcc
-fifo/database.tcc
-fifo/datamanager.tcc
-fifo/departureratesampletype.tcc
-fifo/element.tcc
-fifo/fifoabstract.tcc
-fifo/meansampletype.tcc
-fifo/randomstring.tcc
-fifo/ratesampletype.tcc
-fifo/ringbuffer.tcc
-fifo/ringbufferbase.tcc
-fifo/ringbufferheap.tcc
-fifo/ringbufferinfinite.tcc
-fifo/sample.tcc
-fifo/sampletype.tcc
-random/random.tcc
-random/randomx.tcc
-               )
+file(GLOB_RECURSE TEMPLATES ${PROJECT_SOURCE_DIR}/${RAFTDIR_NAME}/*.tcc)
+file(GLOB_RECURSE CPP_HEADERS ${PROJECT_SOURCE_DIR}/${RAFTDIR_NAME}/*.hpp)
+file(GLOB_RECURSE C_HEADERS ${PROJECT_SOURCE_DIR}/${RAFTDIR_NAME}/*.h)
 
-foreach( TEMPL ${TEMPLATES} )
-file( COPY ${TEMPL} DESTINATION ${CMAKE_SOURCE_DIR}/${RAFTDIR_NAME})
-install( FILES ${TEMPL} DESTINATION ${RAFTDIR} )
-endforeach( TEMPL ${TEMPLATES} )
+set( INST_INC ${TEMPLATES} ${CPP_HEADERS} ${C_HEADERS} )
 
-set( HEADERS affinity.hpp allocate.hpp basicparallel.hpp
-             common.hpp dynalloc.hpp graphtools.hpp
-             kernel.hpp kernelcontainer.hpp kernelpreempt.hpp
-             leastusedfirst.hpp map.hpp mapbase.hpp noparallel.hpp
-             optdef.hpp parallelk.hpp partition_old.hpp poolschedule.hpp
-             port.hpp port_info.hpp port_info_types.hpp portbase.hpp
-             portexception.hpp portiterator.hpp portmap_t.hpp
-             porttemplate.hpp rafttypes.hpp roundrobin.hpp
-             sched_cmd_t.hpp schedule.hpp scheduleconst.hpp
-             simpleschedule.hpp splitmethod.hpp stdalloc.hpp
-             submap.hpp systemsignal.hpp systemsignalhandler.hpp
-             typecheck.hpp
-fifo/Clock.hpp
-fifo/autoreleasebase.hpp
-fifo/blocked.hpp
-fifo/fifo.hpp
-fifo/pointer.hpp
-fifo/procwait.hpp
-fifo/resolution.hpp
-fifo/ringbuffertypes.hpp
-fifo/shm.hpp
-fifo/signal.hpp
-fifo/signaldata.hpp
-fifo/signalvars.hpp
-fifo/systeminfo.hpp
-fifo/systemsignalfifo.hpp
-fifo/units.hpp
-fifo/getrandom.h 
-random/randombase.hpp
-             )
-
-foreach( HEADER ${HEADERS} )
-install( FILES ${HEADER} DESTINATION ${RAFTDIR} )
-file( COPY ${HEADER} DESTINATION ${CMAKE_SOURCE_DIR}/${RAFTDIR_NAME} )
-endforeach( HEADER ${HEADERS} )
+foreach( INST_FILE ${INST_INC} )
+ install( FILES ${INST_FILE} DESTINATION ${RAFTDIR} )
+endforeach( INST_FILE ${INST_INC} )
 
 
+##
+# install main headers in ${prefix}/include dir
+##
 set( MAINHEADERS 
      raft 
      raftio 
@@ -184,7 +113,7 @@ set( MAINHEADERS
      raftrandom
      raftstat )
 foreach( HFILE ${MAINHEADERS} )
- install( FILES ${HFILE}  DESTINATION ${RAFTDIR} )
+ install( FILES ${PROJECT_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 endforeach( HFILE ${MAINHEADERS} )
 
 install( TARGETS raft

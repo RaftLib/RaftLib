@@ -37,11 +37,7 @@
 #include "poolschedule.hpp"
 #include "basicparallel.hpp"
 #include "noparallel.hpp"
-#include "Clock.hpp"
-#include "SystemClock.tcc"
 
-/** lives in clockimpl.cpp **/
-extern Clock *system_clock;
 
 class Map : public MapBase
 {

@@ -21,6 +21,6 @@
 #ifndef _RAFTUTILITY_HPP_
 #define _RAFTUTILITY_HPP_  1
 
-#include "./raft_dir/utility.hpp"
+#include "./raftinc/utility.hpp"
 
 #endif /* END _RAFTUTILITY_HPP_ */

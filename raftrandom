@@ -21,8 +21,8 @@
 #ifndef _RAFTRANDOM_HPP_
 #define _RAFTRANDOM_HPP_  1
 
-#include "./raft_dir/randombase.hpp"
-#include "./raft_dir/randomx.tcc"
-#include "./raft_dir/random.tcc"
+#include "./raftinc/randombase.hpp"
+#include "./raftinc/randomx.tcc"
+#include "./raftinc/random.tcc"
 
 #endif /* END _RAFTRANDOM_HPP_ */
