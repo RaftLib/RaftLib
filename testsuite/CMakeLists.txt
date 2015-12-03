@@ -1,7 +1,7 @@
 find_package( GSL COMPONENTS gsl gslcblas )
 find_package( Threads )
 
-
+if( UNIX )
 ##
 # Check for CXX11 or greater
 ##
@@ -27,7 +27,7 @@ endif()
 
 set( CXX_STANDARD ON )
 set( C_STANDARD ON )
-
+endif( UNIX )
 
 set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
      join lambdatest allocate_s foreach peekrange gamma uniform 
