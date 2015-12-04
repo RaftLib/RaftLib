@@ -335,7 +335,7 @@ public:
 
 };
 
-
+#if BUILDSHM
 /** 
  * SharedMemory 
  */
@@ -467,4 +467,5 @@ public:
    }
 protected:
 };
+#endif //end BUILDSHM
 #endif /* END _RINGBUFFER_TCC_ */
