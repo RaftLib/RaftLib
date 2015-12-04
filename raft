@@ -54,7 +54,6 @@
 #include "./raftinc/pointer.hpp"
 #include "./raftinc/procwait.hpp"
 #include "./raftinc/ringbuffertypes.hpp"
-#include "./raftinc/shm.hpp"
 #include "./raftinc/signalvars.hpp"
 #include "./raftinc/units.hpp"
 
