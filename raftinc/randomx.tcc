@@ -23,14 +23,9 @@
 #define _RANDOMX_TCC_  1
 #include <cstdint>
 #include <raft>
+
 namespace raft{
 
-enum rndtype { 
-   sequential,
-   exponential, 
-   gaussian, 
-   uniform,
-   gammadist /** intel math.h header has a term gamma, could conflict **/ }; 
 
 template < class T > class randomx : public raft::randombase, 
                                      public raft::parallel_k
@@ -48,8 +43,10 @@ public:
     * @param   gen  - raft::rndgenerator
     * @param   seed - const std::uint64_t
     */
+   template < class GENERATOR, DIST >
    randomx( const std::int64_t       count,
-            const raft::rndgenerator gen, 
+            GENERATOR              &&gen,
+            DIST                   &&dist,, 
             const std::uint64_t      seed ) : randombase( gen, seed ),
                                               count( count )
    {

@@ -30,9 +30,14 @@ endif( Boost_FOUND )
 add_subdirectory( testsuite )
 enable_testing()
 set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
-     join lambdatest allocate_s foreach peekrange gamma uniform 
-     gaussian exponential partitionTest iteratort sequential 
-     parallel peek )
+     join lambdatest allocate_s foreach peekrange 
+     partitionTest iteratort parallel peek )
+
+
+if( BUILDRANDOM )
+list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 
+endif( BUILDRANDOM )
+
 foreach( TEST ${TESTAPPS} )
  add_test( NAME "${TEST}_test" COMMAND ${TEST} )
 endforeach( TEST ${TESTAPPS} )

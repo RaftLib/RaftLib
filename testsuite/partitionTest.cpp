@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <raft>
 #include <raftio>
-#include <raftrandom>
+#include "generate.tcc"
 
 int
 main( int argc, char **argv )
@@ -15,9 +15,7 @@ main( int argc, char **argv )
       count = atoi( argv[ 1 ] );
    }
    auto rndgen( raft::kernel::make< 
-      raft::random_variate< std::uint32_t, raft::uniform > >( 1000, 
-                                                              2000, 
-                                                              count  ) );
+      raft::test::generate< std::uint32_t > >( count ) );
                                                               
    
    using sub = raft::lambdak< std::uint32_t >;

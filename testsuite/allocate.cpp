@@ -4,38 +4,8 @@
 #include <cstdlib>
 #include <raft>
 #include <raftio>
+#include "generate.tcc"
 
-
-template < typename T > class Generate : public raft::kernel
-{
-public:
-   Generate( std::int64_t count = 1000 ) : raft::kernel(),
-                                         count( count )
-   {
-      output.addPort< T >( "number_stream" );
-   }
-
-   virtual raft::kstatus run()
-   {
-      if( count-- > 1 )
-      {
-         
-         auto &ref( output[ "number_stream" ].template allocate< T >() );
-         ref = count;
-         output[ "number_stream"].send();
-         
-         return( raft::proceed );
-      }
-      /** else **/
-      auto &ref( output[ "number_stream" ].template allocate< T >() );
-      ref = count;
-      output[ "number_stream" ].send( raft::eof );
-      return( raft::stop );
-   }
-
-private:
-   std::int64_t count;
-};
 
 template< typename A, typename B, typename C > class Sum : public raft::kernel
 {
@@ -75,7 +45,7 @@ main( int argc, char **argv )
    {
       count = atoi( argv[ 1 ] );
    }
-   using gen = Generate< std::int64_t >;
+   using gen = raft::test::generate< std::int64_t >;
    using sum = Sum< std::int64_t, std::int64_t, std::int64_t >;
    using p_out = raft::print< std::int64_t, '\n' >;
 

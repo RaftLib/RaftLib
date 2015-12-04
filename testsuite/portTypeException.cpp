@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <raft>
 #include <raftio>
-#include <raftrandom>
+#include "generate.tcc"
 
 
 
@@ -48,18 +48,17 @@ main( int argc, char **argv )
    }
    using send_t = std::int64_t;
    using wrong_t = float;
-   using gen   = raft::random_variate< send_t, 
-                                       raft::sequential >;
+   using gen   = raft::test::generate< send_t >;
    using sum = Sum< send_t, 
                     wrong_t, 
                     send_t >;
    using p_out = raft::print< send_t, '\n' >;
    auto linked_kernels( 
-      raft::map.link( raft::kernel::make< gen >( 1,count ),
+      raft::map.link( raft::kernel::make< gen >( count ),
                       raft::kernel::make< sum >(), "input_a" ) );
    try{
    raft::map.link( 
-      raft::kernel::make< gen >( 1,count ),
+      raft::kernel::make< gen >( count ),
       &linked_kernels.getDst(), "input_b"  );
    }
    catch( PortTypeMismatchException &ex )

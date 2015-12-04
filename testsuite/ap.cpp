@@ -19,7 +19,6 @@
  */
 
  #include <raft>
- #include <raftrandom>
  #include <cstdint>
  #include <iostream>
  #include <raftio>
@@ -33,10 +32,11 @@
    {
       count = atoi( argv[ 1 ] );
    }
-   using gen   = raft::random_variate< std::int32_t, raft::sequential >;
+   using gen   = raft::test::generate< std::int32_t >;
+
    using p_gen = raft::print< std::int32_t  , '\n' >;
    raft::map.link(
-      raft::kernel::make< gen >( 1, 1000, 1 , count ),
+      raft::kernel::make< gen >( count ),
       raft::kernel::make< p_gen >() );
    raft::map.exe();
    return( EXIT_SUCCESS );

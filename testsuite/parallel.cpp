@@ -18,28 +18,27 @@
  * limitations under the License.
  */
 
- #include <raft>
- #include <raftrandom>
- #include <cstdint>
- #include <iostream>
- #include <raftio>
+#include <raft>
+#include <cstdint>
+#include <iostream>
+#include <raftio>
+#include "generate.tcc" 
 
-
- int
- main( int argc, char **argv )
- {
-   int count( 1000 );
-   if( argc == 2 )
-   {
-      count = atoi( argv[ 1 ] );
-   }
+int
+main( int argc, char **argv )
+{
+  int count( 1000 );
+  if( argc == 2 )
+  {
+     count = atoi( argv[ 1 ] );
+  }
 //   std::ofstream ofs( "/tmp/log" );
-   using gen   = raft::random_variate< std::int32_t, raft::sequential >;
-   using p_gen = raft::print< std::int32_t  , '\n' >;
-   raft::map.link< order::out >(
-      raft::kernel::make< gen >( 1, 1000, 1 , count ),
-      raft::kernel::make< p_gen >( std::cout ) );
-   raft::map.exe();
+  using gen   = raft::test::generate< std::int32_t >;
+  using p_gen = raft::print< std::int32_t  , '\n' >;
+  raft::map.link< order::out >(
+     raft::kernel::make< gen >( count ),
+     raft::kernel::make< p_gen >( std::cout ) );
+  raft::map.exe();
 //   ofs.close();
-   return( EXIT_SUCCESS );
- }
+  return( EXIT_SUCCESS );
+}

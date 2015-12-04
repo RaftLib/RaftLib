@@ -1,4 +1,7 @@
-find_package( GSL COMPONENTS gsl gslcblas )
+if( BUILDRANDOM )
+ find_package( GSL COMPONENTS gsl gslcblas )
+endif( BUILDRANDOM )
+
 find_package( Threads )
 
 if( UNIX )
@@ -30,10 +33,12 @@ set( C_STANDARD ON )
 endif( UNIX )
 
 set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
-     join lambdatest allocate_s foreach peekrange gamma uniform 
-     gaussian exponential partitionTest iteratort sequential 
-     parallel peek )
+     join lambdatest allocate_s foreach peekrange  
+     partitionTest iteratort parallel peek )
 
+if( BUILDRANDOM )
+list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 
+endif( BUILDRANDOM )
 ##
 # start check for RT libs
 # var CMAKE_RT_LIBS will default to "" on non-unix platforms
