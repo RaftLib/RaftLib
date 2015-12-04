@@ -4,3 +4,6 @@
 [submodule "boost-dep/core"]
 	path = boost-dep/core
 	url = https://github.com/boostorg/core.git
+[submodule "boost-dep/random"]
+	path = boost-dep/random
+	url = https://github.com/boostorg/random.git
