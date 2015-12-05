@@ -109,7 +109,7 @@ public:
    template < class T,
               class ... Args,
               typename std::enable_if< 
-               std::is_object< T >::value and not 
+               std::is_object< T >::value && ! 
                std::is_fundamental< T >::value >::type* = nullptr > T& 
                allocate( Args&&... params )
    {
@@ -160,7 +160,7 @@ public:
    template < class T,
               class ... Args,
               typename std::enable_if< 
-               std::is_object< T >::value and not 
+               std::is_object< T >::value && ! 
                std::is_fundamental< T >::value >::type* = nullptr > 
    auto allocate_s( Args&&... params ) -> autorelease< T, allocatetype >
    {
@@ -252,7 +252,7 @@ public:
    template < class T,
               class ... Args,
               typename std::enable_if< 
-               std::is_object< T >::value and not 
+               std::is_object< T >::value && !
                std::is_fundamental< T >::value >::type* = nullptr > 
    void push( const T &item, const raft::signal signal = raft::none )
    {
@@ -300,7 +300,7 @@ public:
    template < class T,
               class ... Args,
               typename std::enable_if< 
-               std::is_object< T >::value and not 
+               std::is_object< T >::value && ! 
                std::is_fundamental< T >::value >::type* = nullptr > 
    void push( const T &&item, const raft::signal signal = raft::none )
    {
@@ -450,7 +450,7 @@ public:
    
    template < class T,
               typename std::enable_if< 
-               std::is_object< T >::value and not
+               std::is_object< T >::value && ! 
                std::is_fundamental< T >::value >::type* = nullptr >
    void recycle( const T &t, const std::size_t range = 1 )
    {
