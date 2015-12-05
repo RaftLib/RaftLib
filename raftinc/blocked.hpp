@@ -48,6 +48,10 @@ union Blocked
       std::uint32_t count;
    };
    std::uint64_t all;
-} __attribute__ ((aligned( 8 )));
+}
+#if __APPLE__ || __linux
+__attribute__ ((aligned( 8 )))
+#endif
+;
 
 #endif /* END _BLOCKED_HPP_ */

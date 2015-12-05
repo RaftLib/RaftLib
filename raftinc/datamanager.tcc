@@ -230,7 +230,11 @@ private:
          dm::key_t     flag[ 8 ];
       };
       std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
-   } __attribute__((aligned(64))) volatile thread_access[ 2 ];
+   } 
+#if defined __APPLE__ || defined __linux   
+    __attribute__((aligned(64))) 
+#endif    
+    volatile thread_access[ 2 ];
   
    std::atomic< std::uint64_t >  checking_size = { 0 };
 
