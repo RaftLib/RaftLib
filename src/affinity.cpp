@@ -73,7 +73,11 @@ affinity::set( const std::size_t desired_core )
       perror( "Failed to yield to wait for core change!\n" );
    }
 #else /** not linux **/
+#if defined __APPLE__
 #warning "No thread pinning for this platform, your results may vary!"
+#elif defined _WIN64 || defined _WIN32
+#pragma message ( "No thread pinning for this platform, your results may vary!" )
+#endif
 #endif
    return;
 }

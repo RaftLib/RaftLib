@@ -26,7 +26,9 @@
 #include <thread>
 #include <cinttypes>
 #include <iostream>
+#if defined __APPLE__ || defined __linux
 #include <sys/mman.h>
+#endif
 #include "signalvars.hpp"
 #include "pointer.hpp"
 #include "ringbuffertypes.hpp"
