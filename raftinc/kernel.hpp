@@ -35,6 +35,7 @@ class Schedule;
 class kernel_container;
 class Map;
 class basic_parallel;
+class kpair;
 
 #ifndef CLONE
 namespace raft
@@ -101,6 +102,14 @@ public:
    }
 
    std::size_t get_id();
+   /**
+    * operator[] - returns the current kernel with the 
+    * specified port name enabled for linking.
+    * @param portname - const std::string&&
+    * @return raft::kernel&&
+    */
+   raft::kernel& operator []( const std::string &&portname );
+   raft::kernel& operator []( const std::string portname   );
 protected:
    /**
     * 
@@ -116,7 +125,10 @@ protected:
     */
    Port               input  = { this };
    Port               output = { this };
- 
+  
+   
+   const std::string& getEnabledPort();
+   
 
    friend class ::MapBase;
    friend class ::Map;
@@ -124,19 +136,24 @@ protected:
    friend class ::GraphTools;
    friend class ::kernel_container;   
    friend class ::basic_parallel;
-
+   friend struct ::kpair;
    /**
     * NOTE: doesn't need to be atomic since only one thread
     * will have responsibility to to create new compute 
     * kernels.
     */
    static std::size_t kernel_count;
+    
+
 
 private:
    /** TODO, replace dup with bit vector **/
    bool   dup_enabled   = false;
    bool   dup_candidate = false;
    const  std::size_t kernel_id;
+
+   /** for operator syntax **/
+   std::string enabled_port = "";
 };
 } /** end namespace raft */
 #endif /* END _KERNEL_HPP_ */

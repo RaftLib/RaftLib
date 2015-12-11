@@ -33,6 +33,19 @@ kernel::get_id()
    return( kernel_id );
 }
 
+raft::kernel& 
+kernel::operator []( const std::string &&portname )
+{
+   (this)->enabled_port = portname;
+   return( (*this) );
+}
+raft::kernel& 
+kernel::operator []( const std::string portname   )
+{
+   (this)->enabled_port = portname;
+   return( (*this) );
+}
+
 std::size_t
 kernel::addPort()
 {
@@ -51,6 +64,12 @@ kernel::unlock()
 {
    /** does nothing, just need a base impl **/
    return;
+}
+
+const std::string&
+kernel::getEnabledPort()
+{
+    return( enabled_port );
 }
 
 //std::string

@@ -81,6 +81,7 @@ public:
       return( *dst );
    }
 
+
 private:
    raft::kernel *src = nullptr;
    raft::kernel *dst = nullptr;
