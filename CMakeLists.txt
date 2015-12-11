@@ -9,7 +9,7 @@ include_directories ( ${PROJECT_SOURCE_DIR} )
 # we need boost to demangle names, might use
 # for random numbers too
 ##
-find_package( Boost )
+find_package( Boost 1.59 )
 if( Boost_FOUND )
 include_directories( ${Boost_INCLUDE_DIRS} )
 else( Boost_FOUND )
