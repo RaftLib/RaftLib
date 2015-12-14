@@ -16,7 +16,8 @@ else
 BUILD = $(RELEASE)
 endif
 
-EXTRA =
+EXTRA = -I../../boost-dep/core/include/ \
+        -I../../boost-dep/config/include/
 
 
 CFLAGS   =  $(BUILD) -Wall -std=c99 

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <iostream>
 #include <raft>
+#include <chrono>
 
 using cvm= typename cv::Mat;
 
@@ -124,8 +125,8 @@ private:
 };
 
 static std::uint64_t frames = 0;
-static double        start  = 0.0;
-static double        end    = 0.0;
+static auto        start  = std::chrono::high_resolution_clock::now();
+static auto        end    = std::chrono::high_resolution_clock::now();
 
 template < class T > class display : public raft::kernel
 {
@@ -146,15 +147,18 @@ public:
       frames++;
       if( frames % 200 == 0 )
       {
-         end = system_clock->getTime();
-         const auto fps( frames / (end - start) );
+         end = std::chrono::high_resolution_clock::now();
+         const auto time( 
+            std::chrono::duration_cast<
+                std::chrono::duration< double > >( end - start ).count() 
+         );
+         const auto fps( frames / ( time ) );
          std::cout << fps << "\n";
       }
       return( raft::proceed );
    }
 };
 
-extern Clock *system_clock;
 
 int main() 
 {
@@ -173,7 +177,7 @@ int main()
       raft::kernel::make< display< cvm > >() 
    );
    /** global time check **/
-   start =  system_clock->getTime();
+   start =  std::chrono::high_resolution_clock::now();
    raft::map.exe();
    return( EXIT_SUCCESS );
 }
