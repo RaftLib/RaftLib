@@ -72,6 +72,10 @@ private:
 int
 main( int argc, char **argv )
 {
+   if( argc < 2 )
+   {
+        std::cerr << "user must provide a file to search!\n";
+   }
    using chunk = raft::filechunk< 256 >;
    using fr    = raft::filereader< chunk, false >;
    using pr    = raft::print< std::size_t, '\n'>;

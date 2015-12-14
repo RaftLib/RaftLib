@@ -16,8 +16,11 @@ else
 BUILD = $(RELEASE)
 endif
 
-CFLAGS   = $(BUILD) -Wall -std=c99
-CXXFLAGS = $(BUILD) $(INC) -Wall -std=c++11 -DRDTSCP=1
+EXTRA = -I../../../boost-dep/core/include/ \
+        -I../../../boost-dep/config/include/
+
+CFLAGS   = $(BUILD) ${EXTRA} -Wall -std=c99
+CXXFLAGS = $(BUILD) $(INC) ${EXTRA} -Wall -std=c++11 -DRDTSCP=1
 LDFLAGS  = -L./ $(LINUXLDFLAGS)
 LDLIBS   = -lstdc++ -lraft -lgsl -lgslcblas -lm $(LINUXLIBS)
 
