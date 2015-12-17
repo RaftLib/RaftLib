@@ -59,7 +59,7 @@
 /** fifo templates **/
 #include "./raftinc/bufferdata.tcc"
 #include "./raftinc/fifoabstract.tcc"
-#include "./raftinc/randomstring.tcc"
+//#include "./raftinc/randomstring.tcc"
 #include "./raftinc/ringbuffer.tcc"
 #include "./raftinc/ringbufferbase.tcc"
 #include "./raftinc/ringbufferheap.tcc"

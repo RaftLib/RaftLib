@@ -24,6 +24,7 @@
 #include <cstring>
 #include <sstream>
 #include <iostream>
+//TODO - rewrite this with c++ random
 #include <gsl/gsl_rng.h>
 #include <cmath>
 
