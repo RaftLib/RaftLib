@@ -3,8 +3,8 @@ project(RaftLib)
 set( version 0.7a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-include_directories ( ${PROJECT_SOURCE_DIR}/raftinc )
-include_directories ( ${PROJECT_SOURCE_DIR} )
+include_directories ( ${CMAKE_SOURCE_DIR}/raftinc )
+include_directories ( ${CMAKE_SOURCE_DIR} )
 ##
 # we need boost to demangle names, might use
 # for random numbers too
@@ -13,7 +13,7 @@ find_package( Boost 1.59 )
 if( Boost_FOUND )
 include_directories( ${Boost_INCLUDE_DIRS} )
 else( Boost_FOUND )
-set( BOOSTDIR ${PROJECT_SOURCE_DIR}/boost-dep )
+set( BOOSTDIR ${CMAKE_SOURCE_DIR}/boost-dep )
 set( BOOST_MODULES config core )
 foreach( BMODULE ${BOOST_MODULES} )
  message( INFO " Initializing sub-module boost-${BMODULE} from git repo!" )
@@ -79,8 +79,8 @@ add_definitions( -DLIBCOMPILE=1  -DRDTSCP=1 )
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g3")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g3")
 
-file(GLOB_RECURSE CPP_SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
-file(GLOB_RECURSE C_SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.c)
+file(GLOB_RECURSE CPP_SRC_FILES ${CMAKE_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE C_SRC_FILES ${CMAKE_SOURCE_DIR}/src/*.c)
 
 add_library(raft ${CPP_SRC_FILES} ${C_SRC_FILES} )  
 
@@ -98,9 +98,9 @@ set( RAFTDIR ${CMAKE_INSTALL_PREFIX}/include/${RAFTDIR_NAME} )
 ##
 install( DIRECTORY DESTINATION ${RAFTDIR} )
 
-file(GLOB_RECURSE TEMPLATES ${PROJECT_SOURCE_DIR}/${RAFTDIR_NAME}/*.tcc)
-file(GLOB_RECURSE CPP_HEADERS ${PROJECT_SOURCE_DIR}/${RAFTDIR_NAME}/*.hpp)
-file(GLOB_RECURSE C_HEADERS ${PROJECT_SOURCE_DIR}/${RAFTDIR_NAME}/*.h)
+file(GLOB_RECURSE TEMPLATES ${CMAKE_SOURCE_DIR}/${RAFTDIR_NAME}/*.tcc)
+file(GLOB_RECURSE CPP_HEADERS ${CMAKE_SOURCE_DIR}/${RAFTDIR_NAME}/*.hpp)
+file(GLOB_RECURSE C_HEADERS ${CMAKE_SOURCE_DIR}/${RAFTDIR_NAME}/*.h)
 
 set( INST_INC ${TEMPLATES} ${CPP_HEADERS} ${C_HEADERS} )
 
@@ -119,7 +119,7 @@ set( MAINHEADERS
      raftrandom
      raftstat )
 foreach( HFILE ${MAINHEADERS} )
- install( FILES ${PROJECT_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
+ install( FILES ${CMAKE_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 endforeach( HFILE ${MAINHEADERS} )
 
 install( TARGETS raft
