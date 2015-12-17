@@ -22,7 +22,7 @@ EXTRA = -I../../../boost-dep/core/include/ \
 CFLAGS   = $(BUILD) ${EXTRA} -Wall -std=c99
 CXXFLAGS = $(BUILD) $(INC) ${EXTRA} -Wall -std=c++11 -DRDTSCP=1
 LDFLAGS  = -L./ $(LINUXLDFLAGS)
-LDLIBS   = -lstdc++ -lraft -lgsl -lgslcblas -lm $(LINUXLIBS)
+LDLIBS   = -lstdc++ -lraft -lm $(LINUXLIBS)
 
 EXE      = bmh  
 OBJS     = $(addsuffix .o, $(CPPFILES)) $(addsuffix .o, $(EXE))

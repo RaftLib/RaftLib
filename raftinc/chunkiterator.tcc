@@ -84,12 +84,13 @@ public:
       return( *this );
    }
 
-   inline chunk_iterator operator = ( chunk_iterator &&other )
+   inline chunk_iterator& operator = ( const chunk_iterator &other )
    {
       index = other.index;
       auto *ptr = const_cast< filechunk< size >* >( chunk );
       ptr = other.chunk;
       is_end = other.is_end;
+      return( *this );
    }
 
    inline bool operator <= ( const chunk_iterator &c )
