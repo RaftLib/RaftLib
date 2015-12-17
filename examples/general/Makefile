@@ -24,7 +24,7 @@ CXXFLAGS = $(BUILD) -Wall -std=c++11 -DRDTSCP=1 \
 LDFLAGS  = -L./ $(LINUXLDFLAGS)
 LDLIBS   = -lstdc++ -lraft -lm $(LINUXLIBS)
 
-EXE      = readtest singlequeue multapp
+EXE      = readtest 
 OBJS     = $(addsuffix .o, $(CPPFILES)) $(addsuffix .o, $(EXE))
 
 all: $(EXE)
