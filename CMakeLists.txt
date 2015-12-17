@@ -16,7 +16,8 @@ else( Boost_FOUND )
 set( BOOSTDIR ${CMAKE_SOURCE_DIR}/boost-dep )
 set( BOOST_MODULES config core )
 foreach( BMODULE ${BOOST_MODULES} )
- message( INFO " Initializing sub-module boost-${BMODULE} from git repo!" )
+ message( INFO " Initializing sub-module boost-${BMODULE} from git repo..." )
+ message( INFO " at location ${BOOSTDIR}/${BMODULE}" )
  execute_process( COMMAND git-submodule init 
                   WORKING_DIRECTORY ${BOOSTDIR}/${BMODULE} )
  execute_process( COMMAND git submodule update 
