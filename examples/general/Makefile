@@ -22,9 +22,9 @@ CXXFLAGS = $(BUILD) -Wall -std=c++11 -DRDTSCP=1 \
            -I../../boost-dep/config/include
 
 LDFLAGS  = -L./ $(LINUXLDFLAGS)
-LDLIBS   = -lstdc++ -lraft -lgsl -lgslcblas -lm $(LINUXLIBS)
+LDLIBS   = -lstdc++ -lraft -lm $(LINUXLIBS)
 
-EXE      = sumapp readtest singlequeue multapp
+EXE      = readtest singlequeue multapp
 OBJS     = $(addsuffix .o, $(CPPFILES)) $(addsuffix .o, $(EXE))
 
 all: $(EXE)
