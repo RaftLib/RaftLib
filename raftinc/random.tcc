@@ -35,7 +35,6 @@
 #include <type_traits>
 #include <cstdint>
 #include <algorithm>
-#include <gsl/gsl_randist.h>
 
 namespace raft
 {

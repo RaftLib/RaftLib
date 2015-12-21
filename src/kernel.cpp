@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include "portexception.hpp"
 #include "kernel.hpp"
 
 using namespace raft;
@@ -36,13 +36,16 @@ kernel::get_id()
 raft::kernel& 
 kernel::operator []( const std::string &&portname )
 {
-   (this)->enabled_port = portname;
-   return( (*this) );
-}
-raft::kernel& 
-kernel::operator []( const std::string portname   )
-{
-   (this)->enabled_port = portname;
+   if( enabled_port.size() < 2 )
+   {
+        enabled_port.push( portname );
+   }
+   else
+   {
+        throw AmbiguousPortAssignmentException(
+            "too many ports added with: " + portname
+        );
+   }
    return( (*this) );
 }
 
@@ -66,10 +69,12 @@ kernel::unlock()
    return;
 }
 
-const std::string&
+std::string
 kernel::getEnabledPort()
 {
-    return( enabled_port );
+    const auto head( enabled_port.front() );
+    enabled_port.pop();
+    return( head );
 }
 
 //std::string

@@ -84,4 +84,3 @@ MapBase::insert( raft::kernel *a,  PortInfo &a_out,
    join( *i, i_out.my_name, i_out,
          *b, b_in.my_name, b_in );
 }
-

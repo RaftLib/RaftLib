@@ -179,21 +179,7 @@ public:
 
       join( *a, port_info_a->my_name, *port_info_a, 
             *b, port_info_b->my_name, *port_info_b );
-      switch( t )
-      {
-         case( order::in ):
-         {
-            port_info_a->out_of_order = false;
-            port_info_b->out_of_order = false;
-         }
-         break;
-         case( order::out ):
-         {
-            port_info_a->out_of_order = true;
-            port_info_b->out_of_order = true;
-         }
-         break;
-      }
+      set_order< t >( *port_info_a, *port_info_b ); 
       return( kernel_pair_t( a, b ) );
    }
    
@@ -247,21 +233,7 @@ public:
       port_info_b->fixed_buffer_size = buffer;
       join( *a, a_port , port_info_a, 
             *b, port_info_b->my_name, *port_info_b );
-      switch( t )
-      {
-         case( order::in ):
-         {
-            port_info_a.out_of_order   = false;
-            port_info_b->out_of_order  = false;
-         }
-         break;
-         case( order::out ):
-         {
-            port_info_a.out_of_order   = true;
-            port_info_b->out_of_order  = true;
-         }
-         break;
-      }
+      set_order< t >( port_info_a, port_info_b ); 
       return( kernel_pair_t( a, b ) );
    }
 
@@ -294,8 +266,6 @@ public:
       {
          dst_kernels += b;
       }
-
-
       all_kernels +=  a;
       all_kernels +=  b;
       PortInfo *port_info_a;
@@ -318,21 +288,7 @@ public:
       
       join( *a, port_info_a->my_name, *port_info_a, 
             *b, b_port, port_info_b );
-      switch( t )
-      {
-         case( order::in ):
-         {
-            port_info_a->out_of_order   = false;
-            port_info_b.out_of_order    = false;
-         }
-         break;
-         case( order::out ):
-         {
-            port_info_a->out_of_order   = true;
-            port_info_b.out_of_order    = true;
-         }
-         break;
-      }
+      set_order< t >( *port_info_a, port_info_b ); 
       return( kernel_pair_t( a, b ) );
    }
    
@@ -373,21 +329,7 @@ public:
       
       join( *a, a_port, port_info_a, 
             *b, b_port, port_info_b );
-      switch( t )
-      {
-         case( order::in ):
-         {
-            port_info_a.out_of_order = false; 
-            port_info_b.out_of_order = false; 
-         }
-         break;
-         case( order::out ):
-         {
-            port_info_a.out_of_order = true; 
-            port_info_b.out_of_order = true; 
-         }
-         break;
-      }
+      set_order< t >( port_info_a, port_info_b ); 
       return( kernel_pair_t( a, b ) );
    }
 
@@ -414,6 +356,40 @@ protected:
    static void insert( raft::kernel *a,  PortInfo &a_out, 
                        raft::kernel *b,  PortInfo &b_in,
                        raft::kernel *i );
+
+   /** 
+    * set_order - keep redundant code, well, less redundant. 
+    * This version handles the in-order settings.
+    * @param    port_info_a, PortInfo&
+    * @param    port_info_b, PortInfo&
+    */
+   template < order::spec t,
+              typename std::enable_if< t == order::in >::type* = nullptr > 
+   static 
+   void set_order( PortInfo &port_info_a, 
+                   PortInfo &port_info_b ) noexcept
+   {
+        port_info_a.out_of_order = false; 
+        port_info_b.out_of_order = false;
+        return;           
+   }
+   
+   /** 
+    * set_order - keep redundant code, well, less redundant. 
+    * This version handles the out-of-order settings.
+    * @param    port_info_a, PortInfo&
+    * @param    port_info_b, PortInfo&
+    */
+   template < order::spec t,
+              typename std::enable_if< t == order::out >::type* = nullptr > 
+   static 
+   void set_order( PortInfo &port_info_a, 
+                   PortInfo &port_info_b ) noexcept
+   {
+        port_info_a.out_of_order = true; 
+        port_info_b.out_of_order = true; 
+        return;
+   }
 
    /** need to keep source kernels **/
    kernelkeeper              source_kernels;

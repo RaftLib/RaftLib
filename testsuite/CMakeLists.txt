@@ -14,7 +14,8 @@ find_package( LIBRT )
 
 set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
      join lambdatest allocate_s foreach peekrange  
-     partitionTest iteratort parallel peek )
+     partitionTest iteratort parallel peek 
+     operatorBracketsTooMany )
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 

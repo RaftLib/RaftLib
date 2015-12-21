@@ -23,7 +23,8 @@
 #include <functional>
 #include <utility>
 #include <cstdint>
-#include <setjmp.h>
+#include <queue>
+#include <string>
 
 #include "port.hpp"
 #include "signalvars.hpp"
@@ -109,7 +110,8 @@ public:
     * @return raft::kernel&&
     */
    raft::kernel& operator []( const std::string &&portname );
-   raft::kernel& operator []( const std::string portname   );
+
+
 protected:
    /**
     * 
@@ -127,7 +129,7 @@ protected:
    Port               output = { this };
   
    
-   const std::string& getEnabledPort();
+   std::string getEnabledPort();
    
 
    friend class ::MapBase;
@@ -153,7 +155,7 @@ private:
    const  std::size_t kernel_id;
 
    /** for operator syntax **/
-   std::string enabled_port = "";
+   std::queue< std::string > enabled_port;
 };
 } /** end namespace raft */
 #endif /* END _KERNEL_HPP_ */
