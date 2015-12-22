@@ -12,7 +12,6 @@ include_directories ( ${CMAKE_SOURCE_DIR} )
 add_subdirectory( src )
 add_subdirectory( raftinc )
 add_subdirectory( ${CMAKE_SOURCE_DIR}/examples/cppalgo/search )
-add_subdirectory( ${CMAKE_SOURCE_DIR}/examples/opencv )
 
 ##
 # we need boost to demangle names, might use
