@@ -49,6 +49,7 @@ addons:
       - wget
       - xz-utils
       - libtool
+      - libopencv-dev
 
 
 before_script:
