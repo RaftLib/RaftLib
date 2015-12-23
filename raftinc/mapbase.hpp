@@ -133,26 +133,13 @@ public:
                           raft::kernel *b,
                           const std::size_t buffer = 0 )
    {
-      /** assume each only has a single input / output **/
-      if( ! a->input.hasPorts() )
-      {
-         source_kernels += a;
-      }
-      if( ! b->output.hasPorts() )
-      {
-         dst_kernels += b;
-      }
-
-
-      all_kernels += a;
-      all_kernels += b;
+      updateKernels( a, b );
       PortInfo *port_info_a;
       try{ 
          port_info_a =  &(a->output.getPortInfo());
       }
       catch( PortNotFoundException &ex )
       {
-         int status( 0 );
          std::stringstream ss;
          ss << 
             "Source port from kernel " << 
@@ -168,7 +155,6 @@ public:
       }
       catch( PortNotFoundException &ex )
       {
-         int status( 0 );
          std::stringstream ss;
          ss << "Destination port from kernel " <<
             boost::core::demangle( typeid( *b ).name() ) << 
@@ -203,18 +189,7 @@ public:
                           raft::kernel *b,
                           const std::size_t buffer = 0 )
    {
-      if( ! a->input.hasPorts() )
-      {
-         source_kernels += a;
-      }
-      if( ! b->output.hasPorts() )
-      {
-         dst_kernels += b;
-      }
-
-
-      all_kernels += a;
-      all_kernels += b;
+      updateKernels( a, b );
       PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
       port_info_a.fixed_buffer_size = buffer;
       PortInfo *port_info_b;
@@ -223,7 +198,6 @@ public:
       }
       catch( PortNotFoundException &ex ) 
       {
-         int status( 0 );
          std::stringstream ss;
          ss << "Destination port from kernel " << 
              boost::core::demangle( typeid( *b ).name() ) << 
@@ -258,16 +232,7 @@ public:
                           const std::string b_port,
                           const std::size_t buffer = 0 )
    {
-      if( ! a->input.hasPorts() )
-      {
-         source_kernels += a;
-      }
-      if( ! b->output.hasPorts() )
-      {
-         dst_kernels += b;
-      }
-      all_kernels +=  a;
-      all_kernels +=  b;
+      updateKernels( a, b );
       PortInfo *port_info_a;
       try{
          port_info_a = &(a->output.getPortInfo() );
@@ -275,7 +240,6 @@ public:
       catch( PortNotFoundException &ex ) 
       {
          std::stringstream ss;
-         int status( 0 );
          ss << "Source port from kernel " <<
             boost::core::demangle( typeid( *a ).name() ) << 
                 "has more than a single port.";
@@ -311,17 +275,7 @@ public:
                           const std::string b_port,
                           const std::size_t buffer = 0 )
    {
-      if( ! a->input.hasPorts() )
-      {
-         source_kernels += a;
-      }
-      if( ! b->output.hasPorts() )
-      {
-         dst_kernels += b;
-      }
-
-      all_kernels += a;
-      all_kernels += b;
+      updateKernels( a, b );
       auto &port_info_a( a->output.getPortInfoFor( a_port ) );
       port_info_a.fixed_buffer_size = buffer;
       auto &port_info_b( b->input.getPortInfoFor( b_port) );
@@ -332,6 +286,7 @@ public:
       set_order< t >( port_info_a, port_info_b ); 
       return( kernel_pair_t( a, b ) );
    }
+   
 
 
 
@@ -391,6 +346,22 @@ protected:
         return;
    }
 
+   template < class A, 
+              class B >
+    void updateKernels( A &a, B &b )
+   {
+      if( ! a->input.hasPorts() )
+      {
+         source_kernels += a;
+      }
+      if( ! b->output.hasPorts() )
+      {
+         dst_kernels += b;
+      }
+      all_kernels += a;
+      all_kernels += b;
+   }
+
    /** need to keep source kernels **/
    kernelkeeper              source_kernels;
    /** dst kernels **/
@@ -407,4 +378,6 @@ protected:
 
    friend class Map;
 };
+   
+
 #endif /* END _MAPBASE_HPP_ */
