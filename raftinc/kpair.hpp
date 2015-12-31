@@ -35,11 +35,11 @@ public:
 
 protected:
     kpair        *next = nullptr;
-    raft::kernel *src;
-    bool          has_src_name;
+    raft::kernel *src  = nullptr;
+    bool          has_src_name = false;
     std::string   src_name;
-    raft::kernel *dst;
-    bool          has_dst_name;
+    raft::kernel *dst  = nullptr;
+    bool          has_dst_name = false;
     std::string   dst_name;
     
     friend class raft::map;

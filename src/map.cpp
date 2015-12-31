@@ -31,7 +31,7 @@
 #include "common.hpp"
 #include "map.hpp"
 #include "graphtools.hpp"
-
+#include "kpair.hpp"
 
 raft::map::map() : MapBase()
 {
