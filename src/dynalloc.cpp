@@ -32,8 +32,9 @@
 #endif
 
 
-dynalloc::dynalloc( Map &map, volatile bool &exit_alloc ) : 
-   Allocate( map, exit_alloc )
+dynalloc::dynalloc( raft::map &map, 
+                    volatile bool &exit_alloc ) : 
+                        Allocate( map, exit_alloc )
 {
 }
 

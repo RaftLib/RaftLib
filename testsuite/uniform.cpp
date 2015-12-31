@@ -29,11 +29,15 @@
  main( int argc, char **argv )
  {
    using namespace raft;
-   auto rndgen( 
-      kernel::make< 
-         random_variate< std::uint32_t, uniform > >( 1000, 2000 , 10000 ) );
-   auto pr( kernel::make< print< std::uint32_t , '\n' > >() );
-   map.link( rndgen, pr );
-   map.exe();
+   using type_t = std::uint32_t;
+   using gen = random_variate< type_t, uniform >;
+   using print = print< type_t, '\n' >;
+
+   gen g( 1000, 2000, 10000 );
+   print p;
+   raft::map m;
+   m += g >> p;
+   m.exe();
+   
    return( EXIT_SUCCESS );
  }

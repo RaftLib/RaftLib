@@ -34,7 +34,7 @@
 extern std::map< std::uintptr_t, int > *core_assign;
 #endif
 
-simple_schedule::simple_schedule( Map &map ) : Schedule( map )
+simple_schedule::simple_schedule( raft::map &map ) : Schedule( map )
 {
 }
 

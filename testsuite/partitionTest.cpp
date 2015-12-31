@@ -28,19 +28,19 @@ main( int argc, char **argv )
          return( raft::proceed );
       } );
 
-    
-   auto kernels = raft::map.link( rndgen,
-                                  raft::kernel::make< sub >( 1, 1, l_sub ) );
+   raft::map m;
+
+   auto kernels = m.link( rndgen,
+                          raft::kernel::make< sub >( 1, 1, l_sub ) );
    
    for( int i( 0 ); i < 50; i++ )
    {
-      kernels = raft::map.link( &kernels.getDst(),
-                                raft::kernel::make< sub >( 1, 1, l_sub ) );
+      kernels = m.link( &kernels.getDst(),
+                        raft::kernel::make< sub >( 1, 1, l_sub ) );
    }
-   raft::map.link( &kernels.getDst(), 
-             raft::kernel::make< raft::print< std::uint32_t, '\n' > >() );
-   raft::map.exe();
+   m.link( &kernels.getDst(), 
+           raft::kernel::make< raft::print< std::uint32_t, '\n' > >() );
    
-
+   m.exe();
    return( EXIT_SUCCESS );
 }

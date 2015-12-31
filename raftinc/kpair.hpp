@@ -25,6 +25,7 @@
 namespace raft
 {
     class kernel;
+    class map;
 }
 
 class kpair
@@ -34,13 +35,17 @@ public:
 
 protected:
     kpair        *next = nullptr;
-private:
     raft::kernel *src;
+    bool          has_src_name;
     std::string   src_name;
     raft::kernel *dst;
+    bool          has_dst_name;
     std::string   dst_name;
+    
+    friend class raft::map;
 };
 
-static kpair operator << ( raft::kernel &&a, raft::kernel &&b );
+kpair operator >> ( raft::kernel &a,  raft::kernel &b  );
+kpair operator >> ( raft::kernel &&a, raft::kernel &&b );
 
 #endif /* END _KPAIR_HPP_ */

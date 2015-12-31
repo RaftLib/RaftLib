@@ -27,7 +27,7 @@
 #include "map.hpp"
 #include "portexception.hpp"
 
-Allocate::Allocate( Map &map, volatile bool &exit_alloc ) : 
+Allocate::Allocate( raft::map &map, volatile bool &exit_alloc ) : 
    source_kernels( map.source_kernels ),
    all_kernels(    map.all_kernels ),
    exit_alloc( exit_alloc )

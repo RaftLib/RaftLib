@@ -36,6 +36,14 @@ public:
       input.addPort<  T >( "0" );
       output.addPort< std::size_t >( "0" );
    }
+   
+   search( const std::string &term ) : raft::kernel(),
+                                       term_length( term.length() ),
+                                       term( term )
+   {
+      input.addPort<  T >( "0" );
+      output.addPort< std::size_t >( "0" );
+   }
 
    virtual ~search()
    {
@@ -72,25 +80,25 @@ private:
 int
 main( int argc, char **argv )
 {
-   if( argc < 2 )
-   {
-        std::cerr << "user must provide a file to search!\n";
-   }
-   using chunk = raft::filechunk< 256 >;
-   using fr    = raft::filereader< chunk, false >;
-   using pr    = raft::print< std::size_t, '\n'>;
-   const std::string term( "Alice" );
-   auto first(
-   raft::map.link(
-      raft::kernel::make< fr >( argv[ 1 ], 1, term.length() ),
-      raft::kernel::make< search< chunk > >( "Alice" )
-   ) );
-   
-   raft::map.link(
-      &first.getDst(),
-      raft::kernel::make< pr >( std::cout )
-   );
+    if( argc < 2 )
+    {
+         std::cerr << "user must provide a file to search!\n";
+         exit( EXIT_FAILURE );
+    }
+    using chunk = raft::filechunk< 256 >;
+    using fr    = raft::filereader< chunk, false >;
+    using search = search< chunk >;
+    using print = raft::print< std::size_t, '\n'>;
+    const std::string term( "Alice" );
+    raft::map m;
+    
+    fr   read( argv[ 1 ], 1, term.length() );
+    search find( term );
+    print p;
+    
+    m += read >> find;
+    m += find >> p;
+    m.exe();
 
-   raft::map.exe();
-   return( EXIT_SUCCESS );
+    return( EXIT_SUCCESS );
 }

@@ -29,7 +29,10 @@
 #include <set>
 #include <iostream>
 
-class Map;
+namespace raft
+{
+    class map;
+}
 
 /** right now we're only considering single input, single output kernels **/
 struct stats
@@ -48,7 +51,7 @@ struct stats
 class basic_parallel
 {
 public:
-   basic_parallel( Map &map, 
+   basic_parallel( raft::map &map, 
                    Allocate &alloc,
                    Schedule &sched,
                    volatile bool &exit_para );

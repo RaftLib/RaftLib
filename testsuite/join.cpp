@@ -12,13 +12,14 @@ main( int argc, char **argv )
    using join  = raft::join< type >;
    using print = raft::print< type, '\n' >;
 
+   gen      g( 10000 );
+   join     j;
+   print    p;
+   raft::map m;
    /** manually link split kernels **/
-   auto kernels( 
-   raft::map.link( raft::kernel::make< gen >( 10000 ),
-                   raft::kernel::make< join >() ) );
+   m += g >> j;
+   m += j >> p;
+   m.exe();
    
-   raft::map.link( &kernels.getDst(), 
-                   raft::kernel::make< print >() );
-   raft::map.exe();
    return( EXIT_SUCCESS );
 }

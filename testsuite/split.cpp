@@ -8,15 +8,19 @@ int
 main( int argc, char **argv )
 {
    using namespace raft;
-   using gen = raft::test::generate< std::int64_t >;
+   using type_t = std::int64_t;
+   using gen = raft::test::generate< type_t >;
+   using print = raft::print< type_t, '\n' >;
+   using split = raft::split< type_t >;
    const auto count( 10000 );
-   /** manually link split kernels **/
-   auto kernels( 
-   map.link( kernel::make< gen >( count ),
-             kernel::make< split< std::int64_t > >() ) );
+   gen a( count );
+   split s;
+   print p;
    
-   map.link( &kernels.getDst(), 
-             kernel::make< print< std::int64_t, '\n' > >() );
-   map.exe();
+   raft::map m;
+   m += a >> s;
+   m += s >> p;
+   m.exe();
+
    return( EXIT_SUCCESS );
 }

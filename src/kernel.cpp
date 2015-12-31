@@ -72,7 +72,11 @@ kernel::unlock()
 std::string
 kernel::getEnabledPort()
 {
-    const auto head( enabled_port.front() );
+    if( enabled_port.size() == 0 )
+    {
+        return( "" );
+    }
+    const std::string head( enabled_port.front() );
     enabled_port.pop();
     return( head );
 }

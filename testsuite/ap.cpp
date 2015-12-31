@@ -33,11 +33,11 @@
       count = atoi( argv[ 1 ] );
    }
    using gen   = raft::test::generate< std::int32_t >;
-
-   using p_gen = raft::print< std::int32_t  , '\n' >;
-   raft::map.link(
-      raft::kernel::make< gen >( count ),
-      raft::kernel::make< p_gen >() );
-   raft::map.exe();
+   using print = raft::print< std::int32_t  , '\n' >;
+   gen   a;
+   print p;
+   raft::map m;
+   m += gen >> print;
+   m.exe();
    return( EXIT_SUCCESS );
  }

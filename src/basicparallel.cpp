@@ -25,7 +25,7 @@
 
 
 
-basic_parallel::basic_parallel( Map &map, 
+basic_parallel::basic_parallel( raft::map &map, 
                                 Allocate &alloc,
                                 Schedule &sched,
                                 volatile bool &exit_para )

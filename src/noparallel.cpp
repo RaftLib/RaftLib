@@ -23,7 +23,7 @@
 #include "streamingstat.tcc"
 #include <map>
 
-no_parallel::no_parallel( Map &map, 
+no_parallel::no_parallel(       raft::map &map, 
                                 Allocate &alloc,
                                 Schedule &sched,
                                 volatile bool &exit_para )

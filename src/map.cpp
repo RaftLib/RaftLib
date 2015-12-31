@@ -32,17 +32,18 @@
 #include "map.hpp"
 #include "graphtools.hpp"
 
-Map::Map() : MapBase()
+
+raft::map::map() : MapBase()
 {
   
 }
 
-Map::~Map()
+raft::map::~map()
 {
 }
 
 void
-Map::checkEdges( kernelkeeper &source_k )
+raft::map::checkEdges( kernelkeeper &source_k )
 {
    auto &container( source_k.acquire() );
    /**
@@ -65,7 +66,7 @@ Map::checkEdges( kernelkeeper &source_k )
                 raft::kernel &i,  PortInfo &i_in, PortInfo &i_out );
 **/
 void 
-Map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
+raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
 {
     auto &source_k( source.acquire() );
     auto &all_k   ( all.acquire()    );
@@ -165,4 +166,28 @@ Map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
                      false );
    source.release();
    all.release();
+}
+
+void
+raft::map::operator += ( kpair &&pair )
+{
+    /** might be able to do better by re-doing with templates **/
+    if( pair.has_src_name && pair.has_dst_name )
+    {
+        (this)->link( pair.src, pair.src_name,
+                      pair.dst, pair.dst_name );
+    }
+    else if( pair.has_src_name && ! pair.has_dst_name )
+    {
+        (this)->link( pair.src, pair.src_name, pair.dst );
+    }
+    else if( ! pair.has_src_name && pair.has_dst_name )
+    {
+        (this)->link( pair.src, pair.dst, pair.dst_name );
+    }
+    else /** single input, single output, hopefully **/
+    {
+        (this)->link( pair.src, pair.dst );
+    }
+    return;
 }

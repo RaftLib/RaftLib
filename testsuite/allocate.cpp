@@ -45,20 +45,19 @@ main( int argc, char **argv )
    {
       count = atoi( argv[ 1 ] );
    }
-   using gen = raft::test::generate< std::int64_t >;
-   using sum = Sum< std::int64_t, std::int64_t, std::int64_t >;
-   using p_out = raft::print< std::int64_t, '\n' >;
+   using type_t = std::int64_t;
+   using gen = raft::test::generate< type_t >;
+   using sum = Sum< type_t, type_t, type_t >;
+   using p_out = raft::print< type_t, '\n' >;
+   gen a( count ), b( count );
+   sum s;
+   p_out print;
 
-   auto linked_kernels( 
-      raft::map.link( raft::kernel::make< gen >( count ),
-                      raft::kernel::make< sum >(), "input_a" ) );
-   raft::map.link( 
-      raft::kernel::make< gen >( count ),
-      &linked_kernels.getDst(), "input_b"  );
-   raft::map.link( 
-      &linked_kernels.getDst(), 
-      raft::kernel::make< p_out >() );
-   raft::map.exe();
-
+   raft::map m;
+   m += a >> s[ "input_a" ];
+   m += b >> s[ "input_b" ];
+   m += s >> print;
+   m.exe();
+   
    return( EXIT_SUCCESS );
 }

@@ -9,28 +9,33 @@
 int
 main( int argc, char **argv )
 {
-   using namespace raft;
-   Map map;
+    using type_t = std::int32_t;
+    using print  = raft::print< type_t, '\n' >;
+    using rnd    = raft::lambdak< type_t >;
+    rnd lk( /** input ports     **/ 0, 
+            /** output ports    **/ 1, 
+            /** the kernel func **/
+        [&]( Port &input,
+             Port &output )
+        {
+            static std::default_random_engine generator;
+            static std::uniform_int_distribution< type_t > distribution(1,10);
+            static auto rand_func = std::bind( distribution,  generator ); 
+            static std::size_t gen_count( 0 );
+            if( gen_count++ < 10000 )
+            {
+               output[ "0" ].push( 
+                  rand_func(),
+                  raft::none );
+               return( raft::proceed );
+            }
+            return( raft::stop );
+        } );
 
-   map.link( 
-      kernel::make< lambdak< int > >( 0, 1, [&]( Port &input,
-                                                 Port &output )
-                                            {
-   static std::default_random_engine generator;
-   static std::uniform_int_distribution<int> distribution(1,10);
-   static auto rand_func = std::bind( distribution,  generator ); 
-   static std::size_t gen_count( 0 );
-                                                if( gen_count++ < 10000 )
-                                                {
-                                                   output[ "0" ].push( 
-                                                      rand_func(),
-                                                      raft::none );
-                                                   return( raft::proceed );
-                                                }
-                                                return( raft::stop );
-                                            } ),
-      kernel::make< print< int, '\n' > >() );
-   map.exe();
+    print p;
+    raft::map m;
 
-   return( EXIT_SUCCESS );
+    m += lk >> p;
+    m.exe();
+    return( EXIT_SUCCESS );
 }

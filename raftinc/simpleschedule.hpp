@@ -22,15 +22,15 @@
 #include <vector>
 #include <thread>
 
-class Map;
 namespace raft{
    class kernel;
+   class map;
 }
 
 class simple_schedule : public Schedule
 {
 public:
-   simple_schedule( Map &map );
+   simple_schedule( raft::map &map );
 
    virtual ~simple_schedule();
 

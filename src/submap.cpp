@@ -19,12 +19,12 @@
  */
 #include "submap.hpp"
 
-submap::submap() : MapBase()
+raft::submap::submap() : MapBase()
 {
    /** nothing really to do **/
 }
 
-submap::~submap()
+raft::submap::~submap()
 {
    /** nothing really to do **/
 }

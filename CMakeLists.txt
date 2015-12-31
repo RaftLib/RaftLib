@@ -30,8 +30,8 @@ add_subdirectory( testsuite )
 enable_testing()
 set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
      join lambdatest allocate_s foreach peekrange 
-     partitionTest iteratort parallel peek
-     operatorBracketsTooMany )
+     partitionTest parallel peek
+     bracketsTest )
 if( BUILDRANDOM )
     list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 
 endif( BUILDRANDOM )

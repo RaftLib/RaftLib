@@ -29,7 +29,9 @@
 
 #include "mapbase.hpp"
 
-class Map;
+namespace raft
+{
+    class map;
 
 class submap : public MapBase
 {
@@ -38,7 +40,7 @@ public:
    virtual ~submap();
 
 protected:
-   friend class Map;
+   friend class map;
    /** essentially source kernels **/
    std::map< std::string, 
              raft::kernel* > input;
@@ -46,4 +48,5 @@ protected:
    std::map< std::string,
              raft::kernel* > output;
 };
+} /** end namespace raft **/
 #endif /* END _SUBMAP_HPP_ */

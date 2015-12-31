@@ -83,7 +83,9 @@ public:
                class ... Args >
       static kernel* make( Args&&... params )
       {
-         return( new T( std::forward< Args >( params )... ) );
+         auto *output( new T( std::forward< Args >( params )... ) );
+         output->internal_alloc = true;
+         return( output );
       }
    
    /** 
@@ -131,9 +133,10 @@ protected:
    
    std::string getEnabledPort();
    
-
+   /** in namespace raft **/
+   friend class map;
+   /** in global namespace **/
    friend class ::MapBase;
-   friend class ::Map;
    friend class ::Schedule;
    friend class ::GraphTools;
    friend class ::kernel_container;   
@@ -146,7 +149,7 @@ protected:
     */
    static std::size_t kernel_count;
     
-
+   bool internal_alloc = false;
 
 private:
    /** TODO, replace dup with bit vector **/

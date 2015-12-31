@@ -48,7 +48,11 @@
 
 #define INITIAL_ALLOC_SIZE 64
 
-class Map;
+namespace raft
+{
+    class map;
+}
+
 class basic_parallel;
 
 class Allocate
@@ -58,12 +62,12 @@ public:
     * Allocate - base constructor, really doesn't do too much
     * save for setting the global variables all_kernels and 
     * source_kernels from the Map object.  
-    * @param map - Map&
+    * @param map - raft::map&
     * @param exit_alloc - bool used to terminate loop,
     *  for monitoring allocations, controlled by map 
     *  object.
     */
-   Allocate( Map &map, volatile bool &exit_alloc );
+   Allocate( raft::map &map, volatile bool &exit_alloc );
    
    /**
     * destructor 

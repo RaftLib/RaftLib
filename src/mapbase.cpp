@@ -42,9 +42,12 @@ MapBase::~MapBase()
    auto &container( all_kernels.acquire() );
    for( raft::kernel *kern : container )
    {
-      if( kern != nullptr ) 
+      if( kern != nullptr && kern->internal_alloc ) 
       {   
-         delete( kern );
+         if( kern->internal_alloc )
+         {
+            delete( kern );
+         }
       }
    }
    all_kernels.release();

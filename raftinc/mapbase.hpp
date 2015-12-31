@@ -44,6 +44,7 @@
 #include "allocate.hpp"
 #include "dynalloc.hpp"
 #include "stdalloc.hpp"
+#include "kpair.hpp"
 
 /**
  * kernel_pair_t - struct to be returned by mapbase link functions,
@@ -140,13 +141,9 @@ public:
       }
       catch( PortNotFoundException &ex )
       {
-         std::stringstream ss;
-         ss << 
-            "Source port from kernel " << 
-                boost::core::demangle( typeid( *a ).name() ) << 
-                    "has more than a single port.";
-         
-         throw AmbiguousPortAssignmentException( ss.str() );
+         portNotFound( true,
+                       ex,
+                       a );
       }
       port_info_a->fixed_buffer_size = buffer;
       PortInfo *port_info_b;
@@ -155,11 +152,9 @@ public:
       }
       catch( PortNotFoundException &ex )
       {
-         std::stringstream ss;
-         ss << "Destination port from kernel " <<
-            boost::core::demangle( typeid( *b ).name() ) << 
-                "has more than a single port.";
-         throw AmbiguousPortAssignmentException( ss.str() );
+            portNotFound( false, 
+                          ex,
+                          b );
       }
       port_info_b->fixed_buffer_size = buffer;
 
@@ -198,16 +193,14 @@ public:
       }
       catch( PortNotFoundException &ex ) 
       {
-         std::stringstream ss;
-         ss << "Destination port from kernel " << 
-             boost::core::demangle( typeid( *b ).name() ) << 
-                "has more than a single port.";
-         throw AmbiguousPortAssignmentException( ss.str() );
+            portNotFound( false,
+                          ex,
+                          b );
       }
       port_info_b->fixed_buffer_size = buffer;
       join( *a, a_port , port_info_a, 
             *b, port_info_b->my_name, *port_info_b );
-      set_order< t >( port_info_a, port_info_b ); 
+      set_order< t >( port_info_a, *port_info_b ); 
       return( kernel_pair_t( a, b ) );
    }
 
@@ -239,11 +232,9 @@ public:
       }
       catch( PortNotFoundException &ex ) 
       {
-         std::stringstream ss;
-         ss << "Source port from kernel " <<
-            boost::core::demangle( typeid( *a ).name() ) << 
-                "has more than a single port.";
-         throw AmbiguousPortAssignmentException( ss.str() );
+            portNotFound( true,
+                          ex,
+                          a );
       }
       port_info_a->fixed_buffer_size = buffer;
       
@@ -320,7 +311,7 @@ protected:
     */
    template < order::spec t,
               typename std::enable_if< t == order::in >::type* = nullptr > 
-   static 
+   static
    void set_order( PortInfo &port_info_a, 
                    PortInfo &port_info_b ) noexcept
    {
@@ -362,6 +353,28 @@ protected:
       all_kernels += b;
    }
 
+   static void inline portNotFound( bool src, 
+                                    PortNotFoundException &ex, 
+                                    raft::kernel * const k )
+   {
+         std::stringstream ss;
+         const auto name( boost::core::demangle( typeid( *k ).name() ) );
+         if( src )
+         {
+            ss << ex.what() << "\n";
+            ss << "Output port from source kernel (" << name << ") " <<
+                   "has more than a single port.";
+
+         }
+         else
+         {
+            ss << ex.what() << "\n";
+            ss << "Input port from destination kernel (" << name << ") " <<
+                   "has more than a single port.";
+         }
+         throw AmbiguousPortAssignmentException( ss.str() );
+   }
+
    /** need to keep source kernels **/
    kernelkeeper              source_kernels;
    /** dst kernels **/
@@ -375,8 +388,7 @@ protected:
     * DOES: flatten these kernels into main map once we run 
     */
    std::vector< MapBase* >   sub_maps;
-
-   friend class Map;
+   friend class raft::map;
 };
    
 

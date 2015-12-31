@@ -28,7 +28,8 @@
 #include "port_info.hpp"
 #include "ringbuffertypes.hpp"
 
-stdalloc::stdalloc( Map &map, volatile bool &exit_alloc) : Allocate( map, exit_alloc )
+stdalloc::stdalloc( raft::map &map, 
+                    volatile bool &exit_alloc) : Allocate( map, exit_alloc )
 {
 }
 
@@ -39,7 +40,9 @@ stdalloc::~stdalloc()
 void
 stdalloc::run()
 {
-   auto alloc_func = [&]( PortInfo &a, PortInfo &b, void *data )
+   auto alloc_func = [&]( PortInfo &a, 
+                          PortInfo &b, 
+                          void *data )
    {
       assert( a.type == b.type );
       /** assume everyone needs a heap for the moment to get working **/

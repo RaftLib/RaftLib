@@ -31,9 +31,9 @@
 #include "schedule.hpp"
 #include "kernelcontainer.hpp"
 
-class Map;
 namespace raft{
    class kernel;
+   class map;
 }
 
 
@@ -44,9 +44,9 @@ public:
     * pool_schedule - constructor, takes a map object, 
     * calling this will launch threads.  scheduler itself
     * is also run as a thread.
-    * @param   map - Map&
+    * @param   map - raft::map&
     */
-   pool_schedule( Map &map );
+   pool_schedule( raft::map &map );
 
    /**
     * destructor, deletes threads and cleans up container

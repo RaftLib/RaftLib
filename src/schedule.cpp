@@ -6,7 +6,7 @@
 #include "optdef.hpp"
 
 
-Schedule::Schedule( Map &map ) : kernel_set( map.all_kernels ),
+Schedule::Schedule( raft::map &map ) : kernel_set( map.all_kernels ),
                                  source_kernels( map.source_kernels ),
                                  dst_kernels( map.dst_kernels )
 {

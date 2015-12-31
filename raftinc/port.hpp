@@ -47,6 +47,7 @@ class basic_parallel;
 /** need to pre-declare this **/
 namespace raft
 {
+   class map;
    class kernel;
    class parallel_k;
    template < class T, class method > class join;
@@ -305,7 +306,7 @@ protected:
    
    /** we need some friends **/
    friend class MapBase;
-   friend class Map;
+   friend class raft::map;
    friend class GraphTools; 
    friend class basic_parallel;
    friend class raft::parallel_k;

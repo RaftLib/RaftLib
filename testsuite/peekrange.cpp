@@ -5,6 +5,7 @@
 #include <vector>
 #include <iterator>
 #include <raft>
+#include <raftio>
 
 template< typename T > class print : public raft::kernel
 {
@@ -42,10 +43,6 @@ public:
    }
 };
 
-namespace raft
-{
-   Map map;
-}
 
 #define COUNT 20
 
@@ -57,13 +54,11 @@ main( int argc, char **argv )
    {
       arr[ i ] = i;
    }
-
-
-   raft::map.link( 
-      raft::kernel::make< raft::for_each< int > >( arr, COUNT, 1),
-      raft::kernel::make< print< int > >() );
-
-   raft::map.exe();
-
+   
+   raft::map m;
+   raft::for_each< int > fe( arr, COUNT, 1 );
+   print< int > pr;
+   m += fe >> pr;
+   m.exe();
    return( EXIT_SUCCESS );
 }

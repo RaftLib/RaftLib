@@ -44,16 +44,16 @@ main( int argc, char **argv )
 
    using add = sum< send_t, send_t, send_t >;
    using p_out = raft::print< send_t, '\n' >;
+   
+   gen a( count ), b( count );
+   add s;
+   p_out print;
 
-   auto linked_kernels( 
-      raft::map.link( raft::kernel::make< gen >( count ),
-                      raft::kernel::make< add >(), "input_a" ) );
-   raft::map.link( 
-      raft::kernel::make< gen >( count ),
-      &linked_kernels.getDst(), "input_b"  );
-   raft::map.link( 
-      &linked_kernels.getDst(), 
-      raft::kernel::make< p_out >() );
-   raft::map.exe();
+   raft::map m;
+   m += a >> s[ "input_a" ];
+   m += b >> s[ "input_b" ];
+   m += s >> print;
+   m.exe();
+   
    return( EXIT_SUCCESS );
 }

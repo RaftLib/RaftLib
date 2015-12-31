@@ -4,39 +4,25 @@
 #include <cstdlib>
 #include <vector>
 #include <raft>
-
-
-template< typename T > class print : public raft::kernel
-{
-public:
-   print() : raft::kernel()
-   {
-      input.addPort< T >( "in" );
-   }
-
-   virtual raft::kstatus run()
-   {
-      T data;
-      input[ "in" ].pop( data );
-      std::cout << data << "\n";
-      return( raft::proceed );
-   }
-};
+#include <raftio>
 
 int
 main( int argc, char **argv )
 {
    using namespace raft;
-   std::vector< std::uint32_t > v;
+   using type_t = std::uint32_t;
+
+   std::vector< type_t > v;
    int i( 0 );
    auto func( [&](){ return( i++ ); } );
    while( i < 10){ v.push_back( func() ); }
-   std::vector< std::uint32_t > o;
+   std::vector< type_t > o;
    /** link iterator reader to print kernel **/
-   map.link( kernel::make< raft::read_each< std::uint32_t > >( v.begin(), v.end() ),
-             kernel::make< raft::write_each< std::uint32_t > >( std::back_inserter( o ) ) );
-   
-   map.exe();
+   raft::map m;
+   raft::read_each< type_t > re( v.begin(), v.end() );
+   raft::write_each< type_t > we( std::back_inserter( o ) );
+   m += re >> we;
+   m.exe();
    
    /** once function returns, o should be readable **/
    for( auto val : o )

@@ -30,7 +30,7 @@
 #include "rafttypes.hpp"
 #include "sched_cmd_t.hpp"
 
-pool_schedule::pool_schedule( Map &map ) : Schedule( map ),
+pool_schedule::pool_schedule( raft::map &map ) : Schedule( map ),
                                      n_threads( std::thread::hardware_concurrency() ),
                                      pool( n_threads ),
                                      container( n_threads )

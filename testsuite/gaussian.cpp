@@ -29,10 +29,11 @@
  main( int argc, char **argv )
  {
    using gen   = raft::random_variate< double , raft::gaussian >;
-   using p_gen = raft::print< double , '\n' >;
-   raft::map.link(
-      raft::kernel::make< gen >( 1, 1 , 10000 ),
-      raft::kernel::make< p_gen >() );
-   raft::map.exe();
+   using print = raft::print< double , '\n' >;
+   gen   g( 1, 1, 10000 );
+   print p;
+   raft::map m;
+   m += g >> p;
+   m.exe();
    return( EXIT_SUCCESS );
  }

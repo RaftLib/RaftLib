@@ -23,7 +23,10 @@
 #define _STDALLOC_HPP_  1
 #include "allocate.hpp"
 
-class Map;
+namespace raft
+{
+    class map;
+}
 
 class stdalloc : public Allocate
 {
@@ -40,7 +43,7 @@ public:
     * owning this one.  Controls when the loop within the run thread
     * is exited.
     */
-   stdalloc( Map &map, volatile bool &exit_alloc  );
+   stdalloc( raft::map &map, volatile bool &exit_alloc  );
    /**
     * destructor, doesn't really do much at he moment.
     */

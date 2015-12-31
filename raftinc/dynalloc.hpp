@@ -21,18 +21,42 @@
 #define _DYNALLOC_HPP_  1
 #include "allocate.hpp"
 
-class Map;
+namespace raft
+{
+    class map;
+}
+
 class dynalloc : public Allocate
 {
 public:
-   dynalloc( Map &map, volatile bool &exit_alloc );
+   dynalloc( raft::map &map, 
+             volatile bool &exit_alloc );
 
    virtual ~dynalloc();
 
-   virtual void run();
+    /**
+     * run - call to initiate schedule, in the
+     * current instantiation this is called by
+     * the scheduler.
+     */
+    virtual void run();
 
 private:
-   static std::size_t hash( PortInfo &a, PortInfo &b );
+    /**
+     * hash - simple hash function to quickly
+     * look-up stats on individual FIFO objects
+     * within the streaming app, based on 
+     * addresses of each queue, one consequence
+     * obviously is that the info is trash once
+     * the FIFO is re-allocated, but this is a 
+     * good thing since we don't typically want
+     * stats to hang around.
+     * @param a, PortInfo& - src portinfo
+     * @param b, PortInfo& - dst portinfo
+     * @return std::size_t
+     */
+    static std::size_t hash( PortInfo &a, 
+                             PortInfo &b );
 };
 
 #endif /* END _DYNALLOC_HPP_ */

@@ -42,19 +42,13 @@ int
 main( int argc, char **argv )
 {
    using gen = Generate< std::int64_t >;
-   gen g;
-   g[ "a" ];
-   g[ "b" ];
-   //should throw exception here
-   try
-   {
-        g[ "c" ];
-   }
-   catch( AmbiguousPortAssignmentException &ex )
-   {
-     std::cerr << ex.what() << "\n";
-     exit( EXIT_SUCCESS );
-   }
-   //otherwise, failure 
-   return( EXIT_FAILURE );
+   gen g( 1000 ) ;
+   using p_out = raft::print< std::int64_t, '\n' >;
+   p_out print;
+   
+   raft::map m;
+   m += g >> print;
+   m.exe();
+
+   return( EXIT_SUCCESS );
 }

@@ -38,19 +38,21 @@
 #include "basicparallel.hpp"
 #include "noparallel.hpp"
 
+namespace raft
+{
 
-class Map : public MapBase
+class map : public MapBase
 {
 public:
    /** 
-    * Map - constructor, really doesn't do too much at the monent
+    * map - constructor, really doesn't do too much at the monent
     * and doesn't really need to.
     */
-   Map();
+   map();
    /** 
     * default destructor 
     */
-   virtual ~Map();
+   virtual ~map();
    
    /** 
     * FIXME, the graph tools need to take more than
@@ -115,7 +117,8 @@ public:
       /** all fifo's deallocated when alloc goes out of scope **/
       return; 
    }
-   
+
+   void operator +=( kpair &&pair );
 
 
 protected:
@@ -142,10 +145,11 @@ protected:
     * TODO, refactor basic_parallel base class to match the
     * all caps base class coding style
     */
-   friend class basic_parallel;
-   friend class Schedule;
-   friend class Allocate;
+   friend class ::basic_parallel;
+   friend class ::Schedule;
+   friend class ::Allocate;
 
-};
+}; /** end map decl **/
 
+} /** end namespace raft **/
 #endif /* END _MAP_HPP_ */

@@ -67,9 +67,5 @@
 
 #include "./raftinc/lambdak.tcc"
 
-namespace raft
-{
-   extern Map map;
-}
 
 #endif /* END _RAFT_HPP_ */

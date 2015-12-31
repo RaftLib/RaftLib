@@ -28,8 +28,8 @@
 
 namespace raft {
    class kernel;
+   class map;
 }
-class Map;
 
 class Schedule
 {
@@ -42,7 +42,7 @@ public:
     * accessors.
     * @param   map - Map&
     */
-   Schedule( Map &map );
+   Schedule( raft::map &map );
    
    /**
     * destructor, takes care of cleanup
@@ -151,7 +151,5 @@ protected:
    kernelkeeper &kernel_set;
    kernelkeeper &source_kernels;      
    kernelkeeper &dst_kernels;
-private:
-//   Map &map_ref;
 };
 #endif /* END _SCHEDULE_HPP_ */

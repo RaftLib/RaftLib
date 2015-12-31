@@ -26,11 +26,11 @@
 #endif
 #include <cstddef>
 
-class Map;
 class Schedule;
 
 namespace raft
 {
+class map;
 
 class parallel_k : public raft::kernel 
 {
@@ -60,7 +60,7 @@ protected:
 
    std::size_t  port_name_index = 0; 
    friend class ::Schedule;
-   friend class ::Map;
+   friend class map;
 };
 
 }

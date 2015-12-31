@@ -32,13 +32,13 @@ main( int argc, char **argv )
   {
      count = atoi( argv[ 1 ] );
   }
-//   std::ofstream ofs( "/tmp/log" );
-  using gen   = raft::test::generate< std::int32_t >;
-  using p_gen = raft::print< std::int32_t  , '\n' >;
-  raft::map.link< order::out >(
+  using type_t = std::int32_t;
+  using gen   = raft::test::generate< type_t >;
+  using p_gen = raft::print< type_t  , '\n' >;
+  raft::map m;
+  m.link< order::out >(
      raft::kernel::make< gen >( count ),
      raft::kernel::make< p_gen >( std::cout ) );
-  raft::map.exe();
-//   ofs.close();
+  m.exe();
   return( EXIT_SUCCESS );
 }

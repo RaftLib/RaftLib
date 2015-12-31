@@ -29,14 +29,16 @@
 #include <set>
 #include <iostream>
 
-class Map;
-
+namespace raft
+{
+    class map;
+}
 
 
 class no_parallel
 {
 public:
-   no_parallel( Map &map, 
+   no_parallel(    raft::map &map, 
                    Allocate &alloc,
                    Schedule &sched,
                    volatile bool &exit_para );
