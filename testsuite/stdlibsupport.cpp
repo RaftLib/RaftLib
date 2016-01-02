@@ -18,9 +18,11 @@ main( int argc, char **argv )
    while( i < 10){ v.push_back( func() ); }
    std::vector< type_t > o;
    /** link iterator reader to print kernel **/
-   raft::map m;
-   raft::read_each< type_t > re( v.begin(), v.end() );
+   auto b( v.begin() );
+   auto e( v.end()   );
+   raft::read_each< type_t >  re( b, e );
    raft::write_each< type_t > we( std::back_inserter( o ) );
+   raft::map m;
    m += re >> we;
    m.exe();
    

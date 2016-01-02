@@ -37,89 +37,113 @@
 
 namespace raft{
 
-template < class T, std::size_t N = 1 > class read_each : 
-   public raft::parallel_k 
+template < class T > class read_each : public raft::parallel_k 
 {
 
-typedef typename std::list< T >::iterator           it_list;
-typedef typename std::vector< T >::iterator         it_vect;
-typedef typename std::array< T, N >::iterator       it_arr;
-typedef typename std::deque< T >::iterator          it_deq;
-typedef typename std::forward_list< T >::iterator   it_forlist;
+using it_list    = typename std::list< T >::iterator        ;   
+using it_vect    = typename std::vector< T >::iterator      ;   
+using it_deq     = typename std::deque< T >::iterator       ;   
 
-template< class iterator_type > 
-   static bool  inc_helper( iterator_type &begin, iterator_type &end, Port &port_list )
+template < class iterator_type >
+static bool  inc_helper( iterator_type &begin, iterator_type &end, Port &port_list )
+{
+   for( auto &port : port_list )
    {
-      for( auto &port : port_list )
+      if( begin == end )
       {
-         if( begin == end )
-         {
-            return( true );
-         }
-         //TODO, replace this with the equivalent from split.tcc
-         port.push< T >( (*begin) );
-         begin++;
+         return( true );
       }
-      return( false );
+      port.push< T >( (*begin) );
+      ++begin;
    }
+   return( false );
+}
+
+/** k, we're going to have to code up mult. structs for each type above **/
+template < class X > struct it_cont
+{
+   it_cont( X * const b, X * const e ): begin( *b ), end( *e ){}
+   X begin;
+   X end;
+};
+using it_list_cont    = it_cont< it_list >;   
+using it_vect_cont    = it_cont< it_vect >;   
+using it_deq_cont     = it_cont< it_deq >;   
 
 const std::map< std::size_t,
-         std::function< bool ( void*, void*, Port& ) > > func_map
+         std::function< void* ( void*, void* ) > > cont_map
             =  {
                   { 
                      typeid( it_list ).hash_code(),
-                     [ ]( void *b_ptr, void *e_ptr, Port &port_list )
+                     [ ]( void *b, void *e )
                      {
-                        it_list *begin( reinterpret_cast< it_list* >( b_ptr ) );
-                        it_list *end  ( reinterpret_cast< it_list* >( e_ptr ) );
-                        return( inc_helper( *begin, *end, port_list ) );
+                        auto *begin = reinterpret_cast< it_list* >( b );
+                        auto *end   = reinterpret_cast< it_list* >( e );
+                        return( new it_list_cont( begin, end ) );
                      }
                   },
                   { 
                      typeid( it_vect ).hash_code(),
-                     [ ]( void *b_ptr, void *e_ptr, Port &port_list )
+                     [ ]( void *b, void *e )
                      {
-                        it_vect *begin( reinterpret_cast< it_vect* >( b_ptr ) );
-                        it_vect *end  ( reinterpret_cast< it_vect* >( e_ptr ) );
-                        return( inc_helper( *begin, *end, port_list ) );
-                     }
-                  },
-                  { 
-                     typeid( it_arr ).hash_code(),
-                     [ ]( void *b_ptr, void *e_ptr, Port &port_list )
-                     {
-                        it_arr *begin( reinterpret_cast< it_arr* >( b_ptr ) );
-                        it_arr *end  ( reinterpret_cast< it_arr* >( e_ptr ) );
-                        return( inc_helper( *begin, *end, port_list ) );
+                        auto *begin = reinterpret_cast< it_vect* >( b );
+                        auto *end   = reinterpret_cast< it_vect* >( e );
+                        return( new it_vect_cont( begin, end ) );
                      }
                   },
                   { 
                      typeid( it_deq ).hash_code(),
-                     [ ]( void *b_ptr, void *e_ptr, Port &port_list )
+                     [ ]( void *b, void *e )
                      {
-                        it_deq *begin( reinterpret_cast< it_deq* >( b_ptr ) );
-                        it_deq *end  ( reinterpret_cast< it_deq* >( e_ptr ) );
-                        return( inc_helper( *begin, *end, port_list ) );
+                        auto *begin = reinterpret_cast< it_deq* >( b );
+                        auto *end   = reinterpret_cast< it_deq* >( e );
+                        return( new it_deq_cont( begin, end ) );
+                     }
+                  }
+               };
+
+const std::map< std::size_t,
+         std::function< bool ( void*, Port& ) > > func_map
+            =  {
+                  { 
+                     typeid( it_list ).hash_code(),
+                     [ ]( void * const global_cont, Port &port_list )
+                     {
+                        auto *ptr = 
+                           reinterpret_cast< it_list_cont* >( global_cont );
+                        return( inc_helper( ptr->begin, 
+                                            ptr->end, 
+                                            port_list ) );
                      }
                   },
                   { 
-                     typeid( it_forlist ).hash_code(),
-                     [ ]( void *b_ptr, void *e_ptr, Port &port_list )
+                     typeid( it_vect ).hash_code(),
+                     [ ]( void * const global_cont, Port &port_list )
                      {
-                        it_forlist *begin( reinterpret_cast< it_forlist* >( b_ptr ) );
-                        it_forlist *end  ( reinterpret_cast< it_forlist* >( e_ptr ) );
-                        return( inc_helper( *begin, *end, port_list ) );
+                        auto *ptr = 
+                           reinterpret_cast< it_vect_cont* >( global_cont );
+                        return( inc_helper( ptr->begin, 
+                                            ptr->end, 
+                                            port_list ) );
+                     }
+                  },
+                  { 
+                     typeid( it_deq ).hash_code(),
+                     [ ]( void * const global_cont, Port &port_list )
+                     {
+                        auto *ptr = 
+                           reinterpret_cast< it_deq_cont* >( global_cont );
+                        return( inc_helper( ptr->begin, 
+                                            ptr->end, 
+                                            port_list ) );
                      }
                   }
                };
 
 public:
-   template < class iterator_type > 
+   template < class iterator_type >
    read_each( iterator_type &&begin, iterator_type &&end ) :
-      //split< T >(),
-      parallel_k(),
-      it_begin_ptr( &begin ),
-      it_end_ptr( &end )                                                         
+      parallel_k()
    {     
       /** NOTE, single output port is added by split< T > sub-class **/
       addPortTo< T >( output );
@@ -129,8 +153,20 @@ public:
        * to move the constructor template to the class template 
        * param
        */
-       const auto ret_val( func_map.find( typeid( iterator_type ).hash_code() ) );
-       if( ret_val not_eq func_map.end() )
+       const auto hash_code( typeid( iterator_type ).hash_code() );
+       const auto cont_ret_val( cont_map.find( hash_code ) );
+       if( cont_ret_val != cont_map.end() )
+       {
+          auto cont_getter_func = (*cont_ret_val).second;
+          /** set objects **/
+          container_ptr = cont_getter_func( &begin, &end );
+       }
+       else
+       {
+          assert( false );
+       }
+       const auto ret_val( func_map.find( hash_code ) );
+       if( ret_val != func_map.end() )
        {
           inc_func = (*ret_val).second; 
        }
@@ -143,7 +179,7 @@ public:
 
    virtual raft::kstatus run()
    {
-      if( inc_func( it_begin_ptr, it_end_ptr, (this)->output ) )
+      if( inc_func( container_ptr, output ) )
       {
          return( raft::stop );
       }
@@ -157,9 +193,8 @@ protected:
    }
 
 private:
-   void       * const it_begin_ptr;
-   void       * const it_end_ptr;
-   std::function< bool ( void*, void*, Port& ) > inc_func;
+   void * container_ptr = nullptr;
+   std::function< bool ( void*, Port& ) > inc_func;
 
 };
 } /** end namespace raft **/

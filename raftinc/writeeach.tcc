@@ -55,13 +55,13 @@ template< class iterator_type >
             /** get all info avail **/
             const auto avail_data( port.size() );
             auto alldata( port.peek_range< T >( avail_data ) );
-            for( std::size_t index( 0 ); index < alldata.size(); index++ )
+            for( auto index( 0 ); index < avail_data; index++ )
             {
                (*insert_position) = alldata[ index ].ele;
                /** hope the iterator defined overloaded ++ **/
                ++insert_position;
             }
-            port.recycle( alldata.size() );
+            port.recycle( avail_data );
          }
       }
       return;
