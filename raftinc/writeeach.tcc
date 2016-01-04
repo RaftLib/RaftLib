@@ -21,126 +21,64 @@
 #define _WRITEEACH_TCC_  1
 #include <iterator>
 #include <raft>
-
 #include <cstddef>
 #include <typeinfo>
 #include <functional>
 
-#include <list>
-#include <vector>
-#include <deque>
-#include <forward_list>
 
-/** 
- * TODO: add functor as an option to set signal handlers
- * so the write object can respond to data stream or 
- * asynch signals appropriately
- */
 namespace raft{
 
-template < class T > class write_each : public parallel_k
+
+template < class T, class BackInsert > class writeeach : public parallel_k
 {
-
-using it_list = std::back_insert_iterator< std::list< T > >;
-using it_vect = std::back_insert_iterator< std::vector< T > >;
-using it_deq  = std::back_insert_iterator< std::deque< T > >;
-
-template< class iterator_type > 
-   static void inc_helper( iterator_type &insert_position, Port &port_list )
-   {
-      for( auto &port : port_list )
-      {
-         if( port.size() > 0 )
-         {
-            /** get all info avail **/
-            const auto avail_data( port.size() );
-            auto alldata( port.peek_range< T >( avail_data ) );
-            for( auto index( 0 ); index < avail_data; index++ )
-            {
-               (*insert_position) = alldata[ index ].ele;
-               /** hope the iterator defined overloaded ++ **/
-               ++insert_position;
-            }
-            port.recycle( avail_data );
-         }
-      }
-      return;
-   }
-
-const std::map< std::size_t,
-         std::function< void ( void*, Port& ) > > func_map
-            =  {
-                  { 
-                     typeid( it_list ).hash_code(),
-                     [ ](  void *e_ptr, Port &port_list )
-                     {
-                        it_list *end  ( reinterpret_cast< it_list* >( e_ptr ) );
-                        return( inc_helper( *end, port_list ) );
-                     }
-                  },
-                  { 
-                     typeid( it_vect ).hash_code(),
-                     [ ](  void *e_ptr, Port &port_list )
-                     {
-                        it_vect *end  ( reinterpret_cast< it_vect* >( e_ptr ) );
-                        return( inc_helper( *end, port_list ) );
-                     }
-                  },
-                  { 
-                     typeid( it_deq ).hash_code(),
-                     [ ](  void *e_ptr, Port &port_list )
-                     {
-                        it_deq *end  ( reinterpret_cast< it_deq* >( e_ptr ) );
-                        return( inc_helper( *end, port_list ) );
-                     }
-                  }
-               };
 public:
-   template < class iterator_type >
-      write_each( iterator_type &&insert_position, 
-                  const std::size_t num_ports = 1  ) :
-         position( &insert_position )
-   {
-      /* no output ports, writing to container */
-      for( auto index( 0 ); index < num_ports; index++ )
-      {
-         addPortTo< T >( input ); 
-      }
-      /** 
-       * hacky way of getting the right iterator type for the ptr
-       * pehaps change if I can figure out how to do without having
-       * to move the constructor template to the class template 
-       * param
-       */
-       const auto ret_val( func_map.find( typeid( iterator_type ).hash_code() ) );
-       if( ret_val != func_map.end() )
-       {
-          inc_func = (*ret_val).second; 
-       }
-       else
-       {
-          /** TODO, make exception for this **/
-          assert( false );
-       }
-   }
+    writeeach( BackInsert &bi ) : parallel_k(),
+                                  inserter( bi )
+    {
+        addPortTo< T >( input );
+    }
 
-   virtual raft::kstatus run()
-   {
-      inc_func( position, input );
-      return( raft::proceed );
-   }
-protected:
-   virtual std::size_t  addPort()
-   {
-      return( (this)->addPortTo< T >( input ) );
-   }
+    writeeach( const writeeach &other ) : parallel_k(),
+                                          inserter( other.inserter )
+    {
+        /** add a single port **/
+        addPortTo< T >( input );
+    }
 
+    virtual ~writeeach() = default;
+
+    virtual raft::kstatus run()
+    {
+        for( auto &port : input )
+        {
+            if( port.size() > 0 )
+            {
+                /** get all info avail **/
+                const auto avail_data( port.size() );
+                auto alldata( port.template peek_range< T >( avail_data ) );
+                for( auto index( 0 ); index < avail_data; index++ )
+                {
+                   (*inserter) = alldata[ index ].ele;
+                   /** hope the iterator defined overloaded ++ **/
+                   ++inserter;
+                }
+                port.recycle( (*inserter), 
+                              avail_data  );
+            }
+        }
+        return( raft::proceed );
+    }
 private:
-   void * const position;
-   std::function < void( void*, Port& ) > inc_func;
-
-   bool readable = false;
+    BackInsert inserter;
 };
+
+template < class T, class BackInsert >
+static 
+writeeach< T, BackInsert >
+write_each( BackInsert &&bi )
+{
+    return( writeeach< T, BackInsert >( bi ) );
+}
 
 } /** end namespace raft **/
 #endif /* END _WRITEEACH_TCC_ */
