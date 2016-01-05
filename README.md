@@ -41,9 +41,32 @@ NOTE: The default prefix in the makefile is
 ```
 PREFIX ?= /usr/local
 ```
+###Citation
+If you use this framework for something that gets published, please cite it as:
+@inproceedings{blc15,
+  author = {Beard, Jonathan C. and Li, Peng and Chamberlain, Roger D.},
+  title = {RaftLib: A {C++} Template Library for High Performance Stream Parallel Processing},
+  publisher = {ACM},
+  address = {New York, NY, USA},
+  year = {2015},
+  month = feb,
+  series = {PMAM 2015},
+  booktitle = {Proceedings of Programming Models and Applications on Multicores and Manycores},
+  pages = {96-105},
+}
+
+###Other Info Sources
+* Project web page -> http://raftlib.io
+* Blog post intro -> https://goo.gl/4VDlbr
+* Jonathan Beard's thesis -> http://goo.gl/obkWUh
+* Feel free to e-mail one of the authors of the repo
+
+###Random Notes
 The old Makefile had an uninstall script, I need to add an object to the 
 cmake file so that we can have similar functionality. 
 
-NOTE: still working on cmake/re-arrangeing. CMake basically works
-tested on OS X and Linux. I'll have more time for re-arrangements and
-the sub-modules sometime this week (19 Nov. 2015)
+A lot of the auto-optimization stuff has been pulled out temporaril while
+I'm working on cross-platform compatibility. A lot of the low level API
+calls are well, low level and Linux/Unix/OS X specific so I'm working on
+building in Windows versions of those specific calls. Should be done
+in a few weeks. ( 5 Jan 2015, jcb )
