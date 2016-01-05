@@ -8,14 +8,14 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
-    <title>Raft Lib by jonathan-beard</title>
+    <title>RaftLib by jonathan-beard</title>
   </head>
 
   <body>
 
     <header>
       <div class="container">
-        <h1>Raft Lib</h1>
+        <h1>RaftLib</h1>
         <h2>Simple, easy to use stream computation library for C++.</h2>
 
         <section id="downloads">
@@ -34,7 +34,7 @@
 <h3>
 <a id="current-status" class="anchor" href="#current-status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Current Status</h3>
 
-<p>The Raft library is currently an alpha release.  The API itself is stable, however the back end
+<p>The Raft library is currently an alpha release.  The API itself is relatively stable, however the back end
 is subject to updates.  The release is subject to the Apache Version 2.0 license. If you are checking
 out the code to develop, please use the main line and create pull request. If you want to 
 develop applications, I suggest using one of the release branches so that you have a stable
@@ -47,8 +47,10 @@ development experience. You can add applications to the main line through subseq
 
 <pre><code>$ cd location_for_the_repo
 $ git clone git@github.com:jonathan-beard/RaftLib.git
-$ cd RaftLib
-$ make
+$ mkdir build
+$ cd build
+$ cmake ../RaftLib
+$ make &amp; make test
 $ sudo make install
 </code></pre>
 
@@ -57,10 +59,10 @@ using the library the only header file needed is the <em>raft</em> header.  Once
 is build you're basically set save for a few details, which will be laid out within the tutorial
  as we go through the example we're about to build.</p>
 
-<p>To build an example application simply (there are multiple to choose from):</p>
+<p>The example applications are build with automatically when you ran make for the library, 
+they should be in the examples folder within the build directory.</p>
 
-<pre><code>$ cd RaftLib/examples/xxx
-$ make
+<pre><code>$ cd build/examples
 </code></pre>
 
 <h3>
