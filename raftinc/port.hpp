@@ -55,6 +55,52 @@ namespace raft
 }
 
 
+/** some helper structs for recursive port adding **/
+template < class T, class PORT, class... PORTNAMES >
+struct port_helper{};
+
+/** stop recursion **/
+template < class T, class PORT >
+struct port_helper< T, PORT >
+{
+    static void add_port( PORT &port )
+    {
+        return;
+    }
+
+};
+
+/** continue recursion **/
+template < class T, 
+           class PORT, 
+           class PORTNAME, 
+           class... PORTNAMES >
+struct port_helper< T, PORT, PORTNAME, PORTNAMES... >
+{
+    static void add_port( PORT &port, 
+                          PORTNAME &&portname,
+                          PORTNAMES&&... portnames )
+    {
+        port.template add_port< T >( portname );
+        port_helper< T, PORT, PORTNAMES... >::add_port( port,
+                                                        std::forward< PORTNAMES >( portnames )... );
+        return;
+    }
+};
+
+/** kicks off recursion for adding ports **/
+template< class T,
+          class PORT,
+          class... PORTNAMES >
+static void
+kick_port_helper( PORT &port, PORTNAMES&&... ports )
+{
+    port_helper< T, PORT, PORTNAMES... >::add_port( port, 
+        std::forward< PORTNAMES >( ports )... );
+    return;
+}
+
+
 class Port : public PortBase
 {
 public:
@@ -81,6 +127,7 @@ public:
     */
    virtual ~Port();
 
+  
    /**
     * addPort - adds and initializes a port for the name
     * given.  Function returns true if added, false if not.
@@ -89,31 +136,16 @@ public:
     * @param   port_name - const std::string
     * @return  bool
     */
-   template < class T >
-   void addPort( const std::string &&port_name )
+   template < class T, 
+              class... PORTNAMES >
+   void addPort(  PORTNAMES&&... ports )
    {
-      /**
-       * we'll have to make a port info object first and pass it by copy
-       * to the portmap.  Perhaps re-work later with pointers, but for
-       * right now this will work and it doesn't necessarily have to
-       * be performant since its only executed once.
-       */
-      PortInfo pi( typeid( T ) );
-      pi.my_kernel = kernel;
-      pi.my_name   = port_name;
-      (this)->initializeConstMap<T>( pi );
-      (this)->initializeSplit< T >( pi );
-      (this)->initializeJoin< T >( pi );
-      const auto ret_val( 
-                  portmap.map.insert( std::make_pair( port_name, 
-                                                      pi ) ) );
-      
-      if( not ret_val.second )
-      {
-         throw PortAlreadyExists( "FATAL ERROR: port \"" + port_name + "\" already exists!" );
-      }
-      return;
+       kick_port_helper< T, Port, PORTNAMES... >( 
+        (*this), 
+        std::forward< PORTNAMES >( ports )... );
    }
+    
+
 
    /** 
     * addPorts - add ports for an existing buffer, basically
@@ -191,10 +223,42 @@ public:
     * @return std::size_t
     */
    std::size_t count();
-
-   /*******
-    * SOME OPERATOR OVERLOADING STUFFS TO MAKE LIFE EASIER 
+   
+//TODO, get this guy into the private area   
+   /**
+    * add_port - adds and initializes a port for the name
+    * given.  Function returns true if added, false if not.
+    * Main reason for returning false would be that the 
+    * port already exists.
+    * @param   port_name - const std::string
+    * @return  bool
     */
+   template < class T >
+   void add_port( const std::string &port_name )
+   {
+      /**
+       * we'll have to make a port info object first and pass it by copy
+       * to the portmap.  Perhaps re-work later with pointers, but for
+       * right now this will work and it doesn't necessarily have to
+       * be performant since its only executed once.
+       */
+      PortInfo pi( typeid( T ) );
+      pi.my_kernel = kernel;
+      pi.my_name   = port_name;
+      (this)->initializeConstMap<T>( pi );
+      (this)->initializeSplit< T >( pi );
+      (this)->initializeJoin< T >( pi );
+      const auto ret_val( 
+                  portmap.map.insert( std::make_pair( port_name, 
+                                                      pi ) ) );
+      
+      if( not ret_val.second )
+      {
+         throw PortAlreadyExists( "FATAL ERROR: port \"" + port_name + "\" already exists!" );
+      }
+      return;
+   }
+
    
 protected:
    /**

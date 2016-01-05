@@ -11,8 +11,7 @@ template< typename T > class sum : public raft::kernel
 public:
    sum() : raft::kernel()
    {
-      input. template addPort< T >( "input_a" );
-      input. template addPort< T >( "input_b" );
+      input. template addPort< T >( "input_a", "input_b" );
       output.template addPort< T >( "sum" );
    }
    virtual raft::kstatus run()
