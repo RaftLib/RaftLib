@@ -30,18 +30,18 @@ template < class GENERATOR,
            template < class > class DIST,
            class TYPE,
            std::size_t N >
-class random : public parallel_k
+class random_variate : public parallel_k
 {
 public:
     template <class ... Args > 
-    random( Args&&... params ) : parallel_k(),
-                                 gen(),
-                                 dist( std::forward< Args >( params )... )
+    random_variate( Args&&... params ) : parallel_k(),
+                                         gen(),
+                                         dist( std::forward< Args >( params )... )
     {
         addPortTo< TYPE >( output );
     }
 
-    virtual ~random() = default;
+    virtual ~random_variate() = default;
 
     virtual raft::kstatus run()
     {

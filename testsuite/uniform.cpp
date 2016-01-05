@@ -31,10 +31,10 @@
    using namespace raft;
    using type_t = std::uint32_t;
    const static auto send_size( 10 );
-   using gen = random< std::default_random_engine,
-                       std::uniform_int_distribution,
-                       type_t,
-                       send_size >;
+   using gen = random_variate< std::default_random_engine,
+                               std::uniform_int_distribution,
+                               type_t,
+                               send_size >;
    std::vector< type_t > output;
    auto we( raft::write_each< type_t >( std::back_inserter( output ) ) );
    const static auto min( 0 );
