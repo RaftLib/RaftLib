@@ -43,6 +43,7 @@ PREFIX ?= /usr/local
 ```
 ###Citation
 If you use this framework for something that gets published, please cite it as:
+```bibtex
 @inproceedings{blc15,
   author = {Beard, Jonathan C. and Li, Peng and Chamberlain, Roger D.},
   title = {RaftLib: A {C++} Template Library for High Performance Stream Parallel Processing},
@@ -54,7 +55,7 @@ If you use this framework for something that gets published, please cite it as:
   booktitle = {Proceedings of Programming Models and Applications on Multicores and Manycores},
   pages = {96-105},
 }
-
+```
 ###Other Info Sources
 * Project web page -> http://raftlib.io
 * Blog post intro -> https://goo.gl/4VDlbr
