@@ -5,30 +5,24 @@
 ### Build status
 [![Build Status](https://travis-ci.org/jonathan-beard/RaftLib.svg?branch=master)](https://travis-ci.org/jonathan-beard/RaftLib)
 
-Test environment:
+CI Test environment:
 * Linux - kernel v. 3.13, Ubuntu 5.2.1-23ubuntu1~12.04, (gcc-5.2.1/Clang 3.7), CMake 3.4
+Offline testing:
 * OS X - El Capitan, Apple LLVM version 7.0.0, CMake 3.4
 
 ### Pre-requisites
 
-####OS X
-Compiler: Clang, GNU GCC 4.8+, or Intel icc
+####OS X & Linux
+Compiler: c++11 capable -> Clang, GNU GCC 4.8+, or Intel icc
 Libraries: 
-* Only for random number generators <a href="http://goo.gl/gchdSw">GNU GSL</a> 
-* Only for partitioning, basic download doesn't need: <a href="http://goo.gl/tI1NGf">Scotch</a>
+* Boost, if not installed, needed hearders automatically downloaded with cmake
 
-####Linux
-Compiler: c++11 capable 
-Libraries: 
-* Only for random number generators <a href="http://goo.gl/gchdSw">GNU GSL</a> 
-* Only for partitioning, basic download doesn't need: <a href="http://goo.gl/tI1NGf">Scotch</a>
 
 ####Windows
 In progress
 
 ### Install
-Once the optional pre-requisite libraries are installed,
-make a build directory (for the instructions below, we'll 
+Make a build directory (for the instructions below, we'll 
 write [build]).
 ```bash
 mkdir [build]
