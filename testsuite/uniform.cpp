@@ -30,14 +30,25 @@
  {
    using namespace raft;
    using type_t = std::uint32_t;
-   using gen = random_variate< type_t, uniform >;
-   using print = print< type_t, '\n' >;
-
-   gen g( 1000, 2000, 10000 );
-   print p;
+   const static auto send_size( 10 );
+   using gen = random< std::default_random_engine,
+                       std::uniform_int_distribution,
+                       type_t,
+                       send_size >;
+   std::vector< type_t > output;
+   auto we( raft::write_each< type_t >( std::back_inserter( output ) ) );
+   const static auto min( 0 );
+   const static auto max( 100 );
+   gen g( min, max );
    raft::map m;
-   m += g >> p;
+   m += g >> we;
    m.exe();
-   
+
+   assert( output.size() == send_size );
+   for( const auto val : output )
+   {
+       assert( val >= min );
+       assert( val <= max );
+   }
    return( EXIT_SUCCESS );
  }

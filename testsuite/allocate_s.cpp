@@ -6,23 +6,22 @@
 #include <raftio>
 #include "generate.tcc"
 
-template< typename A, typename B, typename C > class sum : public raft::kernel
+template< typename T > class sum : public raft::kernel
 {
 public:
    sum() : raft::kernel()
    {
-      input. template addPort< A >( "input_a" );
-      input. template addPort< B >( "input_b" );
-      output.template addPort< C >( "sum" );
+      input. template addPort< T >( "input_a" );
+      input. template addPort< T >( "input_b" );
+      output.template addPort< T >( "sum" );
    }
    virtual raft::kstatus run()
    {
-      A a;
-      B b;
+      T a,b; 
       input[ "input_a" ].pop( a );
       input[ "input_b" ].pop( b );
       /** allocate mem directly on queue **/
-      auto c( output[ "sum" ].template allocate_s< C >() );
+      auto c( output[ "sum" ].template allocate_s< T >() );
       (*c) = a + b;
       /** mem automatically freed upon scope exit **/
       return( raft::proceed );
@@ -42,7 +41,7 @@ main( int argc, char **argv )
    using send_t = std::int64_t;
    using gen   = raft::test::generate< send_t >;
 
-   using add = sum< send_t, send_t, send_t >;
+   using add = sum< send_t >;
    using p_out = raft::print< send_t, '\n' >;
    
    gen a( count ), b( count );

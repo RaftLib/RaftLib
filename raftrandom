@@ -18,11 +18,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RAFTRANDOM_HPP_
-#define _RAFTRANDOM_HPP_  1
+#ifndef _RAFTRANDOM_
+#define _RAFTRANDOM_  1
 
-#include "./raftinc/randombase.hpp"
-#include "./raftinc/randomx.tcc"
+#include <random>
+
 #include "./raftinc/random.tcc"
 
-#endif /* END _RAFTRANDOM_HPP_ */
+#endif /* END _RAFTRANDOM_ */
