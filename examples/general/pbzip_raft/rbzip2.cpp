@@ -18,7 +18,7 @@ template < class chunktype > class filewrite : public raft::parallel_k
 public:
     filewrite( const std::string &&filename ) : raft::parallel_k()
     {
-        out_fp = std::fopen( filename.c_str(), "w" );
+        out_fp = std::fopen( filename.c_str(), "wb" );
         if( out_fp == nullptr )
         {   
             std::cerr << "failed to open output file, " << filename << "\n";
@@ -40,19 +40,15 @@ public:
             if( port.size() > 0 )
             {
                 auto &ele( port.template peek< chunktype >() ); 
-                if( ele.start_position == curr_position )
-                {
+                //if( ele.start_position == curr_position )
+                //{
                     std::fwrite( ele.buffer, 
                                  1, 
                                  ele.length, 
                                  out_fp );    
                     curr_position += ele.length;
                     port.recycle( ele, 1 );
-                }
-            }
-            else
-            {
-                port.unpeek();
+                //}
             }
         }
         return( raft::proceed );
@@ -83,14 +79,15 @@ public:
     {
         auto &in_ele( input[ "in" ].template peek< chunktype >() );
         auto &out_ele(  output[ "out" ].template allocate< chunktype >() );
-        unsigned int length_out( 0 );
-        if( BZ2_bzBuffToBuffCompress( out_ele.buffer,
+        unsigned int length_out( chunktype::getChunkSize() );
+        const auto ret_val( BZ2_bzBuffToBuffCompress( out_ele.buffer,
                                       &length_out,
                                       in_ele.buffer,
                                       in_ele.length,
                                       blocksize,
                                       verbosity,
-                                      workfactor ) == BZ_OK )
+                                      workfactor ) );
+        if( ret_val == BZ_OK )
         {
             
             out_ele.length = length_out;
@@ -99,6 +96,35 @@ public:
         }
         else
         {
+            switch( ret_val )
+            {
+                case BZ_CONFIG_ERROR:
+                {
+                    std::cerr << "if the library has been mis-compiled\n";
+                }
+                break;
+                case BZ_PARAM_ERROR:
+                {
+                    std::cerr << "if dest is NULL or destLen is NULL\n";
+                    std::cerr << "or blockSize100k < 1 or blockSize100k > 9\n";
+                    std::cerr << "or verbosity < 0 or verbosity > 4\n";
+                    std::cerr << "or workFactor < 0 or workFactor > 250\n";
+                }
+                break;
+                case BZ_MEM_ERROR:
+                {
+                    std::cerr << "if insufficient memory is available\n";
+                }
+                break;
+                case BZ_OUTBUFF_FULL:
+                {
+                    std::cerr << "if the size of the compressed data exceeds *destLen\n";
+                }
+                default:
+                {
+                    std::cerr << "undefined error\n";
+                }
+            }
             /** we need to fail here **/
             output[ "out" ].deallocate();
             input[ "in" ].unpeek();
@@ -116,12 +142,13 @@ private:
 int
 main( int argc, char **argv )
 {
-    using chunk_t = raft::filechunk< 16384 >;
+    const static auto chunksize( 4096 );
+    using chunk_t = raft::filechunk< chunksize >;
     using fr_t    = raft::filereader< chunk_t, false >;
     using fw_t    = filewrite< chunk_t >;
     using comp    = compress< chunk_t >;
 
-    int blocksize ( 9 );
+    int blocksize ( 3 );
     int verbosity ( 0 );
     int workfactor( 30 );
    
