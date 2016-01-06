@@ -23,20 +23,22 @@
 #include <random>
 #include <raft>
 #include <cstddef>
+#include <chrono>
 
 namespace raft
 {
 template < class GENERATOR,
            template < class > class DIST,
-           class TYPE,
-           std::size_t N >
+           class TYPE >
 class random_variate : public parallel_k
 {
 public:
     template <class ... Args > 
-    random_variate( Args&&... params ) : parallel_k(),
-                                         gen(),
-                                         dist( std::forward< Args >( params )... )
+    random_variate( const std::size_t N, 
+                    Args&&... params ) : parallel_k(),
+                                         gen( std::chrono::system_clock::now().time_since_epoch().count() ),
+                                         dist( std::forward< Args >( params )... ),
+                                         N( N )
     {
         addPortTo< TYPE >( output );
     }
@@ -60,6 +62,7 @@ private:
     GENERATOR       gen;
     DIST< TYPE >    dist;
     std::size_t     count_of_sent = 0;
+    const std::size_t N;
 };
 
 

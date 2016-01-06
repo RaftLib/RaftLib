@@ -33,13 +33,12 @@
    const static auto send_size( 10 );
    using gen = random_variate< std::default_random_engine,
                                std::uniform_int_distribution,
-                               type_t,
-                               send_size >;
+                               type_t >;
    std::vector< type_t > output;
    auto we( raft::write_each< type_t >( std::back_inserter( output ) ) );
    const static auto min( 0 );
    const static auto max( 100 );
-   gen g( min, max );
+   gen g( send_size, min, max );
    raft::map m;
    m += g >> we;
    m.exe();

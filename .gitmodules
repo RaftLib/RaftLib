@@ -7,3 +7,6 @@
 [submodule "boost-dep/random"]
 	path = boost-dep/random
 	url = https://github.com/boostorg/random.git
+[submodule "git-dep/cmdargs"]
+	path = git-dep/cmdargs
+	url = https://github.com/jonathan-beard/cmdargs.git

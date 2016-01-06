@@ -8,10 +8,12 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 include_directories ( ${CMAKE_SOURCE_DIR}/raftinc )
 include_directories ( ${CMAKE_SOURCE_DIR} )
 
+include( CheckGitDep )
 
 add_subdirectory( src )
 add_subdirectory( raftinc )
 add_subdirectory( ${CMAKE_SOURCE_DIR}/examples/cppalgo/search )
+add_subdirectory( ${CMAKE_SOURCE_DIR}/examples/general/pi )
 
 ##
 # we need boost to demangle names, might use
