@@ -43,7 +43,6 @@ namespace raft
 {
    class kernel;
 }
-
 #define CLONE() \
 virtual raft::kernel* clone()\
 { \
@@ -141,7 +140,8 @@ protected:
    friend class ::GraphTools;
    friend class ::kernel_container;   
    friend class ::basic_parallel;
-   friend struct ::kpair;
+   friend class ::kpair;
+
    /**
     * NOTE: doesn't need to be atomic since only one thread
     * will have responsibility to to create new compute 

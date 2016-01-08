@@ -83,8 +83,8 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
                         if( a.out_of_order && b.out_of_order )
                         {
                            /** case of inline kernel **/
-                           if( b.my_kernel->input.count() == 1 and 
-                               b.my_kernel->output.count() == 1 and 
+                           if( b.my_kernel->input.count() == 1 && 
+                               b.my_kernel->output.count() == 1 && 
                                a.my_kernel->dup_candidate  )
                            {
                               auto *kernel_a( a.my_kernel );
@@ -168,26 +168,118 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
    all.release();
 }
 
-void
-raft::map::operator += ( kpair &&pair )
+void 
+raft::map::joink( kpair * const next )
 {
-    /** might be able to do better by re-doing with templates **/
-    if( pair.has_src_name && pair.has_dst_name )
+        /** might be able to do better by re-doing with templates **/
+        if( next->has_src_name && next->has_dst_name )
+        {
+            (this)->link( next->src, next->src_name,
+                          next->dst, next->dst_name );
+        }
+        else if( next->has_src_name && ! next->has_dst_name )
+        {
+            (this)->link( next->src, next->src_name, next->dst );
+        }
+        else if( ! next->has_src_name && next->has_dst_name )
+        {
+            (this)->link( next->src, next->dst, next->dst_name );
+        }
+        else /** single input, single output, hopefully **/
+        {
+            (this)->link( next->src, next->dst );
+        }
+}
+
+kernel_pair_t
+raft::map::operator += ( kpair * const pair )
+{
+    assert( pair != nullptr );
+    raft::kernel *end( pair->dst ); 
+    /** start at the head, go forward **/
+    kpair *next = pair->head;
+    assert( next != nullptr );
+    raft::kernel *start( next->src );
+    bool found_split_to( false );
+    bool do_join( false );
+    std::uint32_t split_count( 0 );
+    std::vector< raft::kernel* > kernels;
+    while( next != nullptr )
     {
-        (this)->link( pair.src, pair.src_name,
-                      pair.dst, pair.dst_name );
+        if( next->split_to )
+        {
+            found_split_to = true;
+            /** get source count **/
+            split_count = next->src_out_count;
+            /** 
+             * first one allocated somewhere else, the 
+             * rest we'll have to allocate ourselves,
+             * don't worry, the mapbase will delete
+             * them.
+             */
+        }
+        if( next->join_from )
+        {
+            assert(found_split_to  == true );
+            found_split_to = false;
+            do_join = true;
+            //FIXME, throw an exception here
+            assert( split_count == next->dst_in_count );
+        }
+        
+        if( ! found_split_to  && ! do_join )
+        {
+            joink( next );        
+        }
+        else if( found_split_to )
+        {
+            if( kernels.size() == 0 )
+            {
+                //FIXME, should access port name for src
+                /** join first kernel **/
+                kernels.emplace_back( next->dst );
+                (this)->link( next->src, "0", next->dst );
+                /** duplicate and join to first split **/
+                for( auto i( 1 ); i < split_count; i++ )
+                {
+                    raft::kernel *temp_k( next->dst->clone() );
+                    kernels.push_back( temp_k );
+                    /** these should all be one-one **/
+                    (this)->link( next->src, 
+                                  std::to_string( i ),
+                                  kernels[ i ] );
+                }
+            }
+            else
+            {
+                std::vector< raft::kernel* > temp;
+                /** duplicate and join to kernels in vector **/
+                (this)->link( kernels[ 0 ], next->dst );
+                for( auto i( 1 ); i < split_count; i++ )
+                {
+                    raft::kernel *temp_k( next->dst->clone() );
+                    temp.push_back( temp_k );
+                    (this)->link( kernels[ i ], temp[ i ] );
+                }
+                kernels.clear();
+                kernels.insert( kernels.end(), temp.begin(), temp.end() );
+            }
+        }
+        else if( do_join )
+        {
+            /** kernels should be full **/
+            assert( kernels.size() > 0 );
+            auto *dst( next->dst );
+            //no clones
+            for( auto i( 0 ); i < split_count; i++ )
+            {
+                (this)->link( kernels[ i ], dst, std::to_string( i ) );
+            }
+        }
+        
+        kpair *temp = next;
+        next = next->next;
+        delete( temp );
     }
-    else if( pair.has_src_name && ! pair.has_dst_name )
-    {
-        (this)->link( pair.src, pair.src_name, pair.dst );
-    }
-    else if( ! pair.has_src_name && pair.has_dst_name )
-    {
-        (this)->link( pair.src, pair.dst, pair.dst_name );
-    }
-    else /** single input, single output, hopefully **/
-    {
-        (this)->link( pair.src, pair.dst );
-    }
-    return;
+    return( kernel_pair_t( start, end ) );
 }

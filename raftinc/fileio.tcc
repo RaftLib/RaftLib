@@ -52,9 +52,9 @@ template < std::size_t size = 65536 > struct filechunk
    }
 
    char           buffer[ size ];
-   std::size_t    start_position;
-   std::size_t    length;
-
+   std::size_t    start_position    = 0;
+   std::size_t    length            = 0;
+   std::uint64_t  index             = 0;
    constexpr static std::size_t getChunkSize()
    {
       return( size );
@@ -88,7 +88,7 @@ template < class chunktype = filechunk< 65536 >,
            bool copy = false > class filereader : public raft::kernel
 {
 public:
-   filereader( const std::string &&inputfile, 
+   filereader( const std::string inputfile, 
                const std::size_t n_output_ports = 1,
                const std::size_t chunk_offset = 0 ) : chunk_offset( chunk_offset )
    {
@@ -131,13 +131,15 @@ public:
             auto &chunk( port.template allocate< chunktype  >() );
             if( init )
             {
-               fseek( fp, - (chunk_offset+1), SEEK_CUR );
+               fseek( fp, -chunk_offset, SEEK_CUR );
             }
             else
             {
                init = true;
             }
             chunk.start_position = ftell( fp );
+            chunk.index = chunk_index;
+            chunk_index++;
             const auto chunksize( chunktype::getChunkSize() );
             const auto num_read(  
                fread( chunk.buffer, sizeof( char ), chunksize , fp ) );
@@ -161,6 +163,7 @@ public:
    std::streamsize length     = 0;
    std::int64_t    iterations = 0;
    bool            init       = false;
+   std::uint64_t   chunk_index = 0;
    std::size_t     chunk_offset;
 };
 

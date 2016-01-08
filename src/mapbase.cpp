@@ -58,6 +58,7 @@ void
 MapBase::join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
                raft::kernel &b, const std::string name_b, PortInfo &b_info )
 {
+   //b's port info isn't allocated
    if( a_info.type != b_info.type )
    {
       std::stringstream ss;

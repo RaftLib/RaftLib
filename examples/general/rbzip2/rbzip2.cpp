@@ -7,6 +7,7 @@
 #include <iostream>
 #include <raft>
 #include <raftio>
+#include <cmd>
 
 /** 
  * used interface found here: 
@@ -16,15 +17,19 @@
 template < class chunktype > class filewrite : public raft::parallel_k
 {
 public:
-    filewrite( const std::string &&filename ) : raft::parallel_k()
+    filewrite( const std::string filename,
+               const std::size_t n_output_ports = 1 ) : raft::parallel_k()
     {
         out_fp = std::fopen( filename.c_str(), "wb" );
         if( out_fp == nullptr )
         {   
             std::cerr << "failed to open output file, " << filename << "\n";
             exit( EXIT_FAILURE );
-        }  
-        addPortTo< chunktype >( input );
+        } 
+        for( auto i( 0 ); i < n_output_ports; i++ )
+        {
+            addPortTo< chunktype >( input );
+        }
     }
 
     virtual ~filewrite()
@@ -40,15 +45,15 @@ public:
             if( port.size() > 0 )
             {
                 auto &ele( port.template peek< chunktype >() ); 
-                //if( ele.start_position == curr_position )
-                //{
+                if( ele.index == curr_position )
+                {
                     std::fwrite( ele.buffer, 
                                  1, 
                                  ele.length, 
                                  out_fp );    
-                    curr_position += ele.length;
+                    curr_position++;
                     port.recycle( ele, 1 );
-                //}
+                }
             }
         }
         return( raft::proceed );
@@ -73,6 +78,16 @@ public:
         output.addPort< chunktype >( "out" );
     }
 
+    /** need a copy constructor for cloning **/
+    compress( const compress &other ) : raft::kernel(),
+                                        blocksize( other.blocksize ),
+                                        verbosity( other.verbosity ),
+                                        workfactor( other.workfactor )
+    {
+        input.addPort< chunktype >( "in" );
+        output.addPort< chunktype >( "out" );
+    }
+
     virtual ~compress() = default;
 
     virtual raft::kstatus run()
@@ -91,6 +106,7 @@ public:
         {
             
             out_ele.length = length_out;
+            out_ele.index  = in_ele.index;
             output[ "out" ].send();
             input[ "in" ].recycle( in_ele, 1 );
         }
@@ -132,7 +148,10 @@ public:
         }
         return( raft::proceed );
     }
-              
+
+    /** enable cloning **/
+    CLONE();
+
 private:
     const int blocksize;
     const int verbosity;
@@ -142,24 +161,75 @@ private:
 int
 main( int argc, char **argv )
 {
-    const static auto chunksize( 4096 );
+    const static auto chunksize( 65536 );
     using chunk_t = raft::filechunk< chunksize >;
     using fr_t    = raft::filereader< chunk_t, false >;
     using fw_t    = filewrite< chunk_t >;
     using comp    = compress< chunk_t >;
-
-    int blocksize ( 3 );
-    int verbosity ( 0 );
-    int workfactor( 30 );
    
-
-    fr_t reader( argv[ 1 ] );
-    comp c( blocksize, verbosity, workfactor );
-    fw_t writer( argv[ 2 ] );
+    /** variables to set below **/
+    bool help( false );
+    int blocksize ( 9 );
+    int verbosity ( 0 );
+    int workfactor( 250 );
+    std::string inputfile( "" );
+    std::string outputfile( "" );
     
+    std::int64_t  num_threads( 1 );
+
+    CmdArgs cmdargs( argv[ 0 ] /** prog name  **/,
+                     std::cout /** std stream **/,
+                     std::cerr /** err stream **/ );
+
+    /** set options **/
+    cmdargs.addOption( new Option< bool >( help,
+                                           "-h",
+                                           "print this message" ) );
+    cmdargs.addOption( new Option< int >( blocksize,
+                                          "-b",
+                                          "set block size to 100k .. 900k" ) );
+    cmdargs.addOption( new Option< int >( workfactor,
+                                          "-e",
+                                          "effort" ) );
+    cmdargs.addOption( new Option< std::string >( inputfile,
+                                                  "-i",
+                                                  "input file" ) );
+
+    cmdargs.addOption( new Option< std::string >( outputfile,
+                                                  "-o",
+                                                  "output file" ) );
+    
+    cmdargs.addOption( new Option< std::int64_t  >( num_threads,
+                                                    "-th",
+                                                    "number of worker threads" ) );
+    
+    /** process args **/                                                  
+    cmdargs.processArgs( argc, argv );
+    if( help )
+    {
+        cmdargs.printArgs();
+        exit( EXIT_SUCCESS );
+    }
+
+    /** declare kernels **/
+    fr_t reader( inputfile,
+                 num_threads /** manually set threads for b-marking **/ );
+    fw_t writer( outputfile, 
+                 num_threads /** manually set threads for b-marking **/ );
+    comp c( blocksize, 
+            verbosity, 
+            workfactor );
+    
+    /** set-up map **/
     raft::map m;
-    m += reader >> c;
-    m += c >> writer;
+    
+    /** 
+     * detect # output ports from reader,
+     * duplicate c that #, assign each 
+     * output port to the input ports in 
+     * writer
+     */
+    m += reader <= c >= writer;
 
     m.exe();
     return( EXIT_SUCCESS );

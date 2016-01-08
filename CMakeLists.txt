@@ -14,7 +14,7 @@ add_subdirectory( src )
 add_subdirectory( raftinc )
 add_subdirectory( ${CMAKE_SOURCE_DIR}/examples/cppalgo/search )
 add_subdirectory( ${CMAKE_SOURCE_DIR}/examples/general/pi )
-add_subdirectory( ${CMAKE_SOURCE_DIR}/examples/general/pbzip_raft )
+add_subdirectory( ${CMAKE_SOURCE_DIR}/examples/general/rbzip2 )
 
 ##
 # we need boost to demangle names, might use

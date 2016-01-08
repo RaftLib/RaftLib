@@ -118,10 +118,16 @@ public:
       return; 
    }
 
-   void operator +=( kpair &&pair );
+   kernel_pair_t operator +=( kpair * const pair );
 
 
 protected:
+    /** 
+     * joink - convenience function for joining kernels from 
+     * kpair objects
+     * @param next - kpair* const, kpair created from linking process
+     */
+    void joink( kpair * const next );
 
    /**
     * checkEdges - runs a breadth first search through the graph

@@ -31,21 +31,48 @@ namespace raft
 class kpair
 {
 public:
+    kpair( raft::kernel &a, 
+           raft::kernel &b,
+           const bool split,
+           const bool join );
+
+    kpair( kpair * const prev,
+           raft::kernel  &b,
+           const bool split,
+           const bool join );
+
     kpair( raft::kernel &a, raft::kernel &b );
+    
 
 protected:
     kpair        *next = nullptr;
+    kpair        *head = nullptr;
     raft::kernel *src  = nullptr;
     bool          has_src_name = false;
-    std::string   src_name;
+    std::string   src_name  = "";
     raft::kernel *dst  = nullptr;
     bool          has_dst_name = false;
-    std::string   dst_name;
+    std::string   dst_name  = "";
     
+    bool          split_to     = false;
+    std::uint32_t src_out_count  = 0;
+    bool          join_from      = false;
+    std::uint32_t dst_in_count   = 0;
+
+
     friend class raft::map;
+    friend kpair* operator >= ( kpair *a, raft::kernel &&b );
+    friend kpair* operator >= ( kpair *a, raft::kernel &b );
 };
 
-kpair operator >> ( raft::kernel &a,  raft::kernel &b  );
-kpair operator >> ( raft::kernel &&a, raft::kernel &&b );
+kpair*  operator >> ( raft::kernel &a,  raft::kernel &b  );
+kpair*  operator >> ( raft::kernel &&a, raft::kernel &&b );
+
+kpair*  operator <= ( raft::kernel &a, raft::kernel  &b );
+kpair*  operator <= ( raft::kernel &&a, raft::kernel &&b );
+
+kpair*  operator >= ( kpair *a, raft::kernel &b );
+kpair*  operator >= ( kpair *a, raft::kernel &&b );
+
 
 #endif /* END _KPAIR_HPP_ */
