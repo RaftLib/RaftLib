@@ -61,7 +61,8 @@ If you use this framework for something that gets published, please cite it as:
 
 ###Random Notes
 The old Makefile had an uninstall script, I need to add an object to the 
-cmake file so that we can have similar functionality. 
+cmake file so that we can have similar functionality. Theres also a bit
+of cleanup to do as I transition fully from Make to CMake.
 
 A lot of the auto-optimization stuff has been pulled out temporaril while
 I'm working on cross-platform compatibility. A lot of the low level API
