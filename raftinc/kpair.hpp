@@ -68,6 +68,9 @@ protected:
 kpair*  operator >> ( raft::kernel &a,  raft::kernel &b  );
 kpair*  operator >> ( raft::kernel &&a, raft::kernel &&b );
 
+kpair*  operator >> ( kpair *a, raft::kernel &b );
+kpair*  operator >> ( kpair *a, raft::kernel &&b );
+
 kpair*  operator <= ( raft::kernel &a, raft::kernel  &b );
 kpair*  operator <= ( raft::kernel &&a, raft::kernel &&b );
 

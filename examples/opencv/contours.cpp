@@ -14,7 +14,7 @@ public:
    source()
    {
       output.addPort< cvm >( "0" );
-      if( not stream1.isOpened() ) 
+      if( ! stream1.isOpened() ) 
       { 
          std::cout << "cannot open camera\n";
          exit( EXIT_FAILURE );
@@ -160,25 +160,19 @@ public:
 };
 
 
-int main() 
+int 
+main( int argc, char **argv )
 {
    cv::namedWindow( "cam", cv::WINDOW_NORMAL );
-   auto a(
-   raft::map.link( 
-      raft::kernel::make< source< cvm > >(), 
-      raft::kernel::make< canny< cvm > >() 
-   ) );
-   auto b( raft::map.link( 
-      &a.getDst(),
-      raft::kernel::make< findcontours< cvm > >() 
-   ) );
-   raft::map.link( 
-      &b.getDst(),
-      raft::kernel::make< display< cvm > >() 
-   );
-   /** global time check **/
+   source< cvm >       src;
+   canny< cvm >        cny;
+   findcontours< cvm > fndcnt;
+   display< cvm >      disp;
+   
+   raft::map m;
+   m += src >> cny >> fndcnt >> disp;
+   /** start time for printing frame rate **/
    start =  std::chrono::high_resolution_clock::now();
-   raft::map.exe();
+   m.exe();
    return( EXIT_SUCCESS );
 }
-

@@ -9,9 +9,12 @@ main( int argc, char **argv )
    using chunk = raft::filechunk< 1024 >;
    using fr = raft::filereader< chunk, false >; 
    using pr = raft::print< chunk >;
-   raft::map.link( 
-      raft::kernel::make< fr > ( argv[ 1 ]  ), 
-      raft::kernel::make< pr >() );
-   raft::map.exe();
+   fr reader( argv[ 1 ] );
+   pr printer;
+
+   raft::map m;
+   m += reader >> printer;
+   m.exe();
+   
    return( EXIT_SUCCESS );
 };

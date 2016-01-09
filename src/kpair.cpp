@@ -57,6 +57,18 @@ operator >> ( raft::kernel &&a, raft::kernel &&b )
     return( new kpair( a, b ) );
 }
 
+kpair*  
+operator >> ( kpair *a, raft::kernel &b )
+{
+    return( new kpair( a, b, false, false ) );
+}
+
+kpair*  
+operator >> ( kpair *a, raft::kernel &&b )
+{
+    return( new kpair( a, b, false, false ) );
+}
+
 kpair*
 operator <= ( raft::kernel &a, raft::kernel &b )
 {
@@ -80,4 +92,5 @@ operator >= ( kpair *a, raft::kernel &b )
 {
     return( new kpair( a, b, false, true ) );
 }
+
 

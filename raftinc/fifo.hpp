@@ -250,7 +250,6 @@ public:
     * @param   signal -  raft::signal, default raft::none
     */
    template < class T,
-              class ... Args,
               typename std::enable_if< 
                std::is_object< T >::value && !
                std::is_fundamental< T >::value >::type* = nullptr > 

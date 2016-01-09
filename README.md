@@ -24,7 +24,13 @@ In progress
 
 ### Install
 Make a build directory (for the instructions below, we'll 
-write [build]).
+write [build]). If you want to build the OpenCV example, then
+you'll need to have the add
+```bash
+-DBUILD_WOPENCV=true</tt> 
+```
+to the cmake build line below.
+
 ```bash
 mkdir [build]
 cd [build]

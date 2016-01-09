@@ -12,9 +12,12 @@ include( CheckGitDep )
 
 add_subdirectory( src )
 add_subdirectory( raftinc )
-add_subdirectory( ${CMAKE_SOURCE_DIR}/examples/cppalgo/search )
-add_subdirectory( ${CMAKE_SOURCE_DIR}/examples/general/pi )
-add_subdirectory( ${CMAKE_SOURCE_DIR}/examples/general/rbzip2 )
+add_subdirectory( examples )
+
+mark_as_advanced( BUILD_WOPENCV false )
+if( BUILD_WOPENCV )
+    add_subdirectory( examples/opencv )
+endif( BUILD_WOPENCV )
 
 ##
 # we need boost to demangle names, might use
