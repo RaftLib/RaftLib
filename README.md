@@ -54,9 +54,9 @@ If you use this framework for something that gets published, please cite it as:
 ```
 ###Other Info Sources
 * [Project web page](http://raftlib.io)
-* Project wiki page -> https://github.com/jonathan-beard/RaftLib/wiki
-* Blog post intro -> https://goo.gl/4VDlbr
-* Jonathan Beard's thesis -> http://goo.gl/obkWUh
+* [Project wiki page](https://github.com/jonathan-beard/RaftLib/wiki)
+* [Blog post intro](https://goo.gl/4VDlbr)
+* [Jonathan Beard's thesis](http://goo.gl/obkWUh)
 * Feel free to e-mail one of the authors of the repo
 
 ###Random Notes
