@@ -27,7 +27,7 @@ Make a build directory (for the instructions below, we'll
 write [build]). If you want to build the OpenCV example, then
 you'll need to have the add
 ```bash
--DBUILD_WOPENCV=true</tt> 
+-DBUILD_WOPENCV=true 
 ```
 to the cmake build line below.
 
