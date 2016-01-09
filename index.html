@@ -34,11 +34,8 @@
 <h3>
 <a id="project-status" class="anchor" href="#project-status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Status</h3>
 
-<p>The Raft library is currently an alpha release.  The API itself is relatively stable, however the back end
-is subject to updates.  The release is subject to the Apache Version 2.0 license. If you are checking
-out the code to develop, please use the main line and create pull request. If you want to 
-develop applications, I suggest using one of the release branches so that you have a stable
-development experience. You can add applications to the main line through subsequent pull requests.</p>
+<p>The Raft library is currently an alpha release, nearing its first beta.  The API itself is relatively stable, however the back end
+is subject to updates if needed (although we're taking pains to support needed old features). This software is subject to the Apache Version 2.0 license. The main-line branch is also the development branch. As new code is checked in, it is processed through two continuous integration services, the travis-ci.org icon is . You can add applications to the main line through subsequent pull requests. There are also several releases, at this stage of the project, snapshots for releases are taken before any major changes. We plan on moving to a full beta release once the multi-node support is pulled from the research code and re-integrated with the mainline branch (at the current rate of development, that should be mid-March 2016). </p>
 
 <h3>
 <a id="build-status" class="anchor" href="#build-status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build Status</h3>
@@ -48,7 +45,7 @@ development experience. You can add applications to the main line through subseq
 <h3>
 <a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h3>
 
-<p>To checkout the library do the following:</p>
+<p>To checkout the library and build RaftLib (along with all examples) do the following:</p>
 
 <pre><code>$ cd location_for_the_repo
 $ git clone git@github.com:jonathan-beard/RaftLib.git
@@ -59,19 +56,25 @@ $ make &amp; make test
 $ sudo make install
 </code></pre>
 
-<p>This will generate the static library file <em>libraft.a</em>.  When building an application
-using the library the only header file needed is the <em>raft</em> header.  Once the library
-is build you're basically set save for a few details, which will be laid out within the tutorial
- as we go through the example we're about to build.</p>
+<p>Additionally, if you would like to build the OpenCV example, add </p>
 
-<p>The example applications are build with automatically when you ran make for the library, 
-they should be in the examples folder within the build directory.</p>
+<div class="highlight highlight-source-shell"><pre>-DBUILD_WOPENCV=<span class="pl-c1">true</span></pre></div>
+
+<p>to your cmake invocation, you will need a webcam or video source for it to work.</p>
+
+<p>The make command will generate the static library file <em>libraft.a</em>, as well as test cases and all the example applications. These examples can be found in:</p>
 
 <pre><code>$ cd build/examples
 </code></pre>
 
+<p>To install the library to your system (in the default prefix), simply run </p>
+
+<div class="highlight highlight-source-shell"><pre>sudo make install</pre></div>
+
 <h2>
 <a id="how-to-build-apps-and-use-raftlib" class="anchor" href="#how-to-build-apps-and-use-raftlib" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to build apps and use RaftLib</h2>
+
+<p>When building an application using the library the only header file needed is the <em>raft</em> header (see wiki for details), and you must link with the raft library file created during the compilation phase above. Many more details can be found in the following references (we'll endeavor to keep these up to date, but please feel free to contribute to the wiki or point out errors on our part):</p>
 
 <ul>
 <li><a href="https://github.com/jonathan-beard/RaftLib/wiki">Project Wiki</a></li>
@@ -97,14 +100,14 @@ notable is my co-author (<a href="https://github.com/pl53" class="user-mention">
 <h3>
 <a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h3>
 
-<p>The main source of documentation is available on the RaftLib wiki page: <a href="https://github.com/jonathan-beard/RaftLib/wiki">https://github.com/jonathan-beard/RaftLib/wiki</a></p>
+<p>The main source of documentation is available on the <a href="https://github.com/jonathan-beard/RaftLib/wiki">RaftLib wiki page</a></p>
 
 <p>If you see errors, or want to contribute please feel free to do so. </p>
 
 <h3>
 <a id="issues" class="anchor" href="#issues" aria-hidden="true"><span class="octicon octicon-link"></span></a>Issues</h3>
 
-<p>Please feel free to comment on any issues by opening an issue on our issues page: <a href="https://github.com/jonathan-beard/RaftLib/issues">https://github.com/jonathan-beard/RaftLib/issues</a></p>
+<p>Issues can be opened by filing a report on our <a href="https://github.com/jonathan-beard/RaftLib/issues">issues page</a></p>
       </section>
     </div>
 
