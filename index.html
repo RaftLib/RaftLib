@@ -29,7 +29,12 @@
     <div class="container">
       <section id="main_content">
         <h3>
-<a id="welcome-to-the-raft-c-template-library" class="anchor" href="#welcome-to-the-raft-c-template-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to the Raft C++ template library</h3>
+<a id="welcome-to-the-raft-c-stream-processing-template-library" class="anchor" href="#welcome-to-the-raft-c-stream-processing-template-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to the Raft C++ Stream Processing Template Library</h3>
+
+<h3>
+<a id="what-is-it" class="anchor" href="#what-is-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is it?</h3>
+
+<p>Stream processing is a method for extracting data, task, and pipeline parallelism from an application. Ever wash dishes with more than one person, one washer, one dryer, and perhaps one person to put them away? That's pipeline parallelism. Raft lets you do that for your application. How about add two washers, three? You can do this as well. That's data parallelism, you're operating on differing (independent) dishes at the same time. Going further, the Raft library enables task parallelism. That is, if you have four people on the dishes, you can add somebody on the side, taking inventory of the dishes as the pass by, at the same time the dishes are being washed. The inventory task is independent of the other two (which is slightly more nuanced since we've to spot the dishes as they go by). The Raft library uses templates, and a compiled library, to make the otherwise perilous task of creating parallel programs far easier. Please check it out, and if you have any questions, please feel free to send the project developers an email.</p>
 
 <h3>
 <a id="project-status" class="anchor" href="#project-status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Status</h3>
@@ -81,6 +86,7 @@ $ sudo make install
 <li><a href="https://github.com/jonathan-beard/RaftLib/blob/master/README.md">Project README</a></li>
 <li><a href="https://goo.gl/4VDlbr">Blog post intro</a></li>
 <li><a href="http://goo.gl/obkWUh">Jonathan Beard's thesis</a></li>
+<li><a href="https://medium.com/cat-dev-urandom/simplifying-parallel-applications-for-c-an-example-parallel-bzip2-using-raftlib-with-performance-f69cc8f7f962">Parallel Bzip2 Example</a></li>
 </ul>
 
 <h3>
