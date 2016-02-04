@@ -62,6 +62,12 @@ PortIterator::operator++()
    return( (*this) );
 }
 
+const std::string&
+PortIterator::name()
+{
+    return( key_map[ map_index ] );
+}
+
 bool
 PortIterator::operator==( const PortIterator &rhs ) 
 {

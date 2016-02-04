@@ -13,15 +13,45 @@ kpair::kpair( raft::kernel &a,
     join_from = join;
 }
 
-kpair::kpair( kpair * const prev, 
+/**
+ * kpair - for joining kpair on the left (src)
+ * and dst on right.
+ */
+kpair::kpair( kpair &a, 
               raft::kernel &b,
               const bool split,
-              const bool join ) : kpair( *prev->dst, b )
+              const bool join ) : kpair( *(a.dst), b )
 {
-    head        = prev->head;
-    prev->next  = this;
+    head        = a.head;
+    a.next  = this;
     split_to    = split;
     join_from   = join;
+}
+/**
+ * opposite of above 
+ */
+kpair::kpair( raft::kernel &a,
+              kpair        &n, 
+              const bool split,
+              const bool join ) : kpair( a, *(n.src) )
+{
+    head        = this;
+    next        = &n;
+    split_to    = split;
+    join_from   = join;
+}
+
+kpair::kpair( kpair &a,
+              kpair &b, 
+              const bool split,
+              const bool join ) : kpair( *(a.dst), *(b.src) )
+{
+    head = a.head;
+    a.next = this;
+    b.head = a.head;
+    next = &b;
+    split_to  = split;
+    join_from = join;
 }
 
 kpair::kpair( raft::kernel &a, raft::kernel &b )
@@ -45,52 +75,93 @@ kpair::kpair( raft::kernel &a, raft::kernel &b )
     head = this;
 }
 
-kpair* 
+kpair& 
 operator >> ( raft::kernel &a, raft::kernel &b )
 {
-    return( new kpair( a, b ) );
+    auto *ptr( new kpair( a, b ) );
+    return( *ptr );
 }
 
-kpair*
+kpair&
 operator >> ( raft::kernel &&a, raft::kernel &&b )
 {
-    return( new kpair( a, b ) );
+    auto *ptr( new kpair( a, b ) );
+    return( *ptr );
 }
 
-kpair*  
-operator >> ( kpair *a, raft::kernel &b )
+kpair&  
+operator >> ( kpair &a, raft::kernel &b )
 {
-    return( new kpair( a, b, false, false ) );
+    auto *ptr( new kpair( a, b, false, false ) );
+    return( *ptr );
 }
 
-kpair*  
-operator >> ( kpair *a, raft::kernel &&b )
+kpair&
+operator >> ( kpair &a, raft::kernel &&b )
 {
-    return( new kpair( a, b, false, false ) );
+    auto *ptr( new kpair( a, b, false, false ) );
+    return( *ptr );
 }
 
-kpair*
+kpair&
 operator <= ( raft::kernel &a, raft::kernel &b )
 {
-    return( new kpair( a, b, true, false ) );
+    auto *ptr( new kpair( a, b, true, false ) );
+    return( *ptr );
 }
 
-kpair*
+kpair&
 operator <= ( raft::kernel &&a, raft::kernel &&b )
 {
-    return( new kpair( a, b, true, false ) );
+    auto *ptr( new kpair( a, b, true, false ) );
+    return( *ptr );
 }
 
-kpair*
-operator >= ( kpair *a, raft::kernel &&b )
+kpair&
+operator <= ( raft::kernel &a, kpair &b )
 {
-    return( new kpair( a, b, false, true ) );
+    auto *ptr( new kpair( a, b, true, false ) );
+    return( *ptr );
 }
 
-kpair*
-operator >= ( kpair *a, raft::kernel &b )
+kpair&
+operator <= ( raft::kernel &&a, kpair &b )
 {
-    return( new kpair( a, b, false, true ) );
+    auto *ptr( new kpair( a, b, true, false ) );
+    return( *ptr );
 }
 
+kpair&
+operator >= ( kpair &a, raft::kernel &&b )
+{
+    auto *ptr( new kpair( a, b, false, true ) );
+    return( *ptr );
+}
 
+kpair&
+operator >= ( kpair &a, raft::kernel &b )
+{
+    auto *ptr( new kpair( a, b, false, true ) );
+    return( *ptr );
+}
+
+kpair&
+operator >= ( kpair &a, kpair &b )
+{
+    auto *ptr( new kpair( a, b, false, true ) );
+    return(*ptr);
+}
+
+kpair& 
+operator >= ( raft::kernel &a, kpair &b )
+{
+    auto *ptr( new kpair( a, b, false, true ) );
+    return(*ptr);
+}
+
+kpair& 
+operator >= ( raft::kernel &&a, kpair &b )
+{
+    auto *ptr( new kpair( a, b, false, true ) );
+    return(*ptr);
+}

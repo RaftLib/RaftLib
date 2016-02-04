@@ -25,6 +25,7 @@
 #include <iostream>
 #include <raft>
 #include <cstdlib>
+#include <mutex>
 
 namespace raft{
 
@@ -32,8 +33,10 @@ class printbase
 {
 protected:
    std::ostream *ofs = nullptr;
+   static std::mutex   print_lock;
 };
 
+std::mutex printbase::print_lock;
 
 template< typename T > class printabstract : public raft::kernel, 
                                              public raft::printbase
@@ -64,6 +67,16 @@ public:
    print( std::ostream &stream ) : printabstract< T >( stream )
    {
    }
+   
+   print( const print &other ) : print( *other.ofs )
+   {
+   }
+
+   //FIXME - might need to synchronize streams for users
+   //design point
+
+   /** enable cloning **/
+   CLONE();
 
    /** 
     * run - implemented to take a single 
@@ -77,6 +90,7 @@ public:
     */
    virtual raft::kstatus run()
    {
+      std::lock_guard< std::mutex > lg( print< T, delim >::print_lock );
       auto &input_port( (this)->input[ "in" ] );
       auto &data( input_port.template peek< T >() );
       *((this)->ofs) << data << delim;
@@ -95,6 +109,15 @@ public:
    print( std::ostream &stream ) : printabstract< T >( stream )
    {
    }
+   
+   //FIXME - might need to synchronize streams for users
+   //design point
+   print( const print &other ) : print( *other.ofs )
+   {
+   }
+
+   CLONE();
+                                 
 
    /** 
     * run - implemented to take a single 
@@ -108,6 +131,7 @@ public:
     */
    virtual raft::kstatus run()
    {
+      std::lock_guard< std::mutex > lg( print< T, '\0' >::print_lock );
       auto &input_port( (this)->input[ "in" ] );
       auto &data( input_port.template peek< T >() );
       *((this)->ofs) << data;

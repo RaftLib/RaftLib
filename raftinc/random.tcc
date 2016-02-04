@@ -40,10 +40,35 @@ public:
                                          dist( std::forward< Args >( params )... ),
                                          N( N )
     {
+#ifdef STATICPORT
+        for( auto i( 0 ); i < STATICPORT; i++ )
+        {
+#endif
         addPortTo< TYPE >( output );
+#ifdef STATICPORT
+        }
+#endif
+    }
+
+    random_variate( const random_variate &other ) : parallel_k(),
+                                                    gen( std::chrono::system_clock::now().time_since_epoch().count() ),
+                                                    dist( other.dist ),
+                                                    N( other.N )
+    {
+#ifdef STATICPORT
+        for( auto i( 0 ); i < STATICPORT; i++ )
+        {
+#endif
+        addPortTo< TYPE >( output );
+#ifdef STATICPORT
+        }
+#endif
     }
 
     virtual ~random_variate() = default;
+
+    /** enable cloning **/
+    CLONE();
 
     virtual raft::kstatus run()
     {

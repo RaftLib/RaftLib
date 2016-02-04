@@ -118,7 +118,7 @@ public:
       return; 
    }
 
-   kernel_pair_t operator +=( kpair * const pair );
+   kernel_pair_t operator +=( kpair &p );
 
 
 protected:
@@ -154,6 +154,52 @@ protected:
    friend class ::basic_parallel;
    friend class ::Schedule;
    friend class ::Allocate;
+
+private:
+    using split_stack_t = std::stack< std::size_t >;
+    using group_t = std::vector< raft::kernel* >;
+    using up_group_t = std::unique_ptr< group_t >;
+    using kernels_t = std::vector< up_group_t >;
+
+    /**
+     * inline_cont - takes care of >> syntax, even
+     * multiple ones.
+     * @param groups - list of groups, each group containing
+     * multiple (or a single kernel)
+     * @param   temp_groups - temporary storage space
+     * for above
+     * @param   next - kpair*, pair to be joined/split
+     */
+    void inline_cont ( kernels_t     &groups,
+                       kernels_t     &temp_groups,
+                       kpair * const next );
+
+    /**
+     * inline_split - takes care of the <= syntax 
+     * so that you can embed multiple splits in a 
+     * row, and still have the joins appear later
+     * in the proper sequence.
+     * @param split_stack - split_stack_t&, stack
+     * for # of out edges in each split
+     * @param groups - list of groups, each group containing
+     * multiple (or a single kernel)
+     * @param   temp_groups - temporary storage space
+     * for above
+     * @param   next - kpair*, pair to be joined/split
+     */
+    void inline_split( split_stack_t &split_stack,
+                       kernels_t     &groups,
+                       kernels_t     &temp_groups,
+                       kpair * const next );
+
+    void inline_join( split_stack_t &split_stack,
+                      kernels_t &groups,
+                      kernels_t &temp_groups,
+                      kpair * const next );
+
+    void inline_dup_join( kernels_t &groups,
+                          kernels_t &temp_groups,
+                          kpair * const next );
 
 }; /** end map decl **/
 

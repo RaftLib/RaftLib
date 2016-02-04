@@ -59,8 +59,8 @@ public:
                const std::size_t align = 16 ) : 
       RingBufferBase< T, type >()
    {
+      assert( n != 0 );
       (this)->dm.set( new Buffer::Data<T, type >( n, align ) );
-      
    }
    
    /**
@@ -72,6 +72,7 @@ public:
                const std::size_t start_position ) : 
       RingBufferBase< T, type >()
    {
+      assert( length != 0 );
       T *ptrcast = reinterpret_cast< T* >( ptr );
       (this)->dm.set( new Buffer::Data<T, type >( ptrcast, length, start_position ) );
    }

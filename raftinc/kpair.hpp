@@ -36,8 +36,18 @@ public:
            const bool split,
            const bool join );
 
-    kpair( kpair * const prev,
+    kpair( kpair &a,
            raft::kernel  &b,
+           const bool split,
+           const bool join );
+
+    kpair( raft::kernel &a,
+           kpair        &n,
+           const bool   split,
+           const bool   join );
+
+    kpair( kpair &a,
+           kpair &b,
            const bool split,
            const bool join );
 
@@ -61,21 +71,33 @@ protected:
 
 
     friend class raft::map;
-    friend kpair* operator >= ( kpair *a, raft::kernel &&b );
-    friend kpair* operator >= ( kpair *a, raft::kernel &b );
+    friend kpair& operator >= ( kpair &a, raft::kernel &&b );
+    friend kpair& operator >= ( kpair &a, raft::kernel &b );
+    friend kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
+    friend kpair& operator <= ( raft::kernel &&a, raft::kernel &&b );
+    friend kpair& operator <= ( raft::kernel &a,  kpair &b );
+    friend kpair& operator <= ( raft::kernel &&a, kpair &b );
+    friend kpair& operator >= ( kpair &a, kpair &b );
+    friend kpair& operator >= ( raft::kernel &a, kpair &b );
+    friend kpair& operator >= ( raft::kernel &&a, kpair &b );
 };
 
-kpair*  operator >> ( raft::kernel &a,  raft::kernel &b  );
-kpair*  operator >> ( raft::kernel &&a, raft::kernel &&b );
+kpair& operator >> ( raft::kernel &a,  raft::kernel &b  );
+kpair& operator >> ( raft::kernel &&a, raft::kernel &&b );
+kpair& operator >> ( kpair &a, raft::kernel &b );
+kpair& operator >> ( kpair &a, raft::kernel &&b );
 
-kpair*  operator >> ( kpair *a, raft::kernel &b );
-kpair*  operator >> ( kpair *a, raft::kernel &&b );
+kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
+kpair& operator <= ( raft::kernel &&a, raft::kernel &&b );
+kpair& operator <= ( raft::kernel &a,  kpair &b );
+kpair& operator <= ( raft::kernel &&a, kpair &b );
 
-kpair*  operator <= ( raft::kernel &a, raft::kernel  &b );
-kpair*  operator <= ( raft::kernel &&a, raft::kernel &&b );
+kpair& operator >= ( kpair &a, raft::kernel &b );
+kpair& operator >= ( kpair &a, raft::kernel &&b );
+kpair& operator >= ( kpair &a, kpair &b );
+kpair& operator >= ( raft::kernel &a, kpair &b );
+kpair& operator >= ( raft::kernel &&a, kpair &b );
 
-kpair*  operator >= ( kpair *a, raft::kernel &b );
-kpair*  operator >= ( kpair *a, raft::kernel &&b );
 
 
 #endif /* END _KPAIR_HPP_ */

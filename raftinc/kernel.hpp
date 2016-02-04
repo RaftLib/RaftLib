@@ -50,6 +50,8 @@ virtual raft::kernel* clone()\
       new typename std::remove_reference< decltype( *this ) >::type( ( *(\
    (typename std::decay< decltype( *this ) >::type * ) \
    this ) ) ) );\
+   /** RL needs to dealloc this one **/\
+   ptr->internal_alloc = true;\
    return( ptr );\
 }
 #endif
@@ -159,6 +161,9 @@ private:
 
    /** for operator syntax **/
    std::queue< std::string > enabled_port;
+
 };
+
+
 } /** end namespace raft */
 #endif /* END _KERNEL_HPP_ */

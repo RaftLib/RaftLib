@@ -52,7 +52,9 @@ public:
       add_ports< PORTS... >( inputs, outputs );
    }
 
-  
+    
+    //FIXME, add copy constructor    
+
 
    /**
     * run - implement the run function for this kernel, 
@@ -62,6 +64,7 @@ public:
       return( run_func( input  /** input ports **/, 
                         output /** output ports **/) ); 
    }
+
 
 
 private:

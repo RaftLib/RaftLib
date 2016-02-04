@@ -46,6 +46,9 @@ public:
    bool operator!=(const PortIterator& rhs) ;
    FIFO& operator*() ;
 
+
+   const std::string& name();
+
 private:
    static inline
    void initKeyMap( portmap_t * const port_map, 

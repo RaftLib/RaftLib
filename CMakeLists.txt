@@ -37,7 +37,9 @@ enable_testing()
 set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
      join lambdatest allocate_s foreach peekrange 
      partitionTest parallel peek
-     bracketsTest uniform )
+     bracketsTest uniform splitchain
+     staticLongSplitChain staticSplitJoin 
+     staticSplitChainJoin staticJoin staticContJoin )
 if( BUILDRANDOM )
     list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 
 endif( BUILDRANDOM )
