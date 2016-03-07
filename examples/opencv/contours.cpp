@@ -64,7 +64,7 @@ public:
            );
 
       input[ "0" ].unpeek();
-      input[ "0" ].recycle( img_in );
+      input[ "0" ].recycle( 1 );
       output[ "0" ].send();
       return( raft::proceed );
    }
@@ -97,7 +97,7 @@ public:
       out = cv::Mat::zeros( img_in.size(), 
                             CV_8UC3 );
       input[ "0" ].unpeek();
-      input[ "0" ].recycle( img_in );
+      input[ "0" ].recycle( 1 );
       for( auto i( 0 ); std::isless( i, contours.size() ); i++ )
       {
          cv::Scalar color( 
@@ -143,7 +143,7 @@ public:
       auto &frame( input[ "0" ].template peek< cvm >() );
       cv::imshow( "cam", frame );
       input[ "0" ].unpeek();
-      input[ "0" ].recycle( frame );
+      input[ "0" ].recycle( 1 );
       frames++;
       if( frames % 200 == 0 )
       {

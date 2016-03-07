@@ -52,7 +52,7 @@ public:
                                  ele.length, 
                                  out_fp );    
                     curr_position++;
-                    port.recycle( ele, 1 );
+                    port.recycle( 1 );
                 }
             }
         }
@@ -108,7 +108,7 @@ public:
             out_ele.length = length_out;
             out_ele.index  = in_ele.index;
             output[ "out" ].send();
-            input[ "in" ].recycle( in_ele, 1 );
+            input[ "in" ].recycle( 1 );
         }
         else
         {

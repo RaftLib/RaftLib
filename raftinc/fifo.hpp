@@ -34,7 +34,10 @@
 #include "bufferdata.tcc"
 #include "blocked.hpp"
 #include "signalvars.hpp"
+#include "alloc_traits.tcc"
 
+
+#include "defs.hpp"
 
 /** pre-declare Schedule class **/
 class Schedule;
@@ -94,7 +97,8 @@ public:
     */
    template < class T,
               typename std::enable_if< 
-                  std::is_pod< T >::value >::type* = nullptr > T& allocate()
+                  inline_nonclass_alloc< T >::value >::type* = nullptr > 
+   T& allocate()
    {
       void *ptr( nullptr );
       /** call blocks till an element is available **/
@@ -102,16 +106,13 @@ public:
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
 
-#ifndef UNUSED 
-#define UNUSED( x )[&x]{}()
-#endif
 
    template < class T,
               class ... Args,
               typename std::enable_if< 
-               std::is_object< T >::value && ! 
-               std::is_fundamental< T >::value >::type* = nullptr > T& 
-               allocate( Args&&... params )
+                inline_class_alloc< T >::value >::type* = nullptr > 
+   T& 
+   allocate( Args&&... params )
    {
       void *ptr( nullptr );
       /** call blocks till an element is available **/
@@ -119,6 +120,19 @@ public:
       T * __attribute__ (( unused )) temp( new (ptr) T( std::forward< Args >( params )... ) );
       UNUSED( temp );
       return( *( reinterpret_cast< T* >( ptr ) ) );
+   }
+   
+   template < class T,
+              class ... Args,
+              typename std::enable_if< ext_alloc< T >::value >::type* = nullptr > 
+   T& 
+   allocate( Args&&... params )
+   {
+      T **ptr( nullptr );
+      /** call blocks till an element is available **/
+      local_allocate( (void**) &ptr );
+      *ptr = new T( std::forward< Args >( params )... );
+      return( **ptr );
    }
 
    /**
@@ -139,7 +153,7 @@ public:
     */
    template < class T,
               typename std::enable_if< 
-                  std::is_pod< T >::value >::type* = nullptr > 
+                inline_nonclass_alloc< T >::value >::type* = nullptr > 
    auto allocate_s() -> autorelease< T, allocatetype >
    {
       void *ptr( nullptr );
@@ -160,8 +174,7 @@ public:
    template < class T,
               class ... Args,
               typename std::enable_if< 
-               std::is_object< T >::value && ! 
-               std::is_fundamental< T >::value >::type* = nullptr > 
+                inline_class_alloc< T >::value >::type* = nullptr > 
    auto allocate_s( Args&&... params ) -> autorelease< T, allocatetype >
    {
       void *ptr( nullptr );
@@ -228,12 +241,10 @@ public:
     * @param   item -  T&
     * @param   signal -  raft::signal, default raft::none
     */
-   template < class T,
-              typename std::enable_if< 
-                  std::is_pod< T >::value >::type* = nullptr > 
+   template < class T >
    void push( const T &item, const raft::signal signal = raft::none )
    {
-      void *ptr( (void*) &item );
+      void * const ptr( (void*) &item );
       /** call blocks till element is written and released to queue **/
       local_push( ptr, signal );
       return;
@@ -249,69 +260,14 @@ public:
     * @param   item -  T&&
     * @param   signal -  raft::signal, default raft::none
     */
-   template < class T,
-              typename std::enable_if< 
-               std::is_object< T >::value && !
-               std::is_fundamental< T >::value >::type* = nullptr > 
-   void push( const T &item, const raft::signal signal = raft::none )
-   {
-      void *ptr( nullptr );
-      /** call blocks till an element is available **/
-      local_allocate( &ptr );
-      /** call copy constructor **/
-      T * __attribute__((__unused__)) temp( new (ptr) T( item  ) );
-      send( signal );
-   }
-   
-   /**
-    * push - function which takes an object of type T and a 
-    * signal, makes a copy of the object using the copy 
-    * constructor and passes it to the FIFO along with the
-    * signal which is guaranteed to be delivered at the 
-    * same time as the object (if of course the receiving 
-    * object is responding to signals).
-    * @param   item -  T&&
-    * @param   signal -  raft::signal, default raft::none
-    */
-   template < class T,
-              typename std::enable_if< 
-                  std::is_pod< T >::value >::type* = nullptr > 
+   template < class T >
    void push( const T &&item, const raft::signal signal = raft::none )
    {
-      void *ptr( (void*) &item );
+      void * const ptr( (void*) &item );
       /** call blocks till element is written and released to queue **/
       local_push( ptr, signal );
       return;
    }
-
-
-
-   /**
-    * push - function which takes an object of type T and a 
-    * signal, makes a copy of the object using the copy 
-    * constructor and passes it to the FIFO along with the
-    * signal which is guaranteed to be delivered at the 
-    * same time as the object (if of course the receiving 
-    * object is responding to signals).
-    * @param   item -  T&&
-    * @param   signal -  raft::signal, default raft::none
-    */
-   template < class T,
-              class ... Args,
-              typename std::enable_if< 
-               std::is_object< T >::value && ! 
-               std::is_fundamental< T >::value >::type* = nullptr > 
-   void push( const T &&item, const raft::signal signal = raft::none )
-   {
-      void *ptr( nullptr );
-      /** call blocks till an element is available **/
-      local_allocate( &ptr );
-      /** call copy constructor **/
-      T * __attribute__((__unused__)) temp( new (ptr) T( item  ) );
-      send( signal );
-   }
-
-
 
 
    /**
@@ -332,7 +288,10 @@ public:
    {
       void *begin_ptr( reinterpret_cast< void* >( &begin ) );
       void *end_ptr  ( reinterpret_cast< void* >( &end   ) );
-      local_insert( begin_ptr, end_ptr, signal, typeid( iterator_type ).hash_code() );
+      local_insert( begin_ptr, 
+                    end_ptr, 
+                    signal, 
+                    typeid( iterator_type ).hash_code() );
       return;
    }
    
@@ -385,12 +344,22 @@ public:
     * @param   signal - raft::signal, default: nullptr
     * @return T&
     */
-   template< class T >
+   template< class T,
+             typename std::enable_if< inline_alloc< T >::value >::type* = nullptr >
    T& peek( raft::signal *signal = nullptr )
    {
       void *ptr( nullptr );
       local_peek( &ptr, signal );
       return( *( reinterpret_cast< T* >( ptr ) ) );
+   }
+   
+   template< class T,
+             typename std::enable_if< ext_alloc< T >::value >::type* = nullptr >
+   T& peek( raft::signal *signal = nullptr )
+   {
+      T **ptr( nullptr );
+      local_peek( (void**)&ptr, signal );
+      return( **ptr );
    }
 
    /**
@@ -401,7 +370,8 @@ public:
     * @ n - const std::size_t, number of items to peek
     * @return - std::vector< std::reference_wrapper< T > >
     */
-   template< class T >
+   template< class T,
+             typename std::enable_if< inline_alloc< T >::value >::type* = nullptr >
    auto  peek_range( const std::size_t n ) -> 
       autorelease< T, peekrange >
    {
@@ -416,6 +386,27 @@ public:
          curr_pointer_loc,
          n ) );
    }
+   
+   template< class T,
+             typename std::enable_if< ext_alloc< T >::value >::type* = nullptr >
+   auto  peek_range( const std::size_t n ) -> 
+      autorelease< T, peekrange >
+   {
+      /** FIXME: still not implemented yet for externally allocated objects **/
+      assert( false );
+      void *ptr = nullptr;
+      void *sig = nullptr;
+      std::size_t curr_pointer_loc( 0 );
+      local_peek_range( &ptr, &sig, n, curr_pointer_loc );
+      return( autorelease< T, peekrange >( 
+         (*this),
+         reinterpret_cast< T * const >( ptr ),
+         reinterpret_cast< Buffer::Signal* >( sig ),
+         curr_pointer_loc,
+         n ) );
+   }
+
+
    /**
     * unpeek - call after peek to let the runtime know that 
     * all references to the returned value are no longer in
@@ -439,27 +430,11 @@ public:
     * never access it.
     * @param   range - const std::size_t
     */
-   template < class T,
-              typename std::enable_if< 
-                  std::is_pod< T >::value >::type* = nullptr >
-   void recycle( const T &t, const std::size_t range = 1 )
+   void recycle( const std::size_t range = 1 )
    {
       local_recycle( range ); 
    }
    
-   template < class T,
-              typename std::enable_if< 
-               std::is_object< T >::value && ! 
-               std::is_fundamental< T >::value >::type* = nullptr >
-   void recycle( const T &t, const std::size_t range = 1 )
-   {
-      recyclefunc f( []( void *ptr )
-      {
-         T *ptr_cast( reinterpret_cast< T* >( ptr ) );
-         ptr_cast->~T();
-      } );
-      local_recycle( range, f );
-   }
 
    
    
@@ -532,10 +507,22 @@ public:
     */
    virtual bool is_invalid() = 0;
 protected:
-
-   using recyclefunc = 
-      std::function< void ( void* ) >;
-   
+   /**
+    * setPtrMap - 
+    */
+   virtual void setPtrMap( ptr_map_t * const in );
+   /**
+    * setPtrSet - 
+    */
+   virtual void setPtrSet( ptr_set_t * const out );
+   /**
+    * setInPeekSet -
+    */
+   virtual void setInPeekSet( ptr_set_t * const peekset );
+   /**
+    * setOutPeekSet -
+    */
+   virtual void setOutPeekSet( ptr_set_t * const peekset );
    /**
     * set_src_kernel - sets teh protected source
     * kernel for this fifo, necessary for preemption,
@@ -662,9 +649,6 @@ protected:
     * @param range - std::size_t
     */
    virtual void local_recycle( const std::size_t range ) = 0;
-   
-   virtual void local_recycle( const std::size_t range, 
-                               recyclefunc       func ) = 0;
 
    
    /**

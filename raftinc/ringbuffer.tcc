@@ -60,7 +60,7 @@ public:
       RingBufferBase< T, type >()
    {
       assert( n != 0 );
-      (this)->dm.set( new Buffer::Data<T, type >( n, align ) );
+      (this)->datamanager.set( new Buffer::Data<T, type >( n, align ) );
    }
    
    /**
@@ -74,14 +74,15 @@ public:
    {
       assert( length != 0 );
       T *ptrcast = reinterpret_cast< T* >( ptr );
-      (this)->dm.set( new Buffer::Data<T, type >( ptrcast, length, start_position ) );
+      (this)->datamanager.set( 
+        new Buffer::Data<T, type >( ptrcast, length, start_position ) );
    }
 
    virtual ~RingBuffer()
    {
       /** TODO, might need to get a lock here **/
       /** might have bad behavior if we double delete **/
-      delete( (this)->dm.get() );
+      delete( (this)->datamanager.get() );
    }
 
    /**
@@ -119,9 +120,9 @@ public:
                         const std::size_t align,
                         volatile bool &exit_alloc )
    {
-      if( (this)->dm.is_resizeable() )
+      if( (this)->datamanager.is_resizeable() )
       {
-         (this)->dm.resize( 
+         (this)->datamanager.resize( 
             new Buffer::Data< T, type >( size, align ), exit_alloc );
       }
       /** else, not resizeable..just return **/
@@ -155,7 +156,7 @@ public:
             RingBufferBase< T, type >(),
             term( false )
    {
-      (this)->dm.set( new Buffer::Data<T, 
+      (this)->datamanager.set( new Buffer::Data<T, 
                                       Type::Heap >( n, align ) );
 
       /** add monitor types immediately after construction **/
@@ -180,7 +181,7 @@ public:
       //monitor->join();
       //delete( monitor );
       //monitor = nullptr;
-      delete( (this)->dm.get() );
+      delete( (this)->datamanager.get() );
    }
 
    std::ostream&
@@ -194,9 +195,9 @@ public:
                         const std::size_t align,
                         volatile bool &exit_alloc )
    {
-      if( (this)->dm.is_resizeable() )
+      if( (this)->datamanager.is_resizeable() )
       {
-         (this)->dm.resize( 
+         (this)->datamanager.resize( 
             new Buffer::Data< T, type >( size, align ), exit_alloc );
       }
       /** else, not resizeable..just return **/
@@ -236,10 +237,7 @@ public:
       /** nothing really to do **/
    }
    
-   virtual ~RingBuffer()
-   {
-      /** nothing really to do **/
-   }
+   virtual ~RingBuffer() = default;
    
    static FIFO* make_new_fifo( std::size_t n_items,
                                std::size_t align,
@@ -265,10 +263,7 @@ public:
       RingBufferBaseMonitor< T, Type::Infinite >( 1, align )
    {
    }
-   virtual ~RingBuffer()
-   {
-      /** nothing really to do **/
-   }
+   virtual ~RingBuffer() = default;
 
    static FIFO* make_new_fifo( std::size_t n_items,
                                std::size_t align,
@@ -293,12 +288,12 @@ public:
    RingBuffer( const std::size_t n, const std::size_t align = 16 ) : 
       RingBufferBase< T, Type::Infinite >()
    {
-      (this)->dm.set( new Buffer::Data<T, Type::Heap >( 1, 16 ) );
+      (this)->datamanager.set( new Buffer::Data<T, Type::Heap >( 1, 16 ) );
    }
 
    virtual ~RingBuffer()
    {
-      delete( (this)->dm.get() );
+      delete( (this)->datamanager.get() );
    }
 
    /**
@@ -353,14 +348,14 @@ public:
                RingBufferBase< T, Type::SharedMemory >(),
                                               shm_key( key )
    {
-      (this)->dm.set( 
+      (this)->datamanager.set( 
          new Buffer::Data< T, 
                            Type::SharedMemory >( nitems, key, dir, alignment ) );
    }
 
    virtual ~RingBuffer()
    {
-      delete( (this)->dm.get() );      
+      delete( (this)->datamanager.get() );      
    }
   
    struct Data
@@ -429,10 +424,7 @@ public:
       //TODO, fill in stuff here
    }
 
-   virtual ~RingBuffer()
-   {
-
-   }
+   virtual ~RingBuffer() = default;
    
    struct Data
    {

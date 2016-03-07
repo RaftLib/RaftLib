@@ -33,7 +33,7 @@ public:
     * pointers for the ring buffer.  This class encapsulates
     * wrapping.
     */
-   Pointer( const std::size_t cap );
+   constexpr Pointer( const std::size_t cap ) : max_cap( cap ){};
    
    Pointer( const std::size_t cap, 
             const wrap_t wrap_set );
@@ -71,11 +71,12 @@ public:
     * incBy - increments the current pointer poisition
     * by 'in' increments.  To be used for range insertion
     * and removal
+    * @param  ptr - Pointer * const
     * @param  in - const std::size_t
-    * @return  std::size_t, current increment after adding 'in'
+    * @return void
     */
-   static void incBy( const std::size_t in, 
-                      Pointer * const ptr ) ;
+   static void incBy( Pointer * const ptr,
+                      const std::size_t in );
 
    
    /**

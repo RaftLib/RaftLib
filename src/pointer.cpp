@@ -20,18 +20,17 @@
 #include <cstdint>
 #include <cstddef>
 #include "pointer.hpp"
-Pointer::Pointer(const std::size_t cap ) : max_cap( cap )
-{
-}
 
 Pointer::Pointer(const std::size_t cap, 
-                 const wrap_t wrap_set ) : wrap_a( wrap_set  ),
-                                           wrap_b( wrap_set  ),
-                                           max_cap( cap )
-{}
+                 const wrap_t wrap_set ) : Pointer( cap )
+{
+    wrap_a = wrap_set;
+    wrap_b = wrap_set;
+}
+
 
 Pointer::Pointer( Pointer * const other, 
-                  const std::size_t new_cap ) : max_cap( new_cap )
+                  const std::size_t new_cap ) : Pointer( new_cap )
 {
    const auto val(  Pointer::val( other ) );
    a = val;
@@ -48,7 +47,7 @@ Pointer::val( Pointer * const ptr )
    do{
       copy.a = ptr->a;
       copy.b = ptr->b;
-   }while( copy.a not_eq copy.b );
+   }while( copy.a !=  copy.b );
    return( copy.b );
 }
 
@@ -65,8 +64,8 @@ Pointer::inc( Pointer * const ptr )
 }
 
 void
-Pointer::incBy( const std::size_t in, 
-                Pointer * const ptr ) 
+Pointer::incBy( Pointer * const ptr, 
+                const std::size_t in )
 {
    ptr->a = ( ptr->a + in ) % ptr->max_cap;
    ptr->b = ( ptr->b + in ) % ptr->max_cap;
@@ -87,6 +86,6 @@ Pointer::wrapIndicator( Pointer * const ptr )
    do{
       copy.a = ptr->wrap_a;
       copy.b = ptr->wrap_b;
-   }while( copy.a not_eq copy.b );
+   }while( copy.a != copy.b );
    return( copy.b );
 }

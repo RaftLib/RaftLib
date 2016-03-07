@@ -36,6 +36,7 @@
 #include "datamanager.tcc"
 
 #include "kernelpreempt.hpp"
+#include "alloc_traits.tcc"
 
 namespace raft
 {
@@ -49,6 +50,17 @@ namespace raft
  * actively spin while waiting.
  */
 #define NICE 1
+
+template < class T,
+           Type::RingBufferType type,
+           class Enable = void >
+class RingBufferBase
+{
+public:
+    RingBufferBase() = delete;
+    virtual ~RingBufferBase() = delete;;
+};
+
 
 /** heap implementation, uses thread shared memory or SHM **/
 #include "ringbufferheap.tcc"

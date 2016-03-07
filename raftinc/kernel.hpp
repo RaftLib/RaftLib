@@ -161,7 +161,6 @@ private:
 
    /** for operator syntax **/
    std::queue< std::string > enabled_port;
-
 };
 
 

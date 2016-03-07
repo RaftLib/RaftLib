@@ -21,5 +21,7 @@ add_library( raft
              ${CPP_SRC_FILES} 
              ${C_SRC_FILES}   )
 
+target_link_libraries( raft )
+
 install( TARGETS raft
          ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib )

@@ -62,8 +62,7 @@ public:
                    /** hope the iterator defined overloaded ++ **/
                    ++inserter;
                 }
-                port.recycle( (*inserter), 
-                              avail_data  );
+                port.recycle( avail_data  );
             }
         }
         return( raft::proceed );

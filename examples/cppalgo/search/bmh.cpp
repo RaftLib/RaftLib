@@ -45,9 +45,7 @@ public:
       output.addPort< std::size_t >( "0" );
    }
 
-   virtual ~search()
-   {
-   }
+   virtual ~search() = default;
 
    virtual raft::kstatus run()
    {
@@ -69,7 +67,7 @@ public:
       }
       while( true );
       input[ "0" ].unpeek();
-      input[ "0" ].recycle( chunk );
+      input[ "0" ].recycle( );
       return( raft::proceed );
    }
 private:
@@ -80,15 +78,11 @@ private:
 int
 main( int argc, char **argv )
 {
-    if( argc < 2 )
-    {
-         std::cerr << "user must provide a file to search!\n";
-         exit( EXIT_FAILURE );
-    }
     using chunk = raft::filechunk< 256 >;
     using fr    = raft::filereader< chunk, false >;
     using search = search< chunk >;
     using print = raft::print< std::size_t, '\n'>;
+    
     const std::string term( "Alice" );
     raft::map m;
     
@@ -96,8 +90,7 @@ main( int argc, char **argv )
     search find( term );
     print p;
     
-    m += read >> find;
-    m += find >> p;
+    m += read >> find >> p;
     m.exe();
 
     return( EXIT_SUCCESS );

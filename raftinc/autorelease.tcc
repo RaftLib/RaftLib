@@ -73,7 +73,7 @@ public:
       if( ! copied )
       {
          fifo.unpeek();
-         fifo.recycle( item, 1 );
+         fifo.recycle();
       }
    }
 

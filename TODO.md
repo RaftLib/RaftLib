@@ -7,3 +7,8 @@ not necessarily essential for correctness.
 * add homebrew script/macports script to get dependencies for OS X
 * finish testing out on Windows
 
+##Object Functions
+
+* struct with ref. count,
+* larger run-time wide structure for storing the actual data, access to those as well
+* 

@@ -152,6 +152,7 @@ Schedule::kernelHasNoInputPorts( raft::kernel *kernel )
    return( true );
 }
 
+
 bool
 Schedule::kernelRun( raft::kernel * const kernel,
                      volatile bool       &finished,
@@ -177,4 +178,65 @@ Schedule::kernelRun( raft::kernel * const kernel,
       finished = true;
    }
    return( true );
+}
+
+void
+Schedule::setPtrSets( raft::kernel * const kernel,
+                      ptr_map_t    * const in,
+                      ptr_set_t    * const out,
+                      ptr_set_t    * const peekset )
+{
+    assert( in  != nullptr );
+    assert( out != nullptr );
+    assert( peekset != nullptr );
+    /**
+     * looks a bit odd initially, but the same 
+     * peekset is set for each kernel's FIFO's
+     * within the view of the kernel they'll be
+     * accessed sequentially so no contention
+     */
+    for( auto &port : kernel->input )
+    {
+        port.setPtrMap( in );
+        port.setInPeekSet( peekset );
+    }
+    for( auto &port : kernel->output )
+    {
+        port.setPtrSet( out );
+        port.setOutPeekSet( peekset );
+    }
+    return;
+}
+
+void
+Schedule::fifo_gc( ptr_map_t * const in,
+                   ptr_set_t * const out,
+                   ptr_set_t * const peekset )
+{
+    auto in_begin( in->begin() ), in_end( in->end() );
+    auto out_beg( out->begin() ), out_end( out->end() );
+    while( out_beg != out_end )
+    {
+        if( (*out_beg) != (*in_begin).first )
+        {
+            void *ptr = reinterpret_cast< void* >( (*in_begin).first );
+            (*in_begin).second( ptr );
+            ++in_begin;     
+        }
+        else
+        {
+            ++out_beg;
+            ++in_begin;
+        }
+    }
+    while( in_begin != in_end )
+    {
+            void *ptr = reinterpret_cast< void* >( (*in_begin).first );
+            (*in_begin).second( ptr );
+            ++in_begin;     
+    }
+    in->clear();
+    out->clear();
+    peekset->clear();
+    return;
 }

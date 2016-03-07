@@ -4,6 +4,37 @@ set( version 0.7a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
+##
+# c std
+##
+include( CheckSTD )
+
+set( HELPER_DIR ${CMAKE_SOURCE_DIR}/helpers )
+
+##
+# helper exec to get the L1 cache size from Linux/OS X/Win
+##
+execute_process( COMMAND ${CMAKE_CXX_COMPILER} ${HELPER_DIR}/cacheinfo.cpp -o ${HELPER_DIR}/cacheinfo)
+execute_process( COMMAND ${HELPER_DIR}/cacheinfo 
+                 COMMAND tr -d '\n' 
+                 OUTPUT_VARIABLE L1D_LINE_SIZE )
+execute_process( COMMAND rm -f ${HELPER_DIR}/cacheinfo )                 
+
+if( NOT L1D_LINE_SIZE )
+    set( L1D_LINE_SIZE 64 )
+    message( INFO "Couldn't detect cache line size, set to: ${L1D_LINE_SIZE}" )
+else( NOT L1D_LINE_SIZE )
+    message( INFO "Detected cache line size, set to: ${L1D_LINE_SIZE}" )
+endif( NOT L1D_LINE_SIZE )
+
+##
+# for cache line size
+##
+add_definitions( "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" ) 
+##
+# for tcmalloc
+##
+#add_definitions( "-fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free" )
 
 include_directories ( ${CMAKE_SOURCE_DIR}/raftinc )
 include_directories ( ${CMAKE_SOURCE_DIR} )
@@ -24,10 +55,6 @@ endif( BUILD_WOPENCV )
 # for random numbers too
 ##
 include( CheckBoostDep )
-##
-# c std
-##
-include( CheckSTD )
 
 ##
 # Set up unit tests
@@ -39,7 +66,20 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      partitionTest parallel peek
      bracketsTest uniform splitchain
      staticLongSplitChain staticSplitJoin 
-     staticSplitChainJoin staticJoin staticContJoin )
+     staticSplitChainJoin staticJoin staticContJoin
+     fitInCacheLine
+     isExtClass
+     doesntFitInCacheLine
+     isInlineClass
+     isExtArray
+     isExtAlloc 
+     isInlineNonClass 
+     allocateSendPush 
+     allocateSendRandomPush 
+     allocatePopPush 
+     allocatePopInternal
+     allocatePopInternalObject
+     allocatePopExternal )
 if( BUILDRANDOM )
     list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 
 endif( BUILDRANDOM )

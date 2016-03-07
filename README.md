@@ -16,8 +16,7 @@ Offline testing:
 ####OS X & Linux
 Compiler: c++11 capable -> Clang, GNU GCC 4.8+, or Intel icc
 Libraries: 
-* Boost, if not installed, needed hearders automatically downloaded with cmake
-
+* Boost, if not installed, needed headers automatically downloaded with cmake
 
 ####Windows
 In progress
@@ -25,7 +24,7 @@ In progress
 ### Install
 Make a build directory (for the instructions below, we'll 
 write [build]). If you want to build the OpenCV example, then
-you'll need to have the add
+you'll need to add
 ```bash
 -DBUILD_WOPENCV=true 
 ```
@@ -38,10 +37,11 @@ cmake ..
 make && make test
 sudo make install
 ```
-NOTE: The default prefix in the makefile is 
+NOTE: The default prefix in the makefile is: 
 ```
 PREFIX ?= /usr/local
 ```
+Feel free to substitute your favorite build tool. I use Ninja and make depending on which machine I'm on. To change out, use cmake to generate the appropriate build files with the -Gxxx flag.
 
 ###Citation
 If you use this framework for something that gets published, please cite it as:

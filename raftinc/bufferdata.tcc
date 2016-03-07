@@ -26,6 +26,7 @@
 #include <thread>
 #include <cinttypes>
 #include <iostream>
+#include <type_traits>
 #if defined __APPLE__ || defined __linux
 #include <sys/mman.h>
 #endif
@@ -35,6 +36,8 @@
 #include "signal.hpp"
 #include "database.tcc"
 
+#include "alloc_traits.tcc"
+
 #if BUILDSHM
 #include "shm.hpp"
 #endif
@@ -42,11 +45,15 @@
 namespace Buffer
 {
 
+template < class T,
+           Type::RingBufferType B,
+           class Enable = void > struct Data{};
 
 /** buffer structure for "heap" storage class **/
-template < class T, 
-           Type::RingBufferType B = Type::Heap, 
-           std::size_t SIZE = 0 > struct Data : public DataBase< T >
+template < class T > struct Data< T, 
+                                  Type::Heap, 
+               typename std::enable_if< inline_alloc< T >::value >::type >
+                    : public DataBase< T >
 {
 
    Data( T  * const ptr, 
@@ -77,7 +84,7 @@ template < class T,
    {
       int ret_val( 0 );
 
-#if (defined __LINUX__) || (defined __APPLE__ )
+#if (defined __linux ) || (defined __APPLE__ )
       ret_val = posix_memalign( (void**)&((this)->store), 
                                  align, 
                                 (this)->length_store );
@@ -99,7 +106,7 @@ template < class T,
       }
       assert( (this)->store != nullptr );
       
-#if (defined __LINUX__) || (defined __APPLE__ )
+#if (defined __linux ) || (defined __APPLE__ )
       posix_madvise( (this)->store, 
                      (this)->length_store,  
                      POSIX_MADV_SEQUENTIAL );
@@ -117,7 +124,15 @@ template < class T,
       (this)->read_pt   = new Pointer( max_cap );
       (this)->write_pt  = new Pointer( max_cap ); 
    }
-   
+  
+   /**
+    * copyFrom - invoke this function when you want to duplicate
+    * the FIFO's underlying data structure from one FIFO
+    * to the next. You can however no longer use the FIFO
+    * "other" unless you are very certain how the implementation
+    * works as very bad things might happen.
+    * @param other - DataBase< T >*, to be copied
+    */
    virtual void copyFrom( DataBase< T > *other )
    {
       //TODO, figure something better out for here 
@@ -161,7 +176,131 @@ template < class T,
       free( (this)->signal );
    }
 
-}; /** end heap **/
+}; /** end heap < Line Size **/
+
+/** buffer structure for "heap" storage class > line size **/
+template < class T > 
+            struct Data< T, 
+                         Type::Heap, 
+           typename std::enable_if< ext_alloc< T >::value >::type >
+                            : public DataBase< T* >
+{
+   using type_t = T*;
+   using ourtype_t = DataBase< type_t >;
+
+   Data( type_t const ptr, 
+         const std::size_t max_cap,
+         const std::size_t start_position ) : ourtype_t( max_cap )
+   {
+      assert( ptr != nullptr );
+      (this)->store  = reinterpret_cast< type_t* >( ptr );
+      (this)->signal = (Signal*)       calloc( 1,
+                                               sizeof( Signal ) );
+      if( (this)->signal == nullptr )
+      {
+         perror( "Failed to allocate signal queue!" );
+         exit( EXIT_FAILURE );
+      }
+      /** set index to be start_position **/
+      (this)->signal[ 0 ].index  = start_position; 
+      /** allocate read and write pointers **/
+      (this)->read_pt   = new Pointer( max_cap );
+      (this)->write_pt  = new Pointer( max_cap, 1 ); 
+      
+      (this)->external_alloc = true;
+   }
+
+
+   Data( const std::size_t max_cap , 
+         const std::size_t align = 16 ) : ourtype_t( max_cap )
+   {
+      int ret_val( 0 );
+
+#if (defined __linux ) || (defined __APPLE__ )
+      ret_val = posix_memalign( (void**)&((this)->store), 
+                                 align, 
+                                (this)->length_store );
+#elif 0 //defined _WINDOWS 
+//FIXME, we need to test this on Win sys before making live    
+      (this)->store = _aligned_malloc( align, (this)->length_store );
+#else
+      /** 
+       * would use the array allocate, but well...we'd have to 
+       * figure out how to free it
+       */
+      (this)->store = reinterpret_cast< type_t >( malloc( (this)->length_store ) );
+#endif
+      if( ret_val != 0 )
+      {
+         std::cerr << "posix_memalign returned error code (" << ret_val << ")";
+         std::cerr << " with message: \n" << strerror( ret_val ) << "\n";
+         exit( EXIT_FAILURE );
+      }
+      assert( (this)->store != nullptr );
+      
+#if (defined __linux ) || (defined __APPLE__ )
+      posix_madvise( (this)->store, 
+                     (this)->length_store,  
+                     POSIX_MADV_SEQUENTIAL );
+#endif
+      errno = 0;
+      (this)->signal = (Signal*)       calloc( (this)->max_cap,
+                                               sizeof( Signal ) );
+      if( (this)->signal == nullptr )
+      {
+         perror( "Failed to allocate signal queue!" );
+         exit( EXIT_FAILURE );
+      }
+      /** allocate read and write pointers **/
+      /** TODO, see if there are optimizations to be made with sizing and alignment **/
+      (this)->read_pt   = new Pointer( max_cap );
+      (this)->write_pt  = new Pointer( max_cap ); 
+   }
+   
+   virtual void copyFrom( ourtype_t *other )
+   {
+      //TODO, figure something better out for here 
+      if( other->external_alloc )
+      {
+         assert( false );
+      }
+      delete( (this)->read_pt );
+      (this)->read_pt = new Pointer( (other->read_pt),   (this)->max_cap );
+      delete( (this)->write_pt );
+      (this)->write_pt = new Pointer( (other->write_pt), (this)->max_cap );
+
+      (this)->src_kernel = other->src_kernel;
+      (this)->dst_kernel = other->dst_kernel;
+      
+      (this)->is_valid = other->is_valid;
+
+      /** buffer is already alloc'd, copy **/
+      std::memcpy( (void*)(this)->store /* dst */,
+                   (void*)other->store  /* src */,
+                   other->length_store );
+      /** copy signal buff **/
+      std::memcpy( (void*)(this)->signal /* dst */,
+                   (void*)other->signal  /* src */,
+                   other->length_signal );
+      /** everything should be put back together now **/
+   }
+
+
+   virtual ~Data()
+   {
+      //DELETE USED HERE
+      delete( (this)->read_pt );
+      delete( (this)->write_pt );
+      
+      //FREE USED HERE
+      if( ! (this)->external_alloc )
+      {
+         free( (this)->store );
+      }
+      free( (this)->signal );
+   }
+
+}; /** end heap > Line Size **/
 
 #if BUILDSHM
 template < class T > struct Data< T, Type::SharedMemory > : 

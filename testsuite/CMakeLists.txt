@@ -18,7 +18,20 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      bracketsTest uniform chain 
      splitchain staticLongSplitChain 
      staticSplitJoin staticSplitChainJoin 
-     staticJoin staticContJoin )
+     staticJoin staticContJoin 
+     fitInCacheLine
+     isExtClass
+     doesntFitInCacheLine
+     isInlineClass
+     isExtArray
+     isExtAlloc 
+     isInlineNonClass 
+     allocateSendPush 
+     allocateSendRandomPush 
+     allocatePopPush 
+     allocatePopInternal 
+     allocatePopInternalObject
+     allocatePopExternal )
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 
@@ -28,5 +41,7 @@ include_directories(  ${GSL_INCLUDE_DIRS} )
 
 foreach( APP ${TESTAPPS} )
  add_executable( ${APP} "${APP}.cpp" )
- target_link_libraries( ${APP} raft  ${GSL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_RT_LIBS})
+ target_link_libraries( ${APP} raft  ${GSL_LIBRARIES} 
+                                     ${CMAKE_THREAD_LIBS_INIT} 
+                                     ${CMAKE_RT_LIBS} )
 endforeach( APP ${TESTAPPS} )

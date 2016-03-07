@@ -281,10 +281,10 @@ protected:
          std::make_pair( true /** yes instrumentation **/,
                          RingBuffer< T, Type::Heap, true >::make_new_fifo ) );
 
-      pi.const_map.insert( std::make_pair( Type::SharedMemory, new instr_map_t() ) );
-      pi.const_map[ Type::SharedMemory ]->insert(
-         std::make_pair( false /** no instrumentation **/,
-                         RingBuffer< T, Type::SharedMemory >::make_new_fifo ) );
+      //pi.const_map.insert( std::make_pair( Type::SharedMemory, new instr_map_t() ) );
+      //pi.const_map[ Type::SharedMemory ]->insert(
+      //   std::make_pair( false /** no instrumentation **/,
+      //                   RingBuffer< T, Type::SharedMemory >::make_new_fifo ) );
       /**
        * NOTE: If you define more port resource types, they have
        * to be defined here...otherwise the allocator won't be

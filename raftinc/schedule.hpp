@@ -25,6 +25,7 @@
 #include "rafttypes.hpp"
 #include <set>
 #include "kernelkeeper.tcc"
+#include "defs.hpp"
 
 namespace raft {
    class kernel;
@@ -142,6 +143,32 @@ protected:
     */
    static bool kernelHasNoInputPorts( raft::kernel *kernel );
 
+   
+   /**
+    * setPtrSets - add the tracking object from the
+    * sub-class to track input/output ptrs in flight 
+    * by the kernel. The structure will be the same
+    * across all in and output FIFOs, since from within
+    * a "kernel" each fifo is accessed with sequential
+    * consistency we won't need any fancy locking structures.
+    * on each kernel firing, these structures should be
+    * checked to see if any allocated objects (the only
+    * ones to be put in these sets, need to be "garbage
+    * collected"
+    * @param kernel - raft::kernel* the one we're registering
+    * @param in     - set_t*, the input set
+    * @param out    - set_t*, the output set
+    * @return void
+    */
+   static void setPtrSets( raft::kernel * const kernel,
+                           ptr_map_t    * const in,
+                           ptr_set_t    * const out,
+                           ptr_set_t    * const peekset );
+
+   
+   static void fifo_gc( ptr_map_t * const in,
+                        ptr_set_t * const out,
+                        ptr_set_t * const peekset );
    /**
     * signal handlers
     */

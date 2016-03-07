@@ -30,6 +30,8 @@
 #include "rafttypes.hpp"
 #include "affinity.hpp"
 
+#include "defs.hpp"
+
 #ifdef CORE_ASSIGN
 extern std::map< std::uintptr_t, int > *core_assign;
 #endif
@@ -63,7 +65,6 @@ simple_schedule::start()
       thread_map.emplace_back( th_info );
    }
    kernel_set.release();
-
    bool keep_going( true );
    while( keep_going )
    {
@@ -118,7 +119,7 @@ simple_schedule::handleSchedule( raft::kernel * const kernel )
        * kernel is done, it can be rescheduled...and this
        * handles that.
        */
-      while( not thread_map_mutex.try_lock() )
+      while( ! thread_map_mutex.try_lock() )
       {
          std::this_thread::yield();
       }
@@ -131,14 +132,25 @@ simple_schedule::handleSchedule( raft::kernel * const kernel )
 void
 simple_schedule::simple_run( void * data ) 
 {
+   assert( data != nullptr );
    auto * const thread_d( reinterpret_cast< thread_data* >( data ) );
+   ptr_map_t in;
+   ptr_set_t out;
+   ptr_set_t peekset;
+
+   Schedule::setPtrSets( thread_d->k, 
+                        &in, 
+                        &out,
+                        &peekset );
    if( thread_d->loc != -1 )
    {
       /** call does nothing if not available **/
       affinity::set( thread_d->loc );
    }
-   while( not *(thread_d->finished) )
+   while( ! *(thread_d->finished) )
    {
       Schedule::kernelRun( thread_d->k, *(thread_d->finished) );
+      //takes care of peekset clearing too
+      Schedule::fifo_gc( &in, &out, &peekset );
    }
 }

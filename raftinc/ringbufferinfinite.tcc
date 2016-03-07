@@ -19,23 +19,23 @@
  */
 #ifndef _RINGBUFFERINFINITE_TCC_
 #define _RINGBUFFERINFINITE_TCC_  1
+#include "alloc_traits.tcc"
 
-template < class T > class RingBufferBase< T, Type::Infinite > : 
-   public FIFOAbstract< T, Type::Infinite >
+template < class T >
+class RingBufferBase< T, Type::Infinite, 
+           typename std::enable_if< inline_nonclass_alloc< T >::value >::type >
+: public FIFOAbstract< T, Type::Infinite >
 {
 public:
    /**
     * RingBuffer - default constructor, initializes basic
     * data structures.
     */
-   RingBufferBase() : FIFOAbstract< T, Type::Infinite >(),
-                      write_finished( false )
+   RingBufferBase() : FIFOAbstract< T, Type::Infinite >()
    {
    }
    
-   virtual ~RingBufferBase()
-   {
-   }
+   virtual ~RingBufferBase() = default;
 
 
    /**
@@ -70,7 +70,7 @@ public:
     */
    virtual std::size_t   space_avail()
    {
-      return( dm.get()->max_cap );
+      return( (this)->datamanager.get()->max_cap );
    }
 
   
@@ -81,7 +81,7 @@ public:
     */
    virtual std::size_t   capacity()
    {
-      return( dm.get()->max_cap );
+      return( (this)->datamanager.get()->max_cap );
    }
 
    
@@ -95,8 +95,8 @@ public:
    virtual void send( const raft::signal signal = raft::none )
    {
       if( ! (this)->allocate_called ) return;
-      dm.get()->signal[ 0 ].sig = signal;
-      write_stats.count += (this)->n_allocated;
+      (this)->datamanager.get()->signal[ 0 ].sig = signal;
+      (this)->write_stats.count += (this)->n_allocated;
       (this)->allocate_called = false;
       (this)->n_allocated = 1;
    }
@@ -111,19 +111,19 @@ public:
     */
    virtual void recycle( const std::size_t range = 1 )
    {
-      read_stats.count += range;
+      (this)->read_stats.count += range;
    }
 
    virtual void get_zero_read_stats( Blocked &copy )
    {
-      copy.all       = read_stats.all;
-      read_stats.all = 0;
+      copy.all       = (this)->read_stats.all;
+      (this)->read_stats.all = 0;
    }
 
    virtual void get_zero_write_stats( Blocked &copy )
    {
-      copy.all       = write_stats.all;
-      write_stats.all = 0;
+      copy.all       = (this)->write_stats.all;
+      (this)->write_stats.all = 0;
    }
 
 protected:
@@ -131,7 +131,7 @@ protected:
    virtual void  local_allocate( void **ptr )
    {
       (this)->allocate_called = true;
-      *ptr = (void*)&(dm.get()->store[ 0 ]);
+      *ptr = (void*)&((this)->datamanager.get()->store[ 0 ]);
    }
 
    virtual std::size_t local_allocate_n( void *ptr, const std::size_t n )
@@ -140,7 +140,7 @@ protected:
       auto *container( reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
       for( std::size_t index( 0 ); index < output; index++ )
       {
-         container->push_back( dm.get()->store[ 0 ] );
+         container->push_back( (this)->datamanager.get()->store[ 0 ] );
       }
       (this)->allocate_called = true;
       (this)->n_allocated     = output;
@@ -150,10 +150,10 @@ protected:
    virtual void  local_push( void *ptr, const raft::signal &signal )
    {
       T *item (reinterpret_cast< T* >( ptr ) );
-      dm.get()->store [ 0 ]  = *item;
+      (this)->datamanager.get()->store [ 0 ]  = *item;
       /** a bit awkward since it gives the same behavior as the actual queue **/
-      dm.get()->signal[ 0 ].sig  = signal;
-      write_stats.count++;
+      (this)->datamanager.get()->signal[ 0 ].sig  = signal;
+      (this)->write_stats.count++;
    }
 
    template< class iterator_type >
@@ -163,11 +163,11 @@ protected:
    {
       while( begin != end )
       {
-         dm.get()->store[ 0 ] = (*begin);
+         (this)->datamanager.get()->store[ 0 ] = (*begin);
          begin++;
-         write_stats.count++;
+         (this)->write_stats.count++;
       }
-      dm.get()->signal[ 0 ].sig = signal;
+      (this)->datamanager.get()->signal[ 0 ].sig = signal;
       return;
    }
    
@@ -212,12 +212,12 @@ protected:
    virtual void local_pop( void *ptr, raft::signal *signal )
    {
       T *item( reinterpret_cast< T* >( ptr ) );
-      *item  = dm.get()->store[ 0 ];
+      *item  = (this)->datamanager.get()->store[ 0 ];
       if( signal != nullptr )
       {
-         *signal = dm.get()->signal[ 0 ].sig;
+         *signal = (this)->datamanager.get()->signal[ 0 ].sig;
       }
-      read_stats.count++;
+      (this)->read_stats.count++;
    }
   
    virtual void local_pop_range( void *ptr_data,
@@ -231,15 +231,15 @@ protected:
       {
          for( size_t i( 0 ); i < n_items; i++ )
          {
-            items [ i ]  = dm.get()->store [ 0 ];
-            signal[ i ]  = dm.get()->signal[ 0 ].sig;
+            items [ i ]  = (this)->datamanager.get()->store [ 0 ];
+            signal[ i ]  = (this)->datamanager.get()->signal[ 0 ].sig;
          }
       }
       else
       {
          for( size_t i( 0 ); i < n_items; i++ )
          {
-            items [ i ]  = dm.get()->store [ 0 ];
+            items [ i ]  = (this)->datamanager.get()->store [ 0 ];
          }
       }
    }
@@ -247,20 +247,11 @@ protected:
 
    virtual void local_peek( void **ptr, raft::signal  *signal )
    {
-      *ptr = (void*)&( dm.get()->store[ 0 ] );
+      *ptr = (void*)&( (this)->datamanager.get()->store[ 0 ] );
       if( signal != nullptr )
       {
-         *signal = dm.get()->signal[  0  ].sig;
+         *signal = (this)->datamanager.get()->signal[  0  ].sig;
       }
    }
-
-   /** go ahead and allocate a buffer as a heap, doesn't really matter **/
-   DataManager< T, Type::Heap >       dm;
-   
-   /** note, these need to get moved into the data struct **/
-   volatile Blocked                             read_stats;
-   volatile Blocked                             write_stats;
-   
-   volatile bool                                write_finished;
 };
 #endif /* END _RINGBUFFERINFINITE_TCC_ */

@@ -46,7 +46,7 @@ public:
       if( split_func.send( range, output ) )
       {
          /* recycle item */
-         output_port.recycle( range[ 0 ], avail );
+         output_port.recycle( avail );
       }
       else
       {

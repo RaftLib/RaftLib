@@ -41,3 +41,27 @@ FIFO::get_zero_write_stats( Blocked &copy )
    /** default version does nothing at all **/
    return;
 }
+
+void
+FIFO::setPtrMap( ptr_map_t * const in )
+{
+    return;
+}
+
+void
+FIFO::setPtrSet( ptr_set_t * const out )
+{
+    return;
+}
+
+void
+FIFO::setInPeekSet( ptr_set_t * const peekset )
+{
+    return;
+}
+
+void
+FIFO::setOutPeekSet( ptr_set_t * const peekset )
+{
+    return;
+}
