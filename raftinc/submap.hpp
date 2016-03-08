@@ -36,8 +36,10 @@ namespace raft
 class submap : public MapBase
 {
 public:
-   submap();
-   virtual ~submap();
+    submap();
+    virtual ~submap();
+
+   
 
 protected:
    friend class map;
@@ -48,5 +50,6 @@ protected:
    std::map< std::string,
              raft::kernel* > output;
 };
+
 } /** end namespace raft **/
 #endif /* END _SUBMAP_HPP_ */

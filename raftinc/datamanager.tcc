@@ -24,6 +24,7 @@
 #include <array>
 #include <thread>
 #include <atomic>
+#include <cstdint>
 
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
@@ -61,7 +62,7 @@ public:
     * object.
     * @param   buffer - Buffer::Data< T, B >
     */
-   void set( Buffer::Data< T, B > *buffer )
+   void set( Buffer::Data< T, B > * const buffer ) noexcept 
    {
       assert( buffer != nullptr );
       (this)->buffer = buffer;
@@ -69,7 +70,7 @@ public:
       resizeable     = (  buffer->external_alloc ? false : true ); 
    }
 
-   bool is_resizeable()
+   inline bool is_resizeable() noexcept 
    {
       return( resizeable );
    }
@@ -94,16 +95,16 @@ public:
        * if all fifo functions have completed
        * their operations.
        */
-      auto allclear = [&]() -> bool
+      auto allclear = [&]() noexcept -> bool
       {
-         for( auto &flag_array : thread_access )
+         for( const auto &flag_array : thread_access )
          {
             if( flag_array.whole != 0 )
             {
                return( false );
             }
          }
-         if( checking_size not_eq 0 )
+         if( checking_size.load( std::memory_order_relaxed ) != 0 )
          {
             return( false );
          }
@@ -115,7 +116,7 @@ public:
        * current buffer state is amenable to
        * expanding.
        */
-      auto buffercondition = [&]() -> bool
+      auto buffercondition = [&]() noexcept -> bool
       {
          /** 
           * there's only a few conditions that you can copy
@@ -138,7 +139,7 @@ public:
       for(;;)
       {
          /** check to see if program is done **/
-         if( exit_buffer /** comes from allocator **/ or
+         if( exit_buffer /** comes from allocator **/ |
              ! old_buffer->is_valid  /** comes indirectly from scheduler **/ )
          {
             /** get rid of newly allocated buff, don't need **/
@@ -190,7 +191,7 @@ public:
    void enterBuffer( const dm::access_key key ) noexcept
    {
       /** see lambda below **/
-      set_helper( key, 1 );
+      set_helper( key, static_cast< dm::key_t >( 1 ) );
    }
 
    /**
@@ -229,10 +230,10 @@ private:
          std::uint64_t whole = 0; /** just in case, default zero **/
          dm::key_t     flag[ 8 ];
       };
-      std::uint8_t padding[ 56 /** 64 - 8, 64 byte padding **/ ];
+      std::uint8_t padding[ L1D_CACHE_LINE_SIZE - 8 /** 64 byte padding **/ ];
    } 
 #if defined __APPLE__ || defined __linux   
-    __attribute__((aligned(64))) 
+    __attribute__((aligned( L1D_CACHE_LINE_SIZE ))) 
 #endif    
     volatile thread_access[ 2 ];
   
@@ -276,7 +277,14 @@ private:
          case( dm::size ):
          {
             /** this one has to be atomic, multiple updaters **/
-            checking_size = val; 
+            if( val == 0 )
+            {
+                checking_size.fetch_sub( 1, std::memory_order_relaxed );
+            }
+            else
+            {
+                checking_size.fetch_add( 1, std::memory_order_relaxed );
+            }
          }
          break;
          default:
