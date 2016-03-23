@@ -17,7 +17,7 @@ cache:
 
 env:
     global:
-        - GCC_VERSION=6
+        - GCC_VERSION=5
         - CXXFLAGS=-std=c++14
         - CFLAGS=-std=c99
 
@@ -39,8 +39,8 @@ addons:
       - llvm-toolchain-precise
     packages:
 # ensure these match GCC_VERSION
-      - gcc-6
-      - g++-6
+      - gcc-5
+      - g++-5
       - binutils
       - gawk
       - build-essential
