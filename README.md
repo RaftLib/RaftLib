@@ -6,10 +6,10 @@ RaftLib is a C++ Library for enabling stream/data-flow parallel computation. Usi
 [![Build Status](https://travis-ci.org/jonathan-beard/RaftLib.svg?branch=master)](https://travis-ci.org/jonathan-beard/RaftLib)
 
 CI Test environment:
-* Linux - kernel v. 3.13, Ubuntu 5.2.1-23ubuntu1~12.04, (gcc-5.2.1/Clang 3.7), CMake 3.4
+* Linux - kernel v. 3.13, Ubuntu 5.2.1-23ubuntu1~12.04, (gcc-5.2.1/Clang 3.7.1), CMake 3.5
 
 Offline testing:
-* OS X - El Capitan, Apple LLVM version 7.0.0, CMake 3.4
+* OS X - El Capitan, Apple LLVM version 7.0.2, CMake 3.5
 
 ### Pre-requisites
 
