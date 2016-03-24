@@ -31,7 +31,9 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      allocatePopPush 
      allocatePopInternal 
      allocatePopInternalObject
-     allocatePopExternal )
+     allocatePopExternal 
+     prefetchEffective 
+     parallelchain )
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 

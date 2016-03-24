@@ -26,6 +26,7 @@
 #include "scheduleconst.hpp"
 #include "defs.hpp"
 #include "alloc_traits.tcc"
+#include "prefetch.hpp"
 
 #ifndef NICE
 #define NICE 1
@@ -1530,7 +1531,15 @@ protected:
       }
       //actual pointer
       auto ***real_ptr( reinterpret_cast< T*** >( ptr ) );
-      *real_ptr = reinterpret_cast< T** >( &( buff_ptr->store[ read_index ] ) ); 
+      *real_ptr = reinterpret_cast< T** >( &( buff_ptr->store[ read_index ] ) );
+      /** prefetch first 1024  bytes **/
+      //probably need to optimize this for each arch / # of 
+      //threads
+      raft::prefetch< raft::READ, 
+                      raft::LOTS,
+                      sizeof( T ) < sizeof( std::uintptr_t ) << 7 ?
+                      sizeof( T ) : sizeof( std::uintptr_t ) << 7
+                      >( **real_ptr );
       (this)->in_peek->insert( reinterpret_cast< ptr_t >( **real_ptr ) );
       return;
       /** 

@@ -130,7 +130,7 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
                               a.my_kernel->dup_enabled = true; 
                            }
                            /** parallalizable source, single output no inputs**/
-                           else if( a.my_kernel->input.count() == 0 and
+                           else if( a.my_kernel->input.count() == 0 &&
                                     a.my_kernel->output.count() == 1 )
                            {
                               auto *join( static_cast< raft::kernel* >( a.join_func() ) );
@@ -141,7 +141,7 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
                               a.my_kernel->dup_enabled = true; 
                            }
                            /** parallelizable sink, single input, no outputs **/
-                           else if( b.my_kernel->input.count() == 1 and
+                           else if( b.my_kernel->input.count() == 1 &&
                                     b.my_kernel->output.count() == 0 )
                            {
                               auto *split( 
@@ -176,20 +176,64 @@ raft::map::joink( kpair * const next )
         /** might be able to do better by re-doing with templates **/
         if( next->has_src_name && next->has_dst_name )
         {
-            (this)->link( next->src, next->src_name,
-                          next->dst, next->dst_name );
+            if( next->out_of_order )
+            {
+                (this)->link< raft::order::out >( next->src, 
+                                                  next->src_name,
+                                                  next->dst, 
+                                                  next->dst_name );
+            }
+            else
+            {
+                (this)->link( next->src, 
+                              next->src_name,
+                              next->dst, 
+                              next->dst_name );
+
+            }
         }
         else if( next->has_src_name && ! next->has_dst_name )
         {
-            (this)->link( next->src, next->src_name, next->dst );
+            if( next->out_of_order )
+            {
+                (this)->link< raft::order::out >( next->src, 
+                                                  next->src_name, 
+                                                  next->dst );
+            }
+            else
+            {
+                (this)->link( next->src, 
+                              next->src_name, 
+                              next->dst );
+            }
         }
         else if( ! next->has_src_name && next->has_dst_name )
         {
-            (this)->link( next->src, next->dst, next->dst_name );
+            if( next->out_of_order )
+            {
+                (this)->link< raft::order::out >( next->src, 
+                                                  next->dst, 
+                                                  next->dst_name );
+            }
+            else
+            {
+                (this)->link( next->src, 
+                              next->dst, 
+                              next->dst_name );
+            }
         }
         else /** single input, single output, hopefully **/
         {
-            (this)->link( next->src, next->dst );
+            if( next->out_of_order )
+            {
+                (this)->link< raft::order::out >( next->src, 
+                                                  next->dst );
+            }
+            else
+            {
+                (this)->link( next->src, 
+                              next->dst );
+            }
         }
 }
 
@@ -529,9 +573,6 @@ raft::map::inline_dup_join( kernels_t &groups,
     temp_groups.push_back( up_group_t( new group_t() ) );
     up_group_t &gp( groups[ 0 ] );
     const auto dest_in_count( next->dst_in_count );
-    
-    
-    
     for( auto port_it( next->dst->input.begin() ); 
         port_it != next->dst->input.end(); ++port_it )
     {

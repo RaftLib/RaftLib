@@ -27,7 +27,7 @@ namespace raft{
 template < class T, class method = roundrobin  > class join : public raft::parallel_k
 {
 public:
-   join( const std::size_t num_ports = 1 )
+   join( const std::size_t num_ports = 1 ) : parallel_k()
    {
       output.addPort< T >( "0" );
       for( auto it( 0 ); it < num_ports; it++ )

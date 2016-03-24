@@ -24,7 +24,8 @@
 #include <cstddef>
 #include <typeinfo>
 #include <functional>
-
+#include <type_traits>
+#include <cassert>
 
 namespace raft{
 
@@ -51,10 +52,11 @@ public:
     {
         for( auto &port : input )
         {
-            if( port.size() > 0 )
+            const auto avail_data( port.size() );
+            static_assert( std::is_unsigned< decltype( avail_data ) >::value,
+                            "avail_data size must be unsigned" );
+            if( avail_data != 0 )
             {
-                /** get all info avail **/
-                const auto avail_data( port.size() );
                 auto alldata( port.template peek_range< T >( avail_data ) );
                 for( auto index( 0 ); index < avail_data; index++ )
                 {

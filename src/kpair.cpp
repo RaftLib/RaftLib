@@ -2,7 +2,7 @@
 
 #include "kpair.hpp"
 #include "kernel.hpp"
-
+#include "portorder.hpp"
 
 kpair::kpair( raft::kernel &a, 
               raft::kernel &b,
@@ -75,6 +75,13 @@ kpair::kpair( raft::kernel &a, raft::kernel &b )
     head = this;
 }
 
+void 
+kpair::setOoO() noexcept
+{
+    (this)->out_of_order = true;
+    return;
+}
+
 kpair& 
 operator >> ( raft::kernel &a, raft::kernel &b )
 {
@@ -102,6 +109,70 @@ operator >> ( kpair &a, raft::kernel &&b )
     auto *ptr( new kpair( a, b, false, false ) );
     return( *ptr );
 }
+
+LOoOkpair&
+operator >> ( raft::kernel &a, const raft::order::spec &&order )
+{
+    auto *ptr( new LOoOkpair( a ) );
+    return( *ptr );
+}
+
+kpair&
+operator >> ( LOoOkpair &a, raft::kernel &b )
+{
+    auto *ptr( 
+        new kpair( a.kernel, 
+                   b, 
+                   false, 
+                   false ) 
+    );
+    delete( &a );
+    ptr->setOoO();
+    return( *ptr );
+}
+
+
+kpair&
+operator >> ( LOoOkpair &a, raft::kernel &&b )
+{
+    auto *ptr( 
+        new kpair( a.kernel, b, false, false ) 
+    );
+    delete( &a );
+    ptr->setOoO();
+    return( *ptr );
+}
+
+
+ROoOkpair& 
+operator >> ( kpair &a, const raft::order::spec &&order )
+{
+    auto *ptr( new ROoOkpair( a ) );
+    return( *ptr );
+}
+
+kpair&
+operator >> ( ROoOkpair &a, raft::kernel &b )
+{
+    auto * ptr(
+        new kpair( a.other, b, false, false )
+    );
+    delete( &a );
+    ptr->setOoO();
+    return( *ptr );
+}
+
+kpair&
+operator >> ( ROoOkpair &a, raft::kernel &&b )
+{
+    auto * ptr(
+        new kpair( a.other, b, false, false )
+    );
+    delete( &a );
+    ptr->setOoO();
+    return( *ptr );
+}
+
 
 kpair&
 operator <= ( raft::kernel &a, raft::kernel &b )

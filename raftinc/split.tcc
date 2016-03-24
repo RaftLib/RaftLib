@@ -26,7 +26,7 @@ namespace raft {
 template < class T, class method = roundrobin > class split : public raft::parallel_k
 {
 public:
-   split( const std::size_t num_ports = 1 )
+   split( const std::size_t num_ports = 1 ) : parallel_k()
    {
       input.addPort< T >( "0" );
       for( auto it( 0 ); it < num_ports; it++ )

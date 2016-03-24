@@ -110,7 +110,7 @@ public:
     * the port_info struct
     * @param   k  - raft::kernel*
     */
-   Port( raft::kernel *k );
+   Port( raft::kernel * const k );
    
    /**
     * Port - constructor used to construct a port with 
@@ -120,12 +120,15 @@ public:
     * @param   ptr - void*
     * @param   nbytes - const std::size_t length in bytes
     */
-   Port( raft::kernel *k, void * const ptr, const std::size_t nbytes );
+   Port( raft::kernel * const k, 
+         void * const ptr, 
+         const std::size_t nbytes );
+
    /**
     * ~Port - destructor, deletes the FIFO that was given
     * when the object was initalized.
     */
-   virtual ~Port();
+   virtual ~Port() = default;
 
   
    /**
@@ -171,6 +174,7 @@ public:
          pi.my_kernel = kernel;
          const std::string name( std::to_string( index ) );
          pi.my_name   = name;
+         /** gotta initialize the maps to copy stuff to/from **/
          (this)->initializeConstMap< T >( pi );
          (this)->initializeSplit<    T >( pi );
          (this)->initializeJoin<     T >( pi );

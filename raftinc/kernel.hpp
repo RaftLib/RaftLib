@@ -106,6 +106,7 @@ public:
    }
 
    std::size_t get_id();
+   
    /**
     * operator[] - returns the current kernel with the 
     * specified port name enabled for linking.

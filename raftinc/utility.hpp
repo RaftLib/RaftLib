@@ -55,12 +55,13 @@ template < typename A,
            typename std::enable_if< std::is_arithmetic< A >::value >::type* = nullptr,
            typename std::enable_if< std::is_arithmetic< B >::value >::type* = nullptr > 
 static
+constexpr
 common_v_t< A, B >
 range( const A a, 
        const B b, 
        const common_t< A, B > delta = 1 )
 {
-  if( a < b )
+  if( std::isless( a, b ) )
   {
      const auto cap( (b - a + delta) / delta );
      common_v_t< A, B > out( cap );
@@ -70,7 +71,7 @@ range( const A a,
      {
         out[ index ] = i;
      }
-     return( out );
+     return( std::move( out ) );
   }
   else
   {
@@ -82,7 +83,7 @@ range( const A a,
      {
         out[ index ] = i;
      }
-     return( out );
+     return( std::move( out ) );
   }
 }
 }

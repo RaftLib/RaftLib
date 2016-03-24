@@ -64,8 +64,8 @@ public:
     }
 
 private:
-    Iterator begin;
-    Iterator end;
+    Iterator       begin;
+    const Iterator end;
 }; /** end template readeach **/
 
 template < class T, 

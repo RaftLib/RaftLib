@@ -36,9 +36,14 @@ main( int argc, char **argv )
   using gen   = raft::test::generate< type_t >;
   using p_gen = raft::print< type_t  , '\n' >;
   raft::map m;
-  m.link< order::out >(
-     raft::kernel::make< gen >( count ),
-     raft::kernel::make< p_gen >( std::cout ) );
+  //old syntax
+  gen g( count );
+  p_gen p( std::cout );
+
+  m += g >> raft::order::out >> p;
+  //m.link< order::out >(
+  //   raft::kernel::make< gen >( count ),
+  //   raft::kernel::make< p_gen >( std::cout ) );
   m.exe();
   return( EXIT_SUCCESS );
 }

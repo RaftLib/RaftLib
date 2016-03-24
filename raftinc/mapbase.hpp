@@ -45,6 +45,7 @@
 #include "dynalloc.hpp"
 #include "stdalloc.hpp"
 #include "kpair.hpp"
+#include "portorder.hpp"
 
 /**
  * kernel_pair_t - struct to be returned by mapbase link functions,
@@ -54,13 +55,14 @@
 class kernel_pair_t
 {
 public:
-   kernel_pair_t( raft::kernel *a, raft::kernel *b ) : 
+   constexpr kernel_pair_t( raft::kernel *a, 
+                            raft::kernel *b ) : 
                                            src( a ),
                                            dst( b )
    {
    }
 
-   kernel_pair_t( const kernel_pair_t &other ) : src( other.src ),
+   constexpr kernel_pair_t( const kernel_pair_t &other ) : src( other.src ),
                                                  dst( other.dst )
    {
    }
@@ -72,12 +74,12 @@ public:
       return( *this );
    }
 
-   raft::kernel& getSrc()
+   raft::kernel& getSrc() noexcept 
    {
       return( *src );
    }
 
-   raft::kernel& getDst()
+   raft::kernel& getDst() noexcept
    {
       return( *dst );
    }
@@ -88,16 +90,6 @@ private:
    raft::kernel *dst = nullptr;
 };
 
-
-/**
- * spec is used when specifying the order of items within the queue,
- * by default in order is specified, in the future out wil be fully
- * implemented and will allow quite a few nice optimizations.
- */
-namespace order
-{
-   enum spec  { in, out };
-}
 
 class MapBase
 {
@@ -129,7 +121,7 @@ public:
     *          a single port to link.
     * @return  kernel_pair_t - references to src, dst kernels.
     */
-   template < order::spec t = order::in >
+   template < raft::order::spec t = raft::order::in >
       kernel_pair_t link( raft::kernel *a, 
                           raft::kernel *b,
                           const std::size_t buffer = 0 )
@@ -178,7 +170,7 @@ public:
     *          a_port.
     * @return  kernel_pair_t - references to src, dst kernels.
     */
-   template < order::spec t = order::in > 
+   template < raft::order::spec t = raft::order::in > 
       kernel_pair_t link( raft::kernel *a, 
                           const std::string  a_port, 
                           raft::kernel *b,
@@ -219,7 +211,7 @@ public:
     *          has no input port named b_port
     * @return  kernel_pair_t - references to src, dst kernels.
     */
-   template < order::spec t = order::in >
+   template < raft::order::spec t = raft::order::in >
       kernel_pair_t link( raft::kernel *a, 
                           raft::kernel *b, 
                           const std::string b_port,
@@ -259,7 +251,7 @@ public:
     *          is missing port a_port or b_port.
     * @return  kernel_pair_t - references to src, dst kernels.
     */
-   template < order::spec t = order::in >
+   template < raft::order::spec t = raft::order::in >
       kernel_pair_t link( raft::kernel *a, 
                           const std::string a_port, 
                           raft::kernel *b, 
@@ -309,8 +301,8 @@ protected:
     * @param    port_info_a, PortInfo&
     * @param    port_info_b, PortInfo&
     */
-   template < order::spec t,
-              typename std::enable_if< t == order::in >::type* = nullptr > 
+   template < raft::order::spec t,
+              typename std::enable_if< t == raft::order::in >::type* = nullptr > 
    static
    void set_order( PortInfo &port_info_a, 
                    PortInfo &port_info_b ) noexcept
@@ -326,8 +318,8 @@ protected:
     * @param    port_info_a, PortInfo&
     * @param    port_info_b, PortInfo&
     */
-   template < order::spec t,
-              typename std::enable_if< t == order::out >::type* = nullptr > 
+   template < raft::order::spec t,
+              typename std::enable_if< t == raft::order::out >::type* = nullptr > 
    static 
    void set_order( PortInfo &port_info_a, 
                    PortInfo &port_info_b ) noexcept

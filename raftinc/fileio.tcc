@@ -27,6 +27,7 @@
 #include <iostream>
 #include <cmath>
 #include <raft>
+#include <type_traits>
 #include "chunkiterator.tcc"
 
 
@@ -38,7 +39,7 @@
 
 namespace raft{
 
-enum readertype : std::int32_t { chunk, fasta };
+enum readertype : std::int8_t { chunk, fasta };
 
 template < std::size_t size = 65536 > struct filechunk
 {
@@ -55,6 +56,7 @@ template < std::size_t size = 65536 > struct filechunk
    std::size_t    start_position    = 0;
    std::size_t    length            = 0;
    std::uint64_t  index             = 0;
+   
    constexpr static std::size_t getChunkSize()
    {
       return( size );
@@ -66,12 +68,12 @@ template < std::size_t size = 65536 > struct filechunk
       return( output );
    }
 
-   chunk_iterator< size > begin() noexcept
+   constexpr chunk_iterator< size > begin() noexcept
    {
       return( chunk_iterator< size >( this ) );
    }
 
-   chunk_iterator< size > end() noexcept
+   constexpr chunk_iterator< size > end() noexcept
    {
       return( chunk_iterator< size >( this, length ) );
    }
@@ -149,6 +151,8 @@ public:
                ( iterations - output.count() /* num ports */ ) > 0 ? 
                   raft::none : 
                   raft::eof );
+            static_assert( std::is_signed< decltype( iterations ) >::value, 
+                           "iterations must be a signed type" );
             if( --iterations < 0 )
             {  
                return( raft::stop );

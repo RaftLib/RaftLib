@@ -29,8 +29,8 @@
 #include "port.hpp"
 #include "portexception.hpp"
 
-Port::Port( raft::kernel *k ) : PortBase(),
-                                kernel( k )
+Port::Port( raft::kernel * const k ) : PortBase(),
+                                       kernel( k )
 {
 }
 
@@ -44,13 +44,6 @@ Port::Port( raft::kernel *k,
 {
 }
 
-Port::~Port()
-{
-   /** 
-    * the port map is allocated on the heap so the 
-    * port_info destructor is called
-    */
-}
 
 const std::type_index&
 Port::getPortType( const std::string &&port_name )

@@ -40,7 +40,7 @@ namespace Buffer
  */
 template < class T > struct DataBase 
 {
-   DataBase( const std::size_t max_cap ) : max_cap ( max_cap )
+   constexpr DataBase( const std::size_t max_cap ) : max_cap ( max_cap )
    {
       length_store   = ( sizeof( T  )     * max_cap ); 
       length_signal  = ( sizeof( Signal ) * max_cap );
@@ -68,7 +68,7 @@ template < class T > struct DataBase
     * will fail an assertion and exit the program.
     * @param    k - raft::kernel * const
     */
-   void setSourceKernel( raft::kernel * const k )
+   constexpr void setSourceKernel( raft::kernel * const k )
    {
       assert( k != nullptr );
       src_kernel = k;
@@ -83,7 +83,7 @@ template < class T > struct DataBase
     * will fail an assertion and exit the program.
     * @param    k - raft::kernel * const
     */
-   void setDestKernel( raft::kernel * const k )
+   constexpr void setDestKernel( raft::kernel * const k )
    {
       assert( k != nullptr );
       dst_kernel = k;
