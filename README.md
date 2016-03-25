@@ -14,7 +14,7 @@ Offline testing:
 ### Pre-requisites
 
 ####OS X & Linux
-Compiler: c++11 capable -> Clang, GNU GCC 4.8+, or Intel icc
+Compiler: c++14 capable -> Clang, GNU GCC 5.0+, or Intel icc
 Libraries: 
 * Boost, if not installed, needed headers automatically downloaded with cmake
 
@@ -63,6 +63,7 @@ If you use this framework for something that gets published, please cite it as:
 * [Project wiki page](https://github.com/jonathan-beard/RaftLib/wiki)
 * [Blog post intro](https://goo.gl/4VDlbr)
 * [Jonathan Beard's thesis](http://goo.gl/obkWUh)
+* [Views on parallel computing, general philosphy](https://goo.gl/R5fQAl)
 * Feel free to e-mail one of the authors of the repo
 
 ###Random Notes
@@ -70,8 +71,12 @@ The old Makefile had an uninstall script, I need to add an object to the
 cmake file so that we can have similar functionality. Theres also a bit
 of cleanup to do as I transition fully from Make to CMake.
 
-A lot of the auto-optimization stuff has been pulled out temporaril while
+A lot of the auto-optimization stuff has been pulled out temporarily while
 I'm working on cross-platform compatibility. A lot of the low level API
 calls are well, low level and Linux/Unix/OS X specific so I'm working on
 building in Windows versions of those specific calls. Should be done
-in a few weeks. ( 5 Jan 2015, jcb )
+in a few weeks. ( 5 Jan 2016, jcb )
+
+Added in prefetch for object types larger than a single cache line. Profiling
+shows that it's really not beneficial on most platforms with good prefetch
+algorithms. (25 March 2016, jcb )
