@@ -44,6 +44,7 @@ include( CheckGitDep )
 add_subdirectory( src )
 add_subdirectory( raftinc )
 add_subdirectory( examples )
+add_subdirectory( benchmarks )
 
 mark_as_advanced( BUILD_WOPENCV false )
 if( BUILD_WOPENCV )

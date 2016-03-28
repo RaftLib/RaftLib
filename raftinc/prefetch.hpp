@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cassert>
+#include <type_traits>
 
 namespace raft
 {
@@ -31,6 +32,7 @@ template< MemAction W,
 static void
 prefetch( const void * const addr ) noexcept 
 {
+#ifndef NOPREFETCH    
     /** assert all the time, well except when turned off **/
     assert( addr != nullptr );
     static_assert( NBYTES > 0, "Number of bytes must be greater than zero" );
@@ -38,6 +40,8 @@ prefetch( const void * const addr ) noexcept
     constexpr const std::uint16_t stride( L1D_CACHE_LINE_SIZE );
   
     auto start( reinterpret_cast< const char * >( addr ) );
+    static_assert( std::is_unsigned< decltype( NBYTES ) >::value,
+                   "NBYTES must be an unsigned type, else conditional on loop might not hold" );
     auto end( reinterpret_cast< const char * const >(
         reinterpret_cast< std::uintptr_t >( addr ) +
         NBYTES ) );
@@ -50,6 +54,7 @@ prefetch( const void * const addr ) noexcept
                             T           /** temporal locality, see above **/ );
     }
 #endif //end DEBUG
+#endif //NOPREFETCH
     return;
 } /** end func **/
 } /** end namespace raft **/

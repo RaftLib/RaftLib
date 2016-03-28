@@ -193,11 +193,13 @@ main( int argc, char **argv )
                                           "effort" ) );
     cmdargs.addOption( new Option< std::string >( inputfile,
                                                   "-i",
-                                                  "input file" ) );
+                                                  "input file",
+                                                  true /** required **/ ) );
 
     cmdargs.addOption( new Option< std::string >( outputfile,
                                                   "-o",
-                                                  "output file" ) );
+                                                  "output file",
+                                                  true /** required **/ ) );
     
     cmdargs.addOption( new Option< std::int64_t  >( num_threads,
                                                     "-th",
@@ -205,7 +207,7 @@ main( int argc, char **argv )
     
     /** process args **/                                                  
     cmdargs.processArgs( argc, argv );
-    if( help )
+    if( help || ! cmdargs.allMandatorySet() )
     {
         cmdargs.printArgs();
         exit( EXIT_SUCCESS );
