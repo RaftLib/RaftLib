@@ -24,11 +24,17 @@ In progress
 ### Install
 Make a build directory (for the instructions below, we'll 
 write [build]). If you want to build the OpenCV example, then
-you'll need to add
+you'll need to add to your cmake invocation:
 ```bash
 -DBUILD_WOPENCV=true 
 ```
-to the cmake build line below.
+If you want to use the Scotch partitioning library (Unix/Linux) for partitioning kernel threads amongst physical resources, add
+the following config line to your cmake invocation:
+```bash
+-DUSESCOTCH=1
+```
+
+To build:
 
 ```bash
 mkdir [build]
