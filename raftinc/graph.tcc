@@ -26,13 +26,23 @@
 #include <set>
 #include <utility>
 #include <ostream>
+#include <cassert>
+#include "defs.hpp"
 
 namespace raft
 {
-template< typename T > struct ScotchTables
+template< typename EDGEID_T, typename WEIGHT_T > struct ScotchTables
 {
-   ScotchTables() = default;
-   ~ScotchTables()
+   constexpr ScotchTables() = default;
+
+   constexpr ScotchTables( const ScotchTables &other ) : vtable( other.vtable ),
+                                                         etable( other.etable ),
+                                                         eweight( other.eweight ),
+                                                         partition( other.partition ),
+                                                         num_vertices( other.num_vertices ),
+                                                         num_edges( other.num_edges ){};
+
+   virtual ~ScotchTables()
    {
       delete[]( vtable );
       delete[]( etable );
@@ -40,15 +50,15 @@ template< typename T > struct ScotchTables
       delete[]( partition );
    }
    
-   T              *vtable     = nullptr;
-   T              *etable     = nullptr;
-   T              *eweight    = nullptr;
-   T              *partition  = nullptr;
+   EDGEID_T      *vtable     = nullptr;
+   EDGEID_T      *etable     = nullptr;
+   WEIGHT_T      *eweight    = nullptr;
+   EDGEID_T      *partition  = nullptr;
    std::size_t    num_vertices;
    std::size_t    num_edges;
 
    static 
-   std::ostream& print( std::ostream &stream, const ScotchTables< T > &table )
+   std::ostream& print( std::ostream &stream, const ScotchTables< EDGEID_T, WEIGHT_T > &table )
    {
       stream << "Vertices: \n";
       for( auto i( 0 ); i < table.num_vertices; i++ )
@@ -74,9 +84,7 @@ template< typename T > struct ScotchTables
 
 template < typename EDGETYPE, typename WEIGHT > class graph;
 
-using weight_t = std::int32_t;
-
-template <> class graph< weight_t, weight_t >
+template <> class graph< edge_id_t, weight_t >
 {
 
 private:
@@ -91,9 +99,9 @@ private:
        * @param   dst - const weight_t, destination of appropriate source vertex
        * @param   weight - const weight_t, weight associated with this edge (arc)
        */
-      constexpr wt( const weight_t dst,
-                    const weight_t weight ) : dst( dst ),
-                                              weight( weight ){}
+      constexpr wt( const edge_id_t dst,
+                    const weight_t  weight ) : dst( dst ),
+                                               weight( weight ){}
 
       /** copy constructor **/
       constexpr wt( const wt &other ) : dst( other.dst ),
@@ -104,18 +112,20 @@ private:
       {
          return( dst == other.dst );
       }
-
-      const weight_t dst;
-      const weight_t weight;
+      
+      static_assert( std::is_fundamental< edge_id_t >::value, "edge_id_t must be fundamental" );
+      const edge_id_t dst       = static_cast< edge_id_t >( 0 );
+      static_assert( std::is_fundamental< weight_t >::value, "weight_t must be fundamental" );
+      const weight_t  weight    = static_cast< edge_id_t >( 0 );
    };
   
    /**
     * __addEdge - helper method for same named
     * function above, see its documentation.
     */
-   void __addEdge( const weight_t src,
-                   const weight_t dst,
-                   const weight_t weight )
+   void __addEdge( const edge_id_t  src,
+                   const edge_id_t  dst,
+                   const weight_t   weight )
    {
       auto it( edgelist.find( src ) );
       wt w( dst, weight );  
@@ -149,13 +159,13 @@ private:
       return;
    }
    /** edge adjacency list **/
-   std::map< weight_t, std::vector< wt >* > edgelist; 
+   std::map< edge_id_t, std::vector< wt >* > edgelist; 
    /** 
     * simplifies counting the number of vertices.
     * TODO, recode with counter...if this gets large
     * it could get really really large
     */
-   std::set< weight_t >                     vertex_hash;
+   std::set< edge_id_t >                     vertex_hash;
 public:
 
 
@@ -181,9 +191,9 @@ public:
     * @param   dst - const std;:int32_t, destination
     * @param   weight - const weight_t weight
     */
-   void addEdge( const weight_t src,
-                 const weight_t dst,
-                 const weight_t weight )
+   void addEdge( const edge_id_t src,
+                 const edge_id_t dst,
+                 const weight_t  weight )
    {
       /** forward edge **/
       __addEdge( src, dst, weight );
@@ -200,7 +210,7 @@ public:
     * allocated once it leaves the current frame.
     * @return ScotchTables< weight_t >
     */
-   ScotchTables< weight_t >
+   ScotchTables< edge_id_t, weight_t >*
    getScotchTables()
    {
       const auto size( vertex_hash.size() );
@@ -225,20 +235,20 @@ public:
       /** one past **/
       vertex_list[ size ] = edge_index;
       const auto edge_list_temp_size( edge_list_temp.size() );
-      weight_t *edge_list = new weight_t[ edge_list_temp_size ];
-      weight_t *edge_weight = new weight_t[ edge_list_temp_size ];
+      auto *edge_list( new edge_id_t[ edge_list_temp_size ] );
+      auto *edge_weight( new weight_t[ edge_list_temp_size ] );
       for( auto i( 0 ); i < edge_list_temp_size; i++ )
       {
          edge_list[ i ]    = edge_list_temp[ i ];
          edge_weight[ i ]  = edge_list_weight_temp[ i ];
       }
-      ScotchTables< weight_t >  table;
-      table.vtable            = vertex_list;
-      table.etable            = edge_list;
-      table.eweight           = edge_weight;
-      table.num_vertices      = size;
-      table.num_edges         = edge_list_temp_size;
-      table.partition         = new weight_t[ size ];
+      auto *table( new ScotchTables< edge_id_t, weight_t >() );
+      table->vtable            = vertex_list;
+      table->etable            = edge_list;
+      table->eweight           = edge_weight;
+      table->num_vertices      = size;
+      table->num_edges         = edge_list_temp_size;
+      table->partition         = new edge_id_t[ size ];
       return( table );
    }
    

@@ -1,4 +1,4 @@
-/**
+/*
  * partition.hpp - 
  * @author: Jonathan Beard
  * @version: Tue Mar 10 13:23:12 2015
@@ -212,18 +212,19 @@ private:
          std::cerr << "Failed to initialize graph!!\n";
          exit( EXIT_FAILURE );
       }
-      auto table( raft_graph.getScotchTables() );
+      
+      auto *table( raft_graph.getScotchTables() );
       if( SCOTCH_graphBuild( 
             &graph                  /** graph ptr     **/,
             0                       /** base value    **/,
-            table.num_vertices      /** vertex nmbr (zero indexed)   **/,
-            table.vtable            /** vertex tab **/,
-            &table.vtable[ 1 ]      /** vendtab **/,
+            table->num_vertices      /** vertex nmbr (zero indexed)   **/,
+            table->vtable            /** vertex tab **/,
+            &table->vtable[ 1 ]      /** vendtab **/,
             nullptr           /** velotab **/,
             nullptr           /** vlbltab **/,
-            table.num_edges                 /** edge number **/,
-            table.etable             /** edge tab **/,
-            table.eweight         /** edlotab **/
+            table->num_edges                 /** edge number **/,
+            table->etable             /** edge tab **/,
+            table->eweight         /** edlotab **/
           ) != 0 )
       {
          /** TODO, add RaftLib Exception **/
@@ -234,7 +235,7 @@ private:
       {
          /** TODO, add RaftLib Exception **/
          std::cerr << "Graph is inconsistent\n";
-         std::remove_reference< decltype( table ) >::type::print( std::cerr, table );
+         std::remove_reference< decltype( (*table) ) >::type::print( std::cerr, (*table) );
          std::cerr << "\n";
          raft_graph.print( std::cerr );
          
@@ -289,7 +290,7 @@ private:
             &graph             /** graph ptr **/,
             &archdat,
             &stradat,
-            table.partition    /** parttab **/
+            table->partition    /** parttab **/
             ) != 0 )
       {
          /** TODO, add RaftLib Exception **/
@@ -307,12 +308,12 @@ private:
        * vertices that aren't active (indicated by a -1) so
        * that the returning loop can be as simple as possible
        */
-      if( c.size() == table.num_vertices )
+      if( c.size() == table->num_vertices )
       {
          /** copy mapping **/ 
-         for( auto i( 0 ); i < table.num_vertices; i++ )
+         for( auto i( 0 ); i < table->num_vertices; i++ )
          {
-            mapping.emplace_back( table.partition[ i ] );
+            mapping.emplace_back( table->partition[ i ] );
          }
       }
       else
@@ -325,7 +326,7 @@ private:
          {
             if( i == (*it_map_index) &&  it_map_index != vmapping.cend() )
             {
-               mapping.emplace_back( table.partition[ table_index++ ] );
+               mapping.emplace_back( table->partition[ table_index++ ] );
                ++it_map_index;
             }
             else
@@ -335,6 +336,7 @@ private:
          }
       }
       /** call exit graph **/
+      delete( table );
       SCOTCH_graphExit( &graph    );
       SCOTCH_stratExit( &stradat );
       SCOTCH_archExit ( &archdat );
