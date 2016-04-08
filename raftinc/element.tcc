@@ -25,20 +25,18 @@ namespace Buffer{
 template < class X > struct Element
 {
 
-Element()
-{
-}
+    Element() = default;
 
-Element( const Element< X > &other )
-{
-   (this)->item = other.item;
-}
+    Element( const Element< X > &other )
+    {
+        (this)->item = other.item;
+    }
 
-Element< X >& operator = ( X &other )
-{
-   item = other;
-   return( (*this) );
-}
+    Element< X >& operator = ( X &other )
+    {
+       item = other;
+       return( (*this) );
+    }
 
 }; /** end Element< X > **/
 

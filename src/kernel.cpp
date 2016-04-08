@@ -21,11 +21,6 @@ kernel::kernel( void * const ptr,
 {
 }
 
-kernel::~kernel()
-{
-
-}
-
 
 std::size_t
 kernel::get_id()

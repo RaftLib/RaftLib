@@ -11,6 +11,12 @@ find_package( Threads )
 include( CheckSTD )
 
 find_package( LIBRT )
+##
+# check for Scotch, use if there
+##
+find_package( Scotch )
+
+
 
 set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
      join lambdatest allocate_s foreach peekrange  
@@ -39,11 +45,12 @@ if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 
 endif( BUILDRANDOM )
 
-include_directories(  ${GSL_INCLUDE_DIRS} )
+include_directories( ${CMAKE_SCOTCH_INCS} )
 
 foreach( APP ${TESTAPPS} )
  add_executable( ${APP} "${APP}.cpp" )
  target_link_libraries( ${APP} raft  ${GSL_LIBRARIES} 
                                      ${CMAKE_THREAD_LIBS_INIT} 
+                                     ${CMAKE_SCOTCH_LIBS}
                                      ${CMAKE_RT_LIBS} )
 endforeach( APP ${TESTAPPS} )

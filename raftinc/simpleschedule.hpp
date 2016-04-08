@@ -21,6 +21,8 @@
 #define _SIMPLESSCHEDULE_HPP_  1
 #include <vector>
 #include <thread>
+#include <cstdint>
+#include "defs.hpp"
 
 namespace raft{
    class kernel;
@@ -40,15 +42,16 @@ protected:
    void handleSchedule( raft::kernel * const kernel ); 
                                 
    static void simple_run( void  *data );
+
    struct thread_data
    {
-      thread_data( raft::kernel * const k,
+      constexpr thread_data( raft::kernel * const k,
                    bool *fin ) : k( k ),
                                  finished( fin ){}
 
       raft::kernel *k         = nullptr;
       bool         *finished  = nullptr;
-      int          loc        = -1;
+      core_id_t     loc       = -1;
    };
    
    struct thread_info_t
@@ -69,5 +72,8 @@ protected:
    
    std::mutex                    thread_map_mutex;
    std::vector< thread_info_t* > thread_map;
+#ifdef DEBUGPARTITION   
+   std::vector< core_id_t > core_assign;
+#endif
 };
 #endif /* END _SIMPLESSCHEDULE_HPP_ */

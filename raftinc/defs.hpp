@@ -33,6 +33,8 @@ using recyclefunc_t = std::function< void( void * ) >;
 using ptr_map_t = std::map< std::uintptr_t, recyclefunc_t >;
 using ptr_t = std::uintptr_t;
 
+using core_id_t = std::int64_t;
+
 #ifndef UNUSED 
 #define UNUSED( x )[&x]{}()
 #endif

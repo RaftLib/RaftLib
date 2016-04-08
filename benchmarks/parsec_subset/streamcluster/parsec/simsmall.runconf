@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# simsmall.runconf - file containing information necessary to run a specific
+#                    program of the PARSEC benchmark suite
+#
+# Copyright (C) 2007 Princeton University
+# Written by Christian Bienia
+
+# This is the information which we need to run the program. Each package of the
+# benchmark suite has such a file with information that will be added to the
+# global configuration. All variables set in the global configuration files can
+# be referenced here.
+
+
+# Binary file to execute, relative to installation root
+run_exec="bin/streamcluster"
+
+# Arguments to use
+run_args="10 20 32 4096 4096 1000 none output.txt ${NTHREADS}"
+

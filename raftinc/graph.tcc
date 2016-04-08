@@ -74,8 +74,11 @@ template< typename T > struct ScotchTables
 
 template < typename EDGETYPE, typename WEIGHT > class graph;
 
-template <> class graph< std::int32_t, std::int32_t >
+using weight_t = std::int32_t;
+
+template <> class graph< weight_t, weight_t >
 {
+
 private:
    /**
     * wt - struct to hold the destination of each edge,
@@ -85,39 +88,34 @@ private:
    {
       /**
        * wt - constructor
-       * @param   dst - const std::int32_t, destination of appropriate source vertex
-       * @param   weight - const std::int32_t, weight associated with this edge (arc)
+       * @param   dst - const weight_t, destination of appropriate source vertex
+       * @param   weight - const weight_t, weight associated with this edge (arc)
        */
-      wt( const std::int32_t dst,
-          const std::int32_t weight ) : dst( dst ),
-                                        weight( weight )
-      {
-         /** nothing to do here **/
-      }
+      constexpr wt( const weight_t dst,
+                    const weight_t weight ) : dst( dst ),
+                                              weight( weight ){}
 
       /** copy constructor **/
-      wt( const wt &other ) : dst( other.dst ),
-                              weight( other.weight )
-      {
-      }
+      constexpr wt( const wt &other ) : dst( other.dst ),
+                                        weight( other.weight ){}
 
       /** needed for find operation **/
-      bool operator == ( const wt &other )
+      constexpr bool operator == ( const wt &other )
       {
          return( dst == other.dst );
       }
 
-      const std::int32_t dst;
-      const std::int32_t weight;
+      const weight_t dst;
+      const weight_t weight;
    };
   
    /**
     * __addEdge - helper method for same named
     * function above, see its documentation.
     */
-   void __addEdge( const std::int32_t src,
-                   const std::int32_t dst,
-                   const std::int32_t weight )
+   void __addEdge( const weight_t src,
+                   const weight_t dst,
+                   const weight_t weight )
    {
       auto it( edgelist.find( src ) );
       wt w( dst, weight );  
@@ -151,13 +149,13 @@ private:
       return;
    }
    /** edge adjacency list **/
-   std::map< std::int32_t, std::vector< wt >* > edgelist; 
+   std::map< weight_t, std::vector< wt >* > edgelist; 
    /** 
     * simplifies counting the number of vertices.
     * TODO, recode with counter...if this gets large
     * it could get really really large
     */
-   std::set< std::int32_t >                     vertex_hash;
+   std::set< weight_t >                     vertex_hash;
 public:
 
 
@@ -165,7 +163,7 @@ public:
    graph()  = default;
 
    /** destructor **/
-   ~graph()
+   virtual ~graph()
    {
       for( auto &pair : edgelist )
       {
@@ -179,13 +177,13 @@ public:
     * you want them to be.  The function will add a back
     * edge to the underlying graph to be compatible with
     * the Scotch partitioning framework.
-    * @param   src - const std::int32_t, source
+    * @param   src - const weight_t, source
     * @param   dst - const std;:int32_t, destination
-    * @param   weight - const std::int32_t weight
+    * @param   weight - const weight_t weight
     */
-   void addEdge( const std::int32_t src,
-                 const std::int32_t dst,
-                 const std::int32_t weight )
+   void addEdge( const weight_t src,
+                 const weight_t dst,
+                 const weight_t weight )
    {
       /** forward edge **/
       __addEdge( src, dst, weight );
@@ -200,15 +198,15 @@ public:
     * adding edges to the graph, formats the returned arrays
     * accodingly.  The returned object will release the memory
     * allocated once it leaves the current frame.
-    * @return ScotchTables< std::int32_t >
+    * @return ScotchTables< weight_t >
     */
-   ScotchTables< std::int32_t >
+   ScotchTables< weight_t >
    getScotchTables()
    {
       const auto size( vertex_hash.size() );
-      std::int32_t *vertex_list = new std::int32_t[ size + 1  ];
-      std::vector< std::int32_t > edge_list_temp;
-      std::vector< std::int32_t > edge_list_weight_temp;
+      weight_t *vertex_list = new weight_t[ size + 1  ];
+      std::vector< weight_t > edge_list_temp;
+      std::vector< weight_t > edge_list_weight_temp;
       auto vertex_list_index( 0 );
       auto edge_index( 0 );
       const auto first_vertex_index( *vertex_hash.cbegin() );
@@ -227,20 +225,20 @@ public:
       /** one past **/
       vertex_list[ size ] = edge_index;
       const auto edge_list_temp_size( edge_list_temp.size() );
-      std::int32_t *edge_list = new std::int32_t[ edge_list_temp_size ];
-      std::int32_t *edge_weight = new std::int32_t[ edge_list_temp_size ];
+      weight_t *edge_list = new weight_t[ edge_list_temp_size ];
+      weight_t *edge_weight = new weight_t[ edge_list_temp_size ];
       for( auto i( 0 ); i < edge_list_temp_size; i++ )
       {
          edge_list[ i ]    = edge_list_temp[ i ];
          edge_weight[ i ]  = edge_list_weight_temp[ i ];
       }
-      ScotchTables< std::int32_t >  table;
+      ScotchTables< weight_t >  table;
       table.vtable            = vertex_list;
       table.etable            = edge_list;
       table.eweight           = edge_weight;
       table.num_vertices      = size;
       table.num_edges         = edge_list_temp_size;
-      table.partition         = new std::int32_t[ size ];
+      table.partition         = new weight_t[ size ];
       return( table );
    }
    

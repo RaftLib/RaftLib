@@ -141,10 +141,10 @@ private:
               PortInfo &b,
               void *data )
       {
-         if( ! Schedule::isActive( a.my_kernel ) )
-         {
-            return;
-         }
+         //if( ! Schedule::isActive( a.my_kernel ) )
+         //{
+         //   return;
+         //}
          auto * const local_data(
             reinterpret_cast< LocalData* >( data ) );
          const auto num_src( local_data->num_map[ a.my_kernel ] );
@@ -248,6 +248,7 @@ private:
          std::cerr << "Architecture initialization failed\n";
          exit( EXIT_FAILURE );
       }
+#ifndef USE_HWLOC      
       /** core are equal **/
       if( SCOTCH_archCmplt( &archdat, cores /** num cores **/) != 0 )
       {
@@ -255,6 +256,15 @@ private:
          std::cerr << "Failed to create architecture file\n";
          exit( EXIT_FAILURE );
       }
+#else
+      /** core are equal **/
+      if( SCOTCH_archCmpltw( &archdat, cores /** num cores **/) != 0 )
+      {
+         /** TODO, add RaftLib Exception **/
+         std::cerr << "Failed to create architecture file\n";
+         exit( EXIT_FAILURE );
+      }
+#endif
       /** strategy **/
       SCOTCH_Strat stradat;
       if( SCOTCH_stratInit( &stradat ) != 0 )

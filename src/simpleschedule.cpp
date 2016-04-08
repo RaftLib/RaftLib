@@ -29,10 +29,18 @@
 #include "simpleschedule.hpp"
 #include "rafttypes.hpp"
 #include "affinity.hpp"
-
+#ifdef USE_PARTITION
+#include "partition_scotch.hpp"
+#endif
 #include "defs.hpp"
 
-#ifdef CORE_ASSIGN
+#ifdef STATIC_CORE_ASSIGN
+/**
+ * this is really just for benchmarking/debug
+ * purposes, the map is indexed on the memory
+ * address of each kernel, the second param
+ * is the core to assign to.
+ */
 extern std::map< std::uintptr_t, int > *core_assign;
 #endif
 
@@ -49,6 +57,15 @@ simple_schedule::~simple_schedule()
       delete( th_info );
       th_info = nullptr;
    }
+#ifdef DEBUGPARTITION   
+   std::cout << "\n\n";
+   std::cout << "\033[1;36m";
+   for( const auto core : core_assign )
+   {
+        std::cout << core << "\n";
+   }
+   std::cout << "\033[0m";
+#endif   
 }
 
 
@@ -56,11 +73,28 @@ void
 simple_schedule::start()
 {
    auto &container( kernel_set.acquire() );
+#ifndef STATIC_CORE_ASSIGN
+#ifndef DEBUGPARTITION
+   std::vector< core_id_t > core_assign;
+#endif
+#ifdef USE_PARTITION
+   Partition::simple( container,
+                      core_assign,
+                      std::thread::hardware_concurrency() );
+#endif                      
+#endif
+#ifdef USE_PARTITION
+   auto core_it( core_assign.cbegin() );
+   assert( container.size() == core_assign.size() );
+#endif   
    for( auto * const k : container )
    {  
       auto * const th_info( new thread_info_t( k ) );
-#ifdef CORE_ASSIGN
-      th_info->loc = (*core_assign)[ reinterpret_cast< std::uintptr_t >( k ) ];
+#ifdef STATIC_CORE_ASSIGN
+      th_info->data.loc = (*core_assign)[ reinterpret_cast< std::uintptr_t >( k ) ];
+#elif defined USE_PARTITION /** use partitioning algo **/
+      th_info->data.loc = (*core_it);
+      ++core_it;
 #endif
       thread_map.emplace_back( th_info );
    }
@@ -68,7 +102,7 @@ simple_schedule::start()
    bool keep_going( true );
    while( keep_going )
    {
-      while( not thread_map_mutex.try_lock() )
+      while( ! thread_map_mutex.try_lock() )
       {
          std::this_thread::yield();
       }     
@@ -78,6 +112,7 @@ simple_schedule::start()
       {
          if( ! t_info->term )
          {
+            //loop over each thread and check if done
             if( t_info->finished )
             {
                /**
@@ -88,7 +123,7 @@ simple_schedule::start()
                t_info->th.join();
                t_info->term = true;
             }
-            else /* ! finished */
+            else /* a kernel ! finished */
             {
                keep_going =  true;
             }
@@ -146,6 +181,12 @@ simple_schedule::simple_run( void * data )
    {
       /** call does nothing if not available **/
       affinity::set( thread_d->loc );
+   }
+   else
+   {
+#ifdef USE_PARTITION
+       assert( false );
+#endif
    }
    while( ! *(thread_d->finished) )
    {

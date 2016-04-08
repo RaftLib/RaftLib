@@ -144,7 +144,8 @@ protected:
     * not be implemented in the future.
     * @param    source_k - std::set< raft::kernel* > with sources
     */
-   void enableDuplication( kernelkeeper &source, kernelkeeper &all );
+   void enableDuplication( kernelkeeper &source, 
+                           kernelkeeper &all );
 
 
    /** 

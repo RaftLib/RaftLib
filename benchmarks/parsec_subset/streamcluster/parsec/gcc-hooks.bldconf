@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# gcc-hooks.bldconf - configuration file for PARSEC
+
+source ${PARSECDIR}/pkgs/kernels/streamcluster/parsec/gcc.bldconf
+
+# Package dependencies
+build_deps="hooks"
+

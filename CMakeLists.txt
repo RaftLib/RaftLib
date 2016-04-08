@@ -3,6 +3,12 @@ project(RaftLib)
 set( version 0.7a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
+##
+# check for Scotch, use if there
+##
+find_package( Scotch )
+
+option( USESCOTCH "Use Scotch partitioning library" )
 
 ##
 # c std

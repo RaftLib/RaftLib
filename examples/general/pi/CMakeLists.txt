@@ -2,6 +2,10 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
 find_package( Threads )
 ##
+# check for Scotch, use if there
+##
+find_package( Scotch )
+##
 # c/c++ std
 ##
 include( CheckSTD )
@@ -31,6 +35,8 @@ endforeach( DEPFOLDER ${DEPFOLDERLIST} )
 
 endif( EXISTS ${GITDEP} )
 
+include_directories( ${CMAKE_SCOTCH_INCS} )
+
 set( APP pisim )
 
 add_executable( ${APP} "${APP}.cpp" )
@@ -38,6 +44,7 @@ add_executable( ${APP} "${APP}.cpp" )
 target_link_libraries( ${APP} 
                        raft
                        cmdargs
+                       ${CMAKE_SCOTCH_LIBS}
                        ${CMAKE_THREAD_LIBS_INIT} 
                        ${CMAKE_RT_LIBS} )
 

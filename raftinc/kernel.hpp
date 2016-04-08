@@ -67,7 +67,7 @@ public:
    kernel( void * const ptr,
            const std::size_t nbytes );
 
-   virtual ~kernel();
+   virtual ~kernel() = default;
 
 
    /**

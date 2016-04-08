@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# gcc-pthreads.bldconf - file containing information necessary to build a
+#                        specific program of the PARSEC benchmark suite with
+#                        gcc and pthreads
+#
+# Copyright (C) 2007-2008 Princeton University
+# Written by Christian Bienia
+
+# Compilation and linking options.
+# This is the configuration we'll use to build the program. Each package of the
+# benchmark suite has such a file with information that will be added to the
+# global configuration. All variables set in the global configuration files can
+# be referenced here.
+
+
+# Package dependencies
+build_deps=""
+
+# Environment to use for configure script and Makefile
+build_env="version=pthreads"
+
+# Whether the build system supports only in-place compilation.
+# If TRUE, then all sources will be copied to the build directory before we
+# start building the package. Required for older build systems which don't
+# support VPATH.
+build_inplace="TRUE"
+
+# Arguments to pass to the configure script, if it exists
+build_conf=""

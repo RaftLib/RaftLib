@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# gcc.bldconf - configuration file for PARSEC
+
+# Default parallelization model is pthreads
+source ${PARSECDIR}/pkgs/kernels/streamcluster/parsec/gcc-pthreads.bldconf
+

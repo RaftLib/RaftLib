@@ -81,9 +81,9 @@ basic_parallel::start()
                                  out.update( fifo->size() / fifo->capacity() );
                               }
                               /** apply criteria **/
-                              if( ( kernel->input.count() == 0 or 
-                                    in.mean< float >() > .5  )  and 
-                                  ( out.mean< float >() < .5  or 
+                              if( ( kernel->input.count() == 0 || 
+                                    in.mean< float >() > .5  ) &&
+                                  ( out.mean< float >() < .5   || 
                                     kernel->output.count() == 0 ) )
                               {
                                  hashmap[ hash ].occ_in++;

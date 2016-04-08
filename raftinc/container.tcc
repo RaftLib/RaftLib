@@ -26,18 +26,10 @@
 template < class T > container
 {
 public:
-   container()
-   {
-      
-   }
+   container() = default;
+   virtual ~conainer() = default;
 
-
-   virtual ~conainer()
-   {
-
-   }
-
-   void add( T *ptr )
+   void add( T * const ptr )
    {
       assert( ptr != nullptr );
       mutex.lock();
@@ -58,6 +50,7 @@ public:
          }
       }
       mutex.unlock();
+      return;
    }
 
    virtual ItemIterator begin();
@@ -65,7 +58,7 @@ public:
 
 private:
    std::vector< T* > list;
-   std::mutex       mutex;
+   std::mutex        mutex;
 };
 
 
