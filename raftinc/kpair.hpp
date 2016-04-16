@@ -21,7 +21,9 @@
 #define _KPAIR_HPP_  1
 
 #include <string>
+#include "kset.tcc"
 #include "portorder.hpp"
+#include "defs.hpp"
 
 namespace raft
 {
@@ -58,22 +60,22 @@ public:
     void setOoO() noexcept;
 
 protected:
-    kpair        *next = nullptr;
-    kpair        *head = nullptr;
-    raft::kernel *src  = nullptr;
-    bool          has_src_name = false;
-    std::string   src_name  = "";
-    raft::kernel *dst  = nullptr;
-    bool          has_dst_name = false;
-    std::string   dst_name  = "";
+    kpair        *next          = nullptr;
+    kpair        *head          = nullptr;
+    raft::kernel *src           = nullptr;
+    bool          has_src_name  = false;
+    std::string   src_name      = "";
+    raft::kernel *dst           = nullptr;
+    bool          has_dst_name  = false;
+    std::string   dst_name      = "";
    
     
-    bool          split_to     = false;
-    std::uint32_t src_out_count  = 0;
-    bool          join_from      = false;
-    std::uint32_t dst_in_count   = 0;
+    bool          split_to      = false;
+    core_id_t     src_out_count = 0;
+    bool          join_from     = false;
+    core_id_t     dst_in_count  = 0;
 
-    bool          out_of_order   = false;
+    bool          out_of_order  = false;
 
     friend class raft::map;
     friend kpair& operator >= ( kpair &a, raft::kernel &&b );
@@ -126,12 +128,12 @@ kpair& operator >> ( kpair &a, raft::kernel &b );
 kpair& operator >> ( kpair &a, raft::kernel &&b );
 
 LOoOkpair& operator >> ( raft::kernel &a, const raft::order::spec &&order );
-kpair& operator >> ( LOoOkpair &a, raft::kernel &b );
-kpair& operator >> ( LOoOkpair &a, raft::kernel &&b );
+kpair&     operator >> ( LOoOkpair &a, raft::kernel &b );
+kpair&     operator >> ( LOoOkpair &a, raft::kernel &&b );
 
 ROoOkpair& operator >> ( kpair &a, const raft::order::spec &&order );
-kpair&    operator >> ( ROoOkpair &a, raft::kernel &b );
-kpair&    operator >> ( ROoOkpair &a, raft::kernel &&b );
+kpair&     operator >> ( ROoOkpair &a, raft::kernel &b );
+kpair&     operator >> ( ROoOkpair &a, raft::kernel &&b );
 
 kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
 kpair& operator <= ( raft::kernel &&a, raft::kernel &&b );
@@ -141,6 +143,7 @@ kpair& operator <= ( raft::kernel &&a, kpair &b );
 kpair& operator >= ( kpair &a, raft::kernel &b );
 kpair& operator >= ( kpair &a, raft::kernel &&b );
 kpair& operator >= ( kpair &a, kpair &b );
+
 kpair& operator >= ( raft::kernel &a, kpair &b );
 kpair& operator >= ( raft::kernel &&a, kpair &b );
 
