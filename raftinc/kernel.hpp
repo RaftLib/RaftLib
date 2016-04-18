@@ -25,7 +25,7 @@
 #include <cstdint>
 #include <queue>
 #include <string>
-
+#include "kernelexception.hpp"
 #include "port.hpp"
 #include "signalvars.hpp"
 #include "rafttypes.hpp"
@@ -100,8 +100,8 @@ public:
     */
    virtual raft::kernel* clone()
    {
-      //FIXME, needs to throw an exception
-      assert( false );
+      throw CloneNotImplementedException( "Sub-class has failed to implement clone function, please use the CLONE() macro to add functionality" );
+      /** won't be reached **/
       return( nullptr );
    }
 
@@ -154,11 +154,24 @@ protected:
     
    bool internal_alloc = false;
 
+   
+   constexpr void  retire() noexcept
+   {
+       (this)->execution_done = true;
+   }
+
+   constexpr bool isRetired() noexcept
+   {
+       return( (this)->execution_done );
+   }
+
 private:
    /** TODO, replace dup with bit vector **/
-   bool   dup_enabled   = false;
-   bool   dup_candidate = false;
+   bool   dup_enabled       = false;
+   bool   dup_candidate     = false;
    const  std::size_t kernel_id;
+
+   bool   execution_done    = false;
 
    /** for operator syntax **/
    std::queue< std::string > enabled_port;

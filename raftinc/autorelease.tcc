@@ -82,15 +82,16 @@ public:
     * get the actual value (by reference).
     * @return T&
     */
-   T& operator *()
+   T& operator *() noexcept
    {
       return( item );
    }
+   
    /**
     * sig - get the current signal
     * @return raft::signal
     */
-   raft::signal& sig()
+   constexpr raft::signal& sig() noexcept
    {
       return( (this)->signal );
    }
@@ -164,12 +165,12 @@ public:
     * future versions will deprecate this for all types
     * but that one.
     */
-   std::size_t getindex()
+   constexpr std::size_t getindex() noexcept
    {
       return( signal[ 0 ] .getindex() );
    }
 
-   std::size_t size() const
+   constexpr std::size_t size() noexcept
    {
       return( n_items );
    }
@@ -202,7 +203,7 @@ public:
       const_cast< autorelease< T, allocatetype >& >( other ).copied = true;
    }
    
-   ~autorelease()
+   virtual ~autorelease()
    {
       if( ! copied )
       {
@@ -210,12 +211,12 @@ public:
       }
    }
 
-   T& operator *()
+   T& operator *() noexcept
    {
       return( (*item) ); 
    }
 
-   raft::signal& sig()
+   constexpr raft::signal& sig() noexcept
    {
       return( (this)->signal );
    }
