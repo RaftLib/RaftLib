@@ -155,12 +155,12 @@ protected:
    bool internal_alloc = false;
 
    
-   constexpr void  retire() noexcept
+   void  retire() noexcept
    {
        (this)->execution_done = true;
    }
 
-   constexpr bool isRetired() noexcept
+   bool isRetired() noexcept
    {
        return( (this)->execution_done );
    }
