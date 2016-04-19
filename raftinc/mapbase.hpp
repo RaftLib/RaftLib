@@ -46,50 +46,7 @@
 #include "stdalloc.hpp"
 #include "kpair.hpp"
 #include "portorder.hpp"
-
-/**
- * kernel_pair_t - struct to be returned by mapbase link functions,
- * in order to allow inline "new" construction of kernels that
- * might be re-used in multiple instances.
- */
-class kernel_pair_t
-{
-public:
-   constexpr kernel_pair_t( raft::kernel *a, 
-                            raft::kernel *b ) : 
-                                           src( a ),
-                                           dst( b )
-   {
-   }
-
-   constexpr kernel_pair_t( const kernel_pair_t &other ) : src( other.src ),
-                                                 dst( other.dst )
-   {
-   }
-   
-   kernel_pair_t& operator = ( const kernel_pair_t &other )
-   {
-      src = other.src;
-      dst = other.dst;
-      return( *this );
-   }
-
-   raft::kernel& getSrc() noexcept 
-   {
-      return( *src );
-   }
-
-   raft::kernel& getDst() noexcept
-   {
-      return( *dst );
-   }
-
-
-private:
-   raft::kernel *src = nullptr;
-   raft::kernel *dst = nullptr;
-};
-
+#include "kernel_pair_t.hpp"
 
 class MapBase
 {

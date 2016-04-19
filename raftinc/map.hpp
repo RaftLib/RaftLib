@@ -52,7 +52,7 @@ public:
    /** 
     * default destructor 
     */
-   virtual ~map();
+   virtual ~map() = default;
    
    /** 
     * FIXME, the graph tools need to take more than
@@ -118,8 +118,13 @@ public:
       return; 
    }
 
+   /** 
+    * invoked to add kernel links to the map, returns an iterator to
+    * a list of the last kernels added to the map via the += 
+    */
    kernel_pair_t operator +=( kpair &p );
 
+   
 
 protected:
     /** 

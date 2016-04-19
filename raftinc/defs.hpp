@@ -24,6 +24,15 @@
 #include <functional>
 #include <type_traits>
 #include <cstdint>
+#include <vector>
+#include <utility>
+
+
+/** predeclare raft::kernel for kernel_list_t below **/
+namespace raft
+{
+    class kernel;
+} /** end namespace raft **/
 
 template < typename T > 
     using set_t = std::set< T >;
@@ -43,5 +52,13 @@ using edge_id_t = std::int32_t;
 #ifndef UNUSED 
 #define UNUSED( x )[&x]{}()
 #endif
+
+/** type for return from += you'll get an iterator to one of these **/
+using kernel_list_t  = std::vector< std::reference_wrapper< raft::kernel > >;
+using kernel_it_pair = std::pair< 
+                                    typename kernel_list_t::const_iterator,
+                                    typename kernel_list_t::const_iterator
+                                >;
+
 
 #endif /* END _DEFS_HPP_ */

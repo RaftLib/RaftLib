@@ -34,14 +34,11 @@
 #include "map.hpp"
 #include "graphtools.hpp"
 #include "kpair.hpp"
+#include "mapexception.hpp"
 
 raft::map::map() : MapBase()
 {
   
-}
-
-raft::map::~map()
-{
 }
 
 void
@@ -270,8 +267,7 @@ raft::map::operator += ( kpair &p )
         }
         else
         {
-            //TODO, throw an exception
-            assert( false );
+            throw InvalidTopologyOperationException( "Invalid ordering of topology operators \"<=\", \">>\", \">=.\" Please check and try again\n" );
         }
         //should never reach here **/
         assert( false );
