@@ -52,7 +52,8 @@ PortInfo::getFIFO()
       FIFO *a;
       FIFO *b;
    }copy = { fifo_a, fifo_b };
-   while( copy.a not_eq copy.b )
+   /** for most architectures that don't need this, it'll be optimized out after the first iteration **/
+   while( copy.a != copy.b )
    {
       copy.a = fifo_a;
       copy.b = fifo_b;
