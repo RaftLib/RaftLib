@@ -24,6 +24,8 @@
 #include <cstdint>
 #include <cstddef>
 
+#include "defs.hpp"
+
 class Pointer{
    using wrap_t = std::size_t;
 
@@ -33,12 +35,12 @@ public:
     * pointers for the ring buffer.  This class encapsulates
     * wrapping.
     */
-   constexpr Pointer( const std::size_t cap ) : max_cap( cap ){};
+   Pointer( const std::size_t cap ) : max_cap( cap ){};
    
    Pointer( const std::size_t cap, 
             const wrap_t wrap_set );
    /**
-    * Pointer - used to snchronize read and write poitners for the
+    * Pointer - used to snchronize read and write pointers for the
     * ring buffer, this constructer is a copy constructor that
     * copies an old Pointer object and sets a new max_capacity
     * @param   other, const Pointer&, the other pointer to be cpied
@@ -48,14 +50,7 @@ public:
             const std::size_t new_cap );
 
    /**
-    * val - returns the current value of val.  Internally
-    * the function checks to ensure that any writes to the
-    * pointer have fully completed so that the value returned
-    * is ensured to be the correct one.  This is important
-    * as it means the producer will only see a "conservative"
-    * estimate of how many items can be written and the 
-    * consumer will only see a "conservative" estimate of how
-    * many items can be read.
+    * val - returns the current value of val.
     * @return std::size_t, current 'true' value of the pointer
     */
    static std::size_t val( Pointer * const ptr ) ;
@@ -104,5 +99,14 @@ private:
    volatile wrap_t    wrap_a  = 0;
    volatile wrap_t    wrap_b  = 0;
    const    std::size_t      max_cap;
+
+   volatile byte_t   padd[ 
+    L1D_CACHE_LINE_SIZE -  
+    ( sizeof( a ) + 
+    sizeof( b ) + 
+    sizeof( wrap_a ) + 
+    sizeof( wrap_b ) + 
+    sizeof( max_cap ) )
+   ];
 };
 #endif /* END _POINTER_HPP_ */

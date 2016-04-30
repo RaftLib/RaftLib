@@ -34,15 +34,9 @@ namespace raft
 template < typename T > class streamingstat
 {
 public:
-   streamingstat()
-   {
-      /** also nothing to do yet **/
-   }
+   streamingstat() = default;
 
-   virtual ~streamingstat()
-   {
-      /** nothing to do yet **/
-   }
+   virtual ~streamingstat() = default;
 
    /**
     * mean - returns the mean of the population seen

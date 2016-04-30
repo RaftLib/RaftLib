@@ -60,5 +60,6 @@ using kernel_it_pair = std::pair<
                                     typename kernel_list_t::const_iterator
                                 >;
 
+using byte_t = std::uint8_t;
 
 #endif /* END _DEFS_HPP_ */
