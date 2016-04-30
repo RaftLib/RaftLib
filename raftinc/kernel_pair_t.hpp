@@ -1,5 +1,8 @@
 /**
- * kernel_pair_t.hpp - 
+ * kernel_pair_t.hpp - class returned by the (relatively) deprecated
+ * link operators. These should only be used in the run-time...however
+ * some older code may still have it exposed and running around.
+ *
  * @author: Jonathan Beard
  * @version: Mon Apr 18 20:39:53 2016
  * 
@@ -31,19 +34,21 @@ namespace raft
 class kernel_pair_t
 {
 public:
-   constexpr kernel_pair_t( raft::kernel *a, 
-                            raft::kernel *b ) : 
+   constexpr kernel_pair_t( raft::kernel * const a, 
+                            raft::kernel * const b ) : 
                                            src( a ),
                                            dst( b )
    {
    }
 
    constexpr kernel_pair_t( const kernel_pair_t &other ) : src( other.src ),
-                                                 dst( other.dst )
+                                                           dst( other.dst )
    {
    }
    
-   kernel_pair_t& operator = ( const kernel_pair_t &other )
+   virtual ~kernel_pair_t() = default;
+
+   kernel_pair_t& operator = ( const kernel_pair_t &other ) noexcept
    {
       src = other.src;
       dst = other.dst;
