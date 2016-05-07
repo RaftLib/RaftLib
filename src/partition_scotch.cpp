@@ -4,6 +4,7 @@
  * #include for scotch.h to squelch the warnings as to unknown
  * type.
  */
+#ifdef USE_PARTITION
 #include <cstdio>
 #include <scotch.h>
 #include "partition_scotch.hpp"
@@ -256,3 +257,4 @@ partition_scotch::run_scotch( container_type &c,
    SCOTCH_archExit ( &archdat );
    return;
 }
+#endif

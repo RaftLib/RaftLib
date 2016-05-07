@@ -19,6 +19,7 @@
  */
 #ifndef _PARTITION_SCOTCH_TCC_
 #define _PARTITION_SCOTCH_TCC_  1
+#ifdef USE_PARTITION
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -67,4 +68,5 @@ private:
                     weight_function_t weight_func,
                     void              *weight );
 };
+#endif
 #endif /* END _PARTITION_HPP_ */
