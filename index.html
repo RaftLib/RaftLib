@@ -19,9 +19,11 @@
         <h2>Simple, easy to use stream computation library for C++.</h2>
 
         <section id="downloads">
+        <center>
           <a href="https://github.com/jonathan-beard/RaftLib/zipball/master" class="btn">Download as .zip</a>
           <a href="https://github.com/jonathan-beard/RaftLib/tarball/master" class="btn">Download as .tar.gz</a>
           <a href="https://github.com/jonathan-beard/RaftLib" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </center>
         </section>
       </div>
       <div class="container">
@@ -29,6 +31,7 @@
         <center>
           <iframe src="https://ghbtns.com/github-btn.html?user=jonathan-beard&repo=RaftLib&type=star&count=true&size=large" frameborder="0" scrolling="0" allowtransparency="true"  width="160px" height="30px"></iframe>
           <iframe src="https://ghbtns.com/github-btn.html?user=jonathan-beard&repo=RaftLib&type=fork&count=true&size=large" frameborder="0" scrolling="0" width="158px" allowtransparency="true" height="30px"></iframe>
+<a href="https://travis-ci.org/jonathan-beard/RaftLib"><img src="https://travis-ci.org/jonathan-beard/RaftLib.svg?branch=master" alt="Build Status"></a>
           </center>
         </section>
       </div>
@@ -44,16 +47,15 @@
 
 <p><a href="http://www.jonathanbeard.io/blog/2015/09/19/streaming-and-dataflow.html">Stream processing</a> is a method for extracting data, task, and pipeline parallelism from an application. Ever wash dishes with more than one person, one washer, one dryer, and perhaps one person to put them away? That's pipeline parallelism. Raft lets you do that for your application. How about add two washers, three? You can do this as well. That's data parallelism, you're operating on differing (independent) dishes at the same time. Going further, the Raft library enables task parallelism. That is, if you have four people on the dishes, you can add somebody on the side, taking inventory of the dishes as the pass by, at the same time the dishes are being washed. The inventory task is independent of the other two (which is slightly more nuanced since we've to spot the dishes as they go by). The Raft library uses templates, and a compiled library, to make the otherwise perilous task of creating parallel programs far easier. Please check it out, and if you have any questions, please feel free to send the project developers an email.</p>
 
-<h3>
-<a id="project-status" class="anchor" href="#project-status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Status</h3>
+<h3><a id="want" class="anchor" href="#want" aria-hidden="true"><span class="octicon octicon-link"></span></a>Concurrent Hello World:</a></h3>
+<script src="https://gist.github.com/jonathan-beard/6a2fe1d9796cb7bb102cb8b34800fff1.js"></script>
+
+<h3><a id="status" class="anchor" href="#want" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Status:</a></h3>
 
 <p>The Raft library is currently an alpha release, nearing its first beta.  The API itself is relatively stable, however the back end
 is subject to updates if needed (although we're taking pains to support needed old features). This software is subject to the Apache Version 2.0 license. The main-line branch is also the development branch. As new code is checked in, it is processed through two continuous integration services, the build status icon reflects the current Linux build and testsuite success. You can add applications to the main line through subsequent pull requests. There are also several releases, at this stage of the project, snapshots for releases are taken before any major changes. We plan on moving to a full beta release once the multi-node support is pulled from the research code and re-integrated with the mainline branch (at the current rate of development, that should be mid-July 2016). </p>
 
-<h3>
-<a id="build-status" class="anchor" href="#build-status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build Status</h3>
 
-<p><a href="https://travis-ci.org/jonathan-beard/RaftLib"><img src="https://travis-ci.org/jonathan-beard/RaftLib.svg?branch=master" alt="Build Status"></a></p>
 
 <h3>
 <a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h3>
