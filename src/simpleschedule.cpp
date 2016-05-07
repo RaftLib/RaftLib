@@ -57,15 +57,6 @@ simple_schedule::~simple_schedule()
       delete( th_info );
       th_info = nullptr;
    }
-#ifdef DEBUGPARTITION   
-   std::cout << "\n\n";
-   std::cout << "\033[1;36m";
-   for( const auto core : core_assign )
-   {
-        std::cout << core << "\n";
-   }
-   std::cout << "\033[0m";
-#endif   
 }
 
 
@@ -73,32 +64,14 @@ void
 simple_schedule::start()
 {
    auto &container( kernel_set.acquire() );
-#ifndef STATIC_CORE_ASSIGN
-#ifndef DEBUGPARTITION
-   std::vector< core_id_t > core_assign;
-#endif
-#ifdef USE_PARTITION
-   Partition::simple( container,
-                      core_assign,
-                      std::thread::hardware_concurrency() );
-#endif                      
-#endif
-#ifdef USE_PARTITION
-   auto core_it( core_assign.cbegin() );
-   assert( container.size() == core_assign.size() );
-#endif   
    for( auto * const k : container )
    {  
       auto * const th_info( new thread_info_t( k ) );
-#ifdef STATIC_CORE_ASSIGN
-      th_info->data.loc = (*core_assign)[ reinterpret_cast< std::uintptr_t >( k ) ];
-#elif defined USE_PARTITION /** use partitioning algo **/
-      th_info->data.loc = (*core_it);
-      ++core_it;
-#endif
+      th_info->data.loc = k->getCoreAssignment();
       thread_map.emplace_back( th_info );
    }
    kernel_set.release();
+   
    bool keep_going( true );
    while( keep_going )
    {

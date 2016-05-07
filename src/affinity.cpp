@@ -2,6 +2,9 @@
 #include <cmath>
 #include <cstdint>
 #include <cstddef>
+#include <cstring>
+#include <cstdlib>
+#include <iostream>
 #include <cstdio>
 #ifdef __linux
 #include <sys/sysinfo.h>
@@ -64,7 +67,16 @@ affinity::set( const std::size_t desired_core )
                          cpu_allocate_size,
                          cpuset ) != 0 )
    {
-      perror( "Failed to set affinity for cycle counter!!" );
+      const static auto buff_length( 1000 );
+      char buffer[ buff_length ];
+      std::memset( buffer, '\0', buff_length );
+      /** XSI-compliant, but also GNU version, shouldn't need to check **/
+/**
+#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
+**/
+      strerror_r( errno, buffer, buff_length );
+      std::cerr << "failed to set affinity, desired core( " << desired_core << " )";
+      std::cerr << " exited with error ( " << buffer << " ).\n";
       exit( EXIT_FAILURE );
    }
    /** wait till we know we're on the right processor **/

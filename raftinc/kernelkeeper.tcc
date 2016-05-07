@@ -42,8 +42,13 @@ private:
    std::thread::id   owner_id;
    CONTAINER         container;
 
+    
 public:
+   
+   using value_type = typename std::remove_reference< decltype( container ) >::type;
+   
    keeper() = default;
+
 
    virtual ~keeper() = default;
 

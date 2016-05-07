@@ -156,7 +156,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
       queue.pop();
       /** iterate over all out-edges **/
       /** 1) get lock **/
-      while( not source->output.portmap.mutex_map.try_lock() )
+      while( ! source->output.portmap.mutex_map.try_lock() )
       {
          std::this_thread::yield();
       }

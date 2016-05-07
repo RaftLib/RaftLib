@@ -37,6 +37,8 @@ class kernel_container;
 class Map;
 class basic_parallel;
 class kpair;
+class interface_partition;
+
 
 #ifndef CLONE
 namespace raft
@@ -115,6 +117,10 @@ public:
     */
    raft::kernel& operator []( const std::string &&portname );
 
+   core_id_t getCoreAssignment() noexcept
+   {
+       return( core_assign );
+   }
 
 protected:
    /**
@@ -144,6 +150,7 @@ protected:
    friend class ::kernel_container;   
    friend class ::basic_parallel;
    friend class ::kpair;
+   friend class ::interface_partition;
 
    /**
     * NOTE: doesn't need to be atomic since only one thread
@@ -164,6 +171,14 @@ protected:
    {
        return( (this)->execution_done );
    }
+   
+   void setCore( const core_id_t id ) noexcept
+   {
+       core_assign = id;
+   }
+
+
+   core_id_t core_assign    = -1;
 
 private:
    /** TODO, replace dup with bit vector **/
@@ -172,6 +187,7 @@ private:
    const  std::size_t kernel_id;
 
    bool   execution_done    = false;
+   
 
    /** for operator syntax **/
    std::queue< std::string > enabled_port;

@@ -72,8 +72,5 @@ protected:
    
    std::mutex                    thread_map_mutex;
    std::vector< thread_info_t* > thread_map;
-#ifdef DEBUGPARTITION   
-   std::vector< core_id_t > core_assign;
-#endif
 };
 #endif /* END _SIMPLESSCHEDULE_HPP_ */

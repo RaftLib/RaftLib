@@ -37,6 +37,8 @@
 #include "poolschedule.hpp"
 #include "basicparallel.hpp"
 #include "noparallel.hpp"
+/** includes all partitioners **/
+#include "partitioners.hpp"
 
 namespace raft
 {
@@ -60,22 +62,44 @@ public:
     * the graph twice....will take awhile with big
     * graphs.
     */
-   template< class scheduler           = simple_schedule, 
+   template< class partition           = 
+/** 
+ * a bit hacky, yes, but enables you to inject
+ * the partitioner...if you'd like while keeping
+ * the default selection somewhat optimal (i.e.,
+ * enabling thread pinning if available by default)
+ */
+#ifdef __linux
+#if USE_PARTITION
+             partition_scotch
+#else
+             partition_basic /** no scotch, simple affinity assign **/
+#endif
+#else /** OS X, WIN64 **/
+             partition_dummy
+#endif
+, /** comma for above **/
+             class scheduler           = simple_schedule, 
              class allocator           = dynalloc,
              class parallelism_monitor = basic_parallel > 
       void exe()
    {
-      for( auto * const submap : sub_maps )
       {
          auto &container( all_kernels.acquire() );
-         auto &subcontainer( submap->all_kernels.acquire() );  
-         container.insert( subcontainer.begin(),
-                           subcontainer.end()   );
+         for( auto * const submap : sub_maps )
+         {
+            auto &subcontainer( submap->all_kernels.acquire() );  
+            container.insert( subcontainer.begin(),
+                              subcontainer.end()   );
+            submap->all_kernels.release();
+         }
          all_kernels.release();
-         submap->all_kernels.release();
       }
       /** check types, ensure all are linked **/
       checkEdges( source_kernels );
+      partition pt;
+      pt.partition( all_kernels );
+      
       /** adds in split/join kernels **/
       //enableDuplication( source_kernels, all_kernels );
       volatile bool exit_alloc( false );
