@@ -16,8 +16,8 @@
     <header>
       <div class="container">
         <h1>RaftLib</h1>
-        <h2>Simple, easy to use stream computation library for C++.</h2>
-
+        <h2>Simple, easy to use stream parallel computation library for C++.</h2>
+        <hr/>
         <section id="downloads">
         <center>
           <a href="https://github.com/jonathan-beard/RaftLib/zipball/master" class="btn">Download as .zip</a>
@@ -27,12 +27,30 @@
         </section>
       </div>
       <div class="container">
-        <section id="social">
+        <section id="engineering">
         <center>
           <iframe src="https://ghbtns.com/github-btn.html?user=jonathan-beard&repo=RaftLib&type=star&count=true&size=large" frameborder="0" scrolling="0" allowtransparency="true"  width="160px" height="30px"></iframe>
           <iframe src="https://ghbtns.com/github-btn.html?user=jonathan-beard&repo=RaftLib&type=fork&count=true&size=large" frameborder="0" scrolling="0" width="158px" allowtransparency="true" height="30px"></iframe>
-<a href="https://travis-ci.org/jonathan-beard/RaftLib"><img src="https://travis-ci.org/jonathan-beard/RaftLib.svg?branch=master" alt="Build Status"></a>
           </center>
+        </section>
+      </div>
+      <div>
+        <section id="buildstats">
+            <center>
+            <h3>CI Build Status</h3>
+<a href="https://travis-ci.org/jonathan-beard/RaftLib"><img src="https://travis-ci.org/jonathan-beard/RaftLib.svg?branch=master" alt="Build Status"></a>
+            </center>
+        </section>
+      </div>
+      <div class = "container">
+        <section id="social">
+            <center>
+            <h3>Spread the Word</h3>
+               <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://raftlib.io" data-text="Simple, easy to use stream parallel computation library for C++" data-counturl="http://raftlib.io" data-count="horizontal"  data-via="jonathan_beard" data-lang="en">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+               <a href="https://twitter.com/intent/tweet?button_hashtag=RaftLib&text=Check out RaftLib, the easy to use stream parallel computation library for C++" class="twitter-hashtag-button" data-related="jonathan_beard" data-url="http://raftlib.io" data-dnt="true">Tweet #RaftLib</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            </center>
         </section>
       </div>
     </header>
@@ -53,7 +71,7 @@
 <h3><a id="status" class="anchor" href="#want" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Status:</a></h3>
 
 <p>The Raft library is currently an alpha release, nearing its first beta.  The API itself is relatively stable, however the back end
-is subject to updates if needed (although we're taking pains to support needed old features). This software is subject to the Apache Version 2.0 license. The main-line branch is also the development branch. As new code is checked in, it is processed through two continuous integration services, the build status icon reflects the current Linux build and testsuite success. You can add applications to the main line through subsequent pull requests. There are also several releases, at this stage of the project, snapshots for releases are taken before any major changes. We plan on moving to a full beta release once the multi-node support is pulled from the research code and re-integrated with the mainline branch (at the current rate of development, that should be mid-July 2016). </p>
+is subject to updates if needed (although we're taking pains to support needed old features). This software is subject to the Apache Version 2.0 license. The main-line branch is also the development branch. As new code is checked in, it is processed through two continuous integration services, the build status icon (at top of page) reflects the current Linux build and testsuite success. You can add features, bug fixes, and in general any code you'd like that you think is useful for RaftLib to have to the main line through pull requests. There are also several releases, at this stage of the project, snapshots for releases are taken before any major changes. We plan on moving to a full beta release once the multi-node support is pulled from the research code and re-integrated with the mainline branch (at the current rate of development, that should be mid-July 2016).</p>
 
 
 
@@ -77,7 +95,15 @@ $ sudo make install
 
 <p>to your cmake invocation, you will need a webcam or video source for it to work.</p>
 
-<p>The make command will generate the static library file <em>libraft.a</em>, as well as test cases and all the example applications. These examples can be found in:</p>
+<p>
+    If you're running Linux and want more advanced application partitioning, you can use the <a href="https://www.labri.fr/perso/pelegrin/scotch/" target="_tab">Scotch</a> partitioning
+    library (assuming it's installed) by adding
+</p>
+
+<div class="highlight highlight-source-shell"><pre>-DUSESCOTCH=1=<span class="pl-c1">true</span></pre></div>
+
+
+<p>If you don't have boost installed, the <tt>cmake</tt> invocation will download the needed <a href="http://www.boost.org" target="_tab">Boost</a> headers (this works well for the initial build, however it is recommended that you install boost if you intend to build many RaftLib applications outside of the build directory. The make command will generate the static library file <em>libraft.a</em>, as well as test cases and all the example applications. These examples can be found in:</p>
 
 <pre><code>$ cd build/examples
 </code></pre>
@@ -113,7 +139,9 @@ $ sudo make install
 and realizing the ubiquity of the C++ language, he started work on a template library that 
 uses the same framework as the full Raft language and run-time system.  This C++ library is 
 the result. Since then many have contributed to the theory and code base behind RaftLib (most
-notable is my co-author (<a href="https://github.com/pl53" class="user-mention">@pl53</a>), for a full current contribution list see the GitHub stats page. </p>
+notable is my co-author (<a href="https://github.com/pl53" class="user-mention">@pl53</a>), for a full current contribution list see the GitHub stats page. Special thanks to 
+<a href="https://github.com/adishavit" class="user-mention">@adishavit</a> for 
+the many helpful suggestions, and discussion.</p>
 
 <h3>
 <a id="citing-the-raft-library" class="anchor" href="#citing-the-raft-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>Citing the Raft Library</h3>
