@@ -1,10 +1,10 @@
 /**
- * dynalloc.cpp - 
+ * dynalloc.cpp -
  * @author: Jonathan Beard
  * @version: Mon Oct 13 16:36:18 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -32,8 +32,8 @@
 #endif
 
 
-dynalloc::dynalloc( raft::map &map, 
-                    volatile bool &exit_alloc ) : 
+dynalloc::dynalloc( raft::map &map,
+                    volatile bool &exit_alloc ) :
                         Allocate( map, exit_alloc )
 {
 }
@@ -48,15 +48,15 @@ dynalloc::hash( PortInfo &a, PortInfo &b )
 {
    union{
       std::size_t      all;
-      struct{
+      struct a_and_b{
          std::uint32_t a;
          std::uint32_t b;
-      };
+      } ab;
    } u;
    const auto ta( (std::uint64_t)(& a ) );
    const auto tb( (std::uint64_t)(& b ) );
-   u.a = ta & 0xffff;
-   u.b = tb & 0xffff;
+   u.ab.a = ta & 0xffff;
+   u.ab.b = tb & 0xffff;
    return( u.all );
 }
 
@@ -76,14 +76,16 @@ dynalloc::run()
    (this)->source_kernels.release();
    (this)->setReady();
    std::map< std::size_t, int > size_map;
-   
-   /** 
+
+   /**
     * make this a fixed quantity right now, if size > .75% at
     * montor interval three times or more then increase size.
     */
 
    auto mon_func = [&]( PortInfo &a, PortInfo &b, void *data ) -> void
    {
+      (void) data;
+
       const auto hash_val( dynalloc::hash( a, b ) );
       /** TODO, the values might wrap if no monitoring on **/
       const auto realized_ratio( a.getFIFO()->get_frac_write_blocked() );
@@ -108,11 +110,11 @@ dynalloc::run()
       /** monitor fifo's **/
       std::chrono::microseconds dura( 3000 );
       std::this_thread::sleep_for( dura );
-     
+
       auto &container( (this)->source_kernels.acquire() );
       GraphTools::BFS( container, mon_func );
       (this)->source_kernels.release();
-            
+
    }
    return;
 }

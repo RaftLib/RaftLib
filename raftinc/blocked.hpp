@@ -1,10 +1,10 @@
 /**
- * blocked.hpp - 
+ * blocked.hpp -
  * @author: Jonathan Beard
  * @version: Sun Jun 29 14:06:10 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -23,30 +23,30 @@
 
 union Blocked
 {
-   
+
    Blocked() : all( 0 )
    {}
 
    Blocked( volatile Blocked &other )
    {
-      count    = other.count;
-      blocked  = other.blocked;
+      bec.count    = other.bec.count;
+      bec.blocked  = other.bec.blocked;
    }
 
    Blocked& operator += ( const Blocked &rhs )
    {
-      if( ! rhs.blocked )
+      if( ! rhs.bec.blocked )
       {
-         (this)->count += rhs.count;
+         (this)->bec.count += rhs.bec.count;
       }
       return( *this );
    }
-   
-   struct
+
+   struct blocked_and_counter
    {
       std::uint32_t blocked;
       std::uint32_t count;
-   };
+   } bec;
    std::uint64_t all;
 }
 #if __APPLE__ || __linux

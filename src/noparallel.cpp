@@ -1,10 +1,10 @@
 /**
- * noparallel.cpp - 
+ * noparallel.cpp -
  * @author: Jonathan Beard
  * @version: Mon Aug 10 20:00:25 2015
- * 
+ *
  * Copyright 2015 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -23,11 +23,16 @@
 #include "streamingstat.tcc"
 #include <map>
 
-no_parallel::no_parallel(       raft::map &map, 
+no_parallel::no_parallel(       raft::map &map,
                                 Allocate &alloc,
                                 Schedule &sched,
                                 volatile bool &exit_para )
 {
+   (void) map;
+   (void) alloc;
+   (void) sched;
+   (void) exit_para;
+
    /** nothing to do here, move along **/
 }
 

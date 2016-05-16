@@ -1,10 +1,10 @@
 /**
- * allocate.cpp - 
+ * allocate.cpp -
  * @author: Jonathan Beard
  * @version: Tue Sep 16 20:20:06 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -27,7 +27,7 @@
 #include "map.hpp"
 #include "portexception.hpp"
 
-Allocate::Allocate( raft::map &map, volatile bool &exit_alloc ) : 
+Allocate::Allocate( raft::map &map, volatile bool &exit_alloc ) :
    source_kernels( map.source_kernels ),
    all_kernels(    map.all_kernels ),
    exit_alloc( exit_alloc )
@@ -43,20 +43,20 @@ Allocate::~Allocate()
 }
 
 void
-Allocate::waitTillReady() 
+Allocate::waitTillReady()
 {
    while( ! ready );
 }
 
 void
-Allocate::setReady() 
+Allocate::setReady()
 {
    ready = true;
 }
 
 void
-Allocate::initialize( PortInfo * const src, 
-                      PortInfo * const dst, 
+Allocate::initialize( PortInfo * const src,
+                      PortInfo * const dst,
                       FIFO * const fifo )
 {
    assert( fifo != nullptr );
@@ -64,12 +64,12 @@ Allocate::initialize( PortInfo * const src,
    assert( src  != nullptr );
    if( src->getFIFO() != nullptr )
    {
-      throw PortDoubleInitializeException( 
+      throw PortDoubleInitializeException(
          "Source port \"" + src->my_name + "\" already initialized!" );
    }
    if( dst->getFIFO() !=  nullptr )
    {
-      throw PortDoubleInitializeException( 
+      throw PortDoubleInitializeException(
          "Destination port \"" + dst->my_name +  "\" already initialized!" );
    }
    src->setFIFO( fifo );
@@ -77,27 +77,29 @@ Allocate::initialize( PortInfo * const src,
    dst->setFIFO( fifo );
    fifo->set_dst_kernel( dst->my_kernel );
    /** NOTE: this list simply speeds up the monitoring if we want it **/
-   allocated_fifo.insert( fifo ); 
+   allocated_fifo.insert( fifo );
 }
 
 
-void 
+void
 Allocate::allocate( PortInfo &a, PortInfo &b, void *data )
 {
+   (void) data;
+
    FIFO *fifo( nullptr );
    instr_map_t * const func_map( a.const_map[ Type::Heap ] );
    auto test_func( (*func_map)[ false ] );
-   
+
    if( a.existing_buffer != nullptr )
    {
-      fifo = test_func( a.nitems, 
+      fifo = test_func( a.nitems,
                         a.start_index,
                         a.existing_buffer );
    }
    else
    {
-      fifo = test_func( INITIAL_ALLOC_SIZE    /* items */, 
-                        ALLOC_ALIGN_WIDTH     /* align */, 
+      fifo = test_func( INITIAL_ALLOC_SIZE    /* items */,
+                        ALLOC_ALIGN_WIDTH     /* align */,
                         nullptr );
    }
    initialize( &a, &b, fifo );
