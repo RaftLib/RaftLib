@@ -33,7 +33,7 @@ if ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang"
 
 target_compile_options( raft
                         PUBLIC
-                        "-W" "-Wall" "-Wextra" "-Wpedantic" )
+                        "-W" "-Wall" "-Wextra" "-Wpedantic" "-Wno-unused-parameter" )
 
 endif()
 
