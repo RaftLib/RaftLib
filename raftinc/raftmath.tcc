@@ -1,10 +1,10 @@
 /**
- * raftmath.tcc - 
+ * raftmath.tcc -
  * @author: Jonathan Beard
  * @version: Tue Apr 28 13:48:37 2015
- * 
+ *
  * Copyright 2015 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -42,8 +42,8 @@ template < class RETTYPE, class PORT, class... PORTS >
    {
       RETTYPE val;
       port.pop( val );
-      return(  std::move< RETTYPE >( 
-                  val + sum_helper< RETTYPE, PORTS... >::sum( 
+      return(  std::move< RETTYPE >(
+                  val + sum_helper< RETTYPE, PORTS... >::sum(
                      std::forward< PORTS >( ports )... ) ) );
    }
 };
@@ -54,12 +54,12 @@ template < class RETTYPE, class PORT, class... PORTS >
  */
 template < typename RETTYPE,
            class... PORTS,
-        typename std::enable_if< std::is_arithmetic< RETTYPE >::value >::type* = nullptr 
+        typename std::enable_if< std::is_arithmetic< RETTYPE >::value >::type* = nullptr
            > static RETTYPE sum(  PORTS&&... ports )
 {
-   return( std::move< RETTYPE >( sum_helper< RETTYPE, PORTS... >::sum( 
-               std::forward< PORTS >( ports )... ) ) ); 
-};
+   return( std::move< RETTYPE >( sum_helper< RETTYPE, PORTS... >::sum(
+               std::forward< PORTS >( ports )... ) ) );
+}
 
 /** START recursive templates for mult **/
 template < class RETTYPE, class... PORTS > struct mult_helper{};
@@ -79,8 +79,8 @@ template < class RETTYPE, class PORT, class... PORTS >
    {
       RETTYPE val;
       port.pop( val );
-      return(  std::move< RETTYPE >( 
-                  val * mult_helper< RETTYPE, PORTS... >::mult( 
+      return(  std::move< RETTYPE >(
+                  val * mult_helper< RETTYPE, PORTS... >::mult(
                      std::forward< PORTS >( ports )... ) ) );
    }
 };
@@ -91,12 +91,12 @@ template < class RETTYPE, class PORT, class... PORTS >
  */
 template < typename RETTYPE,
            class... PORTS,
-        typename std::enable_if< std::is_arithmetic< RETTYPE >::value >::type* = nullptr 
+        typename std::enable_if< std::is_arithmetic< RETTYPE >::value >::type* = nullptr
            > static RETTYPE mult(  PORTS&&... ports )
 {
-   return( std::move< RETTYPE >( mult_helper< RETTYPE, PORTS... >::mult( 
-            std::forward< PORTS >( ports )... ) ) ); 
-};
+   return( std::move< RETTYPE >( mult_helper< RETTYPE, PORTS... >::mult(
+            std::forward< PORTS >( ports )... ) ) );
+}
 
 
 } /** end namespace raft **/
