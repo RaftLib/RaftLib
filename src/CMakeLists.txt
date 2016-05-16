@@ -26,5 +26,10 @@ target_link_libraries( raft
                        ${CMAKE_SCOTCH_LIBS}
                        m )
 
+
+target_compile_options( raft
+                        PUBLIC
+                        "-W" "-Wall" "-Wextra" "-Wpedantic" )
+
 install( TARGETS raft
          ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib )
