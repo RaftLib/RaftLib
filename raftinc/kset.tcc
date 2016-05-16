@@ -5,9 +5,9 @@
  *
  * @author: Jonathan Beard
  * @version: Wed Apr 13 12:50:38 2016
- * 
+ *
  * Copyright 2016 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -37,7 +37,7 @@ namespace raft
 /** predeclare raft::kernel **/
 class kernel;
 
-/** 
+/**
  * dummy class for extending to kset, largely used
  * to keep from having to type out the class type
  * in long form within the kpair/map classes.
@@ -45,7 +45,7 @@ class kernel;
 struct basekset{
     constexpr basekset() = delete;
     ~basekset() = delete;
-    
+
     using iterator_t = typename
         std::vector< std::reference_wrapper< raft::kernel > >::iterator;
 
@@ -57,23 +57,23 @@ struct basekset{
 template < class... KERNELS > struct AddKernel;
 
 /**
- * feel hacky doing this, but it's probably the 
+ * feel hacky doing this, but it's probably the
  * least amount of code I can write to get this
  * done....probably better way using a tuple
- * like construct, then the compiler would do 
- * most of the work 
+ * like construct, then the compiler would do
+ * most of the work
  */
 
-template < class... K > class ksetr 
+template < class... K > class ksetr
 #ifndef TEST_WO_RAFT
-: public basekset 
+: public basekset
 #endif
 {
 private:
     static_assert( sizeof...( K ) > 0, "size for kset must be > 0" );
     using common_t = typename std::common_type< K... >::type;
-#ifndef TEST_WO_RAFT    
-    /** 
+#ifndef TEST_WO_RAFT
+    /**
      * interestingly this class is far more generic, but for RaftLib
      * we need the common_t to be either raft::kernel, or a dervied
      * type of raft::kernel
@@ -81,17 +81,17 @@ private:
     static_assert( std::is_base_of< basekset,
                                     common_t >::value,
                    "The common type of ksetr must be a derived class of raft::kernel" );
-#endif                   
+#endif
     /** don't want to type this over and over **/
     using vector_t = std::vector< std::reference_wrapper< common_t > >;
     vector_t  k;
-    
+
 public:
     /**
-     * base constructor, with multiple args. 
+     * base constructor, with multiple args.
      */
     constexpr
-    ksetr( K&... kernels ) 
+    ksetr( K&... kernels )
     {
         /**
          * until we get the tuple-like solution built, dynamic alloc
@@ -101,7 +101,7 @@ public:
         k.reserve( sizeof...( K ) );
         AddKernel< K... >::add( std::forward< K >( kernels )..., k );
     }
-  
+
     /**
      * move constructor, hopefully keep the dynamic mem
      * in vector valid w/o re-allocating and copying.
@@ -131,7 +131,7 @@ public:
      * default destructor, nothing really to destruct
      */
     virtual ~ksetr() = default;
-    
+
     /**
      * get the number of kernels held.
      */
@@ -151,15 +151,15 @@ public:
  */
 template < class K, class... KS > struct AddKernel< K, KS... >
 {
-    template < class CONTAINER > 
-        static void add( K &&kernel, 
-                         KS&&... kernels, 
+    template < class CONTAINER >
+        static void add( K &&kernel,
+                         KS&&... kernels,
                          CONTAINER &c )
     {
         c.emplace_back( kernel );
         AddKernel< KS... >::add( std::forward< KS >( kernels )..., c );
         return;
-    };
+    }
 };
 
 /**
@@ -168,21 +168,21 @@ template < class K, class... KS > struct AddKernel< K, KS... >
  */
 template < class K > struct AddKernel< K >
 {
-    template < class CONTAINER > 
+    template < class CONTAINER >
         static void add( K &&kernel, CONTAINER &c )
     {
         c.emplace_back( kernel );
         return;
-    };
+    }
 };
 
-/** 
- * wrap so I can get away w/o having to do the class vs. constructor 
+/**
+ * wrap so I can get away w/o having to do the class vs. constructor
  * template args
  */
-template< class... K > 
+template< class... K >
 inline
-static 
+static
 ksetr< K... >
 kset( K&&... kernels )
 {

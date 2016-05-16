@@ -1,10 +1,10 @@
 /**
- * lambdak.tcc - 
+ * lambdak.tcc -
  * @author: Jonathan Beard
  * @version: Thu Oct 30 10:12:36 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -27,7 +27,7 @@
 namespace raft
 {
 /** TODO, this needs some more error checking before production **/
-   
+
 /** pre-declare recursive struct / functions **/
 template < class... PORTSL > struct AddPorts;
 template < class... PORTSK > struct AddSamePorts;
@@ -36,33 +36,33 @@ template < class... PORTS >
    class lambdak : public raft::kernel
 {
 public:
-   typedef std::function< raft::kstatus ( Port &input, 
+   typedef std::function< raft::kstatus ( Port &input,
                                           Port &output ) > lambdafunc_t;
    /**
-    * constructor - 
+    * constructor -
     * @param   inputs - const std::size_t number of inputs to the kernel
     * @param   outputs - const std::size_t number of outputs to the kernel
     * @param   func - static or lambda function to execute.
     */
-   lambdak( const std::size_t inputs, 
-            const std::size_t outputs, 
+   lambdak( const std::size_t inputs,
+            const std::size_t outputs,
             lambdafunc_t  func ) :   raft::kernel(),
                                      run_func( func )
    {
       add_ports< PORTS... >( inputs, outputs );
    }
 
-    
-    //FIXME, add copy constructor    
+
+    //FIXME, add copy constructor
 
 
    /**
-    * run - implement the run function for this kernel, 
+    * run - implement the run function for this kernel,
     */
    virtual raft::kstatus run()
    {
-      return( run_func( input  /** input ports **/, 
-                        output /** output ports **/) ); 
+      return( run_func( input  /** input ports **/,
+                        output /** output ports **/) );
    }
 
 
@@ -71,23 +71,23 @@ private:
    /** lambda func passed by user **/
    lambdafunc_t  run_func;
 
-   
+
    /** function **/
    template < class... PORTSM >
-      void add_ports( const std::size_t input_max, 
+      void add_ports( const std::size_t input_max,
                       const std::size_t output_max )
    {
       const auto num_types( sizeof... (PORTSM) );
       if( num_types == 1 )
       {
          /** everybody gets same type, add here **/
-         AddSamePorts< PORTSM... >::add( input_max     /* count */, 
+         AddSamePorts< PORTSM... >::add( input_max     /* count */,
                                          input         /* in-port obj */,
                                          output_max    /* count */,
                                          output        /* out-port obj */ );
       }
       /** no idea what type each port is, throw error **/
-      else if( num_types != (input_max + output_max ) ) 
+      else if( num_types != (input_max + output_max ) )
       {
          /** TODO, make exception for here **/
          assert( false );
@@ -98,10 +98,10 @@ private:
          std::size_t input_index(  0 );
          std::size_t output_index( 0 );
          AddPorts< PORTSM... >::add( input_index,
-                                     input_max, 
-                                     input /* ports */, 
+                                     input_max,
+                                     input /* ports */,
                                      output_index,
-                                     output_max, 
+                                     output_max,
                                      output /* ports */);
       }
    }
@@ -109,14 +109,14 @@ private:
 
 
 }; /** end template lambdak **/
-   
+
 /** class recursion **/
 template < class PORT, class... PORTSL > struct AddPorts< PORT, PORTSL...>
 {
-   static void add( std::size_t &input_index, 
+   static void add( std::size_t &input_index,
                     const std::size_t input_max,
                     Port &input_ports,
-                    std::size_t &output_index, 
+                    std::size_t &output_index,
                     const std::size_t output_max,
                     Port &output_ports )
    {
@@ -144,9 +144,9 @@ template < class PORT, class... PORTSL > struct AddPorts< PORT, PORTSL...>
       }
       else
       {
-         /** 
+         /**
           * I think it'll be okay here simply to return, however
-          * we might need the blank specialization below 
+          * we might need the blank specialization below
           */
       }
       return;
@@ -173,11 +173,14 @@ template < class PORT, class... PORTSK > struct AddSamePorts< PORT, PORTSK... >
    static void add( const std::size_t input_count, Port &inputs,
                     const std::size_t output_count, Port &outputs )
    {
-      for( auto it( 0 ); it < input_count; it++ )
+      using input_index_type = std::remove_const_t<decltype(input_count)>;
+      for( input_index_type it( 0 ); it < input_count; it++ )
       {
          inputs.addPort< PORT >( std::to_string( it ) );
       }
-      for( auto it( 0 ); it < output_count; it++ )
+
+      using output_index_type = std::remove_const_t<decltype(input_count)>;
+      for( output_index_type it( 0 ); it < output_count; it++ )
       {
          outputs.addPort< PORT >( std::to_string( it ) );
       }

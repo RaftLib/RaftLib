@@ -1,10 +1,10 @@
 /**
- * splitmethod.hpp - 
+ * splitmethod.hpp -
  * @author: Jonathan Beard
  * @version: Tue Oct 28 12:56:43 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -32,14 +32,14 @@
 class autoreleasebase;
 
 /** FIXME, it's relativly easy to do zero copy....so implement **/
-class splitmethod 
+class splitmethod
 {
 public:
    splitmethod()          = default;
    virtual ~splitmethod() = default;
-   
-   template < class T /* item */, 
-              typename std::enable_if<    
+
+   template < class T /* item */,
+              typename std::enable_if<
                         std::is_fundamental< T >::value >::type* = nullptr >
       bool send( T &item, const raft::signal signal, Port &outputs )
    {
@@ -52,7 +52,7 @@ public:
       else
       {
          return( false );
-      }  
+      }
    }
 
    /**
@@ -61,29 +61,31 @@ public:
     * only on the autorelease object shortly, but for now this will
     * get it working.
     * @param   range - T&, autorelease object
-    * @param   outputs - output port list 
+    * @param   outputs - output port list
     */
-   template < class T   /* peek range obj,  */, 
-              typename std::enable_if<    
-                       not std::is_base_of< autoreleasebase, 
+   template < class T   /* peek range obj,  */,
+              typename std::enable_if<
+                       not std::is_base_of< autoreleasebase,
                                         T >::value >::type* = nullptr >
       bool send( T &range, Port &outputs )
    {
       auto * const fifo( select_fifo( outputs, sendtype ) );
       if( fifo != nullptr )
       {
-         const auto space_avail( 
+         const auto space_avail(
             std::min( fifo->space_avail(), range.size() ) );
-         for( auto i( 0 ); i < space_avail; i++ )
+
+         using index_type = std::remove_const_t<decltype(space_avail)>;
+         for( index_type i( 0 ); i < space_avail; i++ )
          {
-            fifo->push( range[ i ].ele, range[ i ].sig ); 
+            fifo->push( range[ i ].ele, range[ i ].sig );
          }
          return( true );
       }
       else
       {
          return( false );
-      }  
+      }
    }
 
    template < class T /* item */ >

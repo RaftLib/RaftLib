@@ -1,10 +1,10 @@
 /**
- * split.tcc - 
+ * split.tcc -
  * @author: Jonathan Beard
  * @version: Mon Oct 20 09:49:17 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -29,7 +29,9 @@ public:
    split( const std::size_t num_ports = 1 ) : parallel_k()
    {
       input.addPort< T >( "0" );
-      for( auto it( 0 ); it < num_ports; it++ )
+
+      using index_type = std::remove_const_t<decltype(num_ports)>;
+      for( index_type it( 0 ); it < num_ports; it++ )
       {
          addPort();
       }
@@ -54,7 +56,7 @@ public:
       }
       return( raft::proceed );
    }
-   
+
    virtual std::size_t  addPort()
    {
       return( (this)->addPortTo< T >( output ) );
@@ -63,12 +65,12 @@ public:
 protected:
    virtual void lock()
    {
-      lock_helper( input ); 
+      lock_helper( input );
    }
-   
+
    virtual void unlock()
    {
-      unlock_helper( input ); 
+      unlock_helper( input );
    }
    method split_func;
 };

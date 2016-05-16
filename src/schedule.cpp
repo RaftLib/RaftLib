@@ -10,8 +10,8 @@ Schedule::Schedule( raft::map &map ) : kernel_set( map.all_kernels ),
                                  source_kernels( map.source_kernels ),
                                  dst_kernels( map.dst_kernels )
 {
-   //TODO, see if we want to keep this 
-   handlers.addHandler( raft::quit, Schedule::quitHandler ); 
+   //TODO, see if we want to keep this
+   handlers.addHandler( raft::quit, Schedule::quitHandler );
 }
 
 Schedule::~Schedule()
@@ -27,7 +27,7 @@ Schedule::init()
 
 
 raft::kstatus
-Schedule::quitHandler( FIFO              &fifo, 
+Schedule::quitHandler( FIFO              &fifo,
                        raft::kernel      *kernel,
                        const raft::signal signal,
                        void              *data )
@@ -37,24 +37,29 @@ Schedule::quitHandler( FIFO              &fifo,
     * currently, however that may change in the futre
     * with more features and systems added.
     */
-   fifo.invalidate();  
+
+   (void) kernel;
+   (void) signal;
+   (void) data;
+
+   fifo.invalidate();
    return( raft::stop );
 }
 
-void 
+void
 Schedule::invalidateOutputPorts( raft::kernel *kernel )
 {
-   
+
    auto &output_ports( kernel->output );
    for( auto &port : output_ports )
-   {  
+   {
       port.invalidate();
    }
    return;
 }
 
 raft::kstatus
-Schedule::checkSystemSignal( raft::kernel * const kernel, 
+Schedule::checkSystemSignal( raft::kernel * const kernel,
                              void *data,
                              SystemSignalHandler &handlers )
 {
@@ -73,10 +78,10 @@ Schedule::checkSystemSignal( raft::kernel * const kernel,
       {
          port.signal_pop();
          /**
-          * TODO, right now there is special behavior for term signal only, 
+          * TODO, right now there is special behavior for term signal only,
           * what should we do with others?  Need to decide that.
           */
-         
+
          if( handlers.callHandler( curr_signal,
                                port,
                                kernel,
@@ -167,8 +172,8 @@ Schedule::kernelRun( raft::kernel * const kernel,
          invalidateOutputPorts( kernel );
          finished = true;
       }
-   } 
-   /** 
+   }
+   /**
     * must recheck data items again after port valid check, there could
     * have been a push between these two conditional statements.
     */
@@ -190,7 +195,7 @@ Schedule::setPtrSets( raft::kernel * const kernel,
     assert( out != nullptr );
     assert( peekset != nullptr );
     /**
-     * looks a bit odd initially, but the same 
+     * looks a bit odd initially, but the same
      * peekset is set for each kernel's FIFO's
      * within the view of the kernel they'll be
      * accessed sequentially so no contention
@@ -221,7 +226,7 @@ Schedule::fifo_gc( ptr_map_t * const in,
         {
             void *ptr = reinterpret_cast< void* >( (*in_begin).first );
             (*in_begin).second( ptr );
-            ++in_begin;     
+            ++in_begin;
         }
         else
         {
@@ -233,7 +238,7 @@ Schedule::fifo_gc( ptr_map_t * const in,
     {
             void *ptr = reinterpret_cast< void* >( (*in_begin).first );
             (*in_begin).second( ptr );
-            ++in_begin;     
+            ++in_begin;
     }
     in->clear();
     out->clear();

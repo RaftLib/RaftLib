@@ -1,10 +1,10 @@
 /**
- * basicparallel.cpp - 
+ * basicparallel.cpp -
  * @author: Jonathan Beard
  * @version: Mon Aug 10 20:00:25 2015
- * 
+ *
  * Copyright 2015 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -25,7 +25,7 @@
 
 
 
-basic_parallel::basic_parallel( raft::map &map, 
+basic_parallel::basic_parallel( raft::map &map,
                                 Allocate &alloc,
                                 Schedule &sched,
                                 volatile bool &exit_para )
@@ -49,21 +49,23 @@ basic_parallel::start()
    while( ! exit_para )
    {
       auto &kernels( source_kernels.acquire() );
-      /** 
+      /**
        * since we have to have a lock on the ports
        * for both BFS and duplication, we'll mark
        * the kernels inside of BFS and duplicate
        * outside of it.
        */
       std::vector< raft::kernel* > dup_list;
-      GraphTools::BFS(  kernels, 
-                        [&]( raft::kernel *kernel, 
+      GraphTools::BFS(  kernels,
+                        [&]( raft::kernel *kernel,
                                            void *data )
-                        { 
+                        {
+                           (void) data;
+
                            if( kernel->dup_enabled )
-                           {                           
+                           {
                               /** start checking stats **/
-                              auto hash( 
+                              auto hash(
                                  reinterpret_cast< std::uintptr_t >( kernel ) );
                               /** input  stats **/
                               raft::streamingstat< float > in;
@@ -81,9 +83,9 @@ basic_parallel::start()
                                  out.update( fifo->size() / fifo->capacity() );
                               }
                               /** apply criteria **/
-                              if( ( kernel->input.count() == 0 || 
+                              if( ( kernel->input.count() == 0 ||
                                     in.mean< float >() > .5  ) &&
-                                  ( out.mean< float >() < .5   || 
+                                  ( out.mean< float >() < .5   ||
                                     kernel->output.count() == 0 ) )
                               {
                                  hashmap[ hash ].occ_in++;
@@ -97,12 +99,12 @@ basic_parallel::start()
                            }
                         },
                         nullptr );
-      source_kernels.release();                  
-      
+      source_kernels.release();
+
       for( auto * kernel : dup_list )
       {
-         /** 
-          * FIXME, logic below only works for 
+         /**
+          * FIXME, logic below only works for
           * single input, single output..intended
           * to get it working
           */
@@ -113,7 +115,7 @@ basic_parallel::start()
          {
             auto &old_port_in( kernel->input.getPortInfo() );
             old_port_in.other_kernel->lock();
-            const auto portid( 
+            const auto portid(
                old_port_in.other_kernel->addPort() );
             auto &new_other_outport(
                old_port_in.other_kernel->output.getPortInfoFor(
@@ -135,10 +137,10 @@ basic_parallel::start()
          {
             auto &old_port_out( kernel->output.getPortInfo() );
             old_port_out.other_kernel->lock();
-            const auto portid( 
+            const auto portid(
                old_port_out.other_kernel->addPort() );
             auto &new_other_inport(
-               old_port_out.other_kernel->input.getPortInfoFor( 
+               old_port_out.other_kernel->input.getPortInfoFor(
                   std::to_string( portid ) ) );
 
             auto &newoutport( ptr->output.getPortInfo() );
@@ -147,7 +149,7 @@ basic_parallel::start()
              * newoutport       == port y on b
              * new_other_inport == port x on c
              */
-            alloc.allocate( newoutport, 
+            alloc.allocate( newoutport,
                             new_other_inport,
                             nullptr );
 
@@ -156,8 +158,8 @@ basic_parallel::start()
          /** schedule new kernel **/
          sched.scheduleKernel( ptr );
       }
-      
-      
+
+
       dup_list.clear();
       std::chrono::microseconds dura( 100 );
       std::this_thread::sleep_for( dura );

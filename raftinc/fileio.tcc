@@ -1,10 +1,10 @@
 /**
- * fileio.tcc - 
+ * fileio.tcc -
  * @author: Jonathan Beard
  * @version: Mon Sep 29 14:24:00 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -56,7 +56,7 @@ template < std::size_t size = 65536 > struct filechunk
    std::size_t    start_position    = 0;
    std::size_t    length            = 0;
    std::uint64_t  index             = 0;
-   
+
    constexpr static std::size_t getChunkSize()
    {
       return( size );
@@ -86,20 +86,21 @@ template < std::size_t size = 65536 > struct filechunk
 };
 
 
-template < class chunktype = filechunk< 65536 >, 
+template < class chunktype = filechunk< 65536 >,
            bool copy = false > class filereader : public raft::kernel
 {
 public:
-   filereader( const std::string inputfile, 
+   filereader( const std::string inputfile,
                const std::size_t n_output_ports = 1,
                const std::size_t chunk_offset = 0 ) : chunk_offset( chunk_offset )
    {
-      for( auto index( 0 ); index < n_output_ports; index++ )
+      using index_type = std::remove_const_t<decltype(n_output_ports)>;
+      for( index_type index( 0 ); index < n_output_ports; index++ )
       {
          /** add a port for each index var, all named "output_#" **/
          output.addPort< chunktype  >( std::to_string( index ) );
       }
-      
+
       /** stat file **/
       struct stat st;
       std::memset( &st, 0, sizeof( struct stat ) );
@@ -109,7 +110,7 @@ public:
          //TODO, figure out global shutdown procedure
          exit( EXIT_FAILURE );
       }
-      
+
       /** initialize file **/
       fp = fopen( inputfile.c_str() , "r" );
       if( fp == nullptr )
@@ -117,15 +118,15 @@ public:
          perror( "Failed to open input file, exiting!" );
          exit( EXIT_FAILURE );
       }
-      
+
       /** get length in bytes **/
       length = st.st_size;
-      iterations = std::round( (double) length / 
+      iterations = std::round( (double) length /
                      ( (double) (chunktype::getChunkSize()) - chunk_offset - 1 ) );
    }
 
    virtual raft::kstatus run()
-   {  
+   {
       for( auto &port : output )
       {
          if( port.space_avail() )
@@ -143,18 +144,18 @@ public:
             chunk.index = chunk_index;
             chunk_index++;
             const auto chunksize( chunktype::getChunkSize() );
-            const auto num_read(  
+            const auto num_read(
                fread( chunk.buffer, sizeof( char ), chunksize , fp ) );
             chunk.buffer[ num_read ] = '\0';
             chunk.length = num_read;
-            port.send( 
-               ( iterations - output.count() /* num ports */ ) > 0 ? 
-                  raft::none : 
+            port.send(
+               ( iterations - output.count() /* num ports */ ) > 0 ?
+                  raft::none :
                   raft::eof );
-            static_assert( std::is_signed< decltype( iterations ) >::value, 
+            static_assert( std::is_signed< decltype( iterations ) >::value,
                            "iterations must be a signed type" );
             if( --iterations < 0 )
-            {  
+            {
                return( raft::stop );
             }
          }

@@ -8,10 +8,11 @@
 #include <raft>
 #include <raftio>
 #include <cmd>
+#include <type_traits>
 
-/** 
- * used interface found here: 
- * http://www.bzip.org/1.0.3/html/hl-interface.html 
+/**
+ * used interface found here:
+ * http://www.bzip.org/1.0.3/html/hl-interface.html
  */
 
 template < class chunktype > class filewrite : public raft::parallel_k
@@ -22,11 +23,13 @@ public:
     {
         out_fp = std::fopen( filename.c_str(), "wb" );
         if( out_fp == nullptr )
-        {   
+        {
             std::cerr << "failed to open output file, " << filename << "\n";
             exit( EXIT_FAILURE );
-        } 
-        for( auto i( 0 ); i < n_output_ports; i++ )
+        }
+
+        using index_type = std::remove_const_t<decltype(n_output_ports)>;
+        for( index_type i( 0 ); i < n_output_ports; i++ )
         {
             addPortTo< chunktype >( input );
         }
@@ -35,7 +38,7 @@ public:
     virtual ~filewrite()
     {
         std::fflush( out_fp );
-        std::fclose( out_fp );                             
+        std::fclose( out_fp );
     }
 
     virtual raft::kstatus run()
@@ -44,13 +47,13 @@ public:
         {
             if( port.size() > 0 )
             {
-                auto &ele( port.template peek< chunktype >() ); 
+                auto &ele( port.template peek< chunktype >() );
                 if( ele.index == curr_position )
                 {
-                    std::fwrite( ele.buffer, 
-                                 1, 
-                                 ele.length, 
-                                 out_fp );    
+                    std::fwrite( ele.buffer,
+                                 1,
+                                 ele.length,
+                                 out_fp );
                     curr_position++;
                     port.recycle( 1 );
                 }
@@ -67,7 +70,7 @@ private:
 template < class chunktype > class compress : public raft::kernel
 {
 public:
-    compress( const int blocksize, 
+    compress( const int blocksize,
               const int verbosity,
               const int workfactor ) : raft::kernel(),
                                        blocksize( blocksize ),
@@ -104,7 +107,7 @@ public:
                                       workfactor ) );
         if( ret_val == BZ_OK )
         {
-            
+
             out_ele.length = length_out;
             out_ele.index  = in_ele.index;
             output[ "out" ].send();
@@ -166,7 +169,7 @@ main( int argc, char **argv )
     using fr_t    = raft::filereader< chunk_t, false >;
     using fw_t    = filewrite< chunk_t >;
     using comp    = compress< chunk_t >;
-   
+
     /** variables to set below **/
     bool help( false );
     int blocksize ( 9 );
@@ -174,7 +177,7 @@ main( int argc, char **argv )
     int workfactor( 250 );
     std::string inputfile( "" );
     std::string outputfile( "" );
-    
+
     std::int64_t  num_threads( 1 );
 
     CmdArgs cmdargs( argv[ 0 ] /** prog name  **/,
@@ -200,12 +203,12 @@ main( int argc, char **argv )
                                                   "-o",
                                                   "output file",
                                                   true /** required **/ ) );
-    
+
     cmdargs.addOption( new Option< std::int64_t  >( num_threads,
                                                     "-th",
                                                     "number of worker threads" ) );
-    
-    /** process args **/                                                  
+
+    /** process args **/
     cmdargs.processArgs( argc, argv );
     if( help || ! cmdargs.allMandatorySet() )
     {
@@ -216,19 +219,19 @@ main( int argc, char **argv )
     /** declare kernels **/
     fr_t reader( inputfile,
                  num_threads /** manually set threads for b-marking **/ );
-    fw_t writer( outputfile, 
+    fw_t writer( outputfile,
                  num_threads /** manually set threads for b-marking **/ );
-    comp c( blocksize, 
-            verbosity, 
+    comp c( blocksize,
+            verbosity,
             workfactor );
-    
+
     /** set-up map **/
     raft::map m;
-    
-    /** 
+
+    /**
      * detect # output ports from reader,
-     * duplicate c that #, assign each 
-     * output port to the input ports in 
+     * duplicate c that #, assign each
+     * output port to the input ports in
      * writer
      */
     m += reader <= c >= writer;

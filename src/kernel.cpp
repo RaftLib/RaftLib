@@ -10,11 +10,11 @@ std::size_t kernel::kernel_count( 0 );
 kernel::kernel() : kernel_id( kernel::kernel_count )
 {
    kernel::kernel_count++;
-};
+}
 
 /** existing memory **/
-kernel::kernel( void * const ptr, 
-                const std::size_t nbytes ) : 
+kernel::kernel( void * const ptr,
+                const std::size_t nbytes ) :
    input(  this, ptr, nbytes ),
    output( this, ptr, nbytes ),
    kernel_id( kernel::kernel_count )
@@ -28,7 +28,7 @@ kernel::get_id()
    return( kernel_id );
 }
 
-raft::kernel& 
+raft::kernel&
 kernel::operator []( const std::string &&portname )
 {
    if( enabled_port.size() < 2 )
@@ -49,15 +49,15 @@ kernel::addPort()
 {
    return( 0 );
 }
-   
-void 
+
+void
 kernel::lock()
 {
    /** does nothing, just need a base impl **/
    return;
 }
 
-void 
+void
 kernel::unlock()
 {
    /** does nothing, just need a base impl **/
@@ -80,7 +80,7 @@ kernel::getEnabledPort()
 //kernel::getName()
 //{
 //   int status( 0 );
-//   const std::string name_a( 
+//   const std::string name_a(
 //      abi::__cxa_demangle( typeid( *(this) ).name(), 0, 0, &status ) );
 //
 //}

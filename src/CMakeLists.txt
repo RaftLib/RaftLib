@@ -26,5 +26,16 @@ target_link_libraries( raft
                        ${CMAKE_SCOTCH_LIBS}
                        m )
 
+
+# Enable warnings if using clang or gcc.
+if ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" 
+  OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
+
+target_compile_options( raft
+                        PUBLIC
+                        "-W" "-Wall" "-Wextra" "-Wpedantic" "-Wno-unused-parameter" )
+
+endif()
+
 install( TARGETS raft
          ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib )

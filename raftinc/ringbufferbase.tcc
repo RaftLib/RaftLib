@@ -1,10 +1,10 @@
 /**
- * ringbufferbase.tcc - 
+ * ringbufferbase.tcc -
  * @author: Jonathan Beard
  * @version: Thu May 15 09:06:52 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -58,7 +58,7 @@ class RingBufferBase
 {
 public:
     RingBufferBase() = delete;
-    virtual ~RingBufferBase() = delete;;
+    virtual ~RingBufferBase() = delete;
 };
 
 

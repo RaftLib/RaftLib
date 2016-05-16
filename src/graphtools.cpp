@@ -1,10 +1,10 @@
 /**
- * graphtools.cpp - 
+ * graphtools.cpp -
  * @author: Jonathan Beard
  * @version: Sat Sep 20 13:15:09 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -43,7 +43,7 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
    std::for_each( source_kernels.begin(),
                   source_kernels.end(),
                   [&]( raft::kernel *k )
-                  { 
+                  {
                      queue.push( k );
                      visited_set.insert( k );
                   } );
@@ -61,7 +61,7 @@ GraphTools::BFS( std::vector< raft::kernel* > &source_kernels,
    std::for_each( source_kernels.begin(),
                   source_kernels.end(),
                   [&]( raft::kernel *k )
-                  { 
+                  {
                      queue.push( k );
                      visited_set.insert( k );
                   } );
@@ -84,12 +84,12 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                      visited_set.insert( k );
                   });
 
-   GraphTools::__BFS( queue, visited_set, func, data ); 
+   GraphTools::__BFS( queue, visited_set, func, data );
    return;
 }
-                    
 
-void 
+
+void
 GraphTools::__BFS( std::queue< raft::kernel* > &queue,
                    std::set<   raft::kernel* > &visited_set,
                    edge_func                   func,
@@ -116,7 +116,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
          /** get dst edge to call function on **/
          if( source.other_kernel != nullptr  )
          {
-            PortInfo &dst( 
+            PortInfo &dst(
                source.other_kernel->input.getPortInfoFor( source.other_name ) );
             func( source, dst, data );
          }
@@ -124,8 +124,8 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
          if( connected_error )
          {
             std::stringstream ss;
-            ss << "Unconnected port detected at " << 
-               common::printClassName( *k ) <<  
+            ss << "Unconnected port detected at " <<
+               common::printClassName( *k ) <<
                   "[ \"" <<
                   source.my_name << " \"], please fix and recompile.";
             k->output.portmap.mutex_map.unlock();
@@ -135,7 +135,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
          if( visited_set.find( source.other_kernel ) == visited_set.end() )
          {
             queue.push( source.other_kernel );
-            visited_set.insert( source.other_kernel ); 
+            visited_set.insert( source.other_kernel );
          }
       }
       k->output.portmap.mutex_map.unlock();
@@ -175,7 +175,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
             if( visited_set.find( source.other_kernel ) == visited_set.end() )
             {
                queue.push( source.other_kernel );
-               visited_set.insert( source.other_kernel ); 
+               visited_set.insert( source.other_kernel );
             }
          }
       }
@@ -190,6 +190,11 @@ GraphTools::__DFS( std::stack< raft::kernel* > &stack,
                    edge_func                   func,
                    void                        *data )
 {
+   (void) stack;
+   (void) visited_set;
+   (void) func;
+   (void) data;
+
    /** TODO, implement me **/
    assert( false );
 }
@@ -200,6 +205,11 @@ GraphTools::__DFS( std::stack< raft::kernel* > &stack,
                    vertex_func                 func,
                    void                        *data )
 {
+   (void) stack;
+   (void) visited_set;
+   (void) func;
+   (void) data;
+
    /** TODO, implement me **/
    assert( false );
 }
