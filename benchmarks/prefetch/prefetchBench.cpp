@@ -1,10 +1,10 @@
 /**
- * prefetchBench.cpp - 
+ * prefetchBench.cpp -
  * @author: Jonathan Beard
  * @version: Fri Mar 25 14:49:51 2016
- * 
+ *
  * Copyright 2016 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -55,10 +55,11 @@ static void fun_function( FUNCTION function,
 template < std::size_t N > struct foo
 {
    constexpr foo() : length( N ){}
-   
+
    foo( const foo &other ) : length( other.length )
    {
-        for( auto i( 0 ); i < N; i++ )
+        using index_type = std::remove_const_t<decltype(N)>;
+        for( index_type i( 0 ); i < N; i++ )
         {
             pad[ i ] = other.pad[ i ];
         }
@@ -86,10 +87,13 @@ public:
     virtual raft::kstatus run()
     {
         auto &mem( output[ "y" ].allocate< obj_t >() );
-        for( auto i( 0 ); i < mem.length; i++ )
+
+        using index_type = std::remove_const_t<decltype(mem.length)>;
+        for( index_type i( 0 ); i < mem.length; i++ )
         {
             mem.pad[ i ] = counter;
         }
+
         output[ "y" ].send();
         counter++;
         if( counter == 100000 )
@@ -110,7 +114,7 @@ public:
     {
         input.addPort< obj_t >( "in" );
         output.addPort< obj_t >( "out" );
-#ifdef PAPITEST        
+#ifdef PAPITEST
         //set up PAPI
         fun_function( PAPI_library_init,
                       PAPI_VER_CURRENT,
@@ -142,7 +146,7 @@ public:
                       __FILE__,
                       __LINE__,
                       EventSet );
-#endif                      
+#endif
     }
 
 #ifdef PAPITEST
@@ -168,7 +172,7 @@ public:
     }
 #else
     virtual ~passthrough() = default;
-#endif                      
+#endif
 
     virtual raft::kstatus run()
     {
@@ -183,7 +187,7 @@ public:
         return( raft::proceed );
     }
 
-#ifdef PAPITEST    
+#ifdef PAPITEST
 private:
     int EventSet = PAPI_NULL;
 #endif
@@ -211,7 +215,7 @@ private:
 
 
 
-int 
+int
 main( int argc, char **argv )
 {
     start st;
@@ -219,7 +223,7 @@ main( int argc, char **argv )
     last l;
 
     raft::map m;
-    m += st >> pt >> l; 
+    m += st >> pt >> l;
     m.exe();
     return( EXIT_SUCCESS );
 }

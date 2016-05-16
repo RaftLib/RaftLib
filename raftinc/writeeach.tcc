@@ -1,10 +1,10 @@
 /**
- * write_each.tcc - 
+ * write_each.tcc -
  * @author: Jonathan Beard
  * @version: Sun Oct 26 15:51:46 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -58,7 +58,9 @@ public:
             if( avail_data != 0 )
             {
                 auto alldata( port.template peek_range< T >( avail_data ) );
-                for( auto index( 0 ); index < avail_data; index++ )
+
+                using index_type = std::remove_const_t<decltype(avail_data)>;
+                for( index_type index( 0 ); index < avail_data; index++ )
                 {
                    (*inserter) = alldata[ index ].ele;
                    /** hope the iterator defined overloaded ++ **/
@@ -74,7 +76,7 @@ private:
 };
 
 template < class T, class BackInsert >
-static 
+static
 writeeach< T, BackInsert >
 write_each( BackInsert &&bi )
 {
