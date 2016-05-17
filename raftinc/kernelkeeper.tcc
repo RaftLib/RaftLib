@@ -71,7 +71,7 @@ public:
    CONTAINER& acquire()
    {
       //spin until we can get a lock
-      while( not mutex.try_lock() )
+      while( ! mutex.try_lock() )
       {
          //it's polite to yield
          std::this_thread::yield();
@@ -83,7 +83,9 @@ public:
 
    void release()
    {
+#ifndef NDEBUG      
       const auto caller_id( std::this_thread::get_id() );
+#endif      
       assert( caller_id == owner_id );
       mutex.unlock();
       return;

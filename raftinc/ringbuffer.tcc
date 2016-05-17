@@ -92,17 +92,21 @@ public:
      * @param   align   - memory alignment
      * @return  FIFO*
      */
-    static FIFO* make_new_fifo(
-        std::size_t n_items, std::size_t align, void* const data)
+    static FIFO* make_new_fifo( const std::size_t n_items, 
+                                const std::size_t align, 
+                                void * const data )
     {
-        if(data != nullptr)
+        if( data != nullptr )
         {
-            return (new RingBuffer<T, Type::Heap, false>(
-                data, n_items, align /** actually start pos, redesign **/));
+            return( 
+                new RingBuffer<T, Type::Heap, false>( data, 
+                                                      n_items, 
+                                                      align /** actually start pos, redesign **/)
+            );
         }
         else
         {
-            return (new RingBuffer<T, Type::Heap, false>(n_items, align));
+            return( new RingBuffer< T, Type::Heap, false >(n_items, align ) );
         }
     }
 
@@ -225,8 +229,9 @@ public:
 
     virtual ~RingBuffer() = default;
 
-    static FIFO* make_new_fifo(
-        std::size_t n_items, std::size_t align, void* data)
+    static FIFO* make_new_fifo( const std::size_t n_items, 
+                                const std::size_t align, 
+                                void * const __attribute__((__unused__)) data )
     {
         assert(data == nullptr);
         return (new RingBuffer<T, Type::Heap, true>(n_items, align));
@@ -243,14 +248,17 @@ public:
      * RingBuffer - default constructor, initializes basic
      * data structures.
      */
-    RingBuffer(const std::size_t n, const std::size_t align = 16)
+    RingBuffer( const std::size_t __attribute__((__unused__)) n, 
+                const std::size_t align = 16 )
         : RingBufferBaseMonitor<T, Type::Infinite>(1, align)
     {
     }
+
     virtual ~RingBuffer() = default;
 
-    static FIFO* make_new_fifo(
-        std::size_t n_items, std::size_t align, void* data)
+    static FIFO* make_new_fifo( const std::size_t n_items, 
+                                const std::size_t align, 
+                                void const * __attribute__((__unused__)) data )
     {
         assert(data == nullptr);
         return (new RingBuffer<T, Type::Infinite, true>(n_items, align));
@@ -259,15 +267,16 @@ public:
 
 /** specialization for dummy with no instrumentation **/
 template <class T>
-class RingBuffer<T, Type::Infinite, false>
-    : public RingBufferBase<T, Type::Infinite>
+class RingBuffer< T, Type::Infinite, false >
+    : public RingBufferBase< T, Type::Infinite >
 {
 public:
     /**
      * RingBuffer - default constructor, initializes basic
      * data structures.
      */
-    RingBuffer(const std::size_t n, const std::size_t align = 16)
+    RingBuffer( const std::size_t __attribute__((__unused__)) n, 
+                const std::size_t __attribute__((__unused__)) align = 16)
         : RingBufferBase<T, Type::Infinite>()
     {
         (this)->datamanager.set(new Buffer::Data<T, Type::Heap>(1, 16));
@@ -289,24 +298,28 @@ public:
      * @param   align   - memory alignment
      * @return  FIFO*
      */
-    static FIFO* make_new_fifo(
-        std::size_t n_items, std::size_t align, void* data)
+    static FIFO* make_new_fifo( const std::size_t n_items, 
+                                const std::size_t align, 
+                                void * const __attribute__((__unused__)) data )
     {
         assert(data == nullptr);
         return (new RingBuffer<T, Type::Infinite, false>(n_items, align));
     }
 
     virtual void resize(
-        const std::size_t size, const std::size_t align, bool& exit_alloc)
+        const std::size_t __attribute__((__unused__)) size, 
+        const std::size_t __attribute__((__unused__)) align, 
+        bool& __attribute__((__unused__)) exit_alloc)
     {
+        /** should never really be calling this function **/
         assert(false);
-        /** TODO, implement me **/
     }
 
     virtual float get_frac_write_blocked()
     {
         /** TODO, implement me **/
         assert(false);
+        return( static_cast< float >( 0.0 ) );
     }
 };
 
@@ -315,16 +328,24 @@ public:
  * SharedMemory
  */
 template <class T>
-class RingBuffer<T, Type::SharedMemory, false>
-    : public RingBufferBase<T, Type::SharedMemory>
+class RingBuffer< T, Type::SharedMemory, false >
+    : public RingBufferBase< T, Type::SharedMemory >
 {
 public:
-    RingBuffer(const std::size_t nitems, const std::string key, Direction dir,
-        const std::size_t alignment = 16)
-        : RingBufferBase<T, Type::SharedMemory>(), shm_key(key)
+    RingBuffer( const std::size_t nitems, 
+                const std::string key, 
+                Direction dir,
+                const std::size_t alignment = 16 ) 
+                    : RingBufferBase< T, 
+                                      Type::SharedMemory >() ,
+                      shm_key( key )
     {
-        (this)->datamanager.set(new Buffer::Data<T, Type::SharedMemory>(
-            nitems, key, dir, alignment));
+        (this)->datamanager.set( 
+            new Buffer::Data< T, Type::SharedMemory >( nitems, 
+                                                       key, 
+                                                       dir, 
+                                                       alignment )
+        );
     }
 
     virtual ~RingBuffer()
@@ -349,25 +370,36 @@ public:
      * @param   align   - memory alignment
      * @return  FIFO*
      */
-    static FIFO* make_new_fifo(
-        std::size_t n_items, std::size_t align, void* data)
+    static FIFO* make_new_fifo( const std::size_t n_items, 
+                                const std::size_t align, 
+                                void * const data )
     {
-        auto* data_ptr(reinterpret_cast<Data*>(data));
-        return (new RingBuffer<T, Type::SharedMemory, false>(
-            n_items, data_ptr->key, data_ptr->dir, align));
+        auto * const data_ptr(reinterpret_cast<Data*>(data) );
+        return( new RingBuffer< T, 
+                                Type::SharedMemory, 
+                                false>( n_items, 
+                                        data_ptr->key, 
+                                        data_ptr->dir, 
+                                        align )
+        );
     }
 
-    virtual void resize(const std::size_t size, const std::size_t align,
-        volatile bool& exit_alloc)
+    virtual void resize( const std::size_t __attribute__((__unused__)) size, 
+                         const std::size_t __attribute__((__unused__)) align,
+                         volatile bool& __attribute__((__unused__)) exit_alloc )
     {
+        UNUSED( size );
+        UNUSED( align );
+        UNUSED( exit_alloc );
         assert(false);
         /** TODO, implement me **/
+        return;
     }
 
     virtual float get_frac_write_blocked()
     {
         assert(false);
-        return (0.0);
+        return( static_cast< float >( 0.0 ) );
     }
 
 protected:
@@ -383,11 +415,13 @@ class RingBuffer<T, Type::TCP, false /* no monitoring yet */>
     : public RingBufferBase<T, Type::Heap>
 {
 public:
-    RingBuffer(const std::size_t nitems, const std::string dns_name,
-        Direction dir, const std::size_t alignment = 16)
-        : RingBufferBase<T, Type::Heap>()
+    RingBuffer( const std::size_t __attribute__((__unused__)) nitems, 
+                const std::string __attribute__((__unused__)) dns_name,
+                Direction __attribute__((__unused__)) dir, 
+                const std::size_t __attribute__((__unused__)) alignment = 16 ) 
+                    : RingBufferBase<T, Type::Heap>()
     {
-        // TODO, fill in stuff here
+        // TODO, fill in stuff here, perhaps from original....
     }
 
     virtual ~RingBuffer() = default;
@@ -398,27 +432,38 @@ public:
         std::string dns_name;
     };
 
-    static FIFO* make_new_fifo(
-        const std::size_t n, const std::size_t align, void* data)
+    static FIFO* make_new_fifo( const std::size_t n, 
+                                const std::size_t align, 
+                                void * const data )
     {
-        auto* cast_data(
-            reinterpret_cast<RingBuffer<T, Type::TCP, false>::Data*>(data));
+        auto * const  cast_data( reinterpret_cast< RingBuffer< T, 
+                                                               Type::TCP, 
+                                                               false >::Data* >(data) );
 
-        return (new RingBuffer<T, Type::TCP, false>(
-            n /** n_items **/, cast_data->dns_name, cast_data->dir, align));
+        return( new RingBuffer< T, 
+                                Type::TCP, 
+                                false >( n /** n_items **/, 
+                                         cast_data->dns_name, 
+                                         cast_data->dir, 
+                                         align ) );
     }
 
-    virtual void resize(const std::size_t size, const std::size_t align,
-        volatile bool& exit_alloc)
+    virtual void resize(    const std::size_t __attribute__((__unused__)) size, 
+                            const std::size_t __attribute__((__unused__)) align,
+                            volatile bool& __attribute__((__unused__)) exit_alloc)
     {
+        UNUSED( size );
+        UNUSED( align );
+        UNUSED( exit_alloc );
         assert(false);
         /** TODO implement me **/
+        return;
     }
 
     virtual float get_frac_write_blocked()
     {
         assert(false);
-        return (0.0);
+        return( static_cast< float >( 0.0 ) );
     }
 
 protected:

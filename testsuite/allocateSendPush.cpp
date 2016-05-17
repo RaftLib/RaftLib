@@ -41,7 +41,7 @@ template < std::size_t N > struct foo
    ~foo() = default;
 
    int  length;
-   int  pad[ N ];
+   int  __attribute__((__unused__)) pad[ N ];
 };
 
 using obj_t = foo< 100 >;
@@ -115,7 +115,11 @@ public:
         for( auto i( 0 ); i < mem.length; i++ )
         {
             //will fail if we've messed something up
-            assert( static_cast<std::size_t>(mem.pad[ i ]) == counter );
+            if( static_cast<std::size_t>(mem.pad[ i ]) != counter )
+            {
+                std::cerr << "test failed\n";
+                exit( EXIT_FAILURE );
+            }
         }
         input[ "x" ].unpeek();
         input[ "x" ].recycle();
@@ -128,7 +132,7 @@ private:
 };
 
 int
-main( int argc, char **argv )
+main()
 {
     start s;
     middle m;

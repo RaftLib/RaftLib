@@ -36,7 +36,10 @@ public:
         output.addPort< T >( "0" );
     }
 
-    sub( const sub< T > &other ) : sub(){};
+    sub( const sub< T > & __attribute__((__unused__)) other ) : sub()
+    {
+       UNUSED( other );
+    }
 
     virtual ~sub() = default;
 
@@ -53,7 +56,7 @@ public:
 
 
 int
-main( int argc, char **argv )
+main()
 {
   using namespace raft;
   using type_t = std::uint32_t;

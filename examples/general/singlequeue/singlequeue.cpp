@@ -12,7 +12,7 @@
 
 
 int
-main( int argc, char **argv )
+main()
 {
     using type_t = std::int64_t;
     using gen = raft::random_variate< std::mt19937_64,

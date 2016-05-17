@@ -48,7 +48,7 @@ public:
    /**
     * destructor, takes care of cleanup
     */
-   virtual ~Schedule();
+   virtual ~Schedule() = default;
    
    /**
     * start - called to start execution of all

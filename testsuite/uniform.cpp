@@ -26,7 +26,7 @@
 
 
  int
- main( int argc, char **argv )
+ main()
  {
    using namespace raft;
    using type_t = std::uint32_t;
@@ -43,11 +43,20 @@
    m += g >> we;
    m.exe();
 
-   assert( output.size() == send_size );
+   if( output.size() == send_size )
+   {
+       std::cerr << "test failed\n";
+   }
    for( const auto val : output )
    {
-       assert( val >= min );
-       assert( val <= max );
+       if( val <= min )
+       {
+           std::cerr << "test failed\n";
+       }
+       if( val >= max )
+       {
+           std::cerr << "test failed\n";
+       }
    }
    return( EXIT_SUCCESS );
  }

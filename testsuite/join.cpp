@@ -5,7 +5,7 @@
 #include "generate.tcc"
 
 int
-main( int argc, char **argv )
+main()
 {
    using type  = std::uint32_t;
    using gen   = raft::test::generate< type >;

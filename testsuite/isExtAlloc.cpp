@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstdint>
-#include <cassert>
 #include <cstddef>
 #include <array>
 #include "alloc_traits.tcc"
@@ -11,26 +10,50 @@
 template < std::size_t N > class foo
 {
 public:
-   foo( int a ) : A( a ){}
+   foo( const int a ) : A( a ){}
 
 private:
-   int A;
-   char pad[ N ];
+   const int A;
+   char __attribute__((__unused__)) pad[ N ];
 };
 
 int
-main( int argc, char **argv )
+main()
 {
-   assert( fits_in_cache_line< int[ 32 ] >::value == false );
-   /** true cases **/
-   assert( ext_alloc< int[32] >::value );
-   assert( ext_alloc< foo< 100 > >::value );
-   std::array< int, 100 > f;
-   assert( ext_alloc< decltype( f ) >::value );
-   /** false cases **/
-   assert( ext_alloc< float >::value == false );
-   assert( ext_alloc< int >::value == false );
-   assert( ext_alloc< int[16] >::value == false );
-   assert( ext_alloc< foo< 60 > >::value == false );
-   return( EXIT_SUCCESS );
+    if( fits_in_cache_line< int[ 32 ] >::value != false )
+    {
+        return( EXIT_FAILURE );
+    }
+    /** true cases **/
+    if( ext_alloc< int[32] >::value != true )
+    {
+        return( EXIT_FAILURE );
+    }
+    if( ext_alloc< foo< 100 > >::value != true )
+    {
+        return( EXIT_FAILURE );
+    }
+    std::array< int, 100 > f;
+    if( ext_alloc< decltype( f ) >::value != true )
+    {
+        return( EXIT_FAILURE );
+    }
+    /** false cases **/
+    if( ext_alloc< float >::value != false )
+    {
+        return( EXIT_FAILURE );
+    }
+    if( ext_alloc< int >::value != false )
+    {
+        return( EXIT_FAILURE );
+    }
+    if( ext_alloc< int[16] >::value != false )
+    {
+        return( EXIT_FAILURE );
+    }
+    if( ext_alloc< foo< 60 > >::value != false )
+    {
+        return( EXIT_FAILURE );
+    }
+    return( EXIT_SUCCESS );
 }

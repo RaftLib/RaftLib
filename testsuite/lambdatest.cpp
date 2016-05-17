@@ -5,9 +5,10 @@
 #include <cstdlib>
 #include <cstdint>
 #include <random>
+#include "defs.hpp"
 
 int
-main( int argc, char **argv )
+main()
 {
     using type_t = std::int32_t;
     using print  = raft::print< type_t, '\n' >;
@@ -15,9 +16,10 @@ main( int argc, char **argv )
     rnd lk( /** input ports     **/ 0, 
             /** output ports    **/ 1, 
             /** the kernel func **/
-        [&]( Port &input,
+        [&]( Port & __attribute__((__unused__)) input,
              Port &output )
         {
+            UNUSED( input );
             static std::default_random_engine generator;
             static std::uniform_int_distribution< type_t > distribution(1,10);
             static auto rand_func = std::bind( distribution,  generator ); 

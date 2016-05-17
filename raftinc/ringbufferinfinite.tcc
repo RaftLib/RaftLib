@@ -56,9 +56,8 @@ public:
       return( raft::none );
    }
 
-   virtual bool send_signal( const raft::signal  &signal )
+   virtual bool send_signal( const raft::signal __attribute__((__unused__))  &signal )
    {
-      //(this)->signal = signal;
       return( true );
    }
 
@@ -187,14 +186,14 @@ protected:
                        {
                            it_list *begin( reinterpret_cast< it_list* >( b_ptr ) );
                            it_list *end  ( reinterpret_cast< it_list* >( e_ptr   ) );
-                           local_insert_helper( *begin, *end, signal );
+                           local_insert_helper( *begin, *end, sig );
                        } },
                      { typeid( it_vec ).hash_code(),
                        [ & ]( void *b_ptr, void *e_ptr, const raft::signal &sig )
                        {
                            it_vec *begin( reinterpret_cast< it_vec* >( b_ptr ) );
                            it_vec *end  ( reinterpret_cast< it_vec* >( e_ptr   ) );
-                           local_insert_helper( *begin, *end, signal );
+                           local_insert_helper( *begin, *end, sig );
 
                        } } };
       auto f( func_map.find( iterator_type ) );

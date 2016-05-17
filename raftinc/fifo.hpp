@@ -58,12 +58,12 @@ public:
     * FIFO - default constructor for base class for 
     * all subsequent ringbuffers.
     */
-   FIFO();
+   FIFO() = default;
    
    /**
     * ~FIFO - default destructor
     */
-   virtual ~FIFO();
+   virtual ~FIFO() = default;
 
    /**
     * size - returns the current size of this FIFO
@@ -215,6 +215,8 @@ public:
          std::vector< 
             std::reference_wrapper< T > > >( output ) );
    }
+
+   //FIXME, implement allocate_range for object types
    /**
     * send - releases the last item allocated by allocate() to the 
     * queue.  Function will simply return if allocate wasn't

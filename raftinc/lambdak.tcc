@@ -155,13 +155,19 @@ template < class PORT, class... PORTSL > struct AddPorts< PORT, PORTSL...>
 
 template <> struct AddPorts<>
 {
-   static void add( std::size_t &input_index,
-                    const std::size_t input_max,
-                    Port &input_ports,
-                    std::size_t &output_index,
-                    const std::size_t output_max,
-                    Port &output_ports )
+   static void add( std::size_t & __attribute__((__unused__)) input_index,
+                    const std::size_t __attribute__((__unused__)) input_max,
+                    Port & __attribute__((__unused__)) input_ports,
+                    std::size_t & __attribute__((__unused__)) output_index,
+                    const std::size_t __attribute__((__unused__)) output_max,
+                    Port & __attribute__((__unused__)) output_ports )
    {
+      UNUSED( input_index );
+      UNUSED( input_max );
+      UNUSED( input_ports );
+      UNUSED( output_index );
+      UNUSED( output_max );
+      UNUSED( output_ports );
       return;
    }
 };
@@ -189,9 +195,17 @@ template < class PORT, class... PORTSK > struct AddSamePorts< PORT, PORTSK... >
 
 template <> struct AddSamePorts<>
 {
-   static void add( const std::size_t input_count, Port &inputs,
-                    const std::size_t output_count, Port &outputs )
-   { return; }
+   static void add( const std::size_t __attribute__((__unused__)) input_count, 
+                    Port & __attribute__((__unused__)) inputs,
+                    const std::size_t __attribute__((__unused__)) output_count, 
+                    Port & __attribute__((__unused__)) outputs )
+   { 
+       UNUSED( input_count );
+       UNUSED( inputs );
+       UNUSED( output_count );
+       UNUSED( outputs );
+       return; 
+   }
 };
 
 } /* end namespace raft */

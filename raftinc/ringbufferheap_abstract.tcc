@@ -357,22 +357,27 @@ protected:
    using it_list = typename std::list< T >::iterator;
    using it_vec  = typename std::vector< T >::iterator; 
 
-      
+   /**
+    * FIXME: I suspect this would be faster if the compile time (this)
+    * were in fact a pass by reference and the local_insert_helper could be 
+    * absorbed into the std::function, I think the capture probably
+    * has about as bad of perf as std::bind
+    */
    const std::map< std::size_t, 
              std::function< void (void*,void*,const raft::signal&) > > func_map
                = {{ typeid( it_list ).hash_code(), 
-                    [ & ]( void *b_ptr, void *e_ptr, const raft::signal  &sig )
+                    [&]( void *b_ptr, void *e_ptr, const raft::signal  &sig )
                     {
                         it_list *begin( reinterpret_cast< it_list* >( b_ptr ) );
                         it_list *end  ( reinterpret_cast< it_list* >( e_ptr   ) );
-                        local_insert_helper( *begin, *end, signal );
+                        local_insert_helper( *begin, *end, sig );
                     } },
                   { typeid( it_vec ).hash_code(),
-                    [ & ]( void *b_ptr, void *e_ptr, const raft::signal  &sig )
+                    [&]( void *b_ptr, void *e_ptr, const raft::signal  &sig )
                     {
                         it_vec *begin( reinterpret_cast< it_vec* >( b_ptr ) );
                         it_vec *end  ( reinterpret_cast< it_vec* >( e_ptr   ) );
-                        local_insert_helper( *begin, *end, signal );
+                        local_insert_helper( *begin, *end, sig );
 
                     } } };
       auto f( func_map.find( iterator_type ) );

@@ -4,7 +4,7 @@
 #include <cassert>
 #include <cstddef>
 #include "alloc_traits.tcc"
-
+#include "defs.hpp"
 
 
 template < std::size_t N > class foo
@@ -14,11 +14,11 @@ public:
 
 private:
    int A;
-   char pad[ N ];
+   char __attribute__((__unused__)) pad[ N ];
 };
 
 int
-main( int argc, char **argv )
+main()
 {
    assert( fits_in_cache_line< foo< 4 > >::value );
    /** should be inline class allocate **/

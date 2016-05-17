@@ -52,11 +52,13 @@ raft::map::checkEdges( kernelkeeper &source_k )
     * errors.
     */
    GraphTools::BFS( container,
-                    []( PortInfo &a, PortInfo &b, void *data )
+                    []( PortInfo & __attribute__((__unused__)) a, 
+                        PortInfo & __attribute__((__unused__)) b, 
+                        void * __attribute__((__unused__)) const data )
                     {
-                       (void) a;
-                       (void) b;
-                       (void) data;
+                       UNUSED( a );
+                       UNUSED( b );
+                       UNUSED( data );
                        return;
                     },
                     nullptr,
@@ -81,6 +83,7 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
       typename std::remove_reference< decltype( all_k ) >::type;
     /** need to grab impl of Lengauer and Tarjan dominators, use for SESE **/
     /** in the interim, restrict to kernels that are simple to duplicate **/
+    /** NOTE: there's a better linear SESE algorithm jcb17May16 **/
     GraphTools::BFS( source_k,
                      []( PortInfo &a, PortInfo &b, void *data )
                      {
@@ -245,7 +248,7 @@ raft::map::joink( kpair * const next )
 kernel_pair_t
 raft::map::operator += ( kpair &p )
 {
-    kpair * const pair = &p;
+    kpair * const pair( &p );
     assert( pair != nullptr );
     raft::kernel *end( pair->dst );
     /** start at the head, go forward **/
@@ -254,8 +257,10 @@ raft::map::operator += ( kpair &p )
     raft::kernel *start( next->src );
 
     /** used to do nested splits **/
-    enum sj_t : int8_t { split, join, cont };
-    const static std::array< std::string, 3 > sj_t_str = { "split", "join", "cont" };
+    enum sj_t : std::int8_t { split, join, cont };
+    const static std::array< std::string, 3 > sj_t_str( 
+        {{ "split", "join", "cont" }} 
+    );
 
     auto next_link_type( []( const kpair * const k ) -> sj_t
     {

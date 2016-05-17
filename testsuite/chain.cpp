@@ -26,7 +26,7 @@
 
 
  int
- main( int argc, char **argv )
+ main()
  {
    using namespace raft;
    using type_t = std::uint32_t;

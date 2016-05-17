@@ -129,7 +129,7 @@ private:
 };
 
 int
-main( int argc, char **argv )
+main()
 {
     start s;
     middle m;

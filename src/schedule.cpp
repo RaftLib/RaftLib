@@ -4,6 +4,7 @@
 #include "map.hpp"
 #include "schedule.hpp"
 #include "optdef.hpp"
+#include "defs.hpp"
 
 
 Schedule::Schedule( raft::map &map ) : kernel_set( map.all_kernels ),
@@ -14,10 +15,6 @@ Schedule::Schedule( raft::map &map ) : kernel_set( map.all_kernels ),
    handlers.addHandler( raft::quit, Schedule::quitHandler );
 }
 
-Schedule::~Schedule()
-{
-   /** nothing to do at the moment **/
-}
 
 void
 Schedule::init()
@@ -37,10 +34,9 @@ Schedule::quitHandler( FIFO              &fifo,
     * currently, however that may change in the futre
     * with more features and systems added.
     */
-
-   (void) kernel;
-   (void) signal;
-   (void) data;
+   UNUSED( kernel );
+   UNUSED( signal );
+   UNUSED( data   );
 
    fifo.invalidate();
    return( raft::stop );
@@ -161,9 +157,11 @@ Schedule::kernelHasNoInputPorts( raft::kernel *kernel )
 bool
 Schedule::kernelRun( raft::kernel * const kernel,
                      volatile bool       &finished,
-                     jmp_buf             *gotostate,
-                     jmp_buf             *kernel_state )
+                     jmp_buf             * __attribute__((__unused__)) gotostate,
+                     jmp_buf             * __attribute__((__unused__)) kernel_state )
 {
+   UNUSED( gotostate );
+   UNUSED( kernel_state );
    if( kernelHasInputData( kernel ) )
    {
       const auto sig_status( kernel->run() );
@@ -224,7 +222,7 @@ Schedule::fifo_gc( ptr_map_t * const in,
     {
         if( (*out_beg) != (*in_begin).first )
         {
-            void *ptr = reinterpret_cast< void* >( (*in_begin).first );
+            void * const ptr = reinterpret_cast< void* >( (*in_begin).first );
             (*in_begin).second( ptr );
             ++in_begin;
         }
@@ -236,7 +234,7 @@ Schedule::fifo_gc( ptr_map_t * const in,
     }
     while( in_begin != in_end )
     {
-            void *ptr = reinterpret_cast< void* >( (*in_begin).first );
+            void * const ptr = reinterpret_cast< void* >( (*in_begin).first );
             (*in_begin).second( ptr );
             ++in_begin;
     }

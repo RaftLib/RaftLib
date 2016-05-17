@@ -47,10 +47,12 @@ public:
 #define COUNT 20
 
 int
-main( int argc, char **argv )
+main()
 {
-   int *arr = (int*) malloc( sizeof( int ) * COUNT );
-   for( int i( 0 ); i < COUNT; i++ )
+   int *arr( 
+    static_cast< int* >( malloc( sizeof( int ) * COUNT ) )
+   );
+   for( auto i( 0 ); i < COUNT; i++ )
    {
       arr[ i ] = i;
    }

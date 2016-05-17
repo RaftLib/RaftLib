@@ -7,11 +7,12 @@
 
 template < std::size_t N > struct varlen
 {
-   char pad[ N ];
+   char __attribute__((__unused__)) pad[ N ];
 };
 
 int
-main( int argc, char **argv )
+main()
 {
    assert( fits_in_cache_line< varlen< L1D_CACHE_LINE_SIZE > >::value );
+   return( EXIT_SUCCESS );
 }

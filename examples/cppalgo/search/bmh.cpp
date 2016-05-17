@@ -85,7 +85,11 @@ main( int argc, char **argv )
     
     const std::string term( "Alice" );
     raft::map m;
-    
+    if( argc < 2 )
+    {
+        std::cerr << "must have at least one argument to run the search example\n";
+        exit( EXIT_FAILURE );
+    }
     fr   read( argv[ 1 ], 1, term.length() );
     search find( term );
     print p;

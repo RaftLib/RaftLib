@@ -8,7 +8,7 @@
 #include <raftio>
 
 int
-main( int argc, char **argv )
+main()
 {
    const auto arr_size( 1000 );
    using type_t = std::int32_t;

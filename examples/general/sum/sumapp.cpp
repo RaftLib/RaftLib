@@ -41,7 +41,7 @@ public:
 
 
 int
-main( int argc, char **argv )
+main()
 {
    const auto count( 1000 );
    using type_t = std::int64_t;

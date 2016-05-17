@@ -18,48 +18,48 @@
  * limitations under the License.
  */
 
- #include <raft>
- #include <raftrandom>
- #include <cstdint>
- #include <iostream>
- #include <raftio>
+#include <raft>
+#include <raftrandom>
+#include <cstdint>
+#include <iostream>
+#include <raftio>
 
 
- int
- main( int argc, char **argv )
- {
-   using namespace raft;
-   using type_t = std::uint32_t;
-   const static auto send_size( 10 );
-   using gen = random_variate< std::default_random_engine,
-                               std::uniform_int_distribution,
-                               type_t >;
-   using p_out = raft::print< type_t, '\n' >;
-   using sub = raft::lambdak< type_t >;
-   
-   std::vector< type_t > output;
-   
-   const static auto min( 0 );
-   const static auto max( 100 );
-   gen g( send_size, min, max );
-   
-   p_out print;
+int
+main()
+{
+  using namespace raft;
+  using type_t = std::uint32_t;
+  const static auto send_size( 10 );
+  using gen = random_variate< std::default_random_engine,
+                              std::uniform_int_distribution,
+                              type_t >;
+  using p_out = raft::print< type_t, '\n' >;
+  using sub = raft::lambdak< type_t >;
+  
+  std::vector< type_t > output;
+  
+  const static auto min( 0 );
+  const static auto max( 100 );
+  gen g( send_size, min, max );
+  
+  p_out print;
 
-   auto  l_sub( [&]( Port &input,
-                     Port &output )
-      {
-         type_t a;
-         input[ "0" ].pop( a );
-         output[ "0" ].push( a - 10 );
-         return( raft::proceed );
-      } );
+  auto  l_sub( [&]( Port &input,
+                    Port &output )
+     {
+        type_t a;
+        input[ "0" ].pop( a );
+        output[ "0" ].push( a - 10 );
+        return( raft::proceed );
+     } );
 
-   sub s( 1, 1, l_sub );
+  sub s( 1, 1, l_sub );
 
-   raft::map m;
-   m += g >> raft::order::out >> s >> raft::order::out >>  print;
-   
-   m.exe();
+  raft::map m;
+  m += g >> raft::order::out >> s >> raft::order::out >>  print;
+  
+  m.exe();
 
-   return( EXIT_SUCCESS );
- }
+  return( EXIT_SUCCESS );
+}

@@ -230,7 +230,8 @@ private:
          std::uint64_t whole = 0; /** just in case, default zero **/
          dm::key_t     flag[ 8 ];
       };
-      std::uint8_t padding[ L1D_CACHE_LINE_SIZE - 8 /** 64 byte padding **/ ];
+      std::uint8_t __attribute__((__unused__)) 
+        padding[ L1D_CACHE_LINE_SIZE - 8 /** 64 padding **/ ];
    } 
 #if defined __APPLE__ || defined __linux   
     __attribute__((aligned( L1D_CACHE_LINE_SIZE ))) 

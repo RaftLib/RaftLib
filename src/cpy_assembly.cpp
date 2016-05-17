@@ -8,12 +8,13 @@
 //TODO, comment all below code
 
 
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cassert>
 
-typedef struct {
-     uint32_t
+struct EFlags {
+     std::uint32_t
          CF      :  1,
                  :  1,
          PF      :  1,
@@ -36,12 +37,16 @@ typedef struct {
          VIP     :  1,
          ID      :  1,
                  : 10;
-} EFlags;
+};
 
 
-typedef struct {
-   uint32_t eax, ebx, ecx, edx;
-} Reg;
+struct Reg{
+   Reg() = default;
+   std::uint32_t eax = 0, 
+                 ebx = 0, 
+                 ecx = 0, 
+                 edx = 0;
+};
 
 enum feature_levels {
 	FL_NONE,
@@ -51,22 +56,14 @@ enum feature_levels {
 };
 
 
-#define    CPUID_BASIC     0x0
-#define    CPUID_LEVEL1    0x1
-
-void zero_registers (Reg *in)
-{
-	in->eax = 0x0;
-	in->ebx = 0x0;
-	in->ecx = 0x0;
-	in->edx = 0x0;
-}
-
+enum cpuid_levels : std::uint8_t { CPUID_BASIC  = 0x0, 
+                                   CPUID_LEVEL1 = 0x1 };
 
 /**
  * get_cpuid - sets eax, ebx, ecx, edx values in struct Reg based on input_eax input
  */
-void get_cpuid (Reg *input_registers, Reg *output_registers)
+inline static void get_cpuid( Reg * const input_registers, 
+                              Reg * const output_registers )
 {
 #if( __i386__ == 1 || __x86_64 == 1 )
    __asm__ volatile ("\
@@ -88,36 +85,36 @@ void get_cpuid (Reg *input_registers, Reg *output_registers)
       :
       "eax","ebx","ecx","edx"
       );
+#else
+    UNUSED( input_registers );
+    UNUSED( output_registers );
 #endif
+    return;
 }
 
-int get_level0_data (unsigned int *max_level)
+#if 0
+int get_level0_data(  *max_level)
 {
 	Reg in, out;
 
 	in.eax = CPUID_BASIC;
 	get_cpuid(&in, &out);
 	
-	if (max_level)
-		*max_level = out.eax;
-		
-	return 0;
+    assert( max_level != nullptr );
+	
+    return 0;
 }
+#endif
 
-
-int get_level1_data (unsigned int max_level, unsigned int *eax, 
-	unsigned int *ecx, unsigned int *edx)
+void inline static get_level1_data( std::uint32_t  * const ecx, 
+                                    std::uint32_t  * const edx)
 {
 	Reg in, out;
-
 	in.eax = CPUID_LEVEL1;
-	get_cpuid(&in, &out);
-	
-	if (eax) *eax = out.eax;
-	if (ecx) *ecx = out.ecx;
-	if (edx) *edx = out.edx;
-	
-	return 0;
+	get_cpuid( &in, &out );
+	*ecx = out.ecx;
+	*edx = out.edx;
+	return;
 }
 
 enum feature_levels get_highest_feature (unsigned int max_level)
@@ -129,7 +126,7 @@ enum feature_levels get_highest_feature (unsigned int max_level)
 		exit(-1);
 	}
 	
-	get_level1_data(max_level, NULL, &ecx, &edx);
+	get_level1_data( &ecx, &edx );
 
 	if (ecx & (1 << 28))
 		return FL_AVX;

@@ -14,11 +14,11 @@ public:
 
 private:
    int A;
-   char pad[ N ];
+   char __attribute__((__unused__)) pad[ N ];
 };
 
 int
-main( int argc, char **argv )
+main()
 {
    assert( fits_in_cache_line< int[ 32 ] >::value == false );
    /** here's an array that should be externally allocated **/

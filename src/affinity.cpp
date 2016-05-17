@@ -13,11 +13,11 @@
 #include <cassert>
 
 #include "affinity.hpp"
-
+#include "defs.hpp"
 #ifdef __linux
 
 /** for get cpu **/
-#if (__GLIBC_MINOR__ < 14) && (__GLIBC__ <= 2)
+#if (__GLIBC_MINOR__ < 14 ) && (__GLIBC__ <= 2 )
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE 1
@@ -87,8 +87,10 @@ affinity::set( const std::size_t desired_core )
 #else /** not linux **/
 #if defined __APPLE__
 #warning "No thread pinning for this platform, your results may vary!"
+UNUSED( desired_core );
 #elif defined _WIN64 || defined _WIN32
 #pragma message ( "No thread pinning for this platform, your results may vary!" )
+UNUSED( desired_core );
 #endif
 #endif
    return;

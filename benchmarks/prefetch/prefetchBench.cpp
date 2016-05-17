@@ -208,15 +208,12 @@ public:
         input[ "x" ].recycle();
         return( raft::proceed );
     }
-
-private:
-    std::size_t counter = 0;
 };
 
 
 
 int
-main( int argc, char **argv )
+main()
 {
     start st;
     passthrough pt;

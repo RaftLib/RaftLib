@@ -19,16 +19,22 @@
  */
 #include <cassert>
 #include "signaldata.hpp"
+#include "defs.hpp"
+
 /** TODO: come back here and remodel, and well...make these functions do something **/
+/** NOTE: see notes in header file **/
 raft::signal
-SignalData::get_signal(  const std::thread::id id )
+SignalData::get_signal(  const std::thread::id __attribute__((__unused__)) id )
 {
+    UNUSED( id );
     assert( false );
     return( static_cast< raft::signal >( 0 ) ); 
 }
 
 void
-SignalData::set_signal( const std::thread::id id, const raft::signal signal )
+SignalData::set_signal( const std::thread::id __attribute__((__unused__)) id, 
+                        const raft::signal __attribute__((__unused__)) signal )
 {
-   
+   UNUSED( id );
+   UNUSED( signal );
 }

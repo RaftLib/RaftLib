@@ -63,7 +63,7 @@ struct port_helper{};
 template < class T, class PORT >
 struct port_helper< T, PORT >
 {
-    static void add_port( PORT &port )
+    static constexpr  void add_port( PORT __attribute__((__unused__)) &port )
     {
         return;
     }

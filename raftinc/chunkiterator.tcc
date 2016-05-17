@@ -40,7 +40,7 @@ public:
    
    chunk_iterator( filechunk< size > * const chunk, 
                    const std::size_t index ) : chunk( chunk ),
-                                               index( chunk->length ),
+                                               index( index ),
                                                is_end( true )
    {
       /** nothing to do here **/

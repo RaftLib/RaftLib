@@ -170,6 +170,7 @@ main( int argc, char **argv )
    display< cvm >      disp;
    
    raft::map m;
+   /** what application pipeline looks like **/
    m += src >> cny >> fndcnt >> disp;
    /** start time for printing frame rate **/
    start =  std::chrono::high_resolution_clock::now();

@@ -50,7 +50,7 @@ public:
     }
 
 private:
-    std::size_t counter = 0;
+    obj_t counter = 0;
 };
 
 
@@ -69,16 +69,20 @@ public:
     {
         obj_t in;
         input[ "x" ].pop( in );
-        assert( static_cast<std::size_t>(in) == counter++ );
+        if( in != counter++ )
+        {
+            std::cerr << "failed exit\n";
+            exit( EXIT_FAILURE );
+        }
         return( raft::proceed );
     }
 
 private:
-    std::size_t counter = 0;
+    obj_t counter = 0;
 };
 
 int
-main( int argc, char **argv )
+main()
 {
     start s;
     last l;

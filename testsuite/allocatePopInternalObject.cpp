@@ -43,7 +43,7 @@ template < std::size_t N > struct foo
    ~foo() = default;
 
    int  length;
-   int  pad[ N ];
+   int  __attribute__((__unused__)) pad[ N ];
 };
 
 using obj_t = foo< 63 >;
@@ -100,7 +100,11 @@ public:
         for( index_type i( 0 ); i < mem.length; i++ )
         {
             //will fail if we've messed something up
-            assert( static_cast<std::size_t>(mem.pad[ i ]) == counter );
+            if( static_cast<std::size_t>(mem.pad[ i ]) != counter )
+            {
+                std::cerr << "failed to send correct item, failed test, exiting!!\n";
+                exit( EXIT_FAILURE );
+            }
         }
         counter++;
         return( raft::proceed );
@@ -111,7 +115,7 @@ private:
 };
 
 int
-main( int argc, char **argv )
+main()
 {
     start s;
     last l;

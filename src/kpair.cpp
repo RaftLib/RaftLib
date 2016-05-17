@@ -110,9 +110,14 @@ operator >> ( kpair &a, raft::kernel &&b )
     return( *ptr );
 }
 
+/**
+ * >>, we're using the raft::order::spec as a linquistic tool
+ * at this point. It's only used for disambiguating functions.
+ */
 LOoOkpair&
 operator >> ( raft::kernel &a, const raft::order::spec &&order )
 {
+    UNUSED( order );
     auto *ptr( new LOoOkpair( a ) );
     return( *ptr );
 }
@@ -143,11 +148,15 @@ operator >> ( LOoOkpair &a, raft::kernel &&b )
     return( *ptr );
 }
 
-
+/**
+ * >>, we're using the raft::order::spec as a linquistic tool
+ * at this point. It's only used for disambiguating functions.
+ */
 ROoOkpair& 
 operator >> ( kpair &a, const raft::order::spec &&order )
 {
     auto *ptr( new ROoOkpair( a ) );
+    UNUSED( order );
     return( *ptr );
 }
 

@@ -28,7 +28,7 @@
 volatile std::int64_t *ptr;
 
 int
-main( int argc, char **argv )
+main()
 {
     static const auto SIZE( 1000000 );
     auto *arr( new std::int64_t[ SIZE ] );

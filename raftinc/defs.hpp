@@ -50,7 +50,7 @@ using weight_t  = std::int32_t;
 using edge_id_t = std::int32_t;
 
 #ifndef UNUSED 
-#define UNUSED( x )[&x]{}()
+#define UNUSED( x ) (void)(x)
 #endif
 
 /** type for return from += you'll get an iterator to one of these **/
