@@ -43,7 +43,7 @@ template < std::size_t N > struct foo
    ~foo() = default;
 
    int  length;
-   int  __attribute__((__unused__)) pad[ N ];
+   volatile int pad[ N ];
 };
 
 using obj_t = foo< 63 >;

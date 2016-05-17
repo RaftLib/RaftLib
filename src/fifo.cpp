@@ -21,7 +21,7 @@
 
 
 void
-FIFO::get_zero_read_stats( Blocked __attribute__((__unused__))  &copy )
+FIFO::get_zero_read_stats( Blocked &copy )
 {
    /** default version does nothing at all **/
    UNUSED( copy ); 
@@ -29,7 +29,7 @@ FIFO::get_zero_read_stats( Blocked __attribute__((__unused__))  &copy )
 }
 
 void
-FIFO::get_zero_write_stats( Blocked __attribute__((__unused__))  &copy )
+FIFO::get_zero_write_stats( Blocked &copy )
 {
    /** default version does nothing at all **/
    UNUSED( copy );
@@ -37,28 +37,28 @@ FIFO::get_zero_write_stats( Blocked __attribute__((__unused__))  &copy )
 }
 
 void
-FIFO::setPtrMap( ptr_map_t * __attribute__((__unused__)) const in )
+FIFO::setPtrMap( ptr_map_t * const in )
 {
     UNUSED( in );
     return;
 }
 
 void
-FIFO::setPtrSet( ptr_set_t * __attribute__((__unused__)) const out )
+FIFO::setPtrSet( ptr_set_t * const out )
 {
     UNUSED( out );
     return;
 }
 
 void
-FIFO::setInPeekSet( ptr_set_t * __attribute__((__unused__)) const peekset )
+FIFO::setInPeekSet( ptr_set_t * const peekset )
 {
     UNUSED( peekset );
     return;
 }
 
 void
-FIFO::setOutPeekSet( ptr_set_t * __attribute__((__unused__)) const peekset )
+FIFO::setOutPeekSet( ptr_set_t * const peekset )
 {
     UNUSED( peekset );
     return;

@@ -56,8 +56,9 @@ public:
       return( raft::none );
    }
 
-   virtual bool send_signal( const raft::signal __attribute__((__unused__))  &signal )
+   virtual bool send_signal( const raft::signal   &signal )
    {
+      UNUSED( signal );
       return( true );
    }
 

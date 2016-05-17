@@ -7,12 +7,16 @@
 
 template < std::size_t N > struct varlen
 {
-   char __attribute__((__unused__)) pad[ N ];
+   volatile char pad[ N ];
 };
 
 int
 main()
 {
-   assert( fits_in_cache_line< varlen< L1D_CACHE_LINE_SIZE > >::value );
+   if( fits_in_cache_line< varlen< L1D_CACHE_LINE_SIZE > >::value != true )
+   {
+       std::cerr << "fail test\n";
+       exit( EXIT_FAILURE );
+   }
    return( EXIT_SUCCESS );
 }

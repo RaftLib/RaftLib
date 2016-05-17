@@ -14,21 +14,41 @@ public:
 
 private:
    int A;
-   char __attribute__((__unused__)) pad[ N ];
+   volatile char pad[ N ];
 };
 
 int
-main()
+main( int argc, char **argv )
 {
-   assert( fits_in_cache_line< foo< 4 > >::value );
+   UNUSED( argc );
+   if( fits_in_cache_line< foo< 4 > >::value != true )
+   {
+       std::cerr << "test: " << argv[ 0 ] << " failed\n";
+       exit( EXIT_FAILURE );
+   }
    /** should be inline class allocate **/
-   assert( inline_class_alloc< foo< 4 > >::value );
-   
+   if( inline_class_alloc< foo< 4 > >::value != true )
+   {
+       std::cerr << "test: " << argv[ 0 ] << " failed\n";
+       exit( EXIT_FAILURE );
+   }
    /** should be fundamental type, and be false **/
-   assert( inline_class_alloc< int >::value == false );
+   if( inline_class_alloc< int >::value != false )
+   {
+       std::cerr << "test: " << argv[ 0 ] << " failed\n";
+       exit( EXIT_FAILURE );
+   }
    /** should be too big, ret false **/
-   assert( inline_class_alloc< foo< 128 > >::value == false );
-
+   if( inline_class_alloc< foo< 128 > >::value != false )
+   {
+       std::cerr << "test: " << argv[ 0 ] << " failed\n";
+       exit( EXIT_FAILURE );
+   }
    /** should be false, not a class **/
-   assert( inline_class_alloc< int[ 2 ] >::value == false );
+   if( inline_class_alloc< int[ 2 ] >::value != false )
+   {
+       std::cerr << "test: " << argv[ 0 ] << " failed\n";
+       exit( EXIT_FAILURE );
+   }
+   return( EXIT_SUCCESS );
 }

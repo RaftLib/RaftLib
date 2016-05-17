@@ -14,7 +14,7 @@ public:
 
 private:
    const int A;
-   char __attribute__((__unused__)) pad[ N ];
+   volatile char pad[ N ];
 };
 
 int

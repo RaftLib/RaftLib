@@ -16,7 +16,7 @@ main()
     rnd lk( /** input ports     **/ 0, 
             /** output ports    **/ 1, 
             /** the kernel func **/
-        [&]( Port & __attribute__((__unused__)) input,
+        [&]( Port &input,
              Port &output )
         {
             UNUSED( input );

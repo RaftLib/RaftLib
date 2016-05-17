@@ -39,6 +39,7 @@
 #include "portmap_t.hpp"
 #include "portiterator.hpp"
 #include "portexception.hpp"
+#include "defs.hpp"
 
 /** needed for friending below **/
 class MapBase;
@@ -63,8 +64,9 @@ struct port_helper{};
 template < class T, class PORT >
 struct port_helper< T, PORT >
 {
-    static constexpr  void add_port( PORT __attribute__((__unused__)) &port )
+    static constexpr  void add_port( PORT &port )
     {
+        UNUSED( port );
         return;
     }
 

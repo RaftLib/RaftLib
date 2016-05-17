@@ -52,9 +52,9 @@ raft::map::checkEdges( kernelkeeper &source_k )
     * errors.
     */
    GraphTools::BFS( container,
-                    []( PortInfo & __attribute__((__unused__)) a, 
-                        PortInfo & __attribute__((__unused__)) b, 
-                        void * __attribute__((__unused__)) const data )
+                    []( PortInfo &  a, 
+                        PortInfo &  b, 
+                        void *  const data )
                     {
                        UNUSED( a );
                        UNUSED( b );

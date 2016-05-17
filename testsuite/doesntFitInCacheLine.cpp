@@ -7,7 +7,7 @@
 
 template < std::size_t N > struct varlen
 {
-   char __attribute__((__unused__)) pad[ N ];
+   volatile char pad[ N ];
 };
 
 int

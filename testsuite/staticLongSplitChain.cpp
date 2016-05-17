@@ -1,5 +1,5 @@
 /**
- * random.cpp - 
+ * staticLongSplitChain.cpp - 
  * @author: Jonathan Beard
  * @version: Mon Mar  2 14:00:14 2015
  * 
@@ -36,7 +36,7 @@ public:
         output.addPort< T >( "0" );
     }
 
-    sub( const sub< T > & __attribute__((__unused__)) other ) : sub()
+    sub( const sub< T > &other ) : sub()
     {
        UNUSED( other );
     }

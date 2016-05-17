@@ -4,7 +4,7 @@
 #include <cassert>
 #include <cstddef>
 #include "alloc_traits.tcc"
-
+#include "defs.hpp"
 
 
 template < std::size_t N > class foo
@@ -14,18 +14,35 @@ public:
 
 private:
    int A;
-   char __attribute__((__unused__)) pad[ N ];
+   volatile char pad[ N ];
 };
 
 int
-main()
+main( int argc, char **argv )
 {
-   assert( fits_in_cache_line< int[ 32 ] >::value == false );
+   UNUSED( argc );
+   if( fits_in_cache_line< int[ 32 ] >::value != false )
+   {
+       std::cerr << "test (" << argv[ 0 ] << ") failed\n";
+       exit( EXIT_FAILURE );
+   }
    /** here's an array that should be externally allocated **/
-   assert( ext_mem_alloc< int[ 32 ] >::value == true );
+   if( ext_mem_alloc< int[ 32 ] >::value != true )
+   {
+       std::cerr << "test (" << argv[ 0 ] << ") failed\n";
+       exit( EXIT_FAILURE );
+   }
    /** lets make sure it fails with class types **/
-   assert( ext_mem_alloc< foo< 100 > >::value == false );
+   if( ext_mem_alloc< foo< 100 > >::value != false )
+   {
+       std::cerr << "test (" << argv[ 0 ] << ") failed\n";
+       exit( EXIT_FAILURE );
+   }
    /** lets also make sure it fails with fundamental types **/
-   assert( ext_mem_alloc< long double >::value == false );
+   if( ext_mem_alloc< long double >::value != false )
+   {
+       std::cerr << "test (" << argv[ 0 ] << ") failed\n";
+       exit( EXIT_FAILURE );
+   }
    return( EXIT_SUCCESS );
 }

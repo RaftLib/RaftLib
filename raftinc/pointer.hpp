@@ -100,7 +100,7 @@ private:
    volatile wrap_t    wrap_b  = 0;
    const    std::size_t      max_cap;
 
-   volatile byte_t __attribute__((__unused__)) padd[ 
+   volatile byte_t  padd[ 
     L1D_CACHE_LINE_SIZE -  
     ( sizeof( a ) + 
     sizeof( b ) + 

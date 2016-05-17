@@ -231,8 +231,9 @@ public:
 
     static FIFO* make_new_fifo( const std::size_t n_items, 
                                 const std::size_t align, 
-                                void * const __attribute__((__unused__)) data )
+                                void * const data )
     {
+        UNUSED( data );
         assert(data == nullptr);
         return (new RingBuffer<T, Type::Heap, true>(n_items, align));
     }
@@ -248,18 +249,20 @@ public:
      * RingBuffer - default constructor, initializes basic
      * data structures.
      */
-    RingBuffer( const std::size_t __attribute__((__unused__)) n, 
+    RingBuffer( const std::size_t n, 
                 const std::size_t align = 16 )
         : RingBufferBaseMonitor<T, Type::Infinite>(1, align)
     {
+        UNUSED( n );
     }
 
     virtual ~RingBuffer() = default;
 
     static FIFO* make_new_fifo( const std::size_t n_items, 
                                 const std::size_t align, 
-                                void const * __attribute__((__unused__)) data )
+                                void const * data )
     {
+        UNUSED( data );
         assert(data == nullptr);
         return (new RingBuffer<T, Type::Infinite, true>(n_items, align));
     }
@@ -275,11 +278,12 @@ public:
      * RingBuffer - default constructor, initializes basic
      * data structures.
      */
-    RingBuffer( const std::size_t __attribute__((__unused__)) n, 
-                const std::size_t __attribute__((__unused__)) align = 16)
+    RingBuffer( const std::size_t n, 
+                const std::size_t align = 16)
         : RingBufferBase<T, Type::Infinite>()
     {
-        (this)->datamanager.set(new Buffer::Data<T, Type::Heap>(1, 16));
+        UNUSED( n );
+        (this)->datamanager.set(new Buffer::Data<T, Type::Heap>( 1, align ));
     }
 
     virtual ~RingBuffer()
@@ -300,17 +304,22 @@ public:
      */
     static FIFO* make_new_fifo( const std::size_t n_items, 
                                 const std::size_t align, 
-                                void * const __attribute__((__unused__)) data )
+                                void * const data )
     {
         assert(data == nullptr);
+        UNUSED( data );
         return (new RingBuffer<T, Type::Infinite, false>(n_items, align));
     }
 
     virtual void resize(
-        const std::size_t __attribute__((__unused__)) size, 
-        const std::size_t __attribute__((__unused__)) align, 
-        bool& __attribute__((__unused__)) exit_alloc)
+        const std::size_t size, 
+        const std::size_t align, 
+        bool& exit_alloc)
     {
+        UNUSED( size );
+        UNUSED( align );
+        UNUSED( exit_alloc );
+
         /** should never really be calling this function **/
         assert(false);
     }
@@ -384,9 +393,9 @@ public:
         );
     }
 
-    virtual void resize( const std::size_t __attribute__((__unused__)) size, 
-                         const std::size_t __attribute__((__unused__)) align,
-                         volatile bool& __attribute__((__unused__)) exit_alloc )
+    virtual void resize( const std::size_t size, 
+                         const std::size_t align,
+                         volatile bool& exit_alloc )
     {
         UNUSED( size );
         UNUSED( align );
@@ -415,10 +424,10 @@ class RingBuffer<T, Type::TCP, false /* no monitoring yet */>
     : public RingBufferBase<T, Type::Heap>
 {
 public:
-    RingBuffer( const std::size_t __attribute__((__unused__)) nitems, 
-                const std::string __attribute__((__unused__)) dns_name,
-                Direction __attribute__((__unused__)) dir, 
-                const std::size_t __attribute__((__unused__)) alignment = 16 ) 
+    RingBuffer( const std::size_t nitems, 
+                const std::string dns_name,
+                Direction dir, 
+                const std::size_t alignment = 16 ) 
                     : RingBufferBase<T, Type::Heap>()
     {
         // TODO, fill in stuff here, perhaps from original....
@@ -448,9 +457,9 @@ public:
                                          align ) );
     }
 
-    virtual void resize(    const std::size_t __attribute__((__unused__)) size, 
-                            const std::size_t __attribute__((__unused__)) align,
-                            volatile bool& __attribute__((__unused__)) exit_alloc)
+    virtual void resize(    const std::size_t size, 
+                            const std::size_t align,
+                            volatile bool& exit_alloc)
     {
         UNUSED( size );
         UNUSED( align );

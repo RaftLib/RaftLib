@@ -157,8 +157,8 @@ Schedule::kernelHasNoInputPorts( raft::kernel *kernel )
 bool
 Schedule::kernelRun( raft::kernel * const kernel,
                      volatile bool       &finished,
-                     jmp_buf             * __attribute__((__unused__)) gotostate,
-                     jmp_buf             * __attribute__((__unused__)) kernel_state )
+                     jmp_buf             *gotostate,
+                     jmp_buf             *kernel_state )
 {
    UNUSED( gotostate );
    UNUSED( kernel_state );

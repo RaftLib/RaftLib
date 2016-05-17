@@ -881,9 +881,10 @@ protected:
       if( ptr != nullptr )
       {
           T *item( reinterpret_cast< T* >( ptr ) );
-          T * __attribute__((__unused__)) temp( new (
+          T * temp( new (
             &buff_ptr->store[ write_index ]
           ) T( *item  ) );
+          UNUSED( temp );
           (this)->write_stats.bec.count++;
        }
       buff_ptr->signal[ write_index ]         = signal;

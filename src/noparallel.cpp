@@ -28,10 +28,10 @@ no_parallel::no_parallel(       raft::map &map,
                                 Schedule &sched,
                                 volatile bool &exit_para )
 {
-   (void) map;
-   (void) alloc;
-   (void) sched;
-   (void) exit_para;
+   UNUSED( map );
+   UNUSED( alloc );
+   UNUSED( sched );
+   UNUSED( exit_para );
 
    /** nothing to do here, move along **/
 }

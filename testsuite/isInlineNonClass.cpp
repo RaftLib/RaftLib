@@ -4,7 +4,7 @@
 #include <cassert>
 #include <cstddef>
 #include "alloc_traits.tcc"
-
+#include "defs.hpp"
 
 
 template < std::size_t N > class foo
@@ -14,25 +14,52 @@ public:
 
 private:
    int A;
-   char __attribute__((__unused__)) pad[ N ];
+   volatile char pad[ N ];
 };
 
 
 int
-main()
-{
-   assert( fits_in_cache_line< int[ 2 ] >::value );
+main( int argc, char **argv )
+{   
+   UNUSED( argc );
+   if( fits_in_cache_line< int[ 2 ] >::value != true )
+   {
+       std::cerr << "test: " << argv[ 0 ] << " failed\n";
+       exit( EXIT_FAILURE );
+   }
    /** should be false, gotta disambiguate classes from arr/fund **/
-   assert( inline_class_alloc< int[ 2 ] >::value == false );
+   if( inline_class_alloc< int[ 2 ] >::value != false )
+   {
+       std::cerr << "test: " << argv[ 0 ] << " failed\n";
+       exit( EXIT_FAILURE );
+   }
    /** this one should be true **/
-   assert( inline_nonclass_alloc< int[ 2 ] >::value  );
+   if( inline_nonclass_alloc< int[ 2 ] >::value != true )
+   {
+       std::cerr << "test: " << argv[ 0 ] << " failed\n";
+       exit( EXIT_FAILURE );
+   }
 
    /** should be fundamental type, and be true **/
-   assert( inline_nonclass_alloc< int >::value  );
+   if( inline_nonclass_alloc< int >::value != true )
+   {
+       std::cerr << "test: " << argv[ 0 ] << " failed\n";
+       exit( EXIT_FAILURE );
+   }
 
    /** should be too big, ret false **/
-   assert( inline_nonclass_alloc< int[ 128 ] >::value == false );
+   if( inline_nonclass_alloc< int[ 128 ] >::value != false )
+   {
+       std::cerr << "test: " << argv[ 0 ] << " failed\n";
+       exit( EXIT_FAILURE );
+   }
 
    /** class type, should be false too **/
-   assert( inline_nonclass_alloc< foo< 2 > >::value == false );
+   if( inline_nonclass_alloc< foo< 2 > >::value != false )
+   {
+       std::cerr << "test: " << argv[ 0 ] << " failed\n";
+       exit( EXIT_FAILURE );
+   }
+
+   return( EXIT_SUCCESS );
 }

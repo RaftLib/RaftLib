@@ -36,7 +36,7 @@ public:
         output.addPort< T >( "0" );
     }
 
-    sub( const sub< T > & __attribute__((__unused__))  other ) : sub()
+    sub( const sub< T > &other ) : sub()
     {
         UNUSED( other );
     };

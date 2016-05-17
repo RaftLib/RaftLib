@@ -31,22 +31,18 @@
 #define _SIGNALDATA_HPP_  1
 
 #include <thread>
-
+#include "defs.hpp"
 #include "signalvars.hpp"
 
 class SignalData
 {
 public:
-   SignalData()          = default;
+   SignalData() = default;
+   
    virtual ~SignalData() = default;
 
    raft::signal get_signal(  const std::thread::id id );
    
    void         set_signal( const std::thread::id id, const raft::signal signal );
-
-private:
-   raft::signal __attribute__((__unused__)) signal_a = raft::none;
-   raft::signal __attribute__((__unused__)) signal_b = raft::none;
-
 };
 #endif /* END _SIGNALDATA_HPP_ */

@@ -53,10 +53,7 @@ public:
       /** nothing to do here **/
    }
 
-   virtual ~chunk_iterator()
-   {
-      /** nothing to delete **/
-   }
+   virtual ~chunk_iterator() = default;
 
    chunk_iterator& operator++() noexcept
    {
@@ -87,8 +84,7 @@ public:
    inline chunk_iterator& operator = ( const chunk_iterator &other )
    {
       index = other.index;
-      auto *ptr = const_cast< filechunk< size >* >( chunk );
-      ptr = other.chunk;
+      (this)->chunk = other.chunk;
       is_end = other.is_end;
       return( *this );
    }
@@ -110,7 +106,7 @@ public:
 
    inline bool operator!=(const chunk_iterator& rhs) noexcept
    {
-      return( ( index != rhs.index ) and ( is_end not_eq rhs.is_end ) );
+      return( ( index != rhs.index ) && ( is_end != rhs.is_end ) );
    }
 
    inline char operator*() noexcept
@@ -130,7 +126,7 @@ public:
    }
 
 private:
-   filechunk< size > * const       chunk;
+   filechunk< size > *             chunk;
    /** current index iterated with respect to the buffer **/
    std::size_t                     index = 0;
    bool                            is_end    = false;
