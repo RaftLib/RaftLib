@@ -28,8 +28,36 @@
 #elif __linux
 #include <fstream>
 #include <unistd.h>
-#elif _WIND32
+#elif ( defined _WIN64 || defined _WIN32 )
 #include <windows.h>
+#include <malloc.h>
+#include <stdio.h>
+#include <tchar.h>
+#endif
+
+#if ( defined _WIN64 || defined _WIN32 )
+/**
+ * Note: all windows code adapted from example:
+ * https://msdn.microsoft.com/en-us/library/ms683194.aspx
+ */
+typedef BOOL (WINAPI *LPFN_GLPI)(PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, PDWORD);
+
+// Helper function to count set bits in the processor mask.
+DWORD CountSetBits(ULONG_PTR bitMask)
+{
+    DWORD LSHIFT = sizeof(ULONG_PTR)*8 - 1;
+    DWORD bitSetCount = 0;
+    ULONG_PTR bitTest = (ULONG_PTR)1 << LSHIFT;    
+    DWORD i;
+    
+    for (i = 0; i <= LSHIFT; ++i)
+    {
+        bitSetCount += ((bitMask & bitTest)?1:0);
+        bitTest/=2;
+    }
+
+    return bitSetCount;
+}
 #endif
 
 
@@ -67,7 +95,7 @@ main( int argc, char **argv )
         size = 0;
     }
     std::cout <<  size;
-#elif _WIN32 /** haven't tested this yet **/
+#elif ( defined _WIN64 || defined _WIN32 )
     size_t line_size = 0;
     DWORD buffer_size = 0;
     DWORD i = 0;
@@ -85,7 +113,7 @@ main( int argc, char **argv )
             break;
         }
     }
-    std::cout <<  i;
+    std::cout <<  line_size;
     free(buffer);
 #else
 #error "Unknown platform"
