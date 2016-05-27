@@ -50,7 +50,7 @@ static std::string printClassNameFromStr( const std::string &&str );
 template < class K > static
    std::string printClassName( K &k )
 {
-   return( std::move< std::string >( common::__printClassName( typeid( k ).name() ) ) );
+   return( common::__printClassName( typeid( k ).name() ) );
 }
 
 

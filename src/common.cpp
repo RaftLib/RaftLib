@@ -14,5 +14,5 @@ common::__printClassName( const std::string &&obj_name )
 std::string
 common::printClassNameFromStr( const std::string &&str )
 {
-   return( std::move< std::string >( common::__printClassName( std::move( str ) ) ) );
+   return( common::__printClassName( std::move( str ) ));
 }
