@@ -20,6 +20,7 @@
 #include <cstdint>
 #include <cstddef>
 #include "pointer.hpp"
+#include "defs.hpp"
 
 Pointer::Pointer(const std::size_t cap, 
                  const wrap_t wrap_set ) : Pointer( cap )

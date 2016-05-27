@@ -99,14 +99,5 @@ private:
    volatile wrap_t    wrap_a  = 0;
    volatile wrap_t    wrap_b  = 0;
    const    std::size_t      max_cap;
-
-   volatile byte_t  padd[ 
-    L1D_CACHE_LINE_SIZE -  
-    ( sizeof( a ) + 
-    sizeof( b ) + 
-    sizeof( wrap_a ) + 
-    sizeof( wrap_b ) + 
-    sizeof( max_cap ) )
-   ];
 };
 #endif /* END _POINTER_HPP_ */
