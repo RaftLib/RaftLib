@@ -117,7 +117,7 @@ public:
       void *ptr( nullptr );
       /** call blocks till an element is available **/
       local_allocate( &ptr );
-      T * __attribute__ (( unused )) temp( new (ptr) T( std::forward< Args >( params )... ) );
+      T * temp( new (ptr) T( std::forward< Args >( params )... ) );
       UNUSED( temp );
       return( *( reinterpret_cast< T* >( ptr ) ) );
    }
@@ -620,7 +620,7 @@ protected:
     * @param   n_items  - std::size_t
     */
    virtual void local_pop_range( void *ptr_data,
-                                 std::size_t n_items ) = 0;
+                                 const std::size_t n_items ) = 0;
    /**
     * local_peek - peeks at the head of the queue, the element
     * may be modified but not erased.
@@ -650,7 +650,7 @@ protected:
     * after calling destructor (for non-POD types).
     * @param range - std::size_t
     */
-   virtual void local_recycle( const std::size_t range ) = 0;
+   virtual void local_recycle( std::size_t range ) = 0;
 
    
    /**

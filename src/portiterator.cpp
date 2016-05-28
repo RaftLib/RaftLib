@@ -21,7 +21,6 @@
 #include <utility>
 #include <map>
 #include <iostream>
-#include <pthread.h>
 #include "port_info.hpp"
 #include "portmap_t.hpp"
 #include "portiterator.hpp"

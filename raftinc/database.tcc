@@ -40,11 +40,9 @@ namespace Buffer
  */
 template < class T > struct DataBase 
 {
-   constexpr DataBase( const std::size_t max_cap ) : max_cap ( max_cap )
-   {
-      length_store   = ( sizeof( T  )     * max_cap ); 
-      length_signal  = ( sizeof( Signal ) * max_cap );
-   }
+   DataBase( const std::size_t max_cap ) : max_cap ( max_cap ),
+                                           length_store( sizeof( T ) * max_cap ),
+                                           length_signal( sizeof( T ) * max_cap ){}
 
    /** 
     * copyFrom - implement in all sub-structs to 
@@ -56,9 +54,6 @@ template < class T > struct DataBase
     */
    virtual void copyFrom( DataBase< T > *other ) = 0;
 
-   Pointer                 *read_pt   = nullptr;
-   Pointer                 *write_pt  = nullptr;
-   const std::size_t        max_cap;
 
    /**
     * setSourceKernel - set the source kernel 
@@ -68,7 +63,7 @@ template < class T > struct DataBase
     * will fail an assertion and exit the program.
     * @param    k - raft::kernel * const
     */
-   constexpr void setSourceKernel( raft::kernel * const k )
+   inline void setSourceKernel( raft::kernel * const k )
    {
       assert( k != nullptr );
       src_kernel = k;
@@ -83,13 +78,18 @@ template < class T > struct DataBase
     * will fail an assertion and exit the program.
     * @param    k - raft::kernel * const
     */
-   constexpr void setDestKernel( raft::kernel * const k )
+   inline void setDestKernel( raft::kernel * const k ) 
    {
       assert( k != nullptr );
       dst_kernel = k;
       return;
    }
 
+   const std::size_t        max_cap;
+   /** sizes, might need to define a local type **/
+   const std::size_t       length_store;
+   const std::size_t       length_signal;
+   
    /** 
     * allocating these as structs gives a bit
     * more flexibility later in what to pass
@@ -99,15 +99,16 @@ template < class T > struct DataBase
     * be a case for adding items in the store
     * as well.
     */
+   Pointer                 *read_pt   = nullptr;
+   Pointer                 *write_pt  = nullptr;
+   
+   
    T                       *store         = nullptr;
    Signal                  *signal        = nullptr;
    bool                    external_alloc = false;
    /** variable set by scheduler, used for shutdown **/
    bool                    is_valid       = true;
 
-   /** sizes, might need to define a local type **/
-   std::size_t             length_store;
-   std::size_t             length_signal;
 
    /**
     * need a reference to source and destination 

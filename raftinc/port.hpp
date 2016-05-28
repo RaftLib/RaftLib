@@ -64,7 +64,7 @@ struct port_helper{};
 template < class T, class PORT >
 struct port_helper< T, PORT >
 {
-    static constexpr  void add_port( PORT &port )
+    static void add_port( PORT &port ) 
     {
         UNUSED( port );
         return;
@@ -259,7 +259,7 @@ public:
                   portmap.map.insert( std::make_pair( port_name,
                                                       pi ) ) );
 
-      if( not ret_val.second )
+      if( ! ret_val.second )
       {
          throw PortAlreadyExists( "FATAL ERROR: port \"" + port_name + "\" already exists!" );
       }

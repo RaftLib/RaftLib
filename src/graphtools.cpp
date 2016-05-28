@@ -19,6 +19,7 @@
  */
 #include <algorithm>
 #include <set>
+#include <map>
 #include <queue>
 #include <utility>
 #include <string>
@@ -103,7 +104,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
       if( k == nullptr ) break;
       /** iterate over all out-edges **/
       /** 1) get lock **/
-      while( not k->output.portmap.mutex_map.try_lock() )
+      while( ! k->output.portmap.mutex_map.try_lock() )
       {
          std::this_thread::yield();
       }

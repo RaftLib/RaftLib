@@ -22,6 +22,7 @@
 #include "common.hpp"
 #include "streamingstat.tcc"
 #include <map>
+#include "defs.hpp"
 
 
 
@@ -43,12 +44,10 @@ void
 basic_parallel::start()
 {
    using hash_t = std::uintptr_t;
-   std::map< hash_t, stats > hashmap;
    //FIXME, need to add the code that'll limit this without a count
-   auto count( 0 );
    while( ! exit_para )
    {
-      auto &kernels( source_kernels.acquire() );
+      kernelkeeper::value_type &kernels( source_kernels.acquire() );
       /**
        * since we have to have a lock on the ports
        * for both BFS and duplication, we'll mark
@@ -57,10 +56,13 @@ basic_parallel::start()
        */
       std::vector< raft::kernel* > dup_list;
       GraphTools::BFS(  kernels,
-                        [&]( raft::kernel *kernel,
+                        (vertex_func) [&dup_list]( raft::kernel *kernel,
                                            void *data )
                         {
-                           (void) data;
+                           static std::map< hash_t, stats > hashmap;
+                           static uint64_t count( 0 );
+
+                           UNUSED( data );
 
                            if( kernel->dup_enabled )
                            {
@@ -74,13 +76,15 @@ basic_parallel::start()
                               {
                                  auto &input( kernel->input.getPortInfo() );
                                  auto *fifo( input.getFIFO() );
-                                 in.update( fifo->size() / fifo->capacity() );
+                                 in.update( static_cast< float >( fifo->size() )/ 
+                                                static_cast< float >( fifo->capacity() ) );
                               }
                               if( kernel->output.hasPorts() )
                               {
                                  auto &output( kernel->output.getPortInfo() );
                                  auto *fifo( output.getFIFO() );
-                                 out.update( fifo->size() / fifo->capacity() );
+                                 out.update( static_cast< float >( fifo->size() )/ 
+                                                  static_cast< float >( fifo->capacity() ) );
                               }
                               /** apply criteria **/
                               if( ( kernel->input.count() == 0 ||

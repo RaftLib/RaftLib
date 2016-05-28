@@ -46,7 +46,7 @@ struct basekset{
     constexpr basekset() = delete;
     ~basekset() = delete;
 
-    using iterator_t = typename
+    using iterator_t = 
         std::vector< std::reference_wrapper< raft::kernel > >::iterator;
 
     virtual iterator_t begin()      = 0;

@@ -65,7 +65,7 @@ public:
     */
    template < class T   /* peek range obj,  */,
               typename std::enable_if<
-                       not std::is_base_of< autoreleasebase,
+                       ! std::is_base_of< autoreleasebase,
                                         T >::value >::type* = nullptr >
       bool send( T &range, Port &outputs )
    {

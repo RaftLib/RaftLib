@@ -27,6 +27,7 @@
 #include "defs.hpp"
 #include "alloc_traits.tcc"
 #include "prefetch.hpp"
+#include "defs.hpp"
 
 #ifndef NICE
 #define NICE 1
@@ -68,7 +69,7 @@ public:
     */
    virtual void send( const raft::signal signal = raft::none )
    {
-      if( __builtin_expect( ! (this)->allocate_called, 0 ) )
+      if( R_UNLIKELY( ! (this)->allocate_called ) )
       {
          return;
       }
@@ -298,7 +299,7 @@ protected:
          buff_ptr->signal[ write_index ] = raft::none;
          write_index = ( write_index + 1 ) % buff_ptr->max_cap;
       }
-      (this)->n_allocated = n;
+      (this)->n_allocated = static_cast< decltype( (this)->n_allocated ) >( n );
       (this)->allocate_called = true;
       /** exitBuffer() called by push_range **/
    }
@@ -579,7 +580,7 @@ public:
     */
    virtual void send( const raft::signal signal = raft::none )
    {
-      if( __builtin_expect( ! (this)->allocate_called, 0 ) )
+      if( R_UNLIKELY( ! (this)->allocate_called ) )
       {
          return;
       }
@@ -810,7 +811,7 @@ protected:
          buff_ptr->signal[ write_index ] = raft::none;
          write_index = ( write_index + 1 ) % buff_ptr->max_cap;
       }
-      (this)->n_allocated = n;
+      (this)->n_allocated = static_cast< decltype( (this)->n_allocated ) >( n );
       (this)->allocate_called = true;
       /** exitBuffer() called by push_range **/
    }
@@ -1096,7 +1097,7 @@ public:
     */
    virtual void send( const raft::signal signal = raft::none )
    {
-      if( __builtin_expect( ! (this)->allocate_called, 0 ) )
+      if( R_UNLIKELY( ! (this)->allocate_called ) )
       {
          return;
       }

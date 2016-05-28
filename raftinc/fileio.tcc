@@ -57,7 +57,7 @@ template < std::size_t size = 65536 > struct filechunk
    std::size_t    length            = 0;
    std::uint64_t  index             = 0;
 
-   constexpr static std::size_t getChunkSize()
+   constexpr static std::size_t getChunkSize() noexcept
    {
       return( size );
    }
@@ -68,12 +68,12 @@ template < std::size_t size = 65536 > struct filechunk
       return( output );
    }
 
-   constexpr chunk_iterator< size > begin() noexcept
+   chunk_iterator< size > begin() noexcept
    {
       return( chunk_iterator< size >( this ) );
    }
 
-   constexpr chunk_iterator< size > end() noexcept
+   chunk_iterator< size > end() noexcept
    {
       return( chunk_iterator< size >( this, length ) );
    }
@@ -92,7 +92,7 @@ template < class chunktype = filechunk< 65536 >,
 public:
    filereader( const std::string inputfile,
                const std::size_t n_output_ports = 1,
-               const std::size_t chunk_offset = 0 ) : chunk_offset( chunk_offset )
+               const long        chunk_offset = 0 ) : chunk_offset( chunk_offset )
    {
       using index_type = std::remove_const_t<decltype(n_output_ports)>;
       for( index_type index( 0 ); index < n_output_ports; index++ )
@@ -112,17 +112,24 @@ public:
       }
 
       /** initialize file **/
-      fp = fopen( inputfile.c_str() , "r" );
+#if (  defined __WIN64 ) || (  defined __WIN32 ) || ( defined _WINDOWS )
+      if( fopen_s( &fp, inputfile.c_str(), "r" ) != 0 )
+      {
+         std::cerr << "failed to open input file: (" + inputfile + "), exiting\n";
+         exit( EXIT_FAILURE );
+      }
+#else
+      fp = std::fopen( inputfile.c_str() , "r" );
       if( fp == nullptr )
       {
          perror( "Failed to open input file, exiting!" );
          exit( EXIT_FAILURE );
       }
+#endif      
 
       /** get length in bytes **/
       length = st.st_size;
-      iterations = std::round( (double) length /
-                     ( (double) (chunktype::getChunkSize()) - chunk_offset - 1 ) );
+      iterations = length / ( chunktype::getChunkSize() - chunk_offset - 1 );
    }
 
    virtual raft::kstatus run()
@@ -162,14 +169,15 @@ public:
       }
       return( raft::proceed );
    }
-
+   using offset_type = long;
+private:
    /** opened in the constructor **/
    FILE           *fp         = nullptr;
    std::streamsize length     = 0;
    std::int64_t    iterations = 0;
    bool            init       = false;
    std::uint64_t   chunk_index = 0;
-   std::size_t     chunk_offset;
+   offset_type     chunk_offset;
 };
 
 } /* end namespace raft */

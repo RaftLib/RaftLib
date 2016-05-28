@@ -94,7 +94,7 @@ public:
                     edge_func func,
                     void *data = nullptr,
                     bool connected_error = false );
-
+    
 
 
    static void

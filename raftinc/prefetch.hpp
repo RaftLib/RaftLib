@@ -32,6 +32,8 @@ template< MemAction W,
 static void
 prefetch( const void * const addr ) noexcept 
 {
+#if (defined __linux ) || (defined __APPLE__ )
+
 #ifndef NOPREFETCH    
     /** assert all the time, well except when turned off **/
     assert( addr != nullptr );
@@ -55,6 +57,7 @@ prefetch( const void * const addr ) noexcept
     }
 #endif //end DEBUG
 #endif //NOPREFETCH
+#endif //end APPLE AND LINUX, everyone else, empty function
     return;
 } /** end func **/
 } /** end namespace raft **/

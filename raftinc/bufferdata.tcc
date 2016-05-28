@@ -82,15 +82,22 @@ template < class T > struct Data< T,
    Data( const std::size_t max_cap , 
          const std::size_t align = 16 ) : DataBase< T >( max_cap )
    {
-      int ret_val( 0 );
 
 #if (defined __linux ) || (defined __APPLE__ )
+      int ret_val( 0 );
       ret_val = posix_memalign( (void**)&((this)->store), 
                                  align, 
                                 (this)->length_store );
-#elif 0 //defined _WINDOWS 
+      if( ret_val != 0 )
+      {
+         std::cerr << "posix_memalign returned error code (" << ret_val << ")";
+         std::cerr << " with message: \n" << strerror( ret_val ) << "\n";
+         exit( EXIT_FAILURE );
+      }
+#elif (defined _WIN64 ) || (defined _WIN32) 
 //FIXME, we need to test this on Win sys before making live    
-      (this)->store = _aligned_malloc( align, (this)->length_store );
+      (this)->store = reinterpret_cast< T* >(  _aligned_malloc( align, 
+                                                                (this)->length_store ) );
 #else
       /** 
        * would use the array allocate, but well...we'd have to 
@@ -98,12 +105,6 @@ template < class T > struct Data< T,
        */
       (this)->store = reinterpret_cast< T* >( malloc( (this)->length_store ) );
 #endif
-      if( ret_val != 0 )
-      {
-         std::cerr << "posix_memalign returned error code (" << ret_val << ")";
-         std::cerr << " with message: \n" << strerror( ret_val ) << "\n";
-         exit( EXIT_FAILURE );
-      }
       assert( (this)->store != nullptr );
       
 #if (defined __linux ) || (defined __APPLE__ )
@@ -111,7 +112,6 @@ template < class T > struct Data< T,
                      (this)->length_store,  
                      POSIX_MADV_SEQUENTIAL );
 #endif
-      errno = 0;
       (this)->signal = (Signal*)       calloc( (this)->max_cap,
                                                sizeof( Signal ) );
       if( (this)->signal == nullptr )
@@ -214,28 +214,28 @@ template < class T >
    Data( const std::size_t max_cap , 
          const std::size_t align = 16 ) : ourtype_t( max_cap )
    {
-      int ret_val( 0 );
 
 #if (defined __linux ) || (defined __APPLE__ )
-      ret_val = posix_memalign( (void**)&((this)->store), 
-                                 align, 
-                                (this)->length_store );
-#elif 0 //defined _WINDOWS 
-//FIXME, we need to test this on Win sys before making live    
-      (this)->store = _aligned_malloc( align, (this)->length_store );
-#else
-      /** 
-       * would use the array allocate, but well...we'd have to 
-       * figure out how to free it
-       */
-      (this)->store = reinterpret_cast< type_t >( malloc( (this)->length_store ) );
-#endif
+      const auto ret_val = posix_memalign( (void**)&((this)->store), 
+                                           align, 
+                                           (this)->length_store );
       if( ret_val != 0 )
       {
          std::cerr << "posix_memalign returned error code (" << ret_val << ")";
          std::cerr << " with message: \n" << strerror( ret_val ) << "\n";
          exit( EXIT_FAILURE );
       }
+#elif (defined _WIN64 ) || (defined _WIN32) 
+//FIXME, we need to test this on Win sys before making live    
+      (this)->store = reinterpret_cast< type_t* >(  _aligned_malloc( align, 
+                                                                    (this)->length_store ) );
+#else
+      /** 
+       * would use the array allocate, but well...we'd have to 
+       * figure out how to free it
+       */
+      (this)->store = reinterpret_cast< type_t* >( malloc( (this)->length_store ) );
+#endif
       assert( (this)->store != nullptr );
       
 #if (defined __linux ) || (defined __APPLE__ )

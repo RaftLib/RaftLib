@@ -23,7 +23,7 @@
 #define _FIFOABSTRACT_TCC_  1
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
-
+#include "blocked.hpp"
 #include "fifo.hpp"
 
 
@@ -38,6 +38,6 @@ public:
 protected:
    /** TODO, package this as as struct **/
    volatile bool            allocate_called = false;
-   std::size_t              n_allocated     = 1;
+   Blocked::value_type      n_allocated     = 1;
 };
 #endif /* END _FIFOABSTRACT_TCC_ */

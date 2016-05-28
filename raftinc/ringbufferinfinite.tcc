@@ -21,6 +21,8 @@
 #define _RINGBUFFERINFINITE_TCC_  1
 #include "alloc_traits.tcc"
 
+//TODO -> fixme
+
 template < class T >
 class RingBufferBase< T, Type::Infinite, 
            typename std::enable_if< inline_nonclass_alloc< T >::value >::type >
@@ -221,27 +223,27 @@ protected:
    }
   
    virtual void local_pop_range( void *ptr_data,
-                                 raft::signal *signal,
-                                 std::size_t n_items )
+                                 const std::size_t n_items )
    {
-      assert( ptr_data != nullptr );
-      auto *items( reinterpret_cast< T* >( ptr_data ) );
+      UNUSED( ptr_data );
+      UNUSED( n_items );
+      //assert( ptr_data != nullptr );
+      //auto *items( reinterpret_cast< T* >( ptr_data ) );
 
-      if( signal != nullptr )
-      {
-         for( size_t i( 0 ); i < n_items; i++ )
-         {
-            items [ i ]  = (this)->datamanager.get()->store [ 0 ];
-            signal[ i ]  = (this)->datamanager.get()->signal[ 0 ].sig;
-         }
-      }
-      else
-      {
-         for( size_t i( 0 ); i < n_items; i++ )
-         {
-            items [ i ]  = (this)->datamanager.get()->store [ 0 ];
-         }
-      }
+      //if( signal != nullptr )
+      //{
+      //   for( size_t i( 0 ); i < n_items; i++ )
+      //   {
+      //      items [ i ]  = (this)->datamanager.get()->store [ 0 ];
+      //   }
+      //}
+      //else
+      //{
+      //   for( size_t i( 0 ); i < n_items; i++ )
+      //   {
+      //      items [ i ]  = (this)->datamanager.get()->store [ 0 ];
+      //   }
+      //}
    }
 
 

@@ -79,8 +79,7 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
     auto &all_k   ( all.acquire()    );
     /** don't have to do this but it makes it far more apparent where it comes from **/
     void * const kernel_ptr( reinterpret_cast< void* >( &all_k ) );
-    using kernel_ptr_t =
-      typename std::remove_reference< decltype( all_k ) >::type;
+    using kernel_ptr_t = std::remove_reference< decltype( all_k ) >::type;
     /** need to grab impl of Lengauer and Tarjan dominators, use for SESE **/
     /** in the interim, restrict to kernels that are simple to duplicate **/
     /** NOTE: there's a better linear SESE algorithm jcb17May16 **/
@@ -510,7 +509,7 @@ raft::map::inline_join( split_stack_t &split_stack,
                         kpair * const next )
 {
     /** need to get the count **/
-    auto count( 0 );
+    std::size_t count( 0 );
     /**
      * for every kernel in each group, join that
      * group's kernels to a single destination and

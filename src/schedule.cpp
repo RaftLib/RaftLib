@@ -68,9 +68,8 @@ Schedule::checkSystemSignal( raft::kernel * const kernel,
          continue;
       }
       const auto curr_signal( port.signal_peek() );
-      if( __builtin_expect(
-         ( curr_signal > 0 && curr_signal < raft::MAX_SYSTEM_SIGNAL ),
-         0 ))
+      if( R_UNLIKELY(
+         ( curr_signal > 0 && curr_signal < raft::MAX_SYSTEM_SIGNAL ) ) )
       {
          port.signal_pop();
          /**

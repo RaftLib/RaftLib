@@ -98,7 +98,7 @@ protected:
     * the previous thread in order to get moved ot a new
     * thread.  Used in pool_schedule::start().
     */
-   const float diff_weight = .20;
+   const float diff_weight = static_cast< const float >( .20 );
    /**
     * total # of hardware supported threads 
     */
@@ -113,6 +113,6 @@ protected:
    std::vector< kernel_container* > container;
 
    std::size_t                      kernel_count = 0;
-   std::remove_reference< decltype( container.end() ) >::type container_it;
+   std::vector< kernel_container* >::iterator      container_it;
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */

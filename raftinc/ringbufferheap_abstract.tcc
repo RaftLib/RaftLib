@@ -69,10 +69,10 @@ TOP:
 
             const auto   wpt( Pointer::val( buff_ptr->write_pt ) ), 
                          rpt( Pointer::val( buff_ptr->read_pt  ) );
-            if( __builtin_expect( (wpt == rpt), 0 ) )
+            if( R_UNLIKELY (wpt == rpt) )
             {
                /** expect most of the time to be full **/
-               if( __builtin_expect( (wrap_read < wrap_write), 1 ) )
+               if( R_LIKELY( wrap_read < wrap_write ) )
                {
                   datamanager.exitBuffer( dm::size );
                   return( buff_ptr->max_cap );
@@ -441,8 +441,8 @@ protected:
     * these two should go inside the buffer, they'll
     * be accessed via the monitoring system.
     */
-   volatile Blocked             read_stats;
-   volatile Blocked             write_stats;
+   Blocked                     read_stats;
+   Blocked                     write_stats;
    /** 
     * This should be okay outside of the buffer, its local 
     * to the writing thread.  Variable gets set "true" in

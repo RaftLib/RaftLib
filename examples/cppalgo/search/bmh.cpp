@@ -90,7 +90,7 @@ main( int argc, char **argv )
         std::cerr << "must have at least one argument to run the search example\n";
         exit( EXIT_FAILURE );
     }
-    fr   read( argv[ 1 ], 1, term.length() );
+    fr   read( argv[ 1 ], 1, (fr::offset_type) term.length() );
     search find( term );
     print p;
     

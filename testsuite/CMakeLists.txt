@@ -1,9 +1,5 @@
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
-if( BUILDRANDOM )
- find_package( GSL COMPONENTS gsl gslcblas )
-endif( BUILDRANDOM )
-
 find_package( Threads )
 ##
 # c/c++ std
@@ -50,8 +46,7 @@ include_directories( ${CMAKE_SCOTCH_INCS} )
 
 foreach( APP ${TESTAPPS} )
  add_executable( ${APP} "${APP}.cpp" )
- target_link_libraries( ${APP} raft  ${GSL_LIBRARIES} 
-                                     ${CMAKE_THREAD_LIBS_INIT} 
+ target_link_libraries( ${APP} raft  ${CMAKE_THREAD_LIBS_INIT} 
                                      ${CMAKE_SCOTCH_LIBS}
                                      ${CMAKE_RT_LIBS} )
 endforeach( APP ${TESTAPPS} )

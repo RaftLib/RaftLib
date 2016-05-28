@@ -91,7 +91,7 @@ public:
     * sig - get the current signal
     * @return raft::signal
     */
-   constexpr raft::signal& sig() noexcept
+   const raft::signal& sig() noexcept
    {
       return( (this)->signal );
    }
@@ -165,12 +165,12 @@ public:
     * future versions will deprecate this for all types
     * but that one.
     */
-   constexpr std::size_t getindex() noexcept
+   std::size_t getindex() noexcept
    {
       return( signal[ 0 ] .getindex() );
    }
 
-   constexpr std::size_t size() noexcept
+   std::size_t size() noexcept
    {
       return( n_items );
    }
@@ -216,7 +216,7 @@ public:
       return( (*item) ); 
    }
 
-   constexpr raft::signal& sig() noexcept
+   raft::signal& sig() noexcept
    {
       return( (this)->signal );
    }

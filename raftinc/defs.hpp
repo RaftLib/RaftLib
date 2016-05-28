@@ -63,4 +63,18 @@ using kernel_it_pair = std::pair<
 
 using byte_t = std::uint8_t;
 
+
+#if (defined __linux) || (defined __APPLE__ )
+
+#define R_LIKELY( var ) __builtin_expect( var, 1 )
+#define R_UNLIKELY( var ) __builtin_expect( var, 0 )
+
+#else
+
+#define R_LIKELY( var ) var
+#define R_UNLIKELY( var ) var
+
+#endif
+
+
 #endif /* END _DEFS_HPP_ */

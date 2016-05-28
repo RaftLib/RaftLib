@@ -20,37 +20,47 @@
 #ifndef _BLOCKED_HPP_
 #define _BLOCKED_HPP_  1
 #include <cstdint>
+#include <cassert>
 
-union Blocked
+/**
+ * FIXME...should probably align these to cache line then 
+ * zero extend pad for producer/consumer.
+ */
+struct Blocked
 {
+    using value_type = std::uint32_t;
+    using whole_type = std::uint64_t;
+    
+    static_assert( sizeof( value_type ) * 2 == sizeof( whole_type ),
+                   "Error, the whole type must be double the size of the half type" );
+    Blocked() = default;
 
-   Blocked() : all( 0 )
-   {}
+    Blocked( const Blocked &other ) : all( other.all ){}
 
-   Blocked( volatile Blocked &other )
-   {
-      bec.count    = other.bec.count;
-      bec.blocked  = other.bec.blocked;
-   }
+    Blocked& operator += ( const Blocked &rhs )
+    {
+       if( ! rhs.bec.blocked )
+       {
+          (this)->bec.count += rhs.bec.count;
+       }
+       return( *this );
+    }
+    struct blocked_and_counter
+    {
+       value_type   blocked;
+       value_type    count;
+    };
+    
+    union
+    {
+        blocked_and_counter bec;
+        whole_type          all = 0;
+    };
 
-   Blocked& operator += ( const Blocked &rhs )
-   {
-      if( ! rhs.bec.blocked )
-      {
-         (this)->bec.count += rhs.bec.count;
-      }
-      return( *this );
-   }
-
-   struct blocked_and_counter
-   {
-      std::uint32_t blocked;
-      std::uint32_t count;
-   } bec;
-   std::uint64_t all;
+    char pad[ L1D_CACHE_LINE_SIZE - sizeof( whole_type ) ]; 
 }
 #if __APPLE__ || __linux
-__attribute__ ((aligned( 8 )))
+__attribute__ (( aligned( 64 )))
 #endif
 ;
 
