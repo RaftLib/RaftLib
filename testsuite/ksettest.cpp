@@ -23,7 +23,6 @@
 //so we can test the basic kset structure w/o invoking raft topo
 #define TEST_WO_RAFT 1
 #include "kset.tcc"
-#undef  TEST_WO_RAFT
 
 
 int main()
@@ -48,3 +47,5 @@ int main()
     }
     return( EXIT_SUCCESS );
 }
+
+#undef  TEST_WO_RAFT

@@ -6,6 +6,7 @@
 #include <iterator>
 #include <raft>
 #include <raftio>
+#include "defs.hpp"
 
 template< typename T > class print : public raft::kernel
 {
@@ -34,6 +35,7 @@ public:
       }
       catch( ClosedPortAccessException &ex )
       {
+         UNUSED( ex );
          /** nothing bad, just no more data **/
          return( raft::stop );
       }

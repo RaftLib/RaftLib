@@ -62,7 +62,7 @@ public:
         auto &mem( output[ "y" ].allocate< obj_t >() );
         for( auto i( 0 ); i < mem.length; i++ )
         {
-            mem.pad[ i ] = counter;
+            mem.pad[ i ] = static_cast< int >( counter );
         }
         output[ "y" ].send();
         counter++;

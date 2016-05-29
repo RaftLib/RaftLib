@@ -5,7 +5,7 @@
 #include <raft>
 #include <raftio>
 #include "generate.tcc"
-
+#include "defs.hpp"
 
 
 template< typename A, typename B, typename C > class Sum : public raft::kernel
@@ -26,7 +26,7 @@ public:
       input[ "input_a" ].pop( a, &sig_a );
       input[ "input_b" ].pop( b, &sig_b );
       assert( sig_a == sig_b );
-      C c( a + b );
+      C c( static_cast< C >( a + b ) );
       output[ "sum" ].push( c , sig_a );
       if( sig_b == raft::eof )
       {
@@ -65,8 +65,9 @@ main( int argc, char **argv )
    }
    catch( PortTypeMismatchException &ex )
    {
-    //yippy, we threw the right exception
-    return( EXIT_SUCCESS );
+        UNUSED( ex );
+        //yippy, we threw the right exception
+        return( EXIT_SUCCESS );
    }
    m.link( 
       &linked_kernels.getDst(), 

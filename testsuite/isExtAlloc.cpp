@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <array>
 #include "alloc_traits.tcc"
-
+#include "defs.hpp"
 
 
 template < std::size_t N > class foo
@@ -38,6 +38,7 @@ main()
     {
         return( EXIT_FAILURE );
     }
+    UNUSED( f );
     /** false cases **/
     if( ext_alloc< float >::value != false )
     {

@@ -46,11 +46,18 @@ struct basekset{
     constexpr basekset() = delete;
     ~basekset() = delete;
 
-    using iterator_t = 
-        std::vector< std::reference_wrapper< raft::kernel > >::iterator;
+    
+    using container_type = 
+        std::vector< std::reference_wrapper< raft::kernel > >;
 
-    virtual iterator_t begin()      = 0;
-    virtual iterator_t end()        = 0;
+    using iterator = container_type::iterator; 
+    
+    using const_iterator = container_type::const_iterator;
+
+    //virtual iterator         begin()      = 0;
+    virtual const_iterator   cbegin()     = 0;
+    //virtual iterator         end()        = 0;
+    virtual const_iterator   cend()       = 0;
 };
 
 /** pre-declaration **/
@@ -87,6 +94,14 @@ private:
     vector_t  k;
 
 public:
+
+#ifdef TEST_WO_RAFT
+using const_iterator = typename vector_t::const_iterator;
+using iterator       = typename vector_t::iterator;
+#else
+using const_iterator = typename basekset::const_iterator;
+using iterator       = typename basekset::iterator;
+#endif
     /**
      * base constructor, with multiple args.
      */
@@ -114,17 +129,27 @@ public:
      * like this is the siplest way since the compiler
      * will only check for begin and end.
      */
-    virtual decltype( k.cbegin() ) begin()
+    virtual const_iterator cbegin()
     {
         return( k.cbegin() );
+    }
+    
+    virtual iterator begin()
+    {
+        return( k.begin() );
     }
 
     /**
      * returns end iterator
      */
-    virtual decltype( k.cend() ) end()
+    virtual const_iterator  cend()
     {
         return( k.cend() );
+    }
+    
+    virtual iterator  end()
+    {
+        return( k.end() );
     }
 
     /**
