@@ -66,6 +66,11 @@ main( int argc, char **argv )
 {
 #if __linux
 #ifdef _SC_LEVEL1_DCACHE_LINESIZE
+    /** 
+     * noticed on some ubuntu powerpc build this is defined, but sysconf returns zero
+     * easy fix is simply to read from /sys/devices which is typically set for at least
+     * proc zero
+     */
     int64_t val = sysconf( _SC_LEVEL1_DCACHE_LINESIZE );
 #else
     int64_t val = -1;
