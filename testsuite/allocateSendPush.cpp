@@ -17,7 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <unistd.h>
 #include <cstdint>
 #include <cstdio>
 #include <cstddef>
@@ -41,7 +40,7 @@ template < std::size_t N > struct foo
    ~foo() = default;
 
    int  length;
-   volatile int  pad[ N ];
+   int  pad[ N ];
 };
 
 using obj_t = foo< 100 >;

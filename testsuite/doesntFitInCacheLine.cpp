@@ -7,7 +7,7 @@
 
 template < std::size_t N > struct varlen
 {
-   volatile char pad[ N ];
+   char pad[ N ];
 };
 
 int

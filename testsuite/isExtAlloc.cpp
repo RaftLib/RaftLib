@@ -14,7 +14,7 @@ public:
 
 private:
    const int A;
-   volatile char pad[ N ];
+   char pad[ N ];
 };
 
 int

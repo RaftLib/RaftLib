@@ -14,7 +14,7 @@ public:
 
 private:
    int A;
-   volatile char pad[ N ];
+   char pad[ N ];
 };
 
 

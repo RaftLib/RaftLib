@@ -23,6 +23,8 @@
 #include <raftio>
 #include <cstdlib>
 
+#if (defined __linux ) || (defined __APPLE__ )
+
 #ifdef PAPITEST
 #include <papi.h>
 #include <papiStdEventDefs.h>
@@ -210,11 +212,12 @@ public:
     }
 };
 
-
+#endif
 
 int
 main()
 {
+#if (defined __linux ) || (defined __APPLE__ )
     start st;
     passthrough pt;
     last l;
@@ -222,5 +225,6 @@ main()
     raft::map m;
     m += st >> pt >> l;
     m.exe();
+#endif    
     return( EXIT_SUCCESS );
 }
