@@ -70,7 +70,7 @@ main( int argc, char **argv )
 #else
     int64_t val = -1;
 #endif    
-    if( val == -1 /** failed, try something else **/ )
+    if( val < 0 /** failed, try something else **/ )
     {
         std::ifstream ifs( 
             "/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size" );
@@ -80,6 +80,12 @@ main( int argc, char **argv )
             ifs.close();
         }
     }
+    /** try one more way **/
+    if( val == 0 )
+    {
+        std::
+    }
+    
     std::cout << ( val == -1 ? 0 : val );
 #elif __APPLE__ 
     uint64_t size =  0;
