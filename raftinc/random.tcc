@@ -36,7 +36,9 @@ public:
     template <class ... Args > 
     random_variate( const std::size_t N, 
                     Args&&... params ) : parallel_k(),
-                                         gen( std::chrono::system_clock::now().time_since_epoch().count() ),
+        gen( 
+         static_cast< typename GENERATOR::result_type >( 
+            std::chrono::system_clock::now().time_since_epoch().count() ) ),
                                          dist( std::forward< Args >( params )... ),
                                          N( N )
     {
@@ -51,7 +53,8 @@ public:
     }
 
     random_variate( const random_variate &other ) : parallel_k(),
-                                                    gen( std::chrono::system_clock::now().time_since_epoch().count() ),
+       gen( static_cast< typename GENERATOR::result_type >( 
+            std::chrono::system_clock::now().time_since_epoch().count() ) ),
                                                     dist( other.dist ),
                                                     N( other.N )
     {
