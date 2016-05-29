@@ -75,7 +75,7 @@ main( int argc, char **argv )
 #else
     int64_t val = -1;
 #endif    
-    if( val < 0 /** failed, try something else **/ )
+    if( val <= 0 /** failed, try something else **/ )
     {
         std::ifstream ifs( 
             "/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size" );
