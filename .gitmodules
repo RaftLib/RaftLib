@@ -10,3 +10,6 @@
 [submodule "git-dep/cmdargs"]
 	path = git-dep/cmdargs
 	url = https://github.com/jonathan-beard/cmdargs.git
+[submodule "git-dep/shm"]
+	path = git-dep/shm
+	url = https://github.com/RaftLib/shm.git

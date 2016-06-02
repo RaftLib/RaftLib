@@ -36,7 +36,6 @@ addons:
  apt:
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise
     packages:
 # ensure these match GCC_VERSION
       - gcc-5
