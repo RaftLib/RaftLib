@@ -74,9 +74,9 @@ affinity::set( const std::size_t desired_core )
 /**
 #if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
 **/
-      strerror_r( errno, buffer, buff_length );
+      const char *str( strerror_r( errno, buffer, buff_length ) );
       std::cerr << "failed to set affinity, desired core( " << desired_core << " )";
-      std::cerr << " exited with error ( " << buffer << " ).\n";
+      std::cerr << " exited with error ( " << str << " ).\n";
       exit( EXIT_FAILURE );
    }
    /** wait till we know we're on the right processor **/
