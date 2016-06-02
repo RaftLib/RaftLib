@@ -85,11 +85,7 @@ main( int argc, char **argv )
             ifs.close();
         }
     }
-    /** try one more way **/
-    if( val == 0 )
-    {
-        std::
-    }
+
     
     std::cout << ( val == -1 ? 0 : val );
 #elif __APPLE__ 
