@@ -21,6 +21,7 @@ env:
         - CXXFLAGS=-std=c++14
         - CFLAGS=-std=c99
 
+
 branches:
     only:
         - master
@@ -67,3 +68,4 @@ script:
     - ${CC} --version ; ${CXX} --version; cmake --version
     - env
     - make -j 4 && make test
+
