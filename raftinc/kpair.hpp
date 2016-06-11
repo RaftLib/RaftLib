@@ -25,6 +25,8 @@
 #include "portorder.hpp"
 #include "defs.hpp"
 
+
+
 namespace raft
 {
     class kernel;
@@ -148,5 +150,6 @@ kpair& operator >= ( raft::kernel &a, kpair &b );
 kpair& operator >= ( raft::kernel &&a, kpair &b );
 
 
+kpair& operator <= ( raft::kernel &a, raft::basekset &&b );
 
 #endif /* END _KPAIR_HPP_ */
