@@ -36,7 +36,8 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      allocatePopExternal 
      prefetchEffective 
      parallelchain 
-     ksettest )
+     ksettest
+     splitKsetJoin )
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 
