@@ -151,5 +151,5 @@ kpair& operator >= ( raft::kernel &&a, kpair &b );
 
 
 kpair& operator <= ( raft::kernel &a, raft::basekset &&b );
-
+kpair& operator >> ( raft::basekset &a, raft::kernel &b );
 #endif /* END _KPAIR_HPP_ */

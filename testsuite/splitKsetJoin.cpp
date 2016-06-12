@@ -1,5 +1,4 @@
 /**
- * random.cpp - 
  * @author: Jonathan Beard
  * @version: Mon Mar  2 14:00:14 2015
  * 
@@ -28,60 +27,42 @@
 #include "defs.hpp"
 #include "kset.tcc"
 
-template < class T > class sub : public raft::kernel
+
+int main()
 {
-public:
-    sub() : raft::kernel() 
-    {
-        input.addPort< T >( "0" );
-        output.addPort< T >( "0" );
-    }
+    using namespace raft;
+    using type_t = std::uint32_t;
+    using gen   = random_variate< std::default_random_engine,
+                                  std::uniform_int_distribution,
+                                  type_t >;
+    using p_out = raft::print< type_t, '\n' >;
+    using sub   = raft::lambdak< type_t >;
+    
+    auto  l_sub( [&]( Port &input,
+                      Port &output )
+       {
+          type_t a;
+          input[ "0" ].pop( a );
+          output[ "0" ].push( a - 10 );
+          return( raft::proceed );
+       } );
+    
 
-    sub( const sub< T > &other ) : sub()
-    {
-       UNUSED( other );
-    }
+    
+    const static auto min( 0 );
+    const static auto max( 100 );
+    
+    gen g( 100, min, max );
+    
+    sub a( 1, 1, l_sub ), 
+        b( 1,1,l_sub ), 
+        c( 1,1,l_sub);
+    
+    p_out print;
+    
+    raft::map m;
+    m += g <= raft::kset( a, b, c ) >> print;
+    m.exe();
 
-    virtual ~sub() = default;
-
-    CLONE();
-
-    virtual raft::kstatus run()
-    {
-        T a;
-        input[ "0" ].pop( a );
-        output[ "0" ].push( a - 10 );
-        return( raft::proceed );
-    }
-};
-
-
-int
-main()
-{
-  using namespace raft;
-  using type_t = std::uint32_t;
-  using gen = random_variate< std::default_random_engine,
-                              std::uniform_int_distribution,
-                              type_t >;
-  using p_out = raft::print< type_t, '\n' >;
-  
-  std::vector< type_t > output;
-  
-  const static auto min( 0 );
-  const static auto max( 100 );
-  gen g( 100, min, max );
-  
-  p_out print;
-  
-  sub< type_t > s;
-
-
-  raft::map m;
-  
-  m += g <= raft::kset( a, b, c ) >> print;
-  
-  m.exe();
-
-  return( EXIT_SUCCESS );
+    return( EXIT_SUCCESS );
 }

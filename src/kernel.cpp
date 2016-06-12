@@ -12,6 +12,15 @@ kernel::kernel() : kernel_id( kernel::kernel_count )
    kernel::kernel_count++;
 }
 
+kernel::kernel( const kernel &other ) : core_assign( other.core_assign ),
+                                        dup_enabled( other.dup_enabled ),
+                                        dup_candidate( other.dup_candidate ),
+                                        kernel_id( kernel::kernel_count )
+{
+    kernel::kernel_count++;
+}
+
+
 /** existing memory **/
 kernel::kernel( void * const ptr,
                 const std::size_t nbytes ) :
@@ -19,6 +28,7 @@ kernel::kernel( void * const ptr,
    output( this, ptr, nbytes ),
    kernel_id( kernel::kernel_count )
 {
+   kernel::kernel_count++;
 }
 
 
