@@ -37,6 +37,9 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      prefetchEffective 
      parallelchain 
      ksettest
+     splitKsetCont
+     ksetContContJoin
+     KsetJoin
      splitKsetJoin )
 
 if( BUILDRANDOM )

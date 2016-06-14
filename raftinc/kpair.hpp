@@ -151,5 +151,17 @@ kpair& operator >= ( raft::kernel &&a, kpair &b );
 
 
 kpair& operator <= ( raft::kernel &a, raft::basekset &&b );
-kpair& operator >> ( raft::basekset &a, raft::kernel &b );
+kpair& operator >> ( raft::basekset &&a, raft::kernel &b );
+kpair& operator >> ( raft::basekset &&a, raft::basekset &&b );
+/**
+ * this case looks like this:
+ * m += raft::kset( g0, g1, g2 ) >= j;
+ */
+kpair& operator >= ( raft::basekset &&a, raft::kernel &b );
+/**
+ * this case looks like this:
+ * m += raft::kset( g0, g1, g2 ) >= j >> print;
+ * due to >> operator precendent in c++
+ */
+kpair& operator >= ( raft::basekset &&a, kpair &b ); 
 #endif /* END _KPAIR_HPP_ */

@@ -56,14 +56,15 @@ int main()
     gen g( 100, min, max );
     
     sub a( 1, 1, l_sub ), 
-        b( 1,1,l_sub ), 
-        c( 1,1,l_sub);
+        b( 1, 1, l_sub ), 
+        c( 1, 1, l_sub ),
+        d( 1, 1, l_sub );
     
     p_out print;
     join_t j( 3 );
 
     raft::map m;
-    m += g <= raft::kset( a, b, c ) >= j >> print;
+    m += ( g >> d )  <= raft::kset( a, b, c ) >= j >> print;
     m.exe();
 
     return( EXIT_SUCCESS );

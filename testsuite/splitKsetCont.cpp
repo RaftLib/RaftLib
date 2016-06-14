@@ -48,8 +48,7 @@ int main()
        } );
     
 
-    using join_t = join< type_t >;
-
+    
     const static auto min( 0 );
     const static auto max( 100 );
     
@@ -60,10 +59,9 @@ int main()
         c( 1,1,l_sub);
     
     p_out print;
-    join_t j( 3 );
-
+    
     raft::map m;
-    m += g <= raft::kset( a, b, c ) >= j >> print;
+    m += g <= raft::kset( a, b, c ) >> print;
     m.exe();
 
     return( EXIT_SUCCESS );

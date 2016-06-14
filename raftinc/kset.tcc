@@ -48,17 +48,14 @@ struct basekset{
     virtual ~basekset() = default;
 
     
-    using container_type = 
-        std::vector< std::reference_wrapper< raft::kernel > >;
+    using container_type = std::vector< raft::kernel* >;
 
     using iterator = container_type::iterator; 
     
     using const_iterator = container_type::const_iterator;
 
-    //virtual iterator         begin()      = 0;
-    virtual const_iterator   cbegin()     = 0;
-    //virtual iterator         end()        = 0;
-    virtual const_iterator   cend()       = 0;
+    virtual const_iterator   begin()     = 0;
+    virtual const_iterator   end()       = 0;
 };
 
 /** pre-declaration **/
@@ -84,9 +81,11 @@ private:
     static_assert( std::is_base_of< raft::kernel,
                                     common_t >::value,
                                     "All kernels given to kset must be derived from raft::kernel" );
+    using vector_t = container_type;
+#else 
+    using vector_t = std::vector< common_t* >;
 #endif
     /** don't want to type this over and over **/
-    using vector_t = std::vector< std::reference_wrapper< common_t > >;
     vector_t  k;
 
 public:
@@ -123,28 +122,19 @@ using iterator       = typename basekset::iterator;
      * like this is the siplest way since the compiler
      * will only check for begin and end.
      */
-    virtual const_iterator cbegin()
+    virtual const_iterator begin()
     {
         return( k.cbegin() );
-    }
-    
-    virtual iterator begin()
-    {
-        return( k.begin() );
     }
 
     /**
      * returns end iterator
      */
-    virtual const_iterator  cend()
+    virtual const_iterator  end()
     {
         return( k.cend() );
     }
     
-    virtual iterator  end()
-    {
-        return( k.end() );
-    }
 
 
     /**
@@ -171,7 +161,7 @@ template < class K, class... KS > struct AddKernel< K, KS... >
                          KS&&... kernels,
                          CONTAINER &c )
     {
-        c.emplace_back( kernel );
+        c.emplace_back( &kernel );
         AddKernel< KS... >::add( std::forward< KS >( kernels )..., c );
         return;
     }
@@ -186,7 +176,7 @@ template < class K > struct AddKernel< K >
     template < class CONTAINER >
         static void add( K &&kernel, CONTAINER &c )
     {
-        c.emplace_back( kernel );
+        c.emplace_back( &kernel );
         return;
     }
 };

@@ -36,6 +36,8 @@ int main()
                                   std::uniform_int_distribution,
                                   type_t >;
     using p_out = raft::print< type_t, '\n' >;
+
+    using join_t = join< type_t >;
     using sub   = raft::lambdak< type_t >;
     
     auto  l_sub( [&]( Port &input,
@@ -46,14 +48,13 @@ int main()
           output[ "0" ].push( a - 10 );
           return( raft::proceed );
        } );
-    
-
-    using join_t = join< type_t >;
 
     const static auto min( 0 );
     const static auto max( 100 );
     
-    gen g( 100, min, max );
+    gen g0( 100, min, max ),
+        g1( 100, min, max ),
+        g2( 100, min, max );
     
     sub a( 1, 1, l_sub ), 
         b( 1,1,l_sub ), 
@@ -63,7 +64,7 @@ int main()
     join_t j( 3 );
 
     raft::map m;
-    m += g <= raft::kset( a, b, c ) >= j >> print;
+    m += ( raft::kset( g0, g1, g2 ) >> raft::kset( a, b, c ) ) >= ( j >> print );
     m.exe();
 
     return( EXIT_SUCCESS );

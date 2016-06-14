@@ -248,12 +248,29 @@ operator >= ( raft::kernel &&a, kpair &b )
 
 kpair& operator <= ( raft::kernel &a, raft::basekset &&b )
 {
-    auto *ptr( new kpair( nullptr, nullptr, true, false) );
-    return(*ptr);
+    kpair *out( nullptr );
+    return(*out );
 }
 
-kpair& operator >> ( raft::basekset &a, raft::kernel &b )
+kpair& operator >> ( raft::basekset &&a, raft::kernel &b )
 {
-    auto *ptr( new kpair( nullptr, nullptr, false, false ) );
-    return(*ptr);
+    kpair *out( nullptr );
+    return(*out);
+}
+
+kpair& operator >> ( raft::basekset &&a, raft::basekset &&b )
+{
+    kpair *out( nullptr );
+    return( *out );
+}
+kpair& operator >= ( raft::basekset &&a, raft::kernel &b )
+{
+    kpair *out( nullptr );
+    return( *out );
+}
+
+kpair& operator >= ( raft::basekset &&a, kpair &b )
+{
+    kpair *out( nullptr );
+    return( *out );
 }
