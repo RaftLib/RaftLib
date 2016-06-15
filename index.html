@@ -2,29 +2,33 @@
 <html>
   <head>
     <meta charset='utf-8'>
+    
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-
+     <div itemscope itemtype="http://schema.org/SoftwareSourceCode">
+    <meta name="keywords" itemprop="keywords" content="stream processing, data flow programming, dataflow, data flow, cpp, c++, raftlib, raft language, parallel programming, parallel, easy parallel programming, awesome"/>
+    </div>
     <title>RaftLib</title>
   </head>
-
   <body>
-
     <header>
       <div class="container">
         <h1><img src="images/raftlibLogo.png" height="64px" width="64px"/> $>./ RaftLib</h1>
-        <h2>Simple, easy to use stream parallel computation library for C++.</h2>
+        <div itemscope itemtype="http://schema.org/SoftwareSourceCode">
+        <h2 itemprop="about">Simple, easy to use stream parallel computation library for <span itemprop="programmingLanguage">C++</span>.</h2>
+        </div>
         <hr/>
+        <div itemscope itemtype="http://schema.org/SoftwareSourceCode">
         <section id="downloads">
         <center>
-          <a href="https://github.com/RaftLib/RaftLib/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/RaftLib/RaftLib/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/RaftLib/RaftLib" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+          <a itemprop="codeRepository"  href="https://github.com/RaftLib/RaftLib/zipball/master" class="btn">Download as .zip</a>
+          <a itemprop="codeRepository" href="https://github.com/RaftLib/RaftLib/tarball/master" class="btn">Download as .tar.gz</a>
+          <a itemprop="codeRepository" href="https://github.com/RaftLib/RaftLib" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
         </center>
         </section>
+        </div> <!-- end itemscope -->
       </div>
       <div class="container">
         <section id="engineering">
@@ -54,39 +58,24 @@
         </section>
       </div>
     </header>
-
     <div class="container">
       <section id="main_content">
         <h3>
 <a id="welcome-to-the-raft-c-stream-processing-template-library" class="anchor" href="#welcome-to-the-raft-c-stream-processing-template-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to the Raft C++ Stream Processing Template Library</h3>
-
 <h3>
 <a id="what-is-it" class="anchor" href="#what-is-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is it?</h3>
-
 <p><a href="http://www.jonathanbeard.io/blog/2015/09/19/streaming-and-dataflow.html">Stream processing</a> is a method for extracting data, task, and pipeline parallelism from an application. Ever wash dishes with more than one person, one washer, one dryer, and perhaps one person to put them away? That's pipeline parallelism. Raft lets you do that for your application. How about add two washers, three? You can do this as well. That's data parallelism, you're operating on differing (independent) dishes at the same time. Going further, the Raft library enables task parallelism. That is, if you have four people on the dishes, you can add somebody on the side, taking inventory of the dishes as the pass by, at the same time the dishes are being washed. The inventory task is independent of the other two (which is slightly more nuanced since we've to spot the dishes as they go by). The Raft library uses templates, and a compiled library, to make the otherwise perilous task of creating parallel programs far easier. Please check it out, and if you have any questions, please feel free to send the project developers an email.</p>
-
 <h3><a id="want" class="anchor" href="#want" aria-hidden="true"><span class="octicon octicon-link"></span></a>Concurrent Hello World:</a></h3>
 <script src="https://gist.github.com/jonathan-beard/6a2fe1d9796cb7bb102cb8b34800fff1.js"></script>
-
 <h3><a id="status" class="anchor" href="#want" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tutorials, Talks, Interviews:</a></h3>
-
 <ul><a href="http://cppcast.com/2016/03/jonathan-beard/" target="_tab">CppCast Interview</a> - Jonathan Beard talks about RaftLib, thoughts on parallel programming, and the future of RaftLib</ul>
-
 <ul><a href="http://sched.co/6Sg8" target="_tab">CppNow</a> - RaftLib tutorial, <a href="http://www.jonathanbeard.io/pdf/cppnow2016.pdf">slides</a> and <a href="http://www.screencast.com/t/4Q5nXf3WXJ" target="_tab">video</a> (official one coming to YouTube channel soon).</ul>
-
-
 <h3><a id="status" class="anchor" href="#want" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Status:</a></h3>
-
 <p>The Raft library is currently an alpha release, nearing its first beta.  The API itself is relatively stable, however the back end
 is subject to updates if needed (although we're taking pains to support needed old features). This software is subject to the Apache Version 2.0 license. The main-line branch is also the development branch. As new code is checked in, it is processed through two continuous integration services, the build status icon (at top of page) reflects the current Linux build and testsuite success. You can add features, bug fixes, and in general any code you'd like that you think is useful for RaftLib to have to the main line through pull requests. There are several releases, at this stage of the project, snapshots for releases are taken before major changes. We plan on moving to a full beta release once the multi-node support is pulled from the research code and re-integrated with the mainline branch (at the current rate of development, that should be mid-July 2016).</p>
-
-
-
 <h3>
 <a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h3>
-
 <p>To checkout the library and build RaftLib (along with all examples) do the following:</p>
-
 <pre><code>$ cd location_for_the_repo
 $ git clone git@github.com:jonathan-beard/RaftLib.git
 $ mkdir build
@@ -95,35 +84,22 @@ $ cmake ../RaftLib
 $ make &amp; make test
 $ sudo make install
 </code></pre>
-
 <p>Additionally, if you would like to build the OpenCV example, add </p>
-
 <div class="highlight highlight-source-shell"><pre>-DBUILD_WOPENCV=<span class="pl-c1">true</span></pre></div>
-
 <p>to your cmake invocation, you will need a webcam or video source for it to work.</p>
-
 <p>
     If you're running Linux and want more advanced application partitioning, you can use the <a href="https://www.labri.fr/perso/pelegrin/scotch/" target="_tab">Scotch</a> partitioning
     library (assuming it's installed) by adding
 </p>
-
-<div class="highlight highlight-source-shell"><pre>-DUSESCOTCH=1</pre></div>
-
-
+<div class="highlight highlight-source-shell"><pre>-DUSESCOTCH=<span class="pl-c1">true</span></pre></div>
 <p>If you don't have boost installed, the <tt>cmake</tt> invocation will download the needed <a href="http://www.boost.org" target="_tab">Boost</a> headers (this works well for the initial build, however it is recommended that you install boost if you intend to build many RaftLib applications outside of the build directory. The make command will generate the static library file <em>libraft.a</em>, as well as test cases and all the example applications. These examples can be found in:</p>
-
 <pre><code>$ cd build/examples
 </code></pre>
-
 <p>To install the library to your system (in the default prefix), simply run </p>
-
 <div class="highlight highlight-source-shell"><pre>sudo make install</pre></div>
-
 <h2>
 <a id="how-to-build-apps-and-use-raftlib" class="anchor" href="#how-to-build-apps-and-use-raftlib" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to build apps and use RaftLib</h2>
-
 <p>When building an application using the library the only header file needed is the <em>raft</em> header (see wiki for details), and you must link with the raft library file created during the compilation phase above. Many more details can be found in the following references (we'll endeavor to keep these up to date, but please feel free to contribute to the wiki or point out errors on our part):</p>
-
 <ul>
 <li><a href="https://github.com/jonathan-beard/RaftLib/wiki">Project Wiki</a></li>
 <li><a href="https://medium.com/cat-dev-urandom/simplifying-parallel-applications-for-c-an-example-parallel-bzip2-using-raftlib-with-performance-f69cc8f7f962">Parallel Bzip2 Example</a></li>
@@ -131,17 +107,12 @@ $ sudo make install
 <li><a href="https://goo.gl/4VDlbr">Blog post intro</a></li>
 <li><a href="http://goo.gl/obkWUh">Jonathan Beard's thesis</a></li>
 </ul>
-
 <h3>
 <a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h3>
-
 <p>The main source of documentation is available on the <a href="https://github.com/jonathan-beard/RaftLib/wiki">RaftLib wiki page</a></p>
-
 <p>If you see errors, or want to contribute please feel free to do so. </p>
-
 <h3>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
 <p>In 2013 Jonathan Beard (<a href="https://github.com/jonathan-beard" class="user-mention">@jonathan-beard</a>, also <a href="https://twitter.com/jonathan_beard">Follow @jonathan_beard</a>  ) started work on the Raft language.  In the interim,
 and realizing the ubiquity of the C++ language, he started work on a template library that 
 uses the same framework as the full Raft language and run-time system.  This C++ library is 
@@ -149,13 +120,11 @@ the result. Since then many have contributed to the theory and code base behind 
 notable is my co-author (<a href="https://github.com/pl53" class="user-mention">@pl53</a>), for a full current contribution list see the GitHub stats page. Special thanks to 
 <a href="https://github.com/adishavit" class="user-mention">@adishavit</a> for 
 the many helpful suggestions, and discussion.</p>
-
 <h3>
 <a id="citing-the-raft-library" class="anchor" href="#citing-the-raft-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>Citing the Raft Library</h3>
-
 <p>Please cite as:</p>
-
-<pre lang="bibtex"><code>@inproceedings{blc15,
+ <div itemscope itemtype="http://schema.org/SoftwareSourceCode">
+<pre lang="bibtex"><code itemprop="citation">@inproceedings{blc15,
   author = {Beard, Jonathan C. and Li, Peng and Chamberlain, Roger D.},
   title = {RaftLib: A {C++} Template Library for High Performance Stream Parallel Processing},
   publisher = {ACM},
@@ -167,48 +136,36 @@ the many helpful suggestions, and discussion.</p>
   pages = {96-105}
 }
 </code></pre>
-
+</div>
 <h3>
 <a id="genealogy" class="anchor" href="#genealogy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Genealogy</h3>
-
 <p>There have been several dozen streaming languages.  Most notable of which is probably StreaMIT.  I've worked on the Auto-Pipe streaming runtime system (both versions 1 and 2) developed at Washington University in St. Louis.  This particular streaming library was developed as a faster way to get started with stream processing by enabling users to stick to a language with which they are already familiar (C++).</p>
-
 <h3>
 <a id="issues" class="anchor" href="#issues" aria-hidden="true"><span class="octicon octicon-link"></span></a>Issues</h3>
-
 <p>Issues can be opened by filing a report on our <a href="https://github.com/jonathan-beard/RaftLib/issues">issues page</a></p>
-
 <h3>
 <a id="comments" class="anchor" href="#comments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comments</h3>
-
-
 <div id="disqus_thread"></div>
 <script>
 /**
 * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
 * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
 */
-
 var disqus_config = function () {
 this.page.url = 'http://raftlib.io/'; // Replace PAGE_URL with your page's canonical URL variable
 this.page.identifier = 'raft_proj_main'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
 };
-
 (function() { // DON'T EDIT BELOW THIS LINE
 var d = document, s = d.createElement('script');
-
 s.src = '//raftlibprojecthome.disqus.com/embed.js';
-
 s.setAttribute('data-timestamp', +new Date());
 (d.head || d.body).appendChild(s);
 })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-
       
       </section>
     </div>
-
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -219,9 +176,6 @@ s.setAttribute('data-timestamp', +new Date());
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
-
 <script id="dsq-count-scr" src="//raftlibprojecthome.disqus.com/count.js" async></script>
-
-
   </body>
 </html>
