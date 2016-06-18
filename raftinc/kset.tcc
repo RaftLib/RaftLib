@@ -56,6 +56,19 @@ struct basekset{
 
     virtual const_iterator   begin()     = 0;
     virtual const_iterator   end()       = 0;
+
+    /** 
+     * we should never hit this one since well, 
+     * there should always be an instantiation of
+     * this abstract struct. So, lets return nullptr
+     * and throw an assert( false ) so it'll turn
+     * up on debug if we screwed up somewhere.
+     */
+    virtual basekset* getCopy()
+    {
+        assert( false );
+        return( nullptr );
+    }
 };
 
 /** pre-declaration **/
@@ -135,7 +148,14 @@ using iterator       = typename basekset::iterator;
         return( k.cend() );
     }
     
-
+    virtual basekset* getCopy()
+    {
+        auto *ptr( 
+           new typename std::remove_reference< decltype( *this ) >::type( ( *(
+        (typename std::decay< decltype( *this ) >::type * ) 
+        this ) ) ) );
+        return( ptr );
+    }
 
     /**
      * get the number of kernels held.

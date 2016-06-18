@@ -21,6 +21,7 @@
 #define _KPAIR_HPP_  1
 
 #include <string>
+#include <vector>
 #include "kset.tcc"
 #include "portorder.hpp"
 #include "defs.hpp"
@@ -57,27 +58,67 @@ public:
            const bool split,
            const bool join );
 
+    kpair( raft::basekset &a,
+           kpair &b,
+           const bool split,
+           const bool join );
+    
+    kpair( raft::basekset   &a,
+           raft::kernel     &b,
+           const bool       split,
+           const bool       join );
+
+    kpair( raft::basekset &a,
+           raft::basekset &b );
+
+    kpair( kpair &a,
+           raft::basekset &b,
+           const bool split,
+           const bool join );
+
+    kpair( raft::kernel     &a,
+           raft::basekset   &b,
+           const bool       split,
+           const bool       join );
+
     kpair( raft::kernel &a, raft::kernel &b );
    
     void setOoO() noexcept;
 
-protected:
-    kpair        *next          = nullptr;
-    kpair        *head          = nullptr;
-    raft::kernel *src           = nullptr;
-    bool          has_src_name  = false;
-    std::string   src_name      = "";
-    raft::kernel *dst           = nullptr;
-    bool          has_dst_name  = false;
-    std::string   dst_name      = "";
-   
-    
-    bool          split_to      = false;
-    core_id_t     src_out_count = 0;
-    bool          join_from     = false;
-    core_id_t     dst_in_count  = 0;
+    virtual ~kpair()
+    {
+        /**
+         * delete the kset structures, everything else
+         * is deleted by the map structure
+         */
+         delete( src_kset );
+         src_kset = nullptr;
+         delete( dst_kset );
+         dst_kset = nullptr;
+    }
 
-    bool          out_of_order  = false;
+protected:
+    kpair                       *next          = nullptr;
+    kpair                       *head          = nullptr;
+    raft::kernel                *src           = nullptr;
+    bool                         has_src_name  = false;
+    /** vector to accomodate kset structures **/
+    std::vector< std::string >   src_name;
+    raft::kernel                *dst           = nullptr;
+    bool                         has_dst_name  = false;
+    /** vector to accomodate kset structures **/
+    std::vector< std::string >   dst_name;
+    /** created via getCopy so these need to be deleted **/
+    raft::basekset  *src_kset     = nullptr;
+    raft::basekset  *dst_kset     = nullptr;
+         
+    
+    bool             split_to      = false;
+    core_id_t        src_out_count = 0;
+    bool             join_from     = false;
+    core_id_t        dst_in_count  = 0;
+
+    bool             out_of_order  = false;
 
     friend class raft::map;
     friend kpair& operator >= ( kpair &a, raft::kernel &&b );
@@ -151,6 +192,7 @@ kpair& operator >= ( raft::kernel &&a, kpair &b );
 
 
 kpair& operator <= ( raft::kernel &a, raft::basekset &&b );
+
 kpair& operator >> ( raft::basekset &&a, raft::kernel &b );
 kpair& operator >> ( raft::basekset &&a, raft::basekset &&b );
 /**

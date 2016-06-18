@@ -55,8 +55,8 @@ int main()
     gen g( 100, min, max );
     
     sub a( 1, 1, l_sub ), 
-        b( 1,1,l_sub ), 
-        c( 1,1,l_sub);
+        b( 1, 1, l_sub ), 
+        c( 1, 1, l_sub );
     
     p_out print;
     

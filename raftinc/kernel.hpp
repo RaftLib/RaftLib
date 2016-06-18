@@ -119,6 +119,16 @@ public:
     */
    raft::kernel& operator []( const std::string &&portname );
 
+   /** 
+    * getCoreAssignment - returns the current compute kernel
+    * id, which is unique and constant for the life fo the
+    * object within a single process. This ID is not 
+    * guaranteed to be unique across processes, the overhead
+    * of synchronizing on ID's would be far too high for the
+    * little gain that we'd get. I am, however, open to convincing 
+    * otherwise.
+    * @return core_id_t
+    */
    core_id_t getCoreAssignment() noexcept
    {
        return( core_assign );
@@ -141,6 +151,15 @@ protected:
    Port               output = { this };
   
    
+   /** 
+    * getEnabledPort - returns the currently enabled port
+    * so that the other pieces of the run-time can get the
+    * port that was included in the ["xyz"] brackets. Should
+    * return a copy, right now this is the behavior I want
+    * so that way if we copy compute kernels we won't have
+    * multiple kernels potentially pointing to the same reference.
+    * @return   std::string - currently active port name
+    */
    std::string getEnabledPort();
    
    /** in namespace raft **/

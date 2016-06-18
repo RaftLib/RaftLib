@@ -72,6 +72,7 @@ raft::map::checkEdges( kernelkeeper &source_k )
                 raft::kernel &b,  PortInfo &b_in,
                 raft::kernel &i,  PortInfo &i_in, PortInfo &i_out );
 **/
+
 void
 raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
 {
@@ -175,6 +176,8 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
    all.release();
 }
 
+
+/** TODO: fix this to where it'll take a kset -> kset **/
 void
 raft::map::joink( kpair * const next )
 {
@@ -194,7 +197,6 @@ raft::map::joink( kpair * const next )
                               next->src_name,
                               next->dst,
                               next->dst_name );
-
             }
         }
         else if( next->has_src_name && ! next->has_dst_name )
@@ -283,7 +285,8 @@ raft::map::operator += ( kpair &p )
         assert( false );
         return( cont );
     });
-
+    
+     
     std::stack< sj_t > stack;
     /**
      * dup kernels arranged in "groups" so that

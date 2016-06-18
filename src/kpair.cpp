@@ -54,22 +54,90 @@ kpair::kpair( kpair &a,
     join_from = join;
 }
 
+kpair::kpair( raft::basekset &a,
+              kpair          &b,
+              const bool split,
+              const bool join )
+{
+    head      = this;
+    next      = &b;
+    split_to  = split;
+    join_from = join;
+    
+    src_kset = a.getCopy(); 
+    //src_name = a.getEnabledPort();
+    //if( src_name.length() > 0 )
+    //{
+    //    /** set false by default **/
+    //    has_src_name = true;
+    //}
+    assert( b.src != nullptr );
+    dst = b.src;
+    //dst_name = b.getEnabledPort();
+    //if( dst_name.length() > 0 )
+    //{
+    //    /** set false by default **/
+    //    has_dst_name = true;
+    //}
+}
+
+kpair::kpair( raft::basekset &a,
+              raft::kernel   &b,
+              const bool split,
+              const bool join )
+{
+
+}
+
+
+kpair::kpair( raft::basekset &a,
+              raft::basekset &b )
+{
+
+}
+
+kpair::kpair( kpair          &a,
+              raft::basekset &b,
+              const bool split,
+              const bool join )
+{
+
+}
+
+kpair::kpair( raft::kernel   &a,
+              raft::basekset &b,
+              const bool split,
+              const bool join )
+{
+
+}
+
+
+
+
 kpair::kpair( raft::kernel &a, raft::kernel &b )
 {
     src = &a;
-    src_name = a.getEnabledPort();
-    if( src_name.length() > 0 )
+    /** see if the source has a name **/
+    const auto src_temp_name( a.getEnabledPort() );
+    if( src_temp_name.length() > 0 )
     {
         /** set false by default **/
         has_src_name = true;
+        src_name.emplace_back( src_temp_name );
     }
+
+    /** see if the destination has a name **/
     dst = &b;
-    dst_name = b.getEnabledPort();
-    if( dst_name.length() > 0 )
+    const auto dst_temp_name( b.getEnabledPort() );
+
+    if( dst_temp_name.length() > 0 )
     {
         /** set false by default **/
         has_dst_name = true;
+        dst_name.emplace_back( dst_temp_name );
     }
+
     src_out_count = a.output.count();
     dst_in_count  = b.input.count();
     head = this;
