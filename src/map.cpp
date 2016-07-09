@@ -30,6 +30,7 @@
 #include <memory>
 #include <array>
 #include <typeinfo>
+
 #include "common.hpp"
 #include "map.hpp"
 #include "graphtools.hpp"
