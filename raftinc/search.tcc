@@ -24,43 +24,74 @@
 #ifndef _SEARCH_TCC_
 #define _SEARCH_TCC_  1
 
+#include <utility>
+#include <cstddef>
 #include <raft>
-#include <boost/algorithm/searching/boyer_moore.hpp>
+#include <algorithm>
 
 namespace raft
 {
+    
+using match_t = std::pair< std::size_t /** start **/, 
+                           std::size_t /** end   **/>; 
 
-enum searchalgo { rk, bm, bmh, kpm };
+enum searchalgo { stdlib, pcre };
 
 template < class T, searchalgo ALGO > class search;
 
-template < class T > class search< searchalgo::bm >
+template < class T > class search< T, stdlib > : public raft::kernel
 {
-   namespace bt = boost::algorithm;
 public:
-   search( const T &&pattern ) : se( pattern.begin(), pattern.end() )
+   search( const std::string && term ) : raft::kernel(),
+                                         term_length( term.length() ),
+                                         term( term )
    {
-       
+      input.addPort< T >( "0" );
+      output.addPort< match_t >( "0" );
    }
+   
+   search( const std::string &term ) : raft::kernel(),
+                                       term_length( term.length() ),
+                                       term( term )
+   {
+      input.addPort<  T >( "0" );
+      output.addPort< match_t >( "0" );
+   }
+
+   virtual ~search() = default;
 
    virtual raft::kstatus run()
    {
-      auto &input_port( (this)->input[ "in" ] );
-      auto &corpus( input_port.template peek< T >() );
-      for( auto it( se( corpus.begin(), corpus.end() ) );
-         it != corpus.end(); it = se( it, corpus.end() ) )
+      auto &chunk( input[ "0" ].template peek< T >() );
+      auto it( chunk.begin() );
+      do
       {
-         
+         it = std::search( it, chunk.end(),
+                           term.begin(), term.end() );
+         if( it != chunk.end() )
+         {
+            std::cout << it.location() + chunk.start_position << "\n";
+            const std::size_t loc( it.location() + chunk.start_position );
+            const std::size_t end( loc + term_length );
+            output[ "0" ].push( std::make_pair( loc, end ) );
+            it += 1;
+         }
+         else
+         {
+            break;
+         }
       }
-      input_port.unpeek();
-      input_port.recycle( 1 );
+      while( true );
+      input[ "0" ].unpeek();
+      input[ "0" ].recycle( );
       return( raft::proceed );
    }
 private:
-   using type_t = 
-      typename std::remove_reference< decltype( pattern.begin() ) >::type;
-   bt::boyer_moore< type_t > se;
+   const std::size_t term_length;
+   const std::string term;
 };
+
+
 
 }
 

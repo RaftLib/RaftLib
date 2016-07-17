@@ -36,7 +36,8 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      allocatePopExternal 
      prefetchEffective 
      parallelchain 
-     ksettest )
+     ksettest 
+     fixedMatchTest )
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 
@@ -50,3 +51,6 @@ foreach( APP ${TESTAPPS} )
                                      ${CMAKE_SCOTCH_LIBS}
                                      ${CMAKE_RT_LIBS} )
 endforeach( APP ${TESTAPPS} )
+
+file( COPY alice.txt
+      DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
