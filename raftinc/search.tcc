@@ -70,7 +70,6 @@ public:
                            term.begin(), term.end() );
          if( it != chunk.end() )
          {
-            std::cout << it.location() + chunk.start_position << "\n";
             const std::size_t loc( it.location() + chunk.start_position );
             const std::size_t end( loc + term_length );
             output[ "0" ].push( std::make_pair( loc, end ) );

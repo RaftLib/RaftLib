@@ -16,8 +16,8 @@ main()
 
     const std::string term( "Alice" );
     raft::map m;
-    
-    fr   read( "alice.txt" /** ex file **/, 
+    /** pwd is root for cmake's test script **/
+    fr   read( "./testsuite/alice.txt" /** ex file **/, 
                (fr::offset_type) term.length(),
                1 );
 
@@ -27,12 +27,10 @@ main()
     m += read >> find >> we;
     /** m.exe() is an implicit barrier for completion of execution **/
     m.exe();
-    if( matches.size() == 174 /** count from grep **/ )
-    {
-        return( EXIT_SUCCESS );
-    }
-    else
+    if( matches.size() != 174 /** count from grep **/ )
     {
         return( EXIT_FAILURE );
     }
+    std::cout << matches.size() << "\n"; 
+   return( EXIT_SUCCESS );
 }
