@@ -47,7 +47,7 @@ template < std::size_t size = 65536 > struct filechunk
 
    filechunk( const filechunk< size > &other )
    {
-      std::memcpy( buffer, other.buffer, other.length + 1 );
+      std::memcpy( buffer, other.buffer, other.length + 1 /** cp null term **/ );
       start_position = other.start_position;
       length = other.length;
    }
@@ -80,7 +80,7 @@ template < std::size_t size = 65536 > struct filechunk
 
    inline char operator []( const std::size_t n )
    {
-      assert( n > 0  && n < size );
+      assert( n >= 0  && n < size );
       return( buffer[ n ] );
    }
 };
@@ -91,8 +91,9 @@ template < class chunktype = filechunk< 65536 >,
 {
 public:
    filereader( const std::string inputfile,
-               const std::size_t n_output_ports = 1,
-               const long        chunk_offset = 0 ) : chunk_offset( chunk_offset )
+               const long        chunk_offset = 0,
+               const std::size_t n_output_ports = 1
+               ) : chunk_offset( chunk_offset )
    {
       using index_type = std::remove_const_t<decltype(n_output_ports)>;
       for( index_type index( 0 ); index < n_output_ports; index++ )
@@ -129,7 +130,14 @@ public:
 
       /** get length in bytes **/
       length = st.st_size;
-      iterations = length / ( chunktype::getChunkSize() - chunk_offset - 1 );
+      if(chunk_offset !=  0 )
+      {
+        iterations = std::ceil( (float) length / (float) ( (chunktype::getChunkSize() - 1) - (chunk_offset - 1) ) );
+      }
+      else
+      {
+        iterations = std::ceil( (float) length / (float)( chunktype::getChunkSize() - 1 ) );
+      }
    }
 
    virtual raft::kstatus run()
@@ -141,7 +149,7 @@ public:
             auto &chunk( port.template allocate< chunktype  >() );
             if( init )
             {
-               fseek( fp, -chunk_offset, SEEK_CUR );
+               fseek( fp, -( chunk_offset - 1) , SEEK_CUR );
             }
             else
             {
@@ -152,7 +160,7 @@ public:
             chunk_index++;
             const auto chunksize( chunktype::getChunkSize() );
             const auto num_read(
-               fread( chunk.buffer, sizeof( char ), chunksize , fp ) );
+               fread( chunk.buffer, sizeof( char ), chunksize - 1 , fp ) );
             chunk.buffer[ num_read ] = '\0';
             chunk.length = num_read;
             port.send(

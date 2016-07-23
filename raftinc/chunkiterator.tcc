@@ -106,7 +106,7 @@ public:
 
    inline bool operator!=(const chunk_iterator& rhs) noexcept
    {
-      return( ( index != rhs.index ) && ( is_end != rhs.is_end ) );
+      return( ( index != rhs.index ) );
    }
 
    inline char operator*() noexcept
@@ -116,7 +116,7 @@ public:
    
    inline std::size_t location() noexcept
    {
-      return( index + chunk->start_position );
+      return( index );
    }
 
 

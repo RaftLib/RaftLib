@@ -93,7 +93,8 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      splitKsetCont
      KsetJoin
      ksetContContJoin
-     splitKsetJoin )
+     splitKsetJoin 
+     fixedMatchTest )
 if( BUILDRANDOM )
     list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 
 endif( BUILDRANDOM )

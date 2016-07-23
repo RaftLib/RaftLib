@@ -218,6 +218,7 @@ main( int argc, char **argv )
 
     /** declare kernels **/
     fr_t reader( inputfile,
+                 0, /** no offset needed **/
                  num_threads /** manually set threads for b-marking **/ );
     fw_t writer( outputfile,
                  num_threads /** manually set threads for b-marking **/ );
