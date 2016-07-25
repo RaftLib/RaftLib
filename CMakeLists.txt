@@ -28,9 +28,9 @@ execute_process( COMMAND rm -f ${HELPER_DIR}/cacheinfo )
 
 if( NOT L1D_LINE_SIZE )
     set( L1D_LINE_SIZE 64 )
-    message( INFO "Couldn't detect cache line size, set to: ${L1D_LINE_SIZE}" )
+    message( INFO " Couldn't detect cache line size, set to: ${L1D_LINE_SIZE}" )
 else( NOT L1D_LINE_SIZE )
-    message( INFO "Detected cache line size, set to: ${L1D_LINE_SIZE}" )
+    message( INFO " Detected cache line size, set to: ${L1D_LINE_SIZE}" )
 endif( NOT L1D_LINE_SIZE )
 
 ##
