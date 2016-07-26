@@ -23,47 +23,29 @@
 #include <algorithm>
 #include <chrono>
 #include <map>
+#include <cassert>
 #include <thread>
 #include "kernel.hpp"
 #include "map.hpp"
 #include "poolschedule.hpp"
 #include "rafttypes.hpp"
 #include "sched_cmd_t.hpp"
+#include <qthread/qthread.hpp>
+#ifndef  USEQTHREADS
+#error "You must use Sandia's QThreads to use the pool scheduler"
+#endif
 
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map ),
-                                     n_threads( std::thread::hardware_concurrency() ),
-                                     pool( n_threads ),
-                                     container( n_threads )
+                                     n_threads( std::thread::hardware_concurrency() )
 {
-   for( decltype( std::thread::hardware_concurrency() ) i( 0 ); i < n_threads; i++ )
-   {
-      /** initialize container objects **/
-      container[ i ] = new kernel_container();
-      /** initialize threads **/
-      pool[ i ] = new std::thread( kernel_container::container_run,
-                                   std::ref( *(container[ i ]) ) );
-   }
+    const auto status( qthread_initialize() );
+    assert( status == QTHREAD_SUCCESS );
 }
 
 
 pool_schedule::~pool_schedule()
 {
-   assert( kernel_count == 0 );
-   /** join threads **/
-   for( std::thread *thr : pool )
-   {
-      thr->join();
-   }
-   /** delete threads **/
-   for( auto * const th : pool )
-   {
-      delete( th );
-   }
-   /** delete containers **/
-   for( auto * const c : container )
-   {
-      delete( c );
-   }
+    qthread_finalize();
 }
 
 bool
