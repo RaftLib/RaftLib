@@ -17,6 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifdef  USEQTHREADS
+
 #include <cassert>
 #include <functional>
 #include <iostream>
@@ -31,9 +33,6 @@
 #include "rafttypes.hpp"
 #include "sched_cmd_t.hpp"
 #include <qthread/qthread.hpp>
-#ifndef  USEQTHREADS
-#error "You must use Sandia's QThreads to use the pool scheduler"
-#endif
 
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map ),
                                      n_threads( std::thread::hardware_concurrency() )
@@ -141,3 +140,5 @@ pool_schedule::container_min_output( kernel_container * const a,
 {
    return( a->getOutputQueue().size() < b->getOutputQueue().size() ? true : false );
 }
+
+#endif
