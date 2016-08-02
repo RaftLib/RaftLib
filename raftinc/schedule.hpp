@@ -79,17 +79,21 @@ public:
                           volatile bool       &finished,
                           jmp_buf             *gotostate    = nullptr,
                           jmp_buf             *kernel_state = nullptr  );
-   
+   //TODO, get rid of jmp_buf, no longer needed 
    /**
     * scheduleKernel - adds the kernel "kernel" to the
     * schedule, ensures that it is run.  Other than
     * that there are no guarantees for its execution.
-    * It is purely virtual in its implementation.  Before
+    * The base version should do for most, however feel
+    * free to re-implement in derived class as long as
+    * the source_kernels has all of the source kernels, 
+    * dst_kernels has all of the destination kernels, and
+    * kernel_set has all of the kernels. Before
     * you drop in a kernel, it better be ready to go..all
     * allocations should be complete.
     * @param kernel - raft::kernel*
     */
-   void scheduleKernel( raft::kernel * const kernel );
+   virtual void scheduleKernel( raft::kernel * const kernel );
 protected:
    virtual void handleSchedule( raft::kernel * const kernel ) = 0; 
    /**

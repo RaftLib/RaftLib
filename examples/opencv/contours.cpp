@@ -161,7 +161,7 @@ public:
 
 
 int 
-main( int argc, char **argv )
+main()
 {
    cv::namedWindow( "cam", cv::WINDOW_NORMAL );
    source< cvm >       src;

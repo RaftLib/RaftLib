@@ -57,6 +57,11 @@ if( BUILD_WOPENCV )
     add_subdirectory( examples/opencv )
 endif( BUILD_WOPENCV )
 
+mark_as_advanced( BUILD_WQTHREADS false )
+if( BUILD_WQTHREADS )
+    add_definitions( "-DUSEQTHREADS=1" )
+endif( BUILD_WQTHREADS )
+
 ##
 # we need boost to demangle names, might use
 # for random numbers too

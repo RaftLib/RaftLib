@@ -5,7 +5,7 @@ set( DEPDIR ${CMAKE_SOURCE_DIR}/git-dep )
 ##
 # LIST MODULES HERE
 ##
-set( GIT_MODULES cmdargs shm qthreads )
+set( GIT_MODULES cmdargs shm )
 ##
 # NOW CHECK THEM OUT 
 ##
@@ -29,7 +29,7 @@ foreach( GMOD ${GIT_MODULES} )
         SOURCE_DIR ${DEPDIR}/${GMOD}
         CONFIGURE_COMMAND ${DEPDIR}/${GMOD}/autogen.sh && ${DEPDIR}/${GMOD}/configure --prefix=${DEPDIR}/${GMOD}
         TEST_COMMAND make test
-        BUILD_COMMAND make
+        BUILD_COMMAND make clean && make
         INSTALL_COMMAND make install
         BUILD_IN_SOURCE 1 )
  endif( EXISTS ${DEPDIR}/${GMOD}/CMakeLists.txt )

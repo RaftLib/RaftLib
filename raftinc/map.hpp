@@ -80,7 +80,13 @@ public:
              partition_dummy
 #endif
 , /** comma for above **/
-             class scheduler           = simple_schedule, 
+             class scheduler           = 
+#ifdef USEQTHREADS
+             pool_schedule
+#else
+             simple_schedule
+#endif             
+             , 
              class allocator           = dynalloc,
              class parallelism_monitor = basic_parallel > 
       void exe()

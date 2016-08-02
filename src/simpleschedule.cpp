@@ -63,6 +63,10 @@ simple_schedule::~simple_schedule()
 void
 simple_schedule::start()
 {
+   /** 
+    * NOTE: this section is the same as the code in the "handleSchedule"
+    * function so that it doesn't call the lock for the thread map.
+    */
    auto &container( kernel_set.acquire() );
    for( auto * const k : container )
    {  

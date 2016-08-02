@@ -34,111 +34,112 @@
 #include "sched_cmd_t.hpp"
 #include <qthread/qthread.hpp>
 
+#include "affinity.hpp"
+#ifdef USE_PARTITION
+#include "partition_scotch.hpp"
+#endif
+#include "defs.hpp"
+
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map ),
                                      n_threads( std::thread::hardware_concurrency() )
 {
     const auto status( qthread_initialize() );
     assert( status == QTHREAD_SUCCESS );
+    return_flags.reserve( dst_kernels.size() );
+    thread_data_pool.reserve( kernel_set.size() );
 }
 
 
 pool_schedule::~pool_schedule()
 {
+    /** kill off the qthread structures **/
     qthread_finalize();
+    /** delete thread data structs **/
+    for( auto *td : thread_data_pool )
+    {
+        delete( td );
+    }
 }
 
-bool
-pool_schedule::scheduleKernel( raft::kernel * const kernel )
+void
+pool_schedule::handleSchedule( raft::kernel * const kernel )
 {
-   assert( kernel != nullptr );
-   /** get a container **/
-   auto it( std::min_element( container.begin(), 
-                              container.end(),
-                              container_min_input ) );
-   auto &buffer( (*it)->getInputQueue() );
-   auto &new_cmd( buffer.allocate< sched_cmd_t >() );
-   new_cmd.cmd    = schedule::add;
-   new_cmd.kernel = kernel;
-   buffer.send();
-   kernel_count++;
-   return( true );
+   //TODO implement me 
 }
-
 
 void
 pool_schedule::start()
 {
-   while( kernel_count > 0 )
-   {
-      auto it( std::max_element( container.begin(),
-                                 container.end(),
-                                 container_min_output ) );
-       
-      /** we want to get the max queue occupancy **/
-      auto &in_buff( (*it)->getOutputQueue() );
-      if( in_buff.size() > 0 )
-      {
-         /** some message exists **/
-         auto &rcvd_cmd( in_buff.peek< sched_cmd_t >() );
-         switch( rcvd_cmd.cmd )
-         {
-            case( schedule::reschedule ):
-            {
-               auto it_r( std::min_element( container.begin(), 
-                                            container.end(),
-                                            container_min_input ) );
-               const auto container_to_use
-               ( ( (*it_r)->getInputQueue().size() <
-                        (*it)->getInputQueue().size() * diff_weight ) ? it_r : it );
-               
-               auto &buffer( (*container_to_use)->getInputQueue() );
-               auto &send_cmd( buffer.allocate< sched_cmd_t >() );
-               send_cmd.cmd    = schedule::add;
-               send_cmd.kernel = rcvd_cmd.kernel;
-               buffer.send();
-            }
-            break;
-            case( schedule::kernelfinished ):
-            {
-               /** remove kernel **/
-               kernel_count--;
-            }
-            break;
-            default:
-            {
-               std::cerr << "Invalid signal: " << 
-                  schedule::sched_cmd_str[ rcvd_cmd.cmd ] << "\n";
-               exit( EXIT_FAILURE );
-            }
-         }
-         in_buff.unpeek();
-         in_buff.recycle( 1 );
-      }
-   }
+    /** 
+     * NOTE: this section is the same as the code in the "handleSchedule"
+     * function so that it doesn't call the lock for the thread map.
+     */
+    auto &container( kernel_set.acquire() );
+    for( auto * const k : container )
+    {  
+        auto *td( new (std::nothrow) thread_data( k ) );
+        assert( td != nullptr );
+        thread_data_pool.emplace_back( td );
+        if( ! kernel->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
+        {
+            
+            /** destination kernel **/
+            return_flags.emplace_back( 0 );
+            qthread_fork(  pool_schedule::pool_run              /** function **/,
+                           (void*) td                           /** data **/,
+                           (aligned_t*) &return_flags.back()    /** ptr to aligned_t flag **/);
 
-   /** all done, shutdown **/ 
-   for( auto * const c : container )
-   {
-      auto &out_buff( c->getInputQueue() );
-      auto &new_cmd( out_buff.allocate< sched_cmd_t >() );
-      new_cmd.cmd    = schedule::shutdown;
-      new_cmd.kernel = nullptr;
-      out_buff.send();
-   }
+        }
+        else
+        {
+            /** else **/
+            qthread_fork(  pool_schedule::pool_run              /** function **/,
+                           (void*) td                           /** data **/,
+                           (aligned_t*) 0 /** no flag **/ ) 
+        }
+    }
+    kernel_set.release();
+    /** now we just need to loop through and wait for the flags to be valid **/
+    for( auto &val : return_flags )
+    {
+        qthread_readFF( nullptr, (aligned_t*)&val );
+    }
+    /** logically if we exit these blocking functions then we're clear, exit **/
+    return;
 }
 
-bool
-pool_schedule::container_min_input( kernel_container * const a,
-                                    kernel_container * const b )
+aligned_t pool_schedule::pool_run( void *data )
 {
-   return( a->getInputQueue().size() < b->getInputQueue().size() ? true : false ); 
-}
+   assert( data != nullptr );
+   auto * const thread_d( reinterpret_cast< thread_data* >( data ) );
+   ptr_map_t in;
+   ptr_set_t out;
+   ptr_set_t peekset;
 
-bool
-pool_schedule::container_min_output( kernel_container * const a,
-                                     kernel_container * const b )
-{
-   return( a->getOutputQueue().size() < b->getOutputQueue().size() ? true : false );
+   Schedule::setPtrSets( thread_d->k, 
+                        &in, 
+                        &out,
+                        &peekset );
+#if 0 //figure out pinning later                        
+   if( thread_d->loc != -1 )
+   {
+      /** call does nothing if not available **/
+      affinity::set( thread_d->loc );
+   }
+   else
+   {
+#ifdef USE_PARTITION
+       assert( false );
+#endif
+   }
+#endif   
+   while( ! thread_d->finished )
+   {
+      Schedule::kernelRun( thread_d->k, thread_d->finished );
+      //takes care of peekset clearing too
+      Schedule::fifo_gc( &in, &out, &peekset );
+   }
+   return( 1 );
 }
 
 #endif

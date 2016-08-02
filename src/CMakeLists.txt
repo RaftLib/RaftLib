@@ -23,7 +23,8 @@ add_library( raft
              ${C_SRC_FILES}   )
 
 target_link_libraries( raft 
-                       ${CMAKE_SCOTCH_LIBS} )
+                       ${CMAKE_SCOTCH_LIBS}
+                       -lqthread )
 
 
 # Enable warnings if using clang or gcc.

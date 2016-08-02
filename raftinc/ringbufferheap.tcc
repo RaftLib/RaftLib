@@ -29,15 +29,8 @@
 #include "prefetch.hpp"
 #include "defs.hpp"
 
-#ifndef NICE
-#define NICE 1
-#else
-#undef NICE
-#define NICE 1
-#endif
-
-#ifndef NOPREEMPT
-#define NOPREEMPT
+#ifdef USEQTHREADS
+#include <qthread/qthread.hpp>
 #endif
 
 /** inline alloc **/
@@ -209,13 +202,16 @@ protected:
          }
          (this)->datamanager.exitBuffer( dm::allocate );
          /** else, spin **/
-#ifdef NICE
-         std::this_thread::yield();
-#endif
          if( (this)->write_stats.bec.blocked == 0 )
          {
             (this)->write_stats.bec.blocked = 1;
          }
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -233,9 +229,6 @@ protected:
 
    virtual void local_allocate_n( void *ptr, const std::size_t n )
    {
-#ifndef NOPREEMPT
-      std::uint8_t blocked( 0 );
-#endif
       for( ;; )
       {
          (this)->datamanager.enterBuffer( dm::allocate_range );
@@ -243,35 +236,20 @@ protected:
          {
             break;
          }
-#ifndef NOPREEMPT
-         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT && (this)->datamanager.notResizing() )
-         {
-
-            auto * const k( (this)->datamanager.get()->src_kernel );
-            auto ret_val( setRunningState( k ) );
-            if( ret_val == 0 /* not returning from scheduler */ )
-            {
-               /** pre-empt back to scheduler **/
-               preempt( k );
-            }
-            else
-            {
-               /** reset blocked, keep trying **/
-               blocked = 0;
-            }
-         }
-#endif
          else
          {
             (this)->datamanager.exitBuffer( dm::allocate_range );
          }
-#ifdef NICE
-         std::this_thread::yield();
-#endif
          if( (this)->write_stats.bec.blocked == 0 )
          {
             (this)->write_stats.bec.blocked = 1;
          }
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
 #if __x86_64
        __asm__ volatile("\
          pause"
@@ -332,31 +310,16 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::push );
-#ifndef NOPREEMPT
-         if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
-         {
-
-            auto * const k( (this)->datamanager.get()->src_kernel );
-            auto ret_val( setRunningState( k ) );
-            if( ret_val == 0 /* not returning from scheduler */ )
-            {
-               /** pre-empt back to scheduler **/
-               preempt( k );
-            }
-            else
-            {
-               /** reset blocked, keep trying **/
-               blocked = 0;
-            }
-         }
-#endif
-#ifdef NICE
-         std::this_thread::yield();
-#endif
          if( (this)->write_stats.bec.blocked == 0 )
          {
             (this)->write_stats.bec.blocked = 1;
          }
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -462,8 +425,11 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#ifdef NICE
+#if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
 #endif
 #if  __x86_64
          __asm__ volatile("\
@@ -516,8 +482,11 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#ifdef NICE
+#if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
 #endif
 #if  __x86_64
          __asm__ volatile("\
@@ -720,14 +689,16 @@ protected:
             break;
          }
          (this)->datamanager.exitBuffer( dm::allocate );
-         /** else, spin **/
-#ifdef NICE
-         std::this_thread::yield();
-#endif
          if( (this)->write_stats.bec.blocked == 0 )
          {
             (this)->write_stats.bec.blocked = 1;
          }
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -755,35 +726,20 @@ protected:
          {
             break;
          }
-#ifndef NOPREEMPT
-         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT && (this)->datamanager.notResizing() )
-         {
-
-            auto * const k( (this)->datamanager.get()->src_kernel );
-            auto ret_val( setRunningState( k ) );
-            if( ret_val == 0 /* not returning from scheduler */ )
-            {
-               /** pre-empt back to scheduler **/
-               preempt( k );
-            }
-            else
-            {
-               /** reset blocked, keep trying **/
-               blocked = 0;
-            }
-         }
-#endif
          else
          {
             (this)->datamanager.exitBuffer( dm::allocate_range );
          }
-#ifdef NICE
-         std::this_thread::yield();
-#endif
          if( (this)->write_stats.bec.blocked == 0 )
          {
             (this)->write_stats.bec.blocked = 1;
          }
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
 #if __x86_64
        __asm__ volatile("\
          pause"
@@ -830,9 +786,6 @@ protected:
     */
    virtual void  local_push( void *ptr, const raft::signal &signal )
    {
-#ifndef NOPREEMPT
-      std::uint8_t blocked( 0 );
-#endif
       for(;;)
       {
          (this)->datamanager.enterBuffer( dm::push );
@@ -844,31 +797,16 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::push );
-#ifndef NOPREEMPT
-         if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
-         {
-
-            auto * const k( (this)->datamanager.get()->src_kernel );
-            auto ret_val( setRunningState( k ) );
-            if( ret_val == 0 /* not returning from scheduler */ )
-            {
-               /** pre-empt back to scheduler **/
-               preempt( k );
-            }
-            else
-            {
-               /** reset blocked, keep trying **/
-               blocked = 0;
-            }
-         }
-#endif
-#ifdef NICE
-         std::this_thread::yield();
-#endif
          if( (this)->write_stats.bec.blocked == 0 )
          {
             (this)->write_stats.bec.blocked = 1;
          }
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -977,8 +915,11 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#ifdef NICE
+#if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
 #endif
 #if  __x86_64
          __asm__ volatile("\
@@ -1031,8 +972,11 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#ifdef NICE
+#if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
 #endif
 #if  __x86_64
          __asm__ volatile("\
@@ -1168,9 +1112,6 @@ protected:
          return;
       }
       do{ /** at least one to remove **/
-#ifndef NOPREEMPT
-         std::uint8_t blocked( 0 );
-#endif
          for( ;; )
          {
             (this)->datamanager.enterBuffer( dm::recycle );
@@ -1185,23 +1126,6 @@ protected:
                   (this)->datamanager.exitBuffer( dm::recycle );
                   return;
                }
-#ifndef NOPREEMPT
-               else if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
-               {
-                  auto * const k( (this)->datamanager.get()->dst_kernel );
-                  const auto ret_val( setRunningState( k ) );
-                  if( ret_val == 0 /* not returning from scheduler */ )
-                  {
-                     /** pre-empt back to scheduler **/
-                     preempt( k );
-                  }
-                  else
-                  {
-                     /** reset blocked, keep trying **/
-                     blocked = 0;
-                  }
-               }
-#endif
             }
             (this)->datamanager.exitBuffer( dm::recycle );
          }
@@ -1246,13 +1170,16 @@ protected:
          }
          (this)->datamanager.exitBuffer( dm::allocate );
          /** else, spin **/
-#ifdef NICE
-         std::this_thread::yield();
-#endif
          if( (this)->write_stats.bec.blocked == 0 )
          {
             (this)->write_stats.bec.blocked = 1;
          }
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -1280,35 +1207,20 @@ protected:
          {
             break;
          }
-#ifndef NOPREEMPT
-         else if( blocked++ > ScheduleConst::PREEMPT_LIMIT && (this)->datamanager.notResizing() )
-         {
-
-            auto * const k( (this)->datamanager.get()->src_kernel );
-            auto ret_val( setRunningState( k ) );
-            if( ret_val == 0 /* not returning from scheduler */ )
-            {
-               /** pre-empt back to scheduler **/
-               preempt( k );
-            }
-            else
-            {
-               /** reset blocked, keep trying **/
-               blocked = 0;
-            }
-         }
-#endif
          else
          {
             (this)->datamanager.exitBuffer( dm::allocate_range );
          }
-#ifdef NICE
-         std::this_thread::yield();
-#endif
          if( (this)->write_stats.bec.blocked == 0 )
          {
             (this)->write_stats.bec.blocked = 1;
          }
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
 #if __x86_64
        __asm__ volatile("\
          pause"
@@ -1369,31 +1281,16 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::push );
-#ifndef NOPREEMPT
-         if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
-         {
-
-            auto * const k( (this)->datamanager.get()->src_kernel );
-            auto ret_val( setRunningState( k ) );
-            if( ret_val == 0 /* not returning from scheduler */ )
-            {
-               /** pre-empt back to scheduler **/
-               preempt( k );
-            }
-            else
-            {
-               /** reset blocked, keep trying **/
-               blocked = 0;
-            }
-         }
-#endif
-#ifdef NICE
-         std::this_thread::yield();
-#endif
          if( (this)->write_stats.bec.blocked == 0 )
          {
             (this)->write_stats.bec.blocked = 1;
          }
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -1514,8 +1411,11 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#ifdef NICE
+#if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
 #endif
 #if  __x86_64
          __asm__ volatile("\
@@ -1579,8 +1479,11 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#ifdef NICE
+#if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
 #endif
 #if  __x86_64
          __asm__ volatile("\

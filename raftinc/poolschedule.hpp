@@ -28,8 +28,13 @@
 #include <set>
 #include <thread>
 #include <cstdint>
+#ifdef USEQTHREADS
+#include <qthread/qthread.hpp>
+#else
+/** dummy **/
+using aligned_t = std::uint64_t;
+#endif
 #include "schedule.hpp"
-#include "kernelcontainer.hpp"
 
 namespace raft{
    class kernel;
@@ -40,79 +45,63 @@ namespace raft{
 class pool_schedule : public Schedule
 {
 public:
-   /**
-    * pool_schedule - constructor, takes a map object, 
-    * calling this will launch threads.  scheduler itself
-    * is also run as a thread.
-    * @param   map - raft::map&
-    */
-   pool_schedule( raft::map &map );
+    /**
+     * pool_schedule - constructor, takes a map object, 
+     * calling this will launch threads.  scheduler itself
+     * is also run as a thread.
+     * @param   map - raft::map&
+     */
+    pool_schedule( raft::map &map );
 
-   /**
-    * destructor, deletes threads and cleans up container
-    * objects.
-    */
-   virtual ~pool_schedule();
+    /**
+     * destructor, deletes threads and cleans up container
+     * objects.
+     */
+    virtual ~pool_schedule();
 
-   /**
-    * start - call to start executing map, at this point
-    * the mapper sould have checked the topology and 
-    * everything should be set up for running.
-    */
-   virtual void start(); 
+    /**
+     * start - call to start executing map, at this point
+     * the mapper sould have checked the topology and 
+     * everything should be set up for running.
+     */
+    virtual void start(); 
    
 protected:
-   /** BEGIN FUNCTIONS **/
-   /**
-    * scheduleKernel - override base class function in order
-    * to add kernels to the right place.
-    * @param kernel - raft::kernel*
-    * @return bool - always true
-    */
-   virtual bool scheduleKernel( raft::kernel * const kernel );
+    /** BEGIN FUNCTIONS **/
+    /**
+     * handleSchedule - handle actions needed to schedule the
+     * kernel. This is mean to make maintaining the code a bit
+     * easier.
+     * @param    kernel - kernel to schedule
+     */
+    virtual void handleSchedule( raft::kernel * const kernel );
+    /**
+     * pool_run - pass this to the qthreads to run them.
+     */
+    static aligned_t pool_run( void *data );
 
-   /**
-    * container_min - returns true if the input queue of a has
-    * fewer items than the input queue of b
-    * @param a - kernel_container * const
-    * @param b - kernel_container * const
-    * @return  bool - true if a->qsize() < b->qsize()
-    */
-   static bool  container_min_input( kernel_container * const a,
-                                     kernel_container * const b );
+    /**
+     * keep list of flags for return. would use a bit
+     * vector, but there's not an interface for that
+     * within the qthreads interface. 
+     */
+    std::vector< aligned_t > return_flags;
+   
+    /** 
+     * modified version of what is in the simple_schedule 
+     * since we don't really need some of the info. this
+     * is passed to each kernel within teh pool_run func
+     */
+    struct thread_data
+    {
+       constexpr thread_data( raft::kernel * const k ) : k( k ){}
 
-   /**
-    * container_max - returns true if the output queue of a
-    * is greater than b.
-    * @param   a - kernel_container * const
-    * @param   b - kernel_container * const
-    * @return  bool - true if a->outqsize > b->qoutsize
-    */
-   static bool  container_min_output( kernel_container * const a,
-                                      kernel_container * const b );
-
-
-   /** END FUNCTIONS, BEGIN VAR DECLS **/
-   /**
-    * The thread has to have this much more "work" than 
-    * the previous thread in order to get moved ot a new
-    * thread.  Used in pool_schedule::start().
-    */
-   const float diff_weight = static_cast< const float >( .20 );
-   /**
-    * total # of hardware supported threads 
-    */
-   const decltype( std::thread::hardware_concurrency() )    n_threads;
-   /**
-    * used as a thread pool
-    */
-   std::vector< std::thread* >      pool;
-   /** 
-    * max_heap_container - sorted by max output-queue occupancy 
-    */
-   std::vector< kernel_container* > container;
-
-   std::size_t                      kernel_count = 0;
-   std::vector< kernel_container* >::iterator      container_it;
+       inline void setCore( const core_id_t core ){ loc = core; };
+       /** this is deleted elsewhere, do not delete here, bad things happen **/
+       raft::kernel *k         = nullptr;
+       bool          finished  = false;
+       core_id_t     loc       = -1;
+    };
+    std::vector< thread_data* > *thread_data_pool = nullptr;
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */
