@@ -476,9 +476,7 @@ protected:
             }
             else if( (this)->is_invalid() && (this)->size() < n )
             {
-               std::stringstream ss;
-               ss << "Too few items (" << (this)->size() << ") left on a closed port, kernel exiting!!";
-               throw NoMoreDataException( ss.str() );
+               throw NoMoreDataException( "Too few items left on closed port, kernel exiting" );
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
@@ -966,9 +964,7 @@ protected:
             }
             else if( (this)->is_invalid() && (this)->size() < n )
             {
-               std::stringstream ss;
-               ss << "Too few items (" << (this)->size() << ") left on a closed port, kernel exiting!!";
-               throw NoMoreDataException( ss.str() );
+               throw NoMoreDataException( "Too few items left on closed port, kernel exiting" );
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
@@ -1473,9 +1469,7 @@ protected:
             }
             else if( (this)->is_invalid() && (this)->size() < n )
             {
-               std::stringstream ss;
-               ss << "Too few items (" << (this)->size() << ") left on a closed port, kernel exiting!!";
-               throw NoMoreDataException( ss.str() );
+               throw NoMoreDataException( "Too few items left on closed port, kernel exiting" );
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
