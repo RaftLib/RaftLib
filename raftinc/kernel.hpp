@@ -38,7 +38,7 @@ class Map;
 class basic_parallel;
 class kpair;
 class interface_partition;
-
+class pool_schedule;
 
 #ifndef CLONE
 namespace raft
@@ -151,6 +151,7 @@ protected:
    friend class ::basic_parallel;
    friend class ::kpair;
    friend class ::interface_partition;
+   friend class ::pool_schedule;
 
    /**
     * NOTE: doesn't need to be atomic since only one thread

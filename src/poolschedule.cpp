@@ -17,16 +17,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifdef  USEQTHREADS
+#ifdef USEQTHREADS 
 
 #include <cassert>
 #include <functional>
 #include <iostream>
 #include <algorithm>
-#include <chrono>
 #include <map>
 #include <cassert>
-#include <thread>
 #include "kernel.hpp"
 #include "map.hpp"
 #include "poolschedule.hpp"
@@ -40,8 +38,7 @@
 #endif
 #include "defs.hpp"
 
-pool_schedule::pool_schedule( raft::map &map ) : Schedule( map ),
-                                     n_threads( std::thread::hardware_concurrency() )
+pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
     const auto status( qthread_initialize() );
     assert( status == QTHREAD_SUCCESS );
@@ -65,6 +62,7 @@ void
 pool_schedule::handleSchedule( raft::kernel * const kernel )
 {
    //TODO implement me 
+   UNUSED( kernel );
 }
 
 void
@@ -80,7 +78,7 @@ pool_schedule::start()
         auto *td( new (std::nothrow) thread_data( k ) );
         assert( td != nullptr );
         thread_data_pool.emplace_back( td );
-        if( ! kernel->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
+        if( ! k->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
         {
             
             /** destination kernel **/
@@ -95,7 +93,7 @@ pool_schedule::start()
             /** else **/
             qthread_fork(  pool_schedule::pool_run              /** function **/,
                            (void*) td                           /** data **/,
-                           (aligned_t*) 0 /** no flag **/ ) 
+                           (aligned_t*) 0 /** no flag **/ ); 
         }
     }
     kernel_set.release();

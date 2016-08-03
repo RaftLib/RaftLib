@@ -102,6 +102,6 @@ protected:
        bool          finished  = false;
        core_id_t     loc       = -1;
     };
-    std::vector< thread_data* > *thread_data_pool = nullptr;
+    std::vector< thread_data* > thread_data_pool;
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */
