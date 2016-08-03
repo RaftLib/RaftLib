@@ -40,8 +40,7 @@
 
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
-    const auto status( qthread_initialize() );
-    assert( status == QTHREAD_SUCCESS );
+    assert( qthread_initialize() == QTHREAD_SUCCESS );
     return_flags.reserve( dst_kernels.size() );
     thread_data_pool.reserve( kernel_set.size() );
 }
@@ -75,8 +74,7 @@ pool_schedule::start()
     auto &container( kernel_set.acquire() );
     for( auto * const k : container )
     {  
-        auto *td( new (std::nothrow) thread_data( k ) );
-        assert( td != nullptr );
+        auto *td( new thread_data( k ) );
         thread_data_pool.emplace_back( td );
         if( ! k->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
         {
