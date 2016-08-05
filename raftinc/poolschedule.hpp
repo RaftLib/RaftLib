@@ -79,13 +79,6 @@ protected:
      * pool_run - pass this to the qthreads to run them.
      */
     static aligned_t pool_run( void *data );
-
-    /**
-     * keep list of flags for return. would use a bit
-     * vector, but there's not an interface for that
-     * within the qthreads interface. 
-     */
-    std::vector< aligned_t > return_flags;
    
     /** 
      * modified version of what is in the simple_schedule 

@@ -31,6 +31,7 @@
 #include "rafttypes.hpp"
 #include "sched_cmd_t.hpp"
 #include <qthread/qthread.hpp>
+#include <qthread/sinc.h>
 
 #include "affinity.hpp"
 #ifdef USE_PARTITION
@@ -41,7 +42,6 @@
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
     assert( qthread_initialize() == QTHREAD_SUCCESS );
-    return_flags.reserve( dst_kernels.size() );
     thread_data_pool.reserve( kernel_set.size() );
 }
 
@@ -67,6 +67,8 @@ pool_schedule::handleSchedule( raft::kernel * const kernel )
 void
 pool_schedule::start()
 {
+    qt_sinc_t *sinc( qt_sinc_create(0, nullptr, nullptr, 0) );
+    std::size_t sinc_count( 0 );
     /** 
      * NOTE: this section is the same as the code in the "handleSchedule"
      * function so that it doesn't call the lock for the thread map.
@@ -78,29 +80,38 @@ pool_schedule::start()
         thread_data_pool.emplace_back( td );
         if( ! k->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
         {
-            
             /** destination kernel **/
-            return_flags.emplace_back( 0 );
-            qthread_fork(  pool_schedule::pool_run              /** function **/,
-                           (void*) td                           /** data **/,
-                           (aligned_t*) &return_flags.back()    /** ptr to aligned_t flag **/);
-
+            qthread_spawn( pool_schedule::pool_run,
+                           (void*) td,
+                           0,
+                           sinc,
+                           0,
+                           nullptr,
+                           NO_SHEPHERD,
+                           ( QTHREAD_SPAWN_RET_SINC | 
+                             QTHREAD_SPAWN_SIMPLE ) );
+            /** inc number to expect for sync **/
+            sinc_count++;
         }
         else
         {
-            /** else **/
-            qthread_fork(  pool_schedule::pool_run              /** function **/,
-                           (void*) td                           /** data **/,
-                           (aligned_t*) 0 /** no flag **/ ); 
+            /** else non-destination kerenl **/
+            qthread_spawn( pool_schedule::pool_run,
+                           (void*) td,
+                           0,
+                           0,
+                           0,
+                           nullptr,
+                           NO_SHEPHERD,
+                           QTHREAD_SPAWN_SIMPLE );
         }
     }
     kernel_set.release();
-    /** now we just need to loop through and wait for the flags to be valid **/
-    for( auto &val : return_flags )
-    {
-        qthread_readFF( nullptr, (aligned_t*)&val );
-    }
-    /** logically if we exit these blocking functions then we're clear, exit **/
+    /** wait on sync **/
+    qt_sinc_expect( sinc /** sinc struct **/, 
+                    sinc_count /** count we're waiting on **/);
+    qt_sinc_wait(   sinc /** sinc struct **/, 
+                    nullptr /** ignore bytes copied, we don't care **/ );
     return;
 }
 
