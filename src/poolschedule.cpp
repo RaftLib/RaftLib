@@ -68,7 +68,11 @@ void
 pool_schedule::start()
 {
     qt_sinc_t *sinc( qt_sinc_create(0, nullptr, nullptr, 0) );
-    std::size_t sinc_count( 0 );
+    //TODO, this needs to be fixed to ensure we can increment expect
+    //atomically from other threads, probably need to modify qthreads
+    //interface a bit
+    qt_sinc_expect( sinc /** sinc struct **/, dst_kernels.size() ); 
+    volatile std::size_t sinc_count( 0 );
     /** 
      * NOTE: this section is the same as the code in the "handleSchedule"
      * function so that it doesn't call the lock for the thread map.
@@ -88,8 +92,7 @@ pool_schedule::start()
                            0,
                            nullptr,
                            NO_SHEPHERD,
-                           ( QTHREAD_SPAWN_RET_SINC | 
-                             QTHREAD_SPAWN_SIMPLE ) );
+                           QTHREAD_SPAWN_RET_SINC_VOID );
             /** inc number to expect for sync **/
             sinc_count++;
         }
@@ -103,13 +106,12 @@ pool_schedule::start()
                            0,
                            nullptr,
                            NO_SHEPHERD,
-                           QTHREAD_SPAWN_SIMPLE );
+                           0 );
         }
     }
     kernel_set.release();
     /** wait on sync **/
-    qt_sinc_expect( sinc /** sinc struct **/, 
-                    sinc_count /** count we're waiting on **/);
+    assert( sinc_count > 0 );
     qt_sinc_wait(   sinc /** sinc struct **/, 
                     nullptr /** ignore bytes copied, we don't care **/ );
     return;

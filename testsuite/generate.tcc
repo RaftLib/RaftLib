@@ -40,14 +40,14 @@ public:
       {
          
          auto &ref( output[ "number_stream" ].template allocate< T >() );
-         ref = static_cast< T >( count );
+         ref = static_cast< T >( (this)->count );
          output[ "number_stream"].send();
          
          return( raft::proceed );
       }
       /** else **/
       auto &ref( output[ "number_stream" ].template allocate< T >() );
-      ref = static_cast< T >( count );
+      ref = static_cast< T >( (this)->count );
       output[ "number_stream" ].send( raft::eof );
       return( raft::stop );
    }
