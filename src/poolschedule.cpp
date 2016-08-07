@@ -71,7 +71,7 @@ pool_schedule::start()
     //TODO, this needs to be fixed to ensure we can increment expect
     //atomically from other threads, probably need to modify qthreads
     //interface a bit
-    qt_sinc_expect( sinc /** sinc struct **/, dst_kernels.size() ); 
+    //qt_sinc_expect( sinc /** sinc struct **/, dst_kernels.size() ); 
     volatile std::size_t sinc_count( 0 );
     /** 
      * NOTE: this section is the same as the code in the "handleSchedule"
@@ -84,6 +84,7 @@ pool_schedule::start()
         thread_data_pool.emplace_back( td );
         if( ! k->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
         {
+            qt_sinc_expect( sinc /** sinc struct **/, 1 ); 
             /** destination kernel **/
             qthread_spawn( pool_schedule::pool_run,
                            (void*) td,

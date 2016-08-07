@@ -134,9 +134,6 @@ protected:
          return;
       }
       do{ /** at least one to remove **/
-#ifndef NOPREEMPT
-         std::uint8_t blocked( 0 );
-#endif
          for( ;; )
          {
             (this)->datamanager.enterBuffer( dm::recycle );
@@ -151,25 +148,14 @@ protected:
                   (this)->datamanager.exitBuffer( dm::recycle );
                   return;
                }
-#ifndef NOPREEMPT
-               else if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
-               {
-                  auto * const k( (this)->datamanager.get()->dst_kernel );
-                  const auto ret_val( setRunningState( k ) );
-                  if( ret_val == 0 /* not returning from scheduler */ )
-                  {
-                     /** pre-empt back to scheduler **/
-                     preempt( k );
-                  }
-                  else
-                  {
-                     /** reset blocked, keep trying **/
-                     blocked = 0;
-                  }
-               }
-#endif
             }
             (this)->datamanager.exitBuffer( dm::recycle );
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          /**
@@ -236,10 +222,7 @@ protected:
          {
             break;
          }
-         else
-         {
-            (this)->datamanager.exitBuffer( dm::allocate_range );
-         }
+         (this)->datamanager.exitBuffer( dm::allocate_range );
          if( (this)->write_stats.bec.blocked == 0 )
          {
             (this)->write_stats.bec.blocked = 1;
@@ -373,13 +356,16 @@ protected:
          else
          {
             (this)->datamanager.exitBuffer( dm::pop );
-#ifdef NICE
-            std::this_thread::yield();
-#endif
             if( (this)->read_stats.bec.blocked == 0 )
             {
                (this)->read_stats.bec.blocked  = 1;
             }
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -619,9 +605,6 @@ protected:
          return;
       }
       do{ /** at least one to remove **/
-#ifndef NOPREEMPT
-         std::uint8_t blocked( 0 );
-#endif
          for( ;; )
          {
             (this)->datamanager.enterBuffer( dm::recycle );
@@ -636,25 +619,14 @@ protected:
                   (this)->datamanager.exitBuffer( dm::recycle );
                   return;
                }
-#ifndef NOPREEMPT
-               else if( blocked++ > ScheduleConst::PREEMPT_LIMIT )
-               {
-                  auto * const k( (this)->datamanager.get()->dst_kernel );
-                  const auto ret_val( setRunningState( k ) );
-                  if( ret_val == 0 /* not returning from scheduler */ )
-                  {
-                     /** pre-empt back to scheduler **/
-                     preempt( k );
-                  }
-                  else
-                  {
-                     /** reset blocked, keep trying **/
-                     blocked = 0;
-                  }
-               }
-#endif
             }
             (this)->datamanager.exitBuffer( dm::recycle );
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -714,9 +686,6 @@ protected:
 
    virtual void local_allocate_n( void *ptr, const std::size_t n )
    {
-#ifndef NOPREEMPT
-      std::uint8_t blocked( 0 );
-#endif
       for( ;; )
       {
          (this)->datamanager.enterBuffer( dm::allocate_range );
@@ -724,10 +693,7 @@ protected:
          {
             break;
          }
-         else
-         {
-            (this)->datamanager.exitBuffer( dm::allocate_range );
-         }
+         (this)->datamanager.exitBuffer( dm::allocate_range );
          if( (this)->write_stats.bec.blocked == 0 )
          {
             (this)->write_stats.bec.blocked = 1;
@@ -861,13 +827,16 @@ protected:
          else
          {
             (this)->datamanager.exitBuffer( dm::pop );
-#ifdef NICE
-            std::this_thread::yield();
-#endif
             if( (this)->read_stats.bec.blocked == 0 )
             {
                (this)->read_stats.bec.blocked  = 1;
             }
+#if (defined NICE) && (! defined USEQTHREADS)
+         std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+         qthread_yield(); 
+#endif
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -1124,6 +1093,12 @@ protected:
                }
             }
             (this)->datamanager.exitBuffer( dm::recycle );
+#if (defined NICE) && (! defined USEQTHREADS)
+            std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+            qthread_yield(); 
+#endif
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -1263,9 +1238,6 @@ protected:
     */
    virtual void  local_push( void *ptr, const raft::signal &signal )
    {
-#ifndef NOPREEMPT
-      std::uint8_t blocked( 0 );
-#endif
       for(;;)
       {
          (this)->datamanager.enterBuffer( dm::push );
@@ -1353,13 +1325,16 @@ protected:
          else
          {
             (this)->datamanager.exitBuffer( dm::pop );
-#ifdef NICE
-            std::this_thread::yield();
-#endif
             if( (this)->read_stats.bec.blocked == 0 )
             {
                (this)->read_stats.bec.blocked  = 1;
             }
+#if (defined NICE) && (! defined USEQTHREADS)
+            std::this_thread::yield();
+#endif
+#ifdef USEQTHREADS
+            qthread_yield(); 
+#endif
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -1464,11 +1439,13 @@ protected:
             }
             else if( (this)->is_invalid() && (this)->size() == 0 )
             {
+               (this)->datamanager.exitBuffer( dm::peek );
                throw ClosedPortAccessException(
                   "Accessing closed port with local_peek_range call, exiting!!" );
             }
             else if( (this)->is_invalid() && (this)->size() < n )
             {
+               (this)->datamanager.exitBuffer( dm::peek );
                throw NoMoreDataException( "Too few items left on closed port, kernel exiting" );
             }
          }

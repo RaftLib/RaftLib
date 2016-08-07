@@ -22,11 +22,9 @@ main( int argc, char **argv )
    auto  l_sub( []( Port &input,
                     Port &output ) -> raft::kstatus
       {
-         static int count = 0;
          std::uint32_t a;
          input[ "0" ].pop( a );
          output[ "0" ].push( a - 10 );
-         fprintf( stdout, "running %d\n", count++ );
          return( raft::proceed );
       } );
 
@@ -35,7 +33,7 @@ main( int argc, char **argv )
    auto kernels = m.link( rndgen,
                           raft::kernel::make< sub >( 1, 1, l_sub ) );
    
-   for( int i( 0 ); i < 8; i++ )
+   for( int i( 0 ); i < 22; i++ )
    {
       kernels = m.link( &kernels.getDst(),
                         raft::kernel::make< sub >( 1, 1, l_sub ) );
