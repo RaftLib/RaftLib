@@ -29,7 +29,9 @@
 #include <cassert>
 #include <cstring>
 #include <mutex>
-
+#ifdef USEQTHREADS
+#include <qthread/qthread.hpp>
+#endif
 namespace raft
 {
    class kernel;
@@ -39,7 +41,9 @@ template< class CONTAINER, class CONTAINERTYPE > class keeper
 {
 private:
    std::mutex        mutex;
+#if 0   
    std::thread::id   owner_id;
+#endif   
    CONTAINER         container;
 
     
@@ -74,19 +78,27 @@ public:
       while( ! mutex.try_lock() )
       {
          //it's polite to yield
+#ifdef USEQTHREADS
+         qthread_yield();
+#else
          std::this_thread::yield();
+#endif         
       }
       //we have a lock, get id
+#if 0      
       owner_id = std::this_thread::get_id();
+#endif      
       return( container );
    }
 
    void release()
    {
+#if 0
 #ifndef NDEBUG      
       const auto caller_id( std::this_thread::get_id() );
 #endif      
       assert( caller_id == owner_id );
+#endif      
       mutex.unlock();
       return;
    }
