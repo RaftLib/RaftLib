@@ -29,9 +29,6 @@
 #include "prefetch.hpp"
 #include "defs.hpp"
 
-#ifdef USEQTHREADS
-#include <qthread/qthread.hpp>
-#endif
 
 /** inline alloc **/
 template < class T >
@@ -153,9 +150,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
-#endif
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          /**
@@ -195,9 +189,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
-#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -229,9 +220,6 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
 #endif
 #if __x86_64
        __asm__ volatile("\
@@ -300,9 +288,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
-#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -363,9 +348,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
-#endif
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -413,9 +395,6 @@ protected:
          (this)->datamanager.exitBuffer( dm::peek );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
 #endif
 #if  __x86_64
          __asm__ volatile("\
@@ -468,9 +447,6 @@ protected:
          (this)->datamanager.exitBuffer( dm::peek );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
 #endif
 #if  __x86_64
          __asm__ volatile("\
@@ -624,9 +600,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
-#endif
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -666,9 +639,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
-#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -700,9 +670,6 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
 #endif
 #if __x86_64
        __asm__ volatile("\
@@ -768,9 +735,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
-#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -834,9 +798,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
-#endif
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -884,9 +845,6 @@ protected:
          (this)->datamanager.exitBuffer( dm::peek );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
 #endif
 #if  __x86_64
          __asm__ volatile("\
@@ -939,9 +897,6 @@ protected:
          (this)->datamanager.exitBuffer( dm::peek );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
 #endif
 #if  __x86_64
          __asm__ volatile("\
@@ -1096,9 +1051,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
             std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-            qthread_yield(); 
-#endif
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -1148,9 +1100,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
-#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -1188,9 +1137,6 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
 #endif
 #if __x86_64
        __asm__ volatile("\
@@ -1255,9 +1201,6 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
 #endif
 #if __x86_64
          __asm__ volatile("\
@@ -1332,9 +1275,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
             std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-            qthread_yield(); 
-#endif
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -1384,9 +1324,6 @@ protected:
          (this)->datamanager.exitBuffer( dm::peek );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
 #endif
 #if  __x86_64
          __asm__ volatile("\
@@ -1453,9 +1390,6 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
-#ifdef USEQTHREADS
-         qthread_yield(); 
-#endif
 #if  __x86_64
          __asm__ volatile("\
            pause"
@@ -1480,4 +1414,6 @@ protected:
 
 
 };
+#define USEQTHREADS 1
+
 #endif /* END _RINGBUFFERHEAP_TCC_ */
