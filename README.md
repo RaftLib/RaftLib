@@ -9,8 +9,9 @@ CI Test environment:
 * Linux - kernel v. 3.13, Ubuntu 5.2.1-23ubuntu1~12.04, (gcc-5.2.1/Clang 3.7.1), CMake 3.5
 
 Offline testing:
-* OS X - El Capitan, Apple LLVM version 7.0.2, CMake 3.5
-
+* OS X - El Capitan, Apple LLVM version 7.0.2, CMake 3.6
+* Linux - kenrel v. 4.4, gcc-6.1/clang 3.8
+* 
 ### Pre-requisites
 
 ####OS X & Linux
