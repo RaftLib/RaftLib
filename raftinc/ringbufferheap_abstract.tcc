@@ -24,18 +24,9 @@
 #include "optdef.hpp"
 #include "scheduleconst.hpp"
 #include "defs.hpp"
-
-#ifndef NICE
-#define NICE 1
-#else
-#undef NICE
-#define NICE 1
+#ifdef USEQTHREADS
+#include <qthread/qthread.hpp>
 #endif
-
-#ifndef NOPREEMPT
-#define NOPREEMPT
-#endif
-
 
 template < class T,  Type::RingBufferType type > 
 class RingBufferBaseHeap : public FIFOAbstract< T, type> 
@@ -87,7 +78,11 @@ TOP:
                    * this is in fact the best of all possible returns (see 
                    * Leibniz or Candide for further info).
                    */
+#ifndef USEQTHREADS                   
                   std::this_thread::yield();
+#else
+                  qthread_yield();
+#endif
                   goto TOP;
                }
                else

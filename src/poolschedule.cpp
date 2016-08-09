@@ -62,6 +62,7 @@ pool_schedule::handleSchedule( raft::kernel * const kernel )
 {
    //TODO implement me 
    UNUSED( kernel );
+   assert( false );
 }
 
 void
@@ -71,7 +72,6 @@ pool_schedule::start()
     //TODO, this needs to be fixed to ensure we can increment expect
     //atomically from other threads, probably need to modify qthreads
     //interface a bit
-    //qt_sinc_expect( sinc /** sinc struct **/, dst_kernels.size() ); 
     volatile std::size_t sinc_count( 0 );
     /** 
      * NOTE: this section is the same as the code in the "handleSchedule"

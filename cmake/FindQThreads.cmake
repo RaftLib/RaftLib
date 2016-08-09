@@ -2,7 +2,7 @@
 # start check for QTHREAD libs
 # var CMAKE_QTHREAD_LIBS will default to "" on non-unix platforms
 ##
-if( USEQTHREAD )
+if( ${USEQTHREAD} )
 
 find_library( QTHREAD_LIBRARY
               NAMES qthread
@@ -47,12 +47,13 @@ else( QTHREAD_LIBRARY )
     message( WARNING " Couldn't find Qthread library" )
 endif( QTHREAD_LIBRARY  )
 
-mark_as_advanced( QTHREAD_LIBRARY 
-                  QTHREAD_ERR_LIBRARY )
+mark_as_advanced( QTHREAD_LIBRARY ) 
 
-else( USEQTHREAD )
+else( ${USEQTHREAD} )
+    
     set( CMAKE_QTHREAD_LIBS "" )
     set( CMAKE_QTHREAD_INCS "" )
-endif( USEQTHREAD )
+
+endif( ${USEQTHREAD} )
 
 ## end check for QTHREAD libs

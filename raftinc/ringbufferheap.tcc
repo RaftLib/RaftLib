@@ -150,6 +150,9 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
+#ifdef USEQTHREADS
+         qthread_yield();
+#endif
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          /**
@@ -188,13 +191,16 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -220,13 +226,16 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if __x86_64
        __asm__ volatile("\
          pause"
          :
          :
          : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto *container(
@@ -267,9 +276,6 @@ protected:
     */
    virtual void  local_push( void *ptr, const raft::signal &signal )
    {
-#ifndef NOPREEMPT
-      std::uint8_t blocked( 0 );
-#endif
       for(;;)
       {
          (this)->datamanager.enterBuffer( dm::push );
@@ -287,13 +293,16 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -348,6 +357,9 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
+#ifdef USEQTHREADS
+         qthread_yield();
+#endif
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -395,13 +407,16 @@ protected:
          (this)->datamanager.exitBuffer( dm::peek );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if  __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -447,13 +462,16 @@ protected:
          (this)->datamanager.exitBuffer( dm::peek );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if  __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
 
@@ -600,6 +618,9 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
+#ifdef USEQTHREADS
+         qthread_yield();
+#endif
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -638,13 +659,16 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -670,13 +694,16 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if __x86_64
        __asm__ volatile("\
          pause"
          :
          :
          : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto *container(
@@ -734,13 +761,16 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -798,6 +828,9 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #endif
+#ifdef USEQTHREADS
+         qthread_yield();
+#endif
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -845,13 +878,16 @@ protected:
          (this)->datamanager.exitBuffer( dm::peek );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if  __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -897,13 +933,16 @@ protected:
          (this)->datamanager.exitBuffer( dm::peek );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if  __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
 
@@ -1051,6 +1090,9 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
             std::this_thread::yield();
 #endif
+#ifdef USEQTHREADS
+         qthread_yield();
+#endif
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -1099,13 +1141,16 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -1117,9 +1162,6 @@ protected:
 
    virtual void local_allocate_n( void *ptr, const std::size_t n )
    {
-#ifndef NOPREEMPT
-      std::uint8_t blocked( 0 );
-#endif
       for( ;; )
       {
          (this)->datamanager.enterBuffer( dm::allocate_range );
@@ -1137,13 +1179,16 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if __x86_64
        __asm__ volatile("\
          pause"
          :
          :
          : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto *container(
@@ -1201,13 +1246,16 @@ protected:
          }
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -1275,6 +1323,9 @@ protected:
 #if (defined NICE) && (! defined USEQTHREADS)
             std::this_thread::yield();
 #endif
+#ifdef USEQTHREADS
+         qthread_yield();
+#endif
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -1324,13 +1375,16 @@ protected:
          (this)->datamanager.exitBuffer( dm::peek );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if  __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -1389,13 +1443,16 @@ protected:
          (this)->datamanager.exitBuffer( dm::peek );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
-#endif
 #if  __x86_64
          __asm__ volatile("\
            pause"
            :
            :
            : );
+#endif
+#endif
+#ifdef USEQTHREADS
+         qthread_yield();
 #endif
       }
 
@@ -1414,6 +1471,5 @@ protected:
 
 
 };
-#define USEQTHREADS 1
 
 #endif /* END _RINGBUFFERHEAP_TCC_ */

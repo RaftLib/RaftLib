@@ -50,7 +50,7 @@ foreach( APP ${TESTAPPS} )
  target_link_libraries( ${APP} raft  ${CMAKE_THREAD_LIBS_INIT} 
                                      ${CMAKE_SCOTCH_LIBS}
                                      ${CMAKE_RT_LIBS} 
-                                     -lqthread                                     
+                                     ${CMAKE_QTHREAD_LIBS}
                                      )
 endforeach( APP ${TESTAPPS} )
 

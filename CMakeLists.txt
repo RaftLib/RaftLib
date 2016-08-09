@@ -10,8 +10,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 find_package( Scotch )
 option( USESCOTCH "Use Scotch partitioning library" )
 
+option( USEQTHREAD "Use QThread threading library" false )
 find_package( QThreads )
-option( USEQTHREAD "Use QThread threading library" )
 
 ##
 # c std
@@ -59,11 +59,6 @@ mark_as_advanced( BUILD_WOPENCV false )
 if( BUILD_WOPENCV )
     add_subdirectory( examples/opencv )
 endif( BUILD_WOPENCV )
-
-mark_as_advanced( USEQTHREAD false )
-if( USEQTHREAD )
-    add_definitions( "-DUSEQTHREADS=1" )
-endif( USEQTHREAD )
 
 ##
 # we need boost to demangle names, might use
