@@ -41,7 +41,7 @@
 
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
-    assert( qthread_initialize() == QTHREAD_SUCCESS );
+    assert( qthread_init( 2 ) == QTHREAD_SUCCESS );
     thread_data_pool.reserve( kernel_set.size() );
 }
 
@@ -78,13 +78,14 @@ pool_schedule::start()
      * function so that it doesn't call the lock for the thread map.
      */
     auto &container( kernel_set.acquire() );
+    qt_sinc_expect( sinc /** sinc struct **/, dst_kernels.size() ); 
     for( auto * const k : container )
     {  
         auto *td( new thread_data( k ) );
         thread_data_pool.emplace_back( td );
         if( ! k->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
         {
-            qt_sinc_expect( sinc /** sinc struct **/, 1 ); 
+            qt_sinc_expect( sinc /** sinc struct **/, 1 );
             /** destination kernel **/
             qthread_spawn( pool_schedule::pool_run,
                            (void*) td,
@@ -93,7 +94,7 @@ pool_schedule::start()
                            0,
                            nullptr,
                            NO_SHEPHERD,
-                           QTHREAD_SPAWN_RET_SINC_VOID );
+                           QTHREAD_SPAWN_RET_SINC );
             /** inc number to expect for sync **/
             sinc_count++;
         }

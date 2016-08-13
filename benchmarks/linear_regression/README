@@ -1,0 +1,38 @@
+Phoenix Project
+Linear Regression Example Application Readme
+Last revised 15th April 2007
+
+
+1. Application Overview
+-----------------------
+
+The linear regression application generates the summary statistics of points to 
+give the linear approximation of all of the points. It reads the x-y coordinates
+sequentially from the specified file.
+
+
+2. Provided Files
+-----------------
+
+linear_regression.c: The version of the file that uses the MapReduce engine
+linear_regression_serial.c: The sequential version of the application
+linear_regression_pthread.c: The pthread version of the application
+stddefines.h: Contains declarations of commonly used functions and constants
+MapReduceScheduler.c/h: The MapReduce engine used by the application
+Makefile: Compiles all 3 versions of the application
+datafiles/key_file*.txt: Files of various sizes that contain input coordinates
+README: This file
+
+
+3. Running the Application
+--------------------------
+
+run 'make' to compile all 3 versions of the application. 
+
+./lreg <file-name>
+./lreg-pthread <file-name>
+./lreg-seq <file-name>
+
+runs the MapReduce, Pthreads and sequential version of the application
+respectively
+

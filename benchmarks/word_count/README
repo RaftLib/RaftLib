@@ -1,0 +1,39 @@
+Phoenix Project
+Wordcount Example Application Readme
+Last revised 15th April 2007
+
+
+1. Application Overview
+-----------------------
+
+The Wordcount application counts the frequency of occurence of each unique word
+in a text document.
+
+2. Provided Files
+-----------------
+
+wordcount.c: The version of the file that uses the MapReduce engine
+wordcount_serial.c: The sequential version of the application
+wordcount_pthreads.c: The pthreads version of the application
+stddefines.h: Contains declarations of commonly used functions and constants
+mapreduce_sort.c/h: The sorting library that uses the MapReduce engine
+sort_pthreads.c/h: The sorting library that uses Pthreads.
+MapReduceScheduler.c/h: The MapReduce engine used by the application
+Makefile: Compiles all 3 versions of the application
+datafiles/*.txt: Sample text files of varying sizes that can be used as 
+                 input to this application
+README: This file
+
+
+3. Running the Application
+--------------------------
+
+run 'make' to compile all 3 versions of the application. 
+
+./wordcount <text_file>
+./wordcount_pthreads <text_file>
+./wordcount_serial <text_file>
+
+runs the MapReduce, Pthreads and sequential version of the application
+respectively
+
