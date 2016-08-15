@@ -43,8 +43,8 @@
 
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
-    //assert( qthread_init( 2 ) == QTHREAD_SUCCESS );
-    qthread_initialize();
+    //assert( qthread_init( 1 ) == QTHREAD_SUCCESS );
+    assert( qthread_initialize() == QTHREAD_SUCCESS );
     thread_data_pool.reserve( kernel_set.size() );
 }
 
@@ -97,7 +97,7 @@ pool_schedule::start()
                            0,
                            0,
                            nullptr,
-                           NO_SHEPHERD,
+                           1,
                            0 );
             /** inc number to expect for sync **/
             //sinc_count++;
@@ -111,7 +111,7 @@ pool_schedule::start()
                            0,
                            0,
                            nullptr,
-                           NO_SHEPHERD,
+                           1,
                            0 );
         }
     }
@@ -173,6 +173,7 @@ aligned_t pool_schedule::pool_run( void *data )
       Schedule::kernelRun( thread_d->k, done );
       //takes care of peekset clearing too
       Schedule::fifo_gc( &in, &out, &peekset );
+      qthread_yield();
    }
    thread_d->finished = true;
    return( 1 );

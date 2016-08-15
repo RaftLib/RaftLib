@@ -20,7 +20,7 @@ main()
                                       type_t >;
     using pr  = raft::print< type_t, '\n' >;
     raft::map m;
-    gen g( 100000 );
+    gen g( 10000000 );
     pr  print;
     m += g >> print;
     m.exe();

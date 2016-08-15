@@ -127,7 +127,8 @@ Schedule::kernelHasInputData( raft::kernel *kernel )
    }
    for( auto &port : port_list )
    {
-      if( port.size() > 0 )
+      const auto size( port.size() );
+      if( size > 0 )
       {
          return( true );
       }
