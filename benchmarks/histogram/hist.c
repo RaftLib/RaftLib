@@ -109,22 +109,27 @@ int myshortcmp(const void *s1, const void *s2)
  */
 void hist_map(map_args_t *args) 
 {
-   int i;
    short *key;
    unsigned char *val;
-   int red[256];
-   int green[256];
-   int blue[256];
+   int red[   256 ];
+   int green[ 256 ];
+   int blue[  256 ];
    
    assert(args);
    unsigned char *data = (unsigned char *)args->data;
    assert(data);
 
-   memset(&(red[0]), 0, sizeof(int) * 256);
-   memset(&(green[0]), 0, sizeof(int) * 256);
-   memset(&(blue[0]), 0, sizeof(int) * 256);
+   memset(  &(red[0]), 
+            0, 
+            sizeof(int) * 256);
+   memset(  &(green[0]), 
+            0, 
+            sizeof(int) * 256);
+   memset(  &(blue[0]), 
+            0, 
+            sizeof(int) * 256);
    
-   for (i = 0; i < (args->length) * 3; i+=3) 
+   for ( int i = 0; i < (args->length) * 3; i+=3) 
    {
       val = &(data[i]);
       blue[*val]++;
@@ -136,19 +141,22 @@ void hist_map(map_args_t *args)
       red[*val]++;   
    }
    
-   for (i = 0; i < 256; i++) 
+   for ( int i = 0; i < 256; i++) 
    {
-      if (blue[i] > 0) {
+      if (blue[i] > 0) 
+      {
          key = &(blue_keys[i]);
-         emit_intermediate((void *)key, (void *)blue[i], sizeof(short));
+         emit_intermediate( (void*) key, 
+                            (void*) blue[i], 
+                            sizeof(short) );
       }
-      
-      if (green[i] > 0) {
+      if (green[i] > 0) 
+      {
          key = &(green_keys[i]);
          emit_intermediate((void *)key, (void *)green[i], sizeof(short));
       }
-      
-      if (red[i] > 0) {
+      if (red[i] > 0) 
+      {
          key = &(red_keys[i]);
          emit_intermediate((void *)key, (void *)red[i], sizeof(short));
       }

@@ -50,7 +50,7 @@
 #include <sys/types.h>
 #endif
 
-#if !defined(__linux) && !defined(_SOLARIS_)
+#if !defined(__linux) && !defined(_SOLARIS_) && !defined(__APPLE__)
 #error Operating system not supported. Currently __linux and _SOLARIS_ (Solaris) are supported.
 #endif
 
@@ -424,7 +424,7 @@ static inline void schedule_tasks(thread_wrapper_arg_t *th_arg)
         curr_proc < sizeof(cpu_set) && thread_cnt < num_threads; 
         curr_proc++)
    {
-      if (isCpuAvailable(cpu_set, curr_proc))
+      if( isCpuAvailable(cpu_set, curr_proc))
       {
 #endif
 #ifdef _SOLARIS_
@@ -465,8 +465,8 @@ static inline void schedule_tasks(thread_wrapper_arg_t *th_arg)
                break;
             }
          }
+#ifdef _SOLARIS_
       }
-      
       /*** ADDED BY RAM TO ASSIGN EACH PTHREAD TO HARDWARE THREADS ON DIFFERENT
       PROCESSORS ON THE ULTRASPARC T1 ****/
       if (getenv("MR_AFARA") != NULL)
