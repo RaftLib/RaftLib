@@ -27,6 +27,7 @@
 #include <vector>
 #include <set>
 #include <thread>
+#include <mutex>
 #include <cstdint>
 #ifdef USEQTHREADS
 #include <qthread/qthread.hpp>
@@ -96,5 +97,7 @@ protected:
        core_id_t     loc       = -1;
     };
     std::vector< thread_data* > thread_data_pool;
+    std::mutex                  tail_mutex;
+    std::vector< thread_data* > tail;
 };
 #endif /* END _POOLSSCHEDULE_HPP_ */

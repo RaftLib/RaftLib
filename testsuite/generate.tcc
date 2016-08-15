@@ -38,11 +38,9 @@ public:
    {
       if( count-- > 1 )
       {
-         
          auto &ref( output[ "number_stream" ].template allocate< T >() );
          ref = static_cast< T >( (this)->count );
          output[ "number_stream"].send();
-         
          return( raft::proceed );
       }
       /** else **/

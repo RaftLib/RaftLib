@@ -105,6 +105,9 @@ TOP:
             return( 0 );
          }
          datamanager.exitBuffer( dm::size );
+#ifdef USEQTHREADS                   
+                  qthread_yield();
+#endif
       } /** end for **/
       return( 0 ); /** keep some compilers happy **/
    }

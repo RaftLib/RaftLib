@@ -32,6 +32,8 @@
 #include "sched_cmd_t.hpp"
 #include <qthread/qthread.hpp>
 #include <qthread/sinc.h>
+#include <mutex>
+#include <chrono>
 
 #include "affinity.hpp"
 #ifdef USE_PARTITION
@@ -41,7 +43,8 @@
 
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
-    assert( qthread_init( 2 ) == QTHREAD_SUCCESS );
+    //assert( qthread_init( 2 ) == QTHREAD_SUCCESS );
+    qthread_initialize();
     thread_data_pool.reserve( kernel_set.size() );
 }
 
@@ -68,35 +71,36 @@ pool_schedule::handleSchedule( raft::kernel * const kernel )
 void
 pool_schedule::start()
 {
-    qt_sinc_t *sinc( qt_sinc_create(0, nullptr, nullptr, 0) );
+    //qt_sinc_t *sinc( qt_sinc_create(0, nullptr, nullptr, 0) );
     //TODO, this needs to be fixed to ensure we can increment expect
     //atomically from other threads, probably need to modify qthreads
     //interface a bit
-    volatile std::size_t sinc_count( 0 );
+    //std::size_t sinc_count( 0 );
     /** 
      * NOTE: this section is the same as the code in the "handleSchedule"
      * function so that it doesn't call the lock for the thread map.
      */
     auto &container( kernel_set.acquire() );
-    qt_sinc_expect( sinc /** sinc struct **/, dst_kernels.size() ); 
+    //const auto expected_dst_size( dst_kernels.size() );
+    //qt_sinc_expect( sinc /** sinc struct **/, expected_dst_size ); 
     for( auto * const k : container )
     {  
         auto *td( new thread_data( k ) );
         thread_data_pool.emplace_back( td );
         if( ! k->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
         {
-            qt_sinc_expect( sinc /** sinc struct **/, 1 );
+            tail.emplace_back( td );
             /** destination kernel **/
             qthread_spawn( pool_schedule::pool_run,
                            (void*) td,
                            0,
-                           sinc,
+                           0,
                            0,
                            nullptr,
                            NO_SHEPHERD,
-                           QTHREAD_SPAWN_RET_SINC );
+                           0 );
             /** inc number to expect for sync **/
-            sinc_count++;
+            //sinc_count++;
         }
         else
         {
@@ -113,9 +117,28 @@ pool_schedule::start()
     }
     kernel_set.release();
     /** wait on sync **/
-    assert( sinc_count > 0 );
-    qt_sinc_wait(   sinc /** sinc struct **/, 
-                    nullptr /** ignore bytes copied, we don't care **/ );
+    //assert( sinc_count == expected_dst_size );
+    bool keep_going( true );
+    while( keep_going )
+    {
+        std::chrono::milliseconds dura( 3 );
+        std::this_thread::sleep_for( dura );
+        
+        std::lock_guard< std::mutex > lock( tail_mutex );
+        keep_going = false;
+        
+        for( auto *td : tail )
+        {
+            if( ! td->finished  )
+            {
+                keep_going = true;
+                break;
+            }
+        }
+    }
+    std::cout << "DONE\n";
+    //qt_sinc_wait(   sinc /** sinc struct **/, 
+    //                nullptr /** ignore bytes copied, we don't care **/ );
     return;
 }
 
@@ -144,12 +167,14 @@ aligned_t pool_schedule::pool_run( void *data )
 #endif
    }
 #endif   
-   while( ! thread_d->finished )
+   volatile bool done( false );
+   while( ! done )
    {
-      Schedule::kernelRun( thread_d->k, thread_d->finished );
+      Schedule::kernelRun( thread_d->k, done );
       //takes care of peekset clearing too
       Schedule::fifo_gc( &in, &out, &peekset );
    }
+   thread_d->finished = true;
    return( 1 );
 }
 

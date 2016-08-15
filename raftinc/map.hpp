@@ -87,8 +87,8 @@ public:
              simple_schedule
 #endif             
              , 
-             class allocator           = dynalloc,
-             class parallelism_monitor = basic_parallel > 
+             class allocator           = stdalloc,
+             class parallelism_monitor = no_parallel > 
       void exe()
    {
       {

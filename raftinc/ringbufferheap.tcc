@@ -29,6 +29,9 @@
 #include "prefetch.hpp"
 #include "defs.hpp"
 
+#ifdef USEQTHREADS
+#include <qthread/qthread.hpp>
+#endif
 
 /** inline alloc **/
 template < class T >
