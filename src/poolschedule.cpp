@@ -136,7 +136,6 @@ pool_schedule::start()
             }
         }
     }
-    std::cout << "DONE\n";
     //qt_sinc_wait(   sinc /** sinc struct **/, 
     //                nullptr /** ignore bytes copied, we don't care **/ );
     return;

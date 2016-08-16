@@ -34,7 +34,13 @@ main( int argc, char **argv )
    auto kernels = m.link( rndgen,
                           raft::kernel::make< sub >( 1, 1, l_sub ) );
    
-   for( int i( 0 ); i < 1000; i++ )
+   for( int i( 0 ); i < 
+#ifdef USEQTHREADS
+   1000
+#else
+   10
+#endif
+   ; i++ )
    {
       kernels = m.link( &kernels.getDst(),
                         raft::kernel::make< sub >( 1, 1, l_sub ) );
