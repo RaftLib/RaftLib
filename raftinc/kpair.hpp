@@ -24,6 +24,7 @@
 #include "kset.tcc"
 #include "portorder.hpp"
 #include "defs.hpp"
+#include "raftmanip.hpp"
 
 namespace raft
 {
@@ -134,6 +135,9 @@ kpair&     operator >> ( LOoOkpair &a, raft::kernel &&b );
 ROoOkpair& operator >> ( kpair &a, const raft::order::spec &&order );
 kpair&     operator >> ( ROoOkpair &a, raft::kernel &b );
 kpair&     operator >> ( ROoOkpair &a, raft::kernel &&b );
+
+kpair&  operator >> ( kpair &a, const raft::parallel::type &&type );
+kpair&  operator >> ( raft::kernel &a, const raft::parallel::type &&type );
 
 kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
 kpair& operator <= ( raft::kernel &&a, raft::kernel &&b );

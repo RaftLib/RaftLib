@@ -182,6 +182,20 @@ operator >> ( ROoOkpair &a, raft::kernel &&b )
     return( *ptr );
 }
 
+//FIXME
+kpair&
+operator >> ( kpair &a, const raft::parallel::type &&type )
+{
+    kpair *ptr( nullptr );
+    return( *ptr );
+}
+
+kpair&  
+operator >> ( raft::kernel &a, const raft::parallel::type &&type )
+{
+
+}
+
 
 kpair&
 operator <= ( raft::kernel &a, raft::kernel &b )
