@@ -1,12 +1,11 @@
 /**
- * raftmanip - header file to put links to the stream modifiers
- * other than the basic raft ordering stuffs. Here we have things
- * like thread, pool, process, vm partition, etc. The reason they
- * are here is to mimic the layout of importing iostream-like 
- * modifiers like std::hex, etc.
+ * alloc_defs.hpp - a place to put internal allocation definitions
+ * for use in deciding what type of memory to allocate within the
+ * allocator for a particular edge in the graph. Right now there
+ * are only a few choices, but that could likely change.
  *
  * @author: Jonathan Beard
- * @version: Tue Aug 16 10:12:22 2016
+ * @version: Tue Aug 16 19:47:01 2016
  * 
  * Copyright 2016 Jonathan Beard
  * 
@@ -22,9 +21,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RAFTMANIP_HPP_
-#define _RAFTMANIP_HPP_  1
+#ifndef _ALLOC_DEFS_HPP_
+#define _ALLOC_DEFS_HPP_  1
 
-#include ./raftinc/raftmanip.hpp
+enum memory_type : std::uint8_t { heap, SHM };
 
-#endif /* END _RAFTMANIP_HPP_ */
+#endif /* END _ALLOC_DEFS_HPP_ */

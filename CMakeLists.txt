@@ -93,7 +93,8 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      prefetchEffective 
      parallelchain 
      ksettest 
-     fixedMatchTest )
+     fixedMatchTest 
+     poolThreadRaftManip )
 if( BUILDRANDOM )
     list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 
 endif( BUILDRANDOM )
@@ -110,6 +111,7 @@ set( MAINHEADERS
      raftio 
      raftmath 
      raftrandom
+     raftmanip
      raftstat )
 foreach( HFILE ${MAINHEADERS} )
  install( FILES ${CMAKE_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )

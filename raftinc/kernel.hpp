@@ -29,6 +29,7 @@
 #include "port.hpp"
 #include "signalvars.hpp"
 #include "rafttypes.hpp"
+#include "raftmanip.hpp"
 
 /** pre-declare for friends **/ 
 class MapBase;
@@ -39,6 +40,7 @@ class basic_parallel;
 class kpair;
 class interface_partition;
 class pool_schedule;
+
 
 #ifndef CLONE
 namespace raft
@@ -183,12 +185,18 @@ protected:
 
 private:
    /** TODO, replace dup with bit vector **/
-   bool   dup_enabled       = false;
-   bool   dup_candidate     = false;
-   const  std::size_t kernel_id;
+   bool             dup_enabled       = false;
+   bool             dup_candidate     = false;
+   const            std::size_t kernel_id;
 
-   bool   execution_done    = false;
-   
+   bool             execution_done    = false;
+/** default pool w/qthreads, thread otherwise **/   
+   parallel::type   context_type      =
+#ifdef USEQTHREADS   
+   parallel::pool;
+#else
+   parallel::thread;
+#endif
 
    /** for operator syntax **/
    std::queue< std::string > enabled_port;

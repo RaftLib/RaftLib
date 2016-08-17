@@ -186,6 +186,8 @@ operator >> ( ROoOkpair &a, raft::kernel &&b )
 kpair&
 operator >> ( kpair &a, const raft::parallel::type &&type )
 {
+    UNUSED( type );
+    UNUSED( a );
     kpair *ptr( nullptr );
     return( *ptr );
 }
@@ -193,7 +195,10 @@ operator >> ( kpair &a, const raft::parallel::type &&type )
 kpair&  
 operator >> ( raft::kernel &a, const raft::parallel::type &&type )
 {
-
+    UNUSED( type );
+    UNUSED( a );
+    kpair *ptr( nullptr );
+    return( *ptr );
 }
 
 

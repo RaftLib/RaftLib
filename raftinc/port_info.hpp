@@ -28,6 +28,7 @@
 #include <memory>
 #include <cassert>
 
+#include "alloc_defs.hpp"
 #include "ringbuffertypes.hpp"
 #include "port_info_types.hpp"
 #include "fifo.hpp"
@@ -105,6 +106,7 @@ struct PortInfo
    /** runtime settings **/
    bool              use_my_allocator= false;
    bool              out_of_order    = false;
+   memory_type       mem             = heap;
    void             *existing_buffer = nullptr;
    std::size_t       nitems          = 0;
    std::size_t       start_index     = 0;
