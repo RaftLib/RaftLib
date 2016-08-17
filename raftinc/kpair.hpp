@@ -90,9 +90,7 @@ protected:
     friend kpair& operator >= ( raft::kernel &&a, kpair &b );
 };
 
-//pre-declare these for "friend" of OoOkpair
-class LOoOkpair;
-class ROoOkpair;
+
 /** 
  * XOoOkpair - simple wrapper for kernel so that the 
  * OoO syntax calls the proper operator overload for
@@ -123,6 +121,30 @@ private:
     friend kpair& operator >> ( ROoOkpair &a, raft::kernel &&b );
 };
 
+class LParaPair
+{
+public:
+    constexpr LParaPair( raft::kernel &src ) : kernel( src ){};
+    ~LParaPair() = default;
+private:
+    raft::kernel &kernel;
+    
+    friend kpair& operator >> ( LParaPair &a, raft::kernel &b );
+    friend kpair& operator >> ( LParaPair &a, raft::kernel &&b );
+};
+
+class RParaPair
+{
+public:
+    constexpr RParaPair( kpair &p ) : other( p ){};
+    ~RParaPair() = default;
+private:
+    kpair &other;
+    friend kpair& operator >> ( RParaPair &a, raft::kernel &b );
+    friend kpair& operator >> ( RParaPair &a, raft::kernel &&b );
+};
+
+
 kpair& operator >> ( raft::kernel &a,  raft::kernel &b  );
 kpair& operator >> ( raft::kernel &&a, raft::kernel &&b );
 kpair& operator >> ( kpair &a, raft::kernel &b );
@@ -136,8 +158,8 @@ ROoOkpair& operator >> ( kpair &a, const raft::order::spec &&order );
 kpair&     operator >> ( ROoOkpair &a, raft::kernel &b );
 kpair&     operator >> ( ROoOkpair &a, raft::kernel &&b );
 
-kpair&  operator >> ( kpair &a, const raft::parallel::type &&type );
-kpair&  operator >> ( raft::kernel &a, const raft::parallel::type &&type );
+LParaPair&  operator >> ( raft::kernel &a, const raft::parallel::type &&type );
+RParaPair&  operator >> ( kpair &a, const raft::parallel::type &&type );
 
 kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
 kpair& operator <= ( raft::kernel &&a, raft::kernel &&b );
@@ -151,6 +173,11 @@ kpair& operator >= ( kpair &a, kpair &b );
 kpair& operator >= ( raft::kernel &a, kpair &b );
 kpair& operator >= ( raft::kernel &&a, kpair &b );
 
+    
+kpair& operator >> ( LParaPair &a, raft::kernel &b );
+kpair& operator >> ( LParaPair &a, raft::kernel &&b );
+kpair& operator >> ( RParaPair &a, raft::kernel &b );
+kpair& operator >> ( RParaPair &a, raft::kernel &&b );
 
 
 #endif /* END _KPAIR_HPP_ */

@@ -181,25 +181,67 @@ operator >> ( ROoOkpair &a, raft::kernel &&b )
     ptr->setOoO();
     return( *ptr );
 }
+/**
+ * check for valid types
+ */
+inline void parallelTypeCheck( const raft::parallel::type type )
+{
+    /** kept switch since this could be a long non-contiguous list **/
+    switch( type )
+    {
+        case raft::parallel::thread:
+        {
+           /** do nothing **/ 
+        }
+        break;
+#ifdef USEQTHREADS        
+        case raft::parallel::pool:
+        {
+           /** do nothing **/ 
+        }
+#endif        
+        break;
+        case raft::parallel::process:
+        {
+           /** do nothing **/ 
+        }
+        break;
+        default:
+        {
+            //TODO throw exception
+            fprintf( stderr, "Invalid parallel type for this platform, check compiler flags\n" );
+            exit( EXIT_FAILURE );
+        }
+    }
+    return;
+}
 
 //FIXME
-kpair&
-operator >> ( kpair &a, const raft::parallel::type &&type )
+
+LParaPair&  
+operator >> ( raft::kernel &a, const raft::parallel::type &&type )
 {
+    parallelTypeCheck( type ); 
     UNUSED( type );
     UNUSED( a );
-    kpair *ptr( nullptr );
+    auto *ptr( new LParaPair( a ) );
     return( *ptr );
 }
 
-kpair&  
-operator >> ( raft::kernel &a, const raft::parallel::type &&type )
+RParaPair&
+operator >> ( kpair &a, const raft::parallel::type &&type )
 {
+    parallelTypeCheck( type ); 
     UNUSED( type );
     UNUSED( a );
-    kpair *ptr( nullptr );
+    auto *ptr( new RParaPair( a ) );
     return( *ptr );
 }
+
+kpair& operator >> ( LParaPair &a, raft::kernel &b );
+kpair& operator >> ( LParaPair &a, raft::kernel &&b );
+kpair& operator >> ( RParaPair &a, raft::kernel &b );
+kpair& operator >> ( RParaPair &a, raft::kernel &&b );
 
 
 kpair&
