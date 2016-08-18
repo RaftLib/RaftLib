@@ -24,7 +24,8 @@ namespace raft
 {
     namespace parallel
     {
-        enum type { thread  /** specify a thread for each kernel **/, 
+        enum type { idc     /** do whatever the runtime wants, I don't care  **/,
+                    thread  /** specify a thread for each kernel **/, 
                     pool    /** thread pool, one kernel thread per core, many kernels in each **/, 
                     process /** open a new process from this point **/ };
     }

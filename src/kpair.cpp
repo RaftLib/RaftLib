@@ -75,6 +75,16 @@ kpair::kpair( raft::kernel &a, raft::kernel &b )
     head = this;
 }
 
+kpair::kpair( LParaPair &lp, raft::kernel &b ) : kpair( lp.value, b )
+{
+   context_type = lp.sp;     
+}
+
+kpair::kpair( RParaPair &rp, raft::kernel &b ) : kpair( rp.value, b, false, false )
+{
+   context_type = rp.sp;     
+}
+
 void 
 kpair::setOoO() noexcept
 {
@@ -126,7 +136,7 @@ kpair&
 operator >> ( LOoOkpair &a, raft::kernel &b )
 {
     auto *ptr( 
-        new kpair( a.kernel, 
+        new kpair( a.value, 
                    b, 
                    false, 
                    false ) 
@@ -141,7 +151,7 @@ kpair&
 operator >> ( LOoOkpair &a, raft::kernel &&b )
 {
     auto *ptr( 
-        new kpair( a.kernel, b, false, false ) 
+        new kpair( a.value, b, false, false ) 
     );
     delete( &a );
     ptr->setOoO();
@@ -164,7 +174,7 @@ kpair&
 operator >> ( ROoOkpair &a, raft::kernel &b )
 {
     auto * ptr(
-        new kpair( a.other, b, false, false )
+        new kpair( a.value, b, false, false )
     );
     delete( &a );
     ptr->setOoO();
@@ -175,7 +185,7 @@ kpair&
 operator >> ( ROoOkpair &a, raft::kernel &&b )
 {
     auto * ptr(
-        new kpair( a.other, b, false, false )
+        new kpair( a.value, b, false, false )
     );
     delete( &a );
     ptr->setOoO();
@@ -222,9 +232,7 @@ LParaPair&
 operator >> ( raft::kernel &a, const raft::parallel::type &&type )
 {
     parallelTypeCheck( type ); 
-    UNUSED( type );
-    UNUSED( a );
-    auto *ptr( new LParaPair( a ) );
+    auto *ptr( new LParaPair( a, type ) );
     return( *ptr );
 }
 
@@ -232,16 +240,38 @@ RParaPair&
 operator >> ( kpair &a, const raft::parallel::type &&type )
 {
     parallelTypeCheck( type ); 
-    UNUSED( type );
-    UNUSED( a );
-    auto *ptr( new RParaPair( a ) );
+    auto *ptr( new RParaPair( a, type ) );
     return( *ptr );
 }
 
-kpair& operator >> ( LParaPair &a, raft::kernel &b );
-kpair& operator >> ( LParaPair &a, raft::kernel &&b );
-kpair& operator >> ( RParaPair &a, raft::kernel &b );
-kpair& operator >> ( RParaPair &a, raft::kernel &&b );
+kpair& 
+operator >> ( LParaPair &a, raft::kernel &b )
+{
+   auto *ptr( new kpair( a, b ) );
+   delete( &a );
+   return( *ptr );     
+}
+
+kpair& operator >> ( LParaPair &a, raft::kernel &&b )
+{
+   auto *ptr( new kpair( a, b ) );
+   delete( &a );
+   return( *ptr );     
+}
+
+kpair& operator >> ( RParaPair &a, raft::kernel &b )
+{
+    auto *ptr( new kpair( a, b ) );
+    delete( &a );
+    return( *ptr );
+}
+
+kpair& operator >> ( RParaPair &a, raft::kernel &&b )
+{
+    auto *ptr( new kpair( a, b ) );
+    delete( &a );
+    return( *ptr );
+}
 
 
 kpair&

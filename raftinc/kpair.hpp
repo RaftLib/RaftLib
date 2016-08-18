@@ -32,6 +32,30 @@ namespace raft
     class map;
 }
 
+class kpair;
+
+template < class T, int N > struct PairBase
+{
+    constexpr PairBase( T &t ) : value( t ){};
+    virtual ~PairBase() = default;
+
+    T &value;
+};
+
+template < class T, class K, int N > struct ParaPair : PairBase< T, N >
+{
+    constexpr ParaPair( T &t, const K sp ) : PairBase< T, N >( t ),
+                                             sp( sp ){};
+    const K sp;
+};
+
+
+using LParaPair = ParaPair< raft::kernel,raft::parallel::type, 1 >;
+using RParaPair = ParaPair< kpair, raft::parallel::type, 1 >;
+
+using LOoOkpair = PairBase< raft::kernel, 2 >; 
+using ROoOkpair = PairBase< kpair, 2 >;
+
 
 class kpair
 {
@@ -57,7 +81,12 @@ public:
            const bool join );
 
     kpair( raft::kernel &a, raft::kernel &b );
-   
+
+    /** case of kernel >> raft::process >> kernel **/
+    kpair( LParaPair &lp, raft::kernel &b );
+    /** case of kernel >> kernel >> raft::process >> kernel **/
+    kpair( RParaPair &rp, raft::kernel &b );
+    
     void setOoO() noexcept;
 
 protected:
@@ -77,7 +106,7 @@ protected:
     core_id_t     dst_in_count  = 0;
 
     bool          out_of_order  = false;
-
+    raft::parallel::type    context_type  = raft::parallel::idc;  
     friend class raft::map;
     friend kpair& operator >= ( kpair &a, raft::kernel &&b );
     friend kpair& operator >= ( kpair &a, raft::kernel &b );
@@ -90,59 +119,6 @@ protected:
     friend kpair& operator >= ( raft::kernel &&a, kpair &b );
 };
 
-
-/** 
- * XOoOkpair - simple wrapper for kernel so that the 
- * OoO syntax calls the proper operator overload for
- * the right shift operator. Otherise, this really
- * doesn't do much but reduce from kernel >> raft::order::out 
- * to kernel
- */
-class LOoOkpair
-{
-public:
-    constexpr LOoOkpair( raft::kernel &src ) : kernel( src ){};
-    ~LOoOkpair() = default;
-private:
-    raft::kernel &kernel;
-    
-    friend kpair& operator >> ( LOoOkpair &a, raft::kernel &b );
-    friend kpair& operator >> ( LOoOkpair &a, raft::kernel &&b );
-};
-
-class ROoOkpair 
-{
-public:
-    constexpr ROoOkpair( kpair &p ) : other( p ){};
-    ~ROoOkpair() = default;
-private:
-    kpair &other;
-    friend kpair& operator >> ( ROoOkpair &a, raft::kernel &b );
-    friend kpair& operator >> ( ROoOkpair &a, raft::kernel &&b );
-};
-
-class LParaPair
-{
-public:
-    constexpr LParaPair( raft::kernel &src ) : kernel( src ){};
-    ~LParaPair() = default;
-private:
-    raft::kernel &kernel;
-    
-    friend kpair& operator >> ( LParaPair &a, raft::kernel &b );
-    friend kpair& operator >> ( LParaPair &a, raft::kernel &&b );
-};
-
-class RParaPair
-{
-public:
-    constexpr RParaPair( kpair &p ) : other( p ){};
-    ~RParaPair() = default;
-private:
-    kpair &other;
-    friend kpair& operator >> ( RParaPair &a, raft::kernel &b );
-    friend kpair& operator >> ( RParaPair &a, raft::kernel &&b );
-};
 
 
 kpair& operator >> ( raft::kernel &a,  raft::kernel &b  );
