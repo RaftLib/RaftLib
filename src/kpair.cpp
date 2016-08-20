@@ -259,6 +259,20 @@ kpair& operator >> ( LParaPair &a, raft::kernel &&b )
    return( *ptr );     
 }
 
+kpair& 
+operator >> ( RParaPair &a, const raft::parallel::type &&type )
+{
+    //go ahead and throw an exception here, end it quickly
+    //mem freed at exit regardless, no external procs have
+    //started at this point
+    
+    throw NonsenseChainRaftManipException( a.sp, type );
+    
+
+    kpair *ptr( nullptr );
+    return( *ptr );     
+}
+
 kpair& operator >> ( RParaPair &a, raft::kernel &b )
 {
     auto *ptr( new kpair( a, b ) );

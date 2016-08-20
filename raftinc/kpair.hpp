@@ -106,7 +106,7 @@ protected:
     core_id_t     dst_in_count  = 0;
 
     bool          out_of_order  = false;
-    raft::parallel::type    context_type  = raft::parallel::idc;  
+    raft::parallel::type    context_type  = raft::parallel::system;  
     friend class raft::map;
     friend kpair& operator >= ( kpair &a, raft::kernel &&b );
     friend kpair& operator >= ( kpair &a, raft::kernel &b );
@@ -155,5 +155,6 @@ kpair& operator >> ( LParaPair &a, raft::kernel &&b );
 kpair& operator >> ( RParaPair &a, raft::kernel &b );
 kpair& operator >> ( RParaPair &a, raft::kernel &&b );
 
+kpair& operator >> ( RParaPair &a, const raft::parallel::type &&type );
 
 #endif /* END _KPAIR_HPP_ */

@@ -94,7 +94,8 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      parallelchain 
      ksettest 
      fixedMatchTest 
-     poolThreadRaftManip )
+     poolThreadRaftManip 
+     poolThreadRaftManip2 )
 if( BUILDRANDOM )
     list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 
 endif( BUILDRANDOM )

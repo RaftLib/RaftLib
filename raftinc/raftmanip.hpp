@@ -20,14 +20,23 @@
 #ifndef _RAFTMANIP_HPP_
 #define _RAFTMANIP_HPP_  1
 
+#include <exception>
+#include <string>
+
 namespace raft
 {
     namespace parallel
     {
-        enum type { idc     /** do whatever the runtime wants, I don't care  **/,
-                    thread  /** specify a thread for each kernel **/, 
-                    pool    /** thread pool, one kernel thread per core, many kernels in each **/, 
-                    process /** open a new process from this point **/ };
+        enum type { system = 0  /** do whatever the runtime wants, I don't care  **/,
+                    thread      /** specify a thread for each kernel **/, 
+                    pool        /** thread pool, one kernel thread per core, many kernels in each **/, 
+                    process     /** open a new process from this point **/,
+                    N };
+        
+        const std::string  type_name[ N ] = { "raft::parallel::system",
+                                              "raft::parallel::thread",
+                                              "raft::parallel::pool",
+                                              "raft::parallel::process" };
     }
     namespace vm
     {
@@ -36,5 +45,22 @@ namespace raft
                     partition   /** partition graph at this point into a new VM space, platform dependent **/ }; 
     }
 } /** end namespace raft **/
+
+
+class RaftManipException : public std::exception
+{
+public:
+   RaftManipException( const std::string message ) : message( message ){};
+   virtual const char* what() const noexcept;
+private:
+   std::string message;
+};
+
+class NonsenseChainRaftManipException : public RaftManipException
+{
+public:
+    NonsenseChainRaftManipException( const raft::parallel::type a,
+                                     const raft::parallel::type b );
+};
 
 #endif /* END _RAFTMANIP_HPP_ */
