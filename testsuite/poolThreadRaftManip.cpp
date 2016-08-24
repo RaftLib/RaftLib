@@ -137,11 +137,11 @@ int
 main()
 {
     start s;
-    last l;
+    auto force_last( std::parallel::thread( last() ) );
     middle m;
 
     raft::map M;
-    M += s >> m >> raft::parallel::thread >> l;
+    M += s >> m >> force_last;
     M.exe();
     return( EXIT_SUCCESS );
 }
