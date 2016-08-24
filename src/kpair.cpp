@@ -75,15 +75,6 @@ kpair::kpair( raft::kernel &a, raft::kernel &b )
     head = this;
 }
 
-kpair::kpair( LParaPair &lp, raft::kernel &b ) : kpair( lp.value, b )
-{
-   context_type = lp.sp;     
-}
-
-kpair::kpair( RParaPair &rp, raft::kernel &b ) : kpair( rp.value, b, false, false )
-{
-   context_type = rp.sp;     
-}
 
 void 
 kpair::setOoO() noexcept
@@ -191,102 +182,6 @@ operator >> ( ROoOkpair &a, raft::kernel &&b )
     ptr->setOoO();
     return( *ptr );
 }
-/**
- * check for valid types
- */
-inline void parallelTypeCheck( const raft::parallel::type type )
-{
-    /** kept switch since this could be a long non-contiguous list **/
-    switch( type )
-    {
-        case raft::parallel::thread:
-        {
-           /** do nothing **/ 
-        }
-        break;
-#ifdef USEQTHREADS        
-        case raft::parallel::pool:
-        {
-           /** do nothing **/ 
-        }
-#endif        
-        break;
-        case raft::parallel::process:
-        {
-           /** do nothing **/ 
-        }
-        break;
-        default:
-        {
-            //TODO throw exception
-            fprintf( stderr, "Invalid parallel type for this platform, check compiler flags\n" );
-            exit( EXIT_FAILURE );
-        }
-    }
-    return;
-}
-
-//FIXME
-
-LParaPair&  
-operator >> ( raft::kernel &a, const raft::parallel::type &&type )
-{
-    parallelTypeCheck( type ); 
-    auto *ptr( new LParaPair( a, type ) );
-    return( *ptr );
-}
-
-RParaPair&
-operator >> ( kpair &a, const raft::parallel::type &&type )
-{
-    parallelTypeCheck( type ); 
-    auto *ptr( new RParaPair( a, type ) );
-    return( *ptr );
-}
-
-kpair& 
-operator >> ( LParaPair &a, raft::kernel &b )
-{
-   auto *ptr( new kpair( a, b ) );
-   delete( &a );
-   return( *ptr );     
-}
-
-kpair& operator >> ( LParaPair &a, raft::kernel &&b )
-{
-   auto *ptr( new kpair( a, b ) );
-   delete( &a );
-   return( *ptr );     
-}
-
-kpair& 
-operator >> ( RParaPair &a, const raft::parallel::type &&type )
-{
-    //go ahead and throw an exception here, end it quickly
-    //mem freed at exit regardless, no external procs have
-    //started at this point
-    
-    throw NonsenseChainRaftManipException( a.sp, type );
-    
-
-    kpair *ptr( nullptr );
-    return( *ptr );     
-}
-
-kpair& operator >> ( RParaPair &a, raft::kernel &b )
-{
-    auto *ptr( new kpair( a, b ) );
-    delete( &a );
-    return( *ptr );
-}
-
-kpair& operator >> ( RParaPair &a, raft::kernel &&b )
-{
-    auto *ptr( new kpair( a, b ) );
-    delete( &a );
-    return( *ptr );
-}
-
 
 kpair&
 operator <= ( raft::kernel &a, raft::kernel &b )
