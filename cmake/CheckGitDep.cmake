@@ -5,7 +5,7 @@ set( DEPDIR ${CMAKE_SOURCE_DIR}/git-dep )
 ##
 # LIST MODULES HERE
 ##
-set( GIT_MODULES cmdargs shm )
+set( GIT_MODULES cmdargs shm SystemClock )
 ##
 # NOW CHECK THEM OUT 
 ##
