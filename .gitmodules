@@ -13,6 +13,3 @@
 [submodule "git-dep/shm"]
 	path = git-dep/shm
 	url = https://github.com/RaftLib/shm.git
-[submodule "git-dep/SystemClock"]
-	path = git-dep/SystemClock
-	url = https://github.com/RaftLib/SystemClock.git
