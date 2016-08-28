@@ -104,20 +104,15 @@ pool_schedule::start()
      * which is relatively bad.
      */
     kernel_set.release();
-    bool keep_going( true );
-    while( keep_going )
+START:        
+    std::chrono::milliseconds dura( 3 );
+    std::this_thread::sleep_for( dura );
+    std::lock_guard< std::mutex > lock( tail_mutex );
+    for( auto * const td : tail )
     {
-        std::chrono::milliseconds dura( 3 );
-        std::this_thread::sleep_for( dura );
-        std::lock_guard< std::mutex > lock( tail_mutex );
-        keep_going = false;
-        for( auto * const td : tail )
+        if( ! td->finished  )
         {
-            if( ! td->finished  )
-            {
-                keep_going = true;
-                break;
-            }
+            goto START;
         }
     }
     return;
