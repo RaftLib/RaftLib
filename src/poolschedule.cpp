@@ -43,7 +43,6 @@
 
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
-    //assert( qthread_init( 1 ) == QTHREAD_SUCCESS );
     assert( qthread_initialize() == QTHREAD_SUCCESS );
     thread_data_pool.reserve( kernel_set.size() );
 }
