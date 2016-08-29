@@ -1,0 +1,38 @@
+Phoenix Project
+Historgram Example Application Readme
+Last revised 15th April 2007
+
+
+1. Application Overview
+-----------------------
+
+The histogram application generates the histogram of frequencies of pixel values
+in the red, green and blue channels of a bitmap picture.
+
+
+2. Provided Files
+-----------------
+
+hist.c: The version of the file that uses the MapReduce engine
+hist-seq.c: The sequential version of the application
+hist-pthread.c: The pthread version of the application
+stddefines.h: Contains declarations of commonly used functions and constants
+MapReduceScheduler.c/h: The MapReduce engine used by the application
+Makefile: Compiles all 3 versions of the application
+datafiles/*.bmp: Sample bitmap files of varying sizes that can be used as 
+                 input to this application
+README: This file
+
+
+3. Running the Application
+--------------------------
+
+run 'make' to compile all 3 versions of the application. 
+
+./hist <image-name>
+./hist-pthread <image-name>
+./hist-seq <image-name>
+
+runs the MapReduce, Pthreads and sequential version of the application
+respectively
+

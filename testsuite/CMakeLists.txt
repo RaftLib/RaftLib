@@ -49,7 +49,9 @@ foreach( APP ${TESTAPPS} )
  add_executable( ${APP} "${APP}.cpp" )
  target_link_libraries( ${APP} raft  ${CMAKE_THREAD_LIBS_INIT} 
                                      ${CMAKE_SCOTCH_LIBS}
-                                     ${CMAKE_RT_LIBS} )
+                                     ${CMAKE_RT_LIBS} 
+                                     ${CMAKE_QTHREAD_LIBS}
+                                     )
 endforeach( APP ${TESTAPPS} )
 
 file( COPY alice.txt

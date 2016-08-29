@@ -4,6 +4,7 @@
 #include <iostream>
 #include <raft>
 #include <chrono>
+#include <cinttypes>
 
 using cvm= typename cv::Mat;
 
@@ -16,15 +17,19 @@ public:
       output.addPort< cvm >( "0" );
       if( ! stream1.isOpened() ) 
       { 
-         std::cout << "cannot open camera\n";
+         std::cerr << "cannot open camera\n";
          exit( EXIT_FAILURE );
       }
    }
 
-   virtual ~source() = default;
+   virtual ~source()
+   {
+       stream1.release();
+   }
 
    virtual raft::kstatus run()
    {
+      fprintf( stdout, "source processing frame %" PRIu64 "\n", counter++ );
       auto &frame( output[ "0" ].template allocate< cvm >() );
       stream1.read( frame );
       output[ "0" ].send();
@@ -33,6 +38,7 @@ public:
 
 private:
    cv::VideoCapture stream1 = { 0 };
+   std::uint64_t    counter = 0;
 };
 
 template < class T > class canny : public raft::kernel
@@ -48,6 +54,7 @@ public:
 
    virtual raft::kstatus run()
    {
+      fprintf( stdout, "source processing frame %" PRIu64 "\n", counter++ );
       auto &img_in( input[ "0" ].template peek< T >() );
       auto &out( output[ "0" ].template allocate< T >() );
       cv::cvtColor( img_in, 
@@ -71,6 +78,7 @@ public:
 
 private:
    const std::int8_t thresh = 100;
+   std::uint64_t     counter = 0;
 };
 
 template < class T > class findcontours : public raft::kernel
@@ -87,7 +95,7 @@ public:
    virtual raft::kstatus run()
    {
       auto &img_in( input[ "0" ].template peek< T >() );
-      auto &out( output[ "0" ].template allocate< T >() );
+      auto &out( output[ "0" ].  template allocate< T >() );
       cv::findContours( img_in,
                         contours,
                         hierarchy,
@@ -140,8 +148,8 @@ public:
    
    virtual raft::kstatus run()
    {
-      auto &frame( input[ "0" ].template peek< cvm >() );
-      cv::imshow( "cam", frame );
+      const auto &frame( input[ "0" ].template peek< cvm >() );
+      cv::imshow( window_name, frame );
       input[ "0" ].unpeek();
       input[ "0" ].recycle( 1 );
       frames++;
@@ -157,11 +165,13 @@ public:
       }
       return( raft::proceed );
    }
+private:
+   const std::string window_name = { "cam" };
 };
 
 
 int 
-main( int argc, char **argv )
+main()
 {
    cv::namedWindow( "cam", cv::WINDOW_NORMAL );
    source< cvm >       src;

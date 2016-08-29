@@ -75,6 +75,7 @@ kpair::kpair( raft::kernel &a, raft::kernel &b )
     head = this;
 }
 
+
 void 
 kpair::setOoO() noexcept
 {
@@ -126,7 +127,7 @@ kpair&
 operator >> ( LOoOkpair &a, raft::kernel &b )
 {
     auto *ptr( 
-        new kpair( a.kernel, 
+        new kpair( a.value, 
                    b, 
                    false, 
                    false ) 
@@ -141,7 +142,7 @@ kpair&
 operator >> ( LOoOkpair &a, raft::kernel &&b )
 {
     auto *ptr( 
-        new kpair( a.kernel, b, false, false ) 
+        new kpair( a.value, b, false, false ) 
     );
     delete( &a );
     ptr->setOoO();
@@ -164,7 +165,7 @@ kpair&
 operator >> ( ROoOkpair &a, raft::kernel &b )
 {
     auto * ptr(
-        new kpair( a.other, b, false, false )
+        new kpair( a.value, b, false, false )
     );
     delete( &a );
     ptr->setOoO();
@@ -175,13 +176,12 @@ kpair&
 operator >> ( ROoOkpair &a, raft::kernel &&b )
 {
     auto * ptr(
-        new kpair( a.other, b, false, false )
+        new kpair( a.value, b, false, false )
     );
     delete( &a );
     ptr->setOoO();
     return( *ptr );
 }
-
 
 kpair&
 operator <= ( raft::kernel &a, raft::kernel &b )

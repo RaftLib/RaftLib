@@ -46,7 +46,7 @@ public:
 };
 
 
-#define COUNT 20
+#define COUNT 7
 
 int
 main()

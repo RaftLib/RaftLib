@@ -46,8 +46,8 @@ protected:
    struct thread_data
    {
       constexpr thread_data( raft::kernel * const k,
-                   bool *fin ) : k( k ),
-                                 finished( fin ){}
+                             bool *fin ) : k( k ),
+                                           finished( fin ){}
 
       raft::kernel *k         = nullptr;
       bool         *finished  = nullptr;
