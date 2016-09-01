@@ -1,8 +1,8 @@
 #include "kernel_pair_t.hpp"
 
-//TODO, finish me
 kernel_pair_t::kernel_pair_t()
 {
+    /** TODO, might need to optimize with something better **/
     source.reserve( 2 );
     destination.reserve( 2 );
 }
@@ -18,7 +18,7 @@ kernel_pair_t::kernel_pair_t( raft::kernel * const src,
 kernel_pair_t::kernel_pair_t( raft::kernel &src,
                               raft::kernel &dst ) : kernel_pair_t()
 {
-    source.emplace_back( &src );
+    source.emplace_back( src );
     destination.emplace_back( dst );
 }
 
