@@ -56,17 +56,14 @@ namespace raft
 class kernel_pair_t
 {
     /** container with ref wrapper **/ 
-    template < class CONTAINER > using kernel_pair_t_base = 
-        CONTAINER< std::reference_wrapper< raft::kernel > > >;
-    /** instantiation of vector as that container type **/
-    using kernel_pair_t_container = kernel_pair_t_base< std::vector >;
-    
+    using kernel_pair_t_container  = 
+        std::vector< std::reference_wrapper< raft::kernel> >;
 
 public:
     /**
      * define iterator type publicly 
      */
-    using kernel_iterator_type = typename kernel_pair_t_container::iterator_type;
+    using kernel_iterator_type = kernel_pair_t_container::iterator;
     /** 
      * endpoint ret type is a std::pair with
      * two iterators, one for begin, the second 
@@ -119,7 +116,7 @@ public:
      * to end();
      * @return endpoint_ret_type
      */
-    endpoint_ret_type getSrc();
+    kernel_pair_t::endpoint_ret_type getSrc();
     /**
      * getSrcSize - returns the size of the source
      * container. This is the number of kernels
@@ -127,7 +124,7 @@ public:
      * @return size_type - number of kernels in source
      *                     container
      */
-    size_type         getSrcSize() noexcept; 
+    kernel_pair_t::size_type         getSrcSize() noexcept; 
     /**
      * getDst - return a std::pair object with iterators
      * to the dst list of kernels added in the last map 
@@ -135,7 +132,7 @@ public:
      * pair.second maps to end();
      * @return endpoint_ret_type
      */
-    endpoint_ret_type getDst();
+    kernel_pair_t::endpoint_ret_type getDst();
     /**
      * getDstSize - returns the size of the destination
      * container. This is the number of kernels
@@ -143,7 +140,7 @@ public:
      * @return size_type - number of kernels in source
      *                     container
      */
-    size_type         getDstSize() noexcept;
+    kernel_pair_t::size_type         getDstSize() noexcept;
     /**
      * addSrc - add a source kernel to this pair object
      * which is retreivable by the getSrc. If this object
