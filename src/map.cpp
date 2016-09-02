@@ -385,9 +385,14 @@ raft::map::operator += ( kpair &p )
         delete( ptr );
     }
     /**
-     * FIXME, re-write kernel_pair_t so it returns struct with
-     * iterators so that we can access an array of ends if the
-     * run-time creates them.
+     * TODO, need to get the kernel_pair_t to 
+     * return the full list of kernels. Basically
+     * need to go back and pass the kernel_pair_t
+     * through the split/cont/join in order ot 
+     * get the right kernels into the list, especially
+     * ones that are cloned internally otherwise
+     * the user might not get the returns that
+     * the expected.
      */
     return( kernel_pair_t( start, end ) );
 }
