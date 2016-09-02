@@ -28,6 +28,7 @@
 namespace raft
 {
     class kernel;
+    class kernel_wrapper;
     class map;
 }
 
@@ -53,13 +54,38 @@ public:
            raft::kernel &b,
            const bool split,
            const bool join );
+    
+    kpair( raft::kernel &a, 
+           raft::kernel_wrapper &b,
+           const bool split,
+           const bool join );
+    
+    kpair( raft::kernel_wrapper &a, 
+           raft::kernel &b,
+           const bool split,
+           const bool join );
+    
+    kpair( raft::kernel_wrapper &a, 
+           raft::kernel_wrapper &b,
+           const bool split,
+           const bool join );
 
     kpair( kpair &a,
            raft::kernel  &b,
            const bool split,
            const bool join );
+    
+    kpair( kpair &a,
+           raft::kernel_wrapper  &b,
+           const bool split,
+           const bool join );
 
     kpair( raft::kernel &a,
+           kpair        &n,
+           const bool   split,
+           const bool   join );
+    
+    kpair( raft::kernel_wrapper &a,
            kpair        &n,
            const bool   split,
            const bool   join );
@@ -70,6 +96,15 @@ public:
            const bool join );
 
     kpair( raft::kernel &a, raft::kernel &b );
+    
+    kpair( raft::kernel &a, 
+           raft::kernel_wrapper &b );
+    
+    kpair( raft::kernel_wrapper &a, 
+           raft::kernel  &b );
+
+    kpair( raft::kernel_wrapper &a, 
+           raft::kernel_wrapper &b );
     
     void setOoO() noexcept;
 
@@ -91,44 +126,37 @@ protected:
 
     bool          out_of_order  = false;
     friend class raft::map;
-    friend kpair& operator >= ( kpair &a, raft::kernel &&b );
-    friend kpair& operator >= ( kpair &a, raft::kernel &b );
-    friend kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
-    friend kpair& operator <= ( raft::kernel &&a, raft::kernel &&b );
-    friend kpair& operator <= ( raft::kernel &a,  kpair &b );
-    friend kpair& operator <= ( raft::kernel &&a, kpair &b );
-    friend kpair& operator >= ( kpair &a, kpair &b );
-    friend kpair& operator >= ( raft::kernel &a, kpair &b );
-    friend kpair& operator >= ( raft::kernel &&a, kpair &b );
 };
 
 
 
 kpair& operator >> ( raft::kernel &a,  raft::kernel &b  );
-kpair& operator >> ( raft::kernel &&a, raft::kernel &&b );
+kpair& operator >> ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b );
+kpair& operator >> ( raft::kernel &a, raft::kernel_wrapper &&w );
+
 kpair& operator >> ( kpair &a, raft::kernel &b );
-kpair& operator >> ( kpair &a, raft::kernel &&b );
+kpair& operator >> ( kpair &a, raft::kernel_wrapper &&w );
 
 LOoOkpair& operator >> ( raft::kernel &a, const raft::order::spec &&order );
 kpair&     operator >> ( LOoOkpair &a, raft::kernel &b );
-kpair&     operator >> ( LOoOkpair &a, raft::kernel &&b );
+kpair&     operator >> ( LOoOkpair &a, raft::kernel_wrapper &&w );
 
 ROoOkpair& operator >> ( kpair &a, const raft::order::spec &&order );
 kpair&     operator >> ( ROoOkpair &a, raft::kernel &b );
-kpair&     operator >> ( ROoOkpair &a, raft::kernel &&b );
+kpair&     operator >> ( ROoOkpair &a, raft::kernel_wrapper &&w );
 
 
 kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
-kpair& operator <= ( raft::kernel &&a, raft::kernel &&b );
+kpair& operator <= ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b );
 kpair& operator <= ( raft::kernel &a,  kpair &b );
-kpair& operator <= ( raft::kernel &&a, kpair &b );
+kpair& operator <= ( raft::kernel_wrapper &&w, kpair &b );
 
 kpair& operator >= ( kpair &a, raft::kernel &b );
-kpair& operator >= ( kpair &a, raft::kernel &&b );
+kpair& operator >= ( kpair &a, raft::kernel_wrapper &&w );
 kpair& operator >= ( kpair &a, kpair &b );
 
 kpair& operator >= ( raft::kernel &a, kpair &b );
-kpair& operator >= ( raft::kernel &&a, kpair &b );
+kpair& operator >= ( raft::kernel_wrapper &&w, kpair &b );
 
 
 #endif /* END _KPAIR_HPP_ */

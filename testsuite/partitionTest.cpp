@@ -29,6 +29,7 @@ main( int argc, char **argv )
        } );
 
     raft::map m;
+    /** make one sub kernel, this one will live on the stack **/
     sub s( 1, 1, l_sub );
     kernel_pair_t::kernel_iterator_type BEGIN, END;
     auto kernels( m += rndgen >> s );
@@ -41,10 +42,10 @@ main( int argc, char **argv )
     ; i++ )
     {
         std::tie( BEGIN, END ) = kernels.getDst();
-        kernels = ( m += (*END).get() >> sub( 1, 1, l_sub ) );        
+        kernels = ( m += (*BEGIN).get() >> raft::kernel::make< sub >( 1, 1, l_sub ) ); 
     }
     std::tie( BEGIN, END ) = kernels.getDst();
-    m += (*END).get() >> p;
+    m += (*BEGIN).get() >> p;
     m.exe();
     return( EXIT_SUCCESS );
 }
