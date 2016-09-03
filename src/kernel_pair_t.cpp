@@ -58,3 +58,15 @@ kernel_pair_t::addDst( raft::kernel &k ) noexcept
 {
     destination.emplace_back( k );
 }
+
+void
+kernel_pair_t::clearSrc() noexcept
+{
+    source.clear();
+}
+
+void
+kernel_pair_t::clearDst() noexcept
+{
+    destination.clear();
+}

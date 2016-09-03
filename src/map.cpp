@@ -332,7 +332,6 @@ raft::map::operator += ( kpair &p )
         decltype( groups ) temp_groups;
         switch( stack.top() )
         {
-
             case( cont ):
             {
                 inline_cont( groups,
@@ -356,6 +355,13 @@ raft::map::operator += ( kpair &p )
                 stack.pop();
                 if( stack.size() == 0  /** mult kernels going ot single kernel **/ )
                 {
+                    /** 
+                     * whoops, looks like we need to clear the source 
+                     * ret_kernel_pair. also reset initialized so we 
+                     * capture all the new source kernels that are added.
+                     */
+                    ret_kernel_pair.clearSrc();
+                    initialized = false;
                     inline_dup_join( groups,
                                      temp_groups,
                                      next );
@@ -378,6 +384,7 @@ raft::map::operator += ( kpair &p )
             default:
                 assert( false );
         }
+
         if( ! initialized )
         {
             for( /** unique ptr **/ auto &groups_ptr : groups )
@@ -395,7 +402,7 @@ raft::map::operator += ( kpair &p )
         /** now old dst (in temp_groups) become new sources **/
         groups = std::move( temp_groups );
         
-        kpair *temp_kpair = next;
+        kpair * const temp_kpair = next;
         next = next->next;
         kpair_store.emplace_back( temp_kpair );
     }

@@ -159,6 +159,21 @@ public:
      * @param   k   - raft::kernel&
      */
     void addDst( raft::kernel &k ) noexcept;
+    /** 
+     * clearSrc - does exactly what it says, clears out
+     * the list of kernels, does not however destoy them
+     * so they're still valid kernels, just not available
+     * to the list anymore
+     */
+    void clearSrc() noexcept;
+    /** 
+     * clearDst - does exactly what it says, clears out
+     * the list of kernels, does not however destoy them
+     * so they're still valid kernels, just not available
+     * to the list anymore
+     */
+    void clearDst() noexcept;
+
 private:
     /** type is determined by using type aliases above the first public: **/
     kernel_pair_t_container source;
