@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <raft>
 #include <raftio>
+#include <tuple>
 #include "generate.tcc"
 #include "defs.hpp"
 
@@ -54,14 +55,18 @@ main( int argc, char **argv )
                     send_t >;
    using p_out = raft::print< send_t, '\n' >;
    raft::map m;
-   auto linked_kernels( 
-      m.link( raft::kernel::make< gen >( count ),
-              raft::kernel::make< sum >(), "input_a" ) );
+   gen g1( count ), g2( count );
+   sum s;
+   p_out p;
+   
+   auto linked_kernels( m += g1 >> s[ "input_a" ] );
+
    try
    {
-        m.link( 
-            raft::kernel::make< gen >( count ),
-            &linked_kernels.getDst(), "input_b"  );
+        /** returns std::pair of iterators **/
+        kernel_pair_t::kernel_iterator_type BEGIN, END;
+        std::tie( BEGIN, END ) = linked_kernels.getDst();
+        m += g2 >> (*BEGIN).get()[ "input_b" ];
    }
    catch( PortTypeMismatchException &ex )
    {
@@ -69,9 +74,7 @@ main( int argc, char **argv )
         //yippy, we threw the right exception
         return( EXIT_SUCCESS );
    }
-   m.link( 
-      &linked_kernels.getDst(), 
-      raft::kernel::make< p_out >() );
+   m += s >> p;
    m.exe();
    return( EXIT_FAILURE );
 }

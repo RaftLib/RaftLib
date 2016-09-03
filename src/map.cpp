@@ -249,12 +249,24 @@ raft::map::operator += ( kpair &p )
 {
     kpair * const pair( &p );
     assert( pair != nullptr );
-    raft::kernel *end( pair->dst );
+    
     /** start at the head, go forward **/
     kpair *next = pair->head;
     assert( next != nullptr );
-    raft::kernel *start( next->src );
-
+    
+    /** init return struct **/
+    kernel_pair_t ret_kernel_pair;
+    
+    /** 
+     * set to true when we've done the first pass
+     * so that the ret_kernel_pair has the correct
+     * source kernels for this addition to the map
+     * most of the time this will look just like
+     * a '>>' op, but others this will get quite
+     * complicated
+     */
+    bool initialized( false );
+    
     /** used to do nested splits **/
     enum sj_t : std::int8_t { split, join, cont };
     const static std::array< std::string, 3 > sj_t_str( 
@@ -320,7 +332,6 @@ raft::map::operator += ( kpair &p )
         decltype( groups ) temp_groups;
         switch( stack.top() )
         {
-
             case( cont ):
             {
                 inline_cont( groups,
@@ -344,6 +355,13 @@ raft::map::operator += ( kpair &p )
                 stack.pop();
                 if( stack.size() == 0  /** mult kernels going ot single kernel **/ )
                 {
+                    /** 
+                     * whoops, looks like we need to clear the source 
+                     * ret_kernel_pair. also reset initialized so we 
+                     * capture all the new source kernels that are added.
+                     */
+                    ret_kernel_pair.clearSrc();
+                    initialized = false;
                     inline_dup_join( groups,
                                      temp_groups,
                                      next );
@@ -367,29 +385,63 @@ raft::map::operator += ( kpair &p )
                 assert( false );
         }
 
+        if( ! initialized )
+        {
+            for( /** unique ptr **/ auto &groups_ptr : groups )
+            {
+                for( auto * const kernel : (*groups_ptr) )
+                {
+                    assert( kernel != nullptr );
+                    ret_kernel_pair.addSrc( *kernel );
+                }
+            }
+            initialized = true;
+        }
+        /** don't need these anymore **/
         groups.clear();
+        /** now old dst (in temp_groups) become new sources **/
         groups = std::move( temp_groups );
-
-
-        kpair *temp_kpair = next;
+        
+        kpair * const temp_kpair = next;
         next = next->next;
         kpair_store.emplace_back( temp_kpair );
     }
-    /**
-     * we should be emptying each time, so this should
-     * always be zero or one at most
+    
+    /** 
+     * groups should now have the final destinations across
+     * multiple groups potentially. Take these, flatten to
+     * a single destination for the return vector since this
+     * is what the specification expects (i.e., all actual
+     * end destinations added to map....which are the last
+     * kernels added or leaf nodes).
      */
-    assert( groups.size() < 2 );
+    for( /** unique ptr **/ auto &groups_ptr : groups )
+    {
+        for( auto * const kernel : (*groups_ptr) )
+        {
+            assert( kernel != nullptr );
+            ret_kernel_pair.addDst( *kernel );
+        }
+    }
+    
+    
+    
     for( auto *ptr : kpair_store )
     {
         delete( ptr );
     }
+
     /**
-     * FIXME, re-write kernel_pair_t so it returns struct with
-     * iterators so that we can access an array of ends if the
-     * run-time creates them.
+     * TODO, need to get the kernel_pair_t to 
+     * return the full list of kernels. Basically
+     * need to go back and pass the kernel_pair_t
+     * through the split/cont/join in order ot 
+     * get the right kernels into the list, especially
+     * ones that are cloned internally otherwise
+     * the user might not get the returns that
+     * the expected.
      */
-    return( kernel_pair_t( start, end ) );
+    return( ret_kernel_pair );
 }
 
 void
@@ -574,15 +626,30 @@ raft::map::inline_dup_join( kernels_t &groups,
                             kernels_t &temp_groups,
                             kpair * const next )
 {
-    //only one group
+    /**
+     * only one group at the moment, this pre-condition 
+     * could change if we make the duplication code
+     * a bit more fancy. need to abstract away more
+     * to scale better. - jcb
+     */
     assert( groups.size() == 1 );
     temp_groups.push_back( up_group_t( new group_t() ) );
     up_group_t &gp( groups[ 0 ] );
-    const auto dest_in_count( next->dst_in_count );
-    (void) gp;
-    (void) dest_in_count;
-
-
+    
+    /** should currently have only one kernel here **/
+    assert( gp->size() == 1 );  
+    /** get count to satisfy postcondition at end **/
+    const auto dst_inport_count( next->dst->input.count() );
+    
+    /** 
+     * this is a bit confusing so here's the overall scheme:
+     * - for each input port in next's dst, create a souce.
+     *   there will of course already be one source but we'll
+     *   likely need to add more. Each of these new kernels
+     *   will need to have the name set, and the dst. will need
+     *   to have the name set so that we don't throw any 
+     *   exceptions. -jcb
+     */
     for( auto port_it( next->dst->input.begin() );
         port_it != next->dst->input.end(); ++port_it )
     {
@@ -611,11 +678,14 @@ raft::map::inline_dup_join( kernels_t &groups,
             {
                 /** go back to head **/
                 auto *head_next( next->head );
+                /** chain condition, start from the source of this kpair **/
                 while( head_next != next )
                 {
                     if( src == nullptr )
                     {
+                        /** clone the sosurce **/
                         src = head_next->src->clone();
+                        gp->emplace_back( src );
                     }
                     auto *dst( head_next->dst->clone() );
                     head_next->src = src;
@@ -636,11 +706,17 @@ raft::map::inline_dup_join( kernels_t &groups,
             {
                 //need to duplicate source
                 next->src = next->src->clone();
+                gp->emplace_back( next->src );
                 next->dst_name = port_it.name();
                 next->has_dst_name = true;
                 joink( next );
             }
         }
     }
+    /** 
+     * post condition, gp should have # of kernels that match dest in-port
+     * count.
+     */
+    assert( gp->size() == dst_inport_count );
     return;
 }
