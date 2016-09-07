@@ -43,7 +43,8 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      staticJoinRetStruct
      staticLongSplitChainRetStruct
      staticSplitChainJoinRetStruct
-     staticSplitJoinRetStruct )
+     staticSplitJoinRetStruct 
+     chainMultiplePorts )
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 

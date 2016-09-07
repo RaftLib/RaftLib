@@ -62,9 +62,26 @@ pool_schedule::~pool_schedule()
 void
 pool_schedule::handleSchedule( raft::kernel * const kernel )
 {
-   //TODO implement me 
-   UNUSED( kernel );
-   assert( false );
+    auto *td( new thread_data( kernel ) );
+    thread_data_mutex.lock();
+    thread_data_pool.emplace_back( td );
+    thread_data_mutex.unlock();
+    if( ! kernel->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
+    {
+        std::lock_guard< std::mutex > tail_lock( tail_mutex );
+        /** destination kernel **/
+        tail.emplace_back( td );
+    }
+    qthread_spawn( pool_schedule::pool_run,
+                   (void*) td,
+                   0,
+                   0,
+                   0,
+                   nullptr,
+                   NO_SHEPHERD,
+                   0 );
+    /** done **/
+    return;
 }
 
 void
@@ -78,9 +95,12 @@ pool_schedule::start()
     for( auto * const k : container )
     {  
         auto *td( new thread_data( k ) );
+        thread_data_mutex.lock();
         thread_data_pool.emplace_back( td );
+        thread_data_mutex.unlock();
         if( ! k->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
         {
+            std::lock_guard< std::mutex > tail_lock( tail_mutex );
             /** destination kernel **/
             tail.emplace_back( td );
         }
@@ -106,14 +126,16 @@ pool_schedule::start()
 START:        
     std::chrono::milliseconds dura( 3 );
     std::this_thread::sleep_for( dura );
-    std::lock_guard< std::mutex > lock( tail_mutex );
+    tail_mutex.lock();
     for( auto * const td : tail )
     {
         if( ! td->finished  )
         {
+            tail_mutex.unlock();
             goto START;
         }
     }
+    tail_mutex.unlock();
     return;
 }
 
