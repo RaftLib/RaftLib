@@ -1,9 +1,9 @@
 /**
- * portmap_t.hpp - 
+ * sumreduce.tcc - 
  * @author: Jonathan Beard
- * @version: Sun Oct  5 09:04:38 2014
+ * @version: Sun Sep  4 04:51:49 2016
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2016 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PORTMAP_T_HPP_
-#define _PORTMAP_T_HPP_  1
+#ifndef _SUMREDUCE_TCC_
+#define _SUMREDUCE_TCC_  1
+#include "join.tcc"
 
-#include <map>
-#include <string>
-#include <mutex>
-#include "port_info.hpp"
-#include <cstddef>
-
-struct portmap_t
+namespace raft
 {
-   using key_type = std::string;
-   using map_type = std::map< key_type, PortInfo >;
-   
-   map_type     map;
-   std::mutex   mutex_map;
+
+template < class T, 
+           class method=roundrobin > class sum_reduce : public raft::join< T, method>
+{
+public:
+    sum_reduce( const std::size_t num_ports = 1 ) : join( num_ports )
+    {
+    }
+
+    virtual sum_reduce() = default;
+
+    virtual raft::kstatus run()
+    {
+        
+    }
 };
 
-#endif /* END _PORTMAP_T_HPP_ */
+} /** end namespace raft **/
+#endif /* END _SUMREDUCE_TCC_ */

@@ -25,19 +25,43 @@
 #include "bufferdata.tcc"
 #include "blocked.hpp"
 #include "fifo.hpp"
-
+#include "datamanager.tcc"
 
 template < class T, Type::RingBufferType type > 
    class FIFOAbstract : public FIFO
 {
 public:
-   FIFOAbstract() : FIFO()
-   {
-   }
+   FIFOAbstract() : FIFO(){}
 
 protected:
-   /** TODO, package this as as struct **/
-   volatile bool            allocate_called = false;
-   Blocked::value_type      n_allocated     = 1;
+    struct{
+        volatile bool            allocate_called = false;
+        Blocked::value_type      n_allocated     = 1;
+        /**
+         * these pointers are set by the scheduler which 
+         * calls the garbage collection function. these
+         * two capture the addresses of output pointers
+         */
+        ptr_set_t                   *out = nullptr;
+        ptr_set_t                   *out_peek = nullptr;
+    }producer_data;
+   
+   
+    struct{
+        /**
+         * these pointers are set by the scheduler which 
+         * calls the garbage collection function. these
+         * two capture the addresses of output pointers
+         */
+        ptr_map_t                   *in = nullptr;
+        ptr_set_t                   *in_peek  = nullptr;
+    }consumer_data;
+    
+    /** 
+     * upgraded the *data structure to be a DataManager
+     * object to enable easier and more intuitive dynamic
+     * lock free buffer resizing and re-alignment.
+     */
+    DataManager< T, type >       datamanager;
 };
 #endif /* END _FIFOABSTRACT_TCC_ */

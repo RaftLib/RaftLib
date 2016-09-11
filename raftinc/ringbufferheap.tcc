@@ -71,14 +71,6 @@ public:
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       buff_ptr->signal[ write_index ] = signal;
       (this)->write_stats.bec.count++;
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
       (this)->allocate_called = false;
       Pointer::inc( buff_ptr->write_pt );
       (this)->datamanager.exitBuffer( dm::allocate );
@@ -100,14 +92,6 @@ public:
       Pointer::incBy( (this)->datamanager.get()->write_pt,
                       (this)->n_allocated );
       (this)->write_stats.bec.count += (this)->n_allocated;
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
       (this)->allocate_called = false;
       (this)->n_allocated     = 0;
       (this)->datamanager.exitBuffer( dm::allocate_range );
@@ -539,14 +523,6 @@ public:
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       buff_ptr->signal[ write_index ] = signal;
       (this)->write_stats.bec.count++;
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
       (this)->allocate_called = false;
       Pointer::inc( buff_ptr->write_pt );
       (this)->datamanager.exitBuffer( dm::allocate );
@@ -569,14 +545,6 @@ public:
                       (this)->n_allocated );
       (this)->write_stats.bec.count += (this)->n_allocated;
       /** cleanup **/
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
       (this)->allocate_called = false;
       (this)->n_allocated     = 0;
       (this)->datamanager.exitBuffer( dm::allocate_range );
@@ -1012,14 +980,6 @@ public:
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       buff_ptr->signal[ write_index ] = signal;
       (this)->write_stats.bec.count++;
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
       (this)->allocate_called = false;
       Pointer::inc( buff_ptr->write_pt );
       (this)->datamanager.exitBuffer( dm::allocate );
@@ -1041,14 +1001,6 @@ public:
                       (this)->n_allocated );
       /** cleanup **/
       (this)->write_stats.bec.count += (this)->n_allocated;
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
       (this)->allocate_called = false;
       (this)->n_allocated     = 0;
       (this)->datamanager.exitBuffer( dm::allocate_range );

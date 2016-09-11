@@ -57,8 +57,8 @@ template < class T,
 class RingBufferBase
 {
 public:
-    RingBufferBase() = delete;
-    virtual ~RingBufferBase() = delete;
+    RingBufferBase() = default;
+protected:   
 };
 
 

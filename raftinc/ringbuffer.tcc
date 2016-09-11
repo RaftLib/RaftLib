@@ -332,7 +332,8 @@ public:
     }
 };
 
-#if BUILDSHM
+
+#if 0
 /**
  * SharedMemory
  */
@@ -343,7 +344,7 @@ class RingBuffer< T, Type::SharedMemory, false >
 public:
     RingBuffer( const std::size_t nitems, 
                 const std::string key, 
-                Direction dir,
+                const Direction dir,
                 const std::size_t alignment = 16 ) 
                     : RingBufferBase< T, 
                                       Type::SharedMemory >() ,
@@ -415,7 +416,6 @@ protected:
     const std::string shm_key;
 };
 
-
 /**
  * TCP w/ multiplexing
  */
@@ -477,5 +477,6 @@ public:
 
 protected:
 };
-#endif // end BUILDSHM
+#endif
+
 #endif /* END _RINGBUFFER_TCC_ */

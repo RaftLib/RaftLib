@@ -50,10 +50,10 @@ public:
    {  
       for( ;; )
       {
-         datamanager.enterBuffer( dm::size );
-         if( datamanager.notResizing() )
+         (this)->datamanager.enterBuffer( dm::size );
+         if( (this)->datamanager.notResizing() )
          {
-            auto * const buff_ptr( datamanager.get() );
+            auto * const buff_ptr( (this)->datamanager.get() );
 TOP:      
             const auto   wrap_write( Pointer::wrapIndicator( buff_ptr->write_pt  ) ),
                          wrap_read(  Pointer::wrapIndicator( buff_ptr->read_pt   ) );
@@ -65,7 +65,7 @@ TOP:
                /** expect most of the time to be full **/
                if( R_LIKELY( wrap_read < wrap_write ) )
                {
-                  datamanager.exitBuffer( dm::size );
+                  (this)->datamanager.exitBuffer( dm::size );
                   return( buff_ptr->max_cap );
                }
                else if( wrap_read > wrap_write )
@@ -87,24 +87,24 @@ TOP:
                }
                else
                {
-                  datamanager.exitBuffer( dm::size );
+                  (this)->datamanager.exitBuffer( dm::size );
                   return( 0 );
                }
             }
             else if( rpt < wpt )
             {
-               datamanager.exitBuffer( dm::size );
+               (this)->datamanager.exitBuffer( dm::size );
                return( wpt - rpt );
             }
             else if( rpt > wpt )
             {
-               datamanager.exitBuffer( dm::size );
+               (this)->datamanager.exitBuffer( dm::size );
                return( buff_ptr->max_cap - rpt + wpt ); 
             }
-            datamanager.exitBuffer( dm::size );
+            (this)->datamanager.exitBuffer( dm::size );
             return( 0 );
          }
-         datamanager.exitBuffer( dm::size );
+         (this)->datamanager.exitBuffer( dm::size );
 #ifdef USEQTHREADS                   
                   qthread_yield();
 #endif
@@ -123,7 +123,7 @@ TOP:
     */
    virtual void invalidate()
    {
-      auto * const ptr( datamanager.get() );
+      auto * const ptr( (this)->datamanager.get() );
       ptr->is_valid = false;
       return;
    }
@@ -137,7 +137,7 @@ TOP:
     */
    virtual bool is_invalid()
    {
-      auto * const ptr( datamanager.get() );
+      auto * const ptr( (this)->datamanager.get() );
       return( ! ptr->is_valid );
    }
 
@@ -150,7 +150,7 @@ TOP:
     */
    virtual std::size_t   space_avail()
    {
-      return( datamanager.get()->max_cap - size() );
+      return( (this)->datamanager.get()->max_cap - size() );
    }
   
    /**
@@ -160,7 +160,7 @@ TOP:
     */
    virtual std::size_t   capacity() 
    {
-      return( datamanager.get()->max_cap );
+      return( (this)->datamanager.get()->max_cap );
    }
 
    
@@ -189,18 +189,6 @@ TOP:
       write_stats.all = 0;
    }
 
-   /**
-    * get_write_finished - does exactly what it says, 
-    * sets the param variable to true when all writes
-    * have been finished.  This particular funciton 
-    * might change in the future but for the moment
-    * its vital for instrumentation.
-    * @param   write_finished - bool&
-    */
-   virtual void get_write_finished( bool &write_finished )
-   {
-      write_finished = (this)->write_finished;
-   }
    
 
 protected:
@@ -236,41 +224,6 @@ protected:
    }
 
    /**
-    * set_src_kernel - sets teh protected source
-    * kernel for this fifo, necessary for preemption,
-    * see comments on variables below.
-    * @param   k - raft::kernel*
-    */
-   virtual void set_src_kernel( raft::kernel * const k )
-   {
-      assert( k != nullptr );
-      while( ! datamanager.notResizing() )
-      { 
-         /* spin */ 
-      }
-      auto * const buffer( datamanager.get() );
-      buffer->setSourceKernel( k );
-   }
-
-
-   /**
-    * set_dst_kernel - sets the protected destination
-    * kernel for this fifo, necessary for preemption,
-    * see comments on variables below.
-    * @param   k - raft::kernel*
-    */
-   virtual void set_dst_kernel( raft::kernel * const k )
-   {
-      assert( k != nullptr );
-      while( ! datamanager.notResizing() )
-      {
-         /* spin */
-      }
-      auto * const buffer( datamanager.get() );
-      buffer->setDestKernel( k );
-   }
-
-   /**
     * signal_peek - return signal at head of 
     * queue and nothing else
     * @return raft::signal
@@ -287,7 +240,7 @@ protected:
        * this value since the elements all remain in their 
        * location relative to the start of the queue.
        */
-      auto * const buff_ptr( datamanager.get() );
+      auto * const buff_ptr( (this)->datamanager.get() );
       const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
       return( buff_ptr->signal[ read_index ] /* make copy */ ); 
    }
@@ -424,37 +377,6 @@ protected:
       }
       return;
    }
-   
-   
-   /** 
-    * upgraded the *data structure to be a DataManager
-    * object to enable easier and more intuitive dynamic
-    * lock free buffer resizing and re-alignment.
-    */
-   DataManager< T, type >       datamanager;
-   
-   
-   
-   /**
-    * these two should go inside the buffer, they'll
-    * be accessed via the monitoring system.
-    */
-   Blocked                     read_stats;
-   Blocked                     write_stats;
-   /** 
-    * This should be okay outside of the buffer, its local 
-    * to the writing thread.  Variable gets set "true" in
-    * the allocate function and false when the push with
-    * only the signal argument is called.
-    */
-   /** TODO, this needs to get moved into the buffer for SHM **/
-   volatile bool                write_finished = false;
-   ptr_map_t                   *in = nullptr;
-   ptr_set_t                   *out = nullptr;
-   /** these are named with reference to the kernel, in == kernel in **/
-   ptr_set_t                   *in_peek  = nullptr;
-   ptr_set_t                   *out_peek = nullptr;
-   
 };
 
 #endif /* END _RINGBUFFERHEAP_ABSTRACT_TCC_ */

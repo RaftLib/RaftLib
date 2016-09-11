@@ -161,21 +161,19 @@ public:
    template < class T >
    bool addInPlacePorts( const std::size_t n_ports )
    {
-      T *existing_buff_t( reinterpret_cast< T* >( alloc_ptr ) );
-      std::size_t length( alloc_ptr_length / sizeof( T ) );
+      T * const existing_buff( reinterpret_cast< T* >( alloc_ptr ) );
+      const std::size_t length( alloc_ptr_length / sizeof( T ) );
       const std::size_t inc( length / n_ports );
       const std::size_t adder( length % n_ports );
-
-      using index_type = std::remove_const_t<decltype(n_ports)>;
-      for( index_type index( 0 ); index < n_ports; index++ )
+      for( std::size_t  index( 0 ); index < n_ports; index++ )
       {
          const std::size_t start_index( index * inc );
          PortInfo pi( typeid( T ),
-                      (void*)&( existing_buff_t[ start_index ] ) /** pointer **/,
+                      (void*)&( existing_buff[ start_index ] ) /** pointer **/,
                       inc + ( index == (n_ports - 1) ? adder : 0 ),
                       start_index );
          pi.my_kernel = kernel;
-         const std::string name( std::to_string( index ) );
+         const auto name( std::to_string( index ) );
          pi.my_name   = name;
          /** gotta initialize the maps to copy stuff to/from **/
          (this)->initializeConstMap< T >( pi );
@@ -196,14 +194,14 @@ public:
     * @return  const type_index&
     * @throws PortNotFoundException
     */
-   const std::type_index& getPortType( const std::string &&port_name );
+   const std::type_index& getPortType( const portmap_t::key_type &&port_name );
 
 
    /**
     * operator[] - input the port name and get a port
     * if it exists.
     */
-   virtual FIFO& operator[]( const std::string &&port_name );
+   virtual FIFO& operator[]( const portmap_t::key_type  &&port_name );
 
 
    /**
@@ -287,11 +285,12 @@ protected:
       pi.const_map[ Type::Heap ]->insert(
          std::make_pair( true /** yes instrumentation **/,
                          RingBuffer< T, Type::Heap, true >::make_new_fifo ) );
-
-      //pi.const_map.insert( std::make_pair( Type::SharedMemory, new instr_map_t() ) );
-      //pi.const_map[ Type::SharedMemory ]->insert(
-      //   std::make_pair( false /** no instrumentation **/,
-      //                   RingBuffer< T, Type::SharedMemory >::make_new_fifo ) );
+#if 0      
+      pi.const_map.insert( std::make_pair( Type::SharedMemory, new instr_map_t() ) );
+      pi.const_map[ Type::SharedMemory ]->insert(
+         std::make_pair( false /** no instrumentation **/,
+                         RingBuffer< T, Type::SharedMemory >::make_new_fifo ) );
+#endif                         
       /**
        * NOTE: If you define more port resource types, they have
        * to be defined here...otherwise the allocator won't be

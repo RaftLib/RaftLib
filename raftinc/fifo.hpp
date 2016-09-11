@@ -526,20 +526,6 @@ protected:
     */
    virtual void setOutPeekSet( ptr_set_t * const peekset );
    /**
-    * set_src_kernel - sets teh protected source
-    * kernel for this fifo, necessary for preemption,
-    * see comments on variables below.
-    * @param   k - raft::kernel*
-    */
-   virtual void set_src_kernel( raft::kernel * const k ) = 0;
-   /**
-    * set_dst_kernel - sets the protected destination
-    * kernel for this fifo, necessary for preemption,
-    * see comments on variables below.
-    * @param   k - raft::kernel*
-    */
-   virtual void set_dst_kernel( raft::kernel * const k ) = 0;
-   /**
     * signal_peek - special function for the scheduler
     * to peek at a signal on the head of the queue.
     * @return raft::signal

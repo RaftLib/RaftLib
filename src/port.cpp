@@ -46,7 +46,7 @@ Port::Port( raft::kernel *k,
 
 
 const std::type_index&
-Port::getPortType( const std::string &&port_name )
+Port::getPortType( const portmap_t::key_type &&port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
@@ -57,7 +57,7 @@ Port::getPortType( const std::string &&port_name )
 }
 
 FIFO&
-Port::operator[]( const std::string &&port_name )
+Port::operator[]( const portmap_t::key_type &&port_name )
 {
    //NOTE: We'll need to add a lock here if later
    //we intend to remove ports dynamically as well
@@ -75,7 +75,7 @@ Port::operator[]( const std::string &&port_name )
 bool
 Port::hasPorts()
 {
-   return( portmap.map.size() > 0 ? true : false );
+   return( portmap.map.size() > 0 );
 }
 
 PortIterator
@@ -97,7 +97,7 @@ Port::count()
 }
 
 PortInfo&
-Port::getPortInfoFor( const std::string port_name )
+Port::getPortInfoFor( const portmap_t::key_type port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )

@@ -38,9 +38,7 @@
 
 #include "alloc_traits.tcc"
 
-#if BUILDSHM
-#include "shm.hpp"
-#endif
+#include <shm>
 
 namespace Buffer
 {
@@ -302,7 +300,6 @@ template < class T >
 
 }; /** end heap > Line Size **/
 
-#if BUILDSHM
 template < class T > struct Data< T, Type::SharedMemory > : 
    public DataBase< T > 
 {
@@ -327,6 +324,7 @@ template < class T > struct Data< T, Type::SharedMemory > :
                                     signal_key( shm_key + "_key" ),
                                     ptr_key( shm_key + "_ptr" )
    {
+      UNUSED( alignment );
       /** now work through opening SHM **/
       switch( dir )
       {
@@ -337,7 +335,7 @@ template < class T > struct Data< T, Type::SharedMemory > :
             {
                try
                {
-                  *ptr = SHM::Init( key, length );
+                  *ptr = shm::init( key, length );
                }catch( bad_shm_alloc &ex )
                {
                   std::cerr << 
@@ -360,12 +358,14 @@ template < class T > struct Data< T, Type::SharedMemory > :
 
             (this)->write_pt = &(this)->read_pt[ 1 ];
             
-            Pointer temp( max_cap );
-            std::memcpy( (this)->read_pt,  &temp, sizeof( Pointer ) );
-            std::memcpy( (this)->write_pt, &temp, sizeof( Pointer ) );
-            
+            auto * tempa( new ( (this)->read_ptr ) Pointer( max_cap ) );
+            auto * tempb( new ( (this)->write_ptr ) Pointer( max_cap ) );
+            UNUSED( tempa );
+            UNUSED( tempb );
+
             (this)->cookie   = (Cookie*) &(this)->read_pt[ 2 ];
             (this)->cookie->producer = 0x1337;
+            
             while( (this)->cookie->consumer != 0x1337 )
             {
                std::this_thread::yield();
@@ -382,7 +382,7 @@ template < class T > struct Data< T, Type::SharedMemory > :
                {
                   try
                   {
-                     *ptr = SHM::Open( str );
+                     *ptr = shm::open( str );
                   }
                   catch( bad_shm_alloc &ex )
                   {
@@ -414,10 +414,11 @@ template < class T > struct Data< T, Type::SharedMemory > :
             assert( (this)->write_pt  != nullptr );
             (this)->cookie    = (Cookie*)&(this)->read_pt[ 2 ]; 
             
-            Pointer temp( max_cap );
-            std::memcpy( (this)->read_pt,  &temp, sizeof( Pointer ) );
-            std::memcpy( (this)->write_pt, &temp, sizeof( Pointer ) );
-            
+            auto * tempa(  new ( (this)->read_ptr ) Pointer( max_cap ) );
+            auto * tempb(  new ( (this)->write_ptr ) Pointer( max_cap ) );
+            UNUSED( tempa );
+            UNUSED( tempb );
+
             (this)->cookie->consumer = 0x1337;
             while( (this)->cookie->producer != 0x1337 )
             {
@@ -437,6 +438,7 @@ template < class T > struct Data< T, Type::SharedMemory > :
 
    virtual void copyFrom( DataBase< T > *other )
    {
+      UNUSED( other );
       assert( false );
       /** TODO, implement me **/
    }
@@ -444,17 +446,17 @@ template < class T > struct Data< T, Type::SharedMemory > :
    ~Data()
    {
       /** three segments of SHM to close **/
-      SHM::Close( store_key.c_str(), 
+      shm::close( store_key.c_str(), 
                   (void*) (this)->store, 
                   (this)->length_store,
                   false,
                   true );
-      SHM::Close( signal_key.c_str(),
+      shm::close( signal_key.c_str(),
                   (void*) (this)->signal,
                   (this)->length_signal,
                   false,
                   true );
-      SHM::Close( ptr_key.c_str(),   
+      shm::close( ptr_key.c_str(),   
                   (void*) (this)->read_pt, 
                   (sizeof( Pointer ) * 2) + sizeof( Cookie ),
                   false,
@@ -463,7 +465,7 @@ template < class T > struct Data< T, Type::SharedMemory > :
    struct Cookie
    {
       std::int32_t producer;
-      std::int32_t consumer;;
+      std::int32_t consumer;
    };
 
    volatile Cookie         *cookie;
@@ -473,6 +475,5 @@ template < class T > struct Data< T, Type::SharedMemory > :
    const std::string signal_key;  
    const std::string ptr_key; 
 };
-#endif //END BUILDSHM
 } //end namespace Buffer
 #endif /* END _BUFFERDATA_TCC_ */
