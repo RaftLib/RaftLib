@@ -23,7 +23,7 @@
 #include "pointer.hpp"
 #include "signal.hpp"
 #include <cstddef>
-
+#include "blocked.hpp"
 
 namespace raft
 {
@@ -55,36 +55,6 @@ template < class T > struct DataBase
     virtual void copyFrom( DataBase< T > *other ) = 0;
 
 
-    /**
-     * setSourceKernel - set the source kernel 
-     * so that an object using this buffer can
-     * have access to it, these must be preserved
-     * across copies.  Null kernel references 
-     * will fail an assertion and exit the program.
-     * @param    k - raft::kernel * const
-     */
-    inline void setSourceKernel( raft::kernel * const k )
-    {
-       assert( k != nullptr );
-       src_kernel = k;
-       return;
-    }
-
-    /**
-     * setDestKernel - set the destination kernel 
-     * so that an object using this buffer can
-     * have access to it, these must be preserved
-     * across copies.  Null kernel references 
-     * will fail an assertion and exit the program.
-     * @param    k - raft::kernel * const
-     */
-    inline void setDestKernel( raft::kernel * const k ) 
-    {
-       assert( k != nullptr );
-       dst_kernel = k;
-       return;
-    }
-
     const std::size_t        max_cap;
     /** sizes, might need to define a local type **/
     const std::size_t       length_store;
@@ -113,8 +83,8 @@ template < class T > struct DataBase
      * these keep reference over how many read/writes are
      * blocked. used for dynamic adaptation.
      */
-    Blocked                 read_stats;
-    Blocked                 write_stats;
+    Blocked                 *read_stats     = nullptr;
+    Blocked                 *write_stats    = nullptr;
     
 
      

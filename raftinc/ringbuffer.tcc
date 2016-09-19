@@ -124,13 +124,16 @@ public:
 
     virtual float get_frac_write_blocked()
     {
-        const auto copy((this)->write_stats);
-        (this)->write_stats.all = 0;
-        if(copy.bec.blocked == 0 || copy.bec.count == 0)
+        auto * const wr_stats( (this)->datamanager.get()->write_stats );
+        const auto copy( *wr_stats );
+        wr_stats->all = 0;
+        if( copy.bec.blocked == 0 || copy.bec.count == 0 )
         {
-            return (0.0);
+            return( 0.0 );
         }
-        return ((float)copy.bec.blocked / (float)copy.bec.count);
+        /** else **/
+        return( (float) copy.bec.blocked / 
+                    (float) copy.bec.count );
     }
 };
 

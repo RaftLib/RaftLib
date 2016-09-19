@@ -173,8 +173,9 @@ TOP:
     */
    virtual void get_zero_read_stats( Blocked &copy )
    {
-      copy.all       = read_stats.all;
-      read_stats.all = 0;
+      auto &buff_ptr_stats( (this)->datamanager.get()->read_stats->all );
+      copy.all          = buff_ptr_stats;;
+      buff_ptr_stats    = 0;
    }
 
    /**
@@ -185,8 +186,9 @@ TOP:
     */
    virtual void get_zero_write_stats( Blocked &copy )
    {
-      copy.all       = write_stats.all;
-      write_stats.all = 0;
+      auto &buff_ptr_stats( (this)->datamanager.get()->write_stats->all );
+      copy.all       = buff_ptr_stats;
+      buff_ptr_stats = 0;
    }
 
    
@@ -198,7 +200,7 @@ protected:
    virtual void setPtrMap( ptr_map_t * const in )
    {
        assert( in != nullptr );
-       (this)->in = in;
+       (this)->consumer_data.in = in;
    }
 
 
@@ -208,19 +210,19 @@ protected:
    virtual void setPtrSet( ptr_set_t * const out )
    {
        assert( out != nullptr );
-       (this)->out = out;
+       (this)->producer_data.out = out;
    }
 
    virtual void setInPeekSet( ptr_set_t * const peekset )
    {
        assert( peekset != nullptr );
-       (this)->in_peek = peekset;
+       (this)->consumer_data.in_peek = peekset;
    }
    
    virtual void setOutPeekSet( ptr_set_t * const peekset )
    {
        assert( peekset != nullptr );
-       (this)->out_peek = peekset;
+       (this)->producer_data.out_peek = peekset;
    }
 
    /**

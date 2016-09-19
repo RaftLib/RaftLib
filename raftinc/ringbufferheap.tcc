@@ -50,7 +50,8 @@ public:
 
    virtual void deallocate()
    {
-      (this)->allocate_called = false;
+      (this)->producer_data.allocate_called = false;
+      auto * const buff_ptr( (this)->datamanager.get() );
       (this)->datamanager.exitBuffer( dm::allocate );
    }
 
@@ -62,7 +63,7 @@ public:
     */
    virtual void send( const raft::signal signal = raft::none )
    {
-      if( R_UNLIKELY( ! (this)->allocate_called ) )
+      if( R_UNLIKELY( ! (this)->producer_data.allocate_called ) )
       {
          return;
       }
@@ -71,7 +72,7 @@ public:
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       buff_ptr->signal[ write_index ] = signal;
       (this)->write_stats.bec.count++;
-      (this)->allocate_called = false;
+      (this)->producer_data.allocate_called = false;
       Pointer::inc( buff_ptr->write_pt );
       (this)->datamanager.exitBuffer( dm::allocate );
    }
@@ -84,16 +85,17 @@ public:
     */
    virtual void send_range( const raft::signal signal = raft::none )
    {
-      if( ! (this)->allocate_called ) return;
+      if( ! (this)->producer_data.allocate_called ) return;
       /** should be the end of the write, regardless of which allocate called **/
       const size_t write_index( Pointer::val( (this)->datamanager.get()->write_pt ) );
       (this)->datamanager.get()->signal[ write_index ] = signal;
       /* only need to inc one more **/
+      auto &n_allocated( (this)->producer_data.n_allocated );
       Pointer::incBy( (this)->datamanager.get()->write_pt,
-                      (this)->n_allocated );
-      (this)->write_stats.bec.count += (this)->n_allocated;
-      (this)->allocate_called = false;
-      (this)->n_allocated     = 0;
+                      n_allocated );
+      (this)->write_stats.bec.count += n_allocated;
+      (this)->producer_data.allocate_called = false;
+      n_allocated     = 0;
       (this)->datamanager.exitBuffer( dm::allocate_range );
    }
 
@@ -193,7 +195,7 @@ protected:
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       *ptr = (void*)&( buff_ptr->store[ write_index ] );
-      (this)->allocate_called = true;
+      (this)->producer_data.allocate_called = true;
       /** call exitBuffer during push call **/
    }
 
@@ -244,8 +246,9 @@ protected:
          buff_ptr->signal[ write_index ] = raft::none;
          write_index = ( write_index + 1 ) % buff_ptr->max_cap;
       }
-      (this)->n_allocated = static_cast< decltype( (this)->n_allocated ) >( n );
-      (this)->allocate_called = true;
+      (this)->producer_data.n_allocated = 
+        static_cast< decltype( (this)->producer_data.n_allocated ) >( n );
+      (this)->producer_data.allocate_called = true;
       /** exitBuffer() called by push_range **/
    }
 
@@ -502,31 +505,31 @@ public:
       auto * const ptr = reinterpret_cast< T* >( &( buff_ptr->store[ read_index ] ) );
       /** destruct **/
       ptr->~T();
-      (this)->allocate_called = false;
+      (this)->producer_data.allocate_called = false;
       (this)->datamanager.exitBuffer( dm::allocate );
    }
 
-   /**
-    * send- releases the last item allocated by allocate() to
-    * the queue.  Function will imply return if allocate wasn't
-    * called prior to calling this function.
-    * @param signal - const raft::signal signal, default: NONE
-    */
-   virtual void send( const raft::signal signal = raft::none )
-   {
-      if( R_UNLIKELY( ! (this)->allocate_called ) )
-      {
-         return;
-      }
-      /** should be the end of the write, regardless of which allocate called **/
-      auto * const buff_ptr( (this)->datamanager.get() );
-      const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
-      buff_ptr->signal[ write_index ] = signal;
-      (this)->write_stats.bec.count++;
-      (this)->allocate_called = false;
-      Pointer::inc( buff_ptr->write_pt );
-      (this)->datamanager.exitBuffer( dm::allocate );
-   }
+    /**
+     * send- releases the last item allocated by allocate() to
+     * the queue.  Function will imply return if allocate wasn't
+     * called prior to calling this function.
+     * @param signal - const raft::signal signal, default: NONE
+     */
+    virtual void send( const raft::signal signal = raft::none )
+    {
+        if( R_UNLIKELY( ! (this)->producer_data.allocate_called ) )
+        {
+           return;
+        }
+        /** should be the end of the write, regardless of which allocate called **/
+        auto * const buff_ptr( (this)->datamanager.get() );
+        const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
+        buff_ptr->signal[ write_index ] = signal;
+        buff_ptr->write_stats->bec.count++;
+        (this)->producer_data.allocate_called = false;
+        Pointer::inc( buff_ptr->write_pt );
+        (this)->datamanager.exitBuffer( dm::allocate );
+    }
 
    /**
     * send_range - releases the last item allocated by allocate_range() to
@@ -536,18 +539,23 @@ public:
     */
    virtual void send_range( const raft::signal signal = raft::none )
    {
-      if( ! (this)->allocate_called ) return;
-      /** should be the end of the write, regardless of which allocate called **/
-      const size_t write_index( Pointer::val( (this)->datamanager.get()->write_pt ) );
-      (this)->datamanager.get()->signal[ write_index ] = signal;
-      /* only need to inc one more, the rest have already**/
-      Pointer::incBy( (this)->datamanager.get()->write_pt,
-                      (this)->n_allocated );
-      (this)->write_stats.bec.count += (this)->n_allocated;
-      /** cleanup **/
-      (this)->allocate_called = false;
-      (this)->n_allocated     = 0;
-      (this)->datamanager.exitBuffer( dm::allocate_range );
+        if( ! (this)->producer_data.allocate_called )
+        {
+            return;
+        }
+        auto * const buff_ptr( (this)->datamanager.get() );
+        /** should be the end of the write, regardless of which allocate called **/
+        const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
+        buff_ptr->signal[ write_index ] = signal;
+        /* only need to inc one more, the rest have already**/
+        auto &n_allocated( (this)->producer_data.n_allocated );
+        Pointer::incBy( buff_ptr->write_pt,
+                        n_allocated );
+        buff_ptr->write_stats->bec.count += n_allocated;
+        /** cleanup **/
+        (this)->producer_data.allocate_called = false;
+        n_allocated     = 0;
+        (this)->datamanager.exitBuffer( dm::allocate_range );
    }
 
 
@@ -623,11 +631,12 @@ protected:
          {
             break;
          }
-         (this)->datamanager.exitBuffer( dm::allocate );
-         if( (this)->write_stats.bec.blocked == 0 )
+         auto * const buff_ptr_tmp_wr( (this)->datamanager.get()->write_stats );
+         if( buff_ptr_tmp_wr->bec.blocked == 0 )
          {
-            (this)->write_stats.bec.blocked = 1;
+            buff_ptr_tmp_wr->bec.blocked = 1;
          }
+         (this)->datamanager.exitBuffer( dm::allocate );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #if __x86_64
@@ -645,7 +654,7 @@ protected:
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       *ptr = (void*)&( buff_ptr->store[ write_index ] );
-      (this)->allocate_called = true;
+      (this)->producer_data.allocate_called = true;
       /** call exitBuffer during push call **/
    }
 
@@ -658,11 +667,12 @@ protected:
          {
             break;
          }
-         (this)->datamanager.exitBuffer( dm::allocate_range );
-         if( (this)->write_stats.bec.blocked == 0 )
+         auto * const buff_ptr_tmp_wr( (this)->datamanager.get()->write_stats );
+         if( buff_ptr_tmp_wr->bec.blocked == 0 )
          {
-            (this)->write_stats.bec.blocked = 1;
+            buff_ptr_tmp_wr->bec.blocked = 1;
          }
+         (this)->datamanager.exitBuffer( dm::allocate_range );
 #if (defined NICE) && (! defined USEQTHREADS)
          std::this_thread::yield();
 #if __x86_64
@@ -696,8 +706,9 @@ protected:
          buff_ptr->signal[ write_index ] = raft::none;
          write_index = ( write_index + 1 ) % buff_ptr->max_cap;
       }
-      (this)->n_allocated = static_cast< decltype( (this)->n_allocated ) >( n );
-      (this)->allocate_called = true;
+      (this)->producer_data.n_allocated = 
+        static_cast< decltype( (this)->producer_data.n_allocated ) >( n );
+      (this)->producer_data.allocate_called = true;
       /** exitBuffer() called by push_range **/
    }
 
@@ -959,7 +970,7 @@ public:
       );
       /** call local delete on obj **/
       ptr->~T();
-      (this)->allocate_called = false;
+      (this)->producer_data.allocate_called = false;
       (this)->datamanager.exitBuffer( dm::allocate );
    }
 
@@ -997,12 +1008,13 @@ public:
       /** should be the end of the write, regardless of which allocate called **/
       const size_t write_index( Pointer::val( (this)->datamanager.get()->write_pt ) );
       (this)->datamanager.get()->signal[ write_index ] = signal;
+      auto &n_allocated( (this)->producer_data.n_allocated );
       Pointer::incBy( (this)->datamanager.get()->write_pt,
-                      (this)->n_allocated );
+                      n_allocated );
       /** cleanup **/
-      (this)->write_stats.bec.count += (this)->n_allocated;
-      (this)->allocate_called = false;
-      (this)->n_allocated     = 0;
+      (this)->write_stats.bec.count += n_allocated;
+      (this)->producer_data.allocate_called = false;
+      n_allocated     = 0;
       (this)->datamanager.exitBuffer( dm::allocate_range );
    }
 

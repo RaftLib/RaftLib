@@ -43,6 +43,8 @@
 namespace Buffer
 {
 
+
+
 template < class T,
            Type::RingBufferType B,
            class Enable = void > struct Data{};
@@ -58,22 +60,24 @@ template < class T > struct Data< T,
          const std::size_t max_cap,
          const std::size_t start_position ) : DataBase< T >( max_cap )
    {
-      assert( ptr != nullptr );
-      (this)->store  = ptr;
-      (this)->signal = (Signal*)       calloc( 1,
-                                               sizeof( Signal ) );
-      if( (this)->signal == nullptr )
-      {
-         perror( "Failed to allocate signal queue!" );
-         exit( EXIT_FAILURE );
-      }
-      /** set index to be start_position **/
-      (this)->signal[ 0 ].index  = start_position; 
-      /** allocate read and write pointers **/
-      (this)->read_pt   = new Pointer( max_cap );
-      (this)->write_pt  = new Pointer( max_cap, 1 ); 
-      
-      (this)->external_alloc = true;
+        assert( ptr != nullptr );
+        (this)->store  = ptr;
+        (this)->signal = (Signal*)       calloc( 1,
+                                                 sizeof( Signal ) );
+        if( (this)->signal == nullptr )
+        {
+           perror( "Failed to allocate signal queue!" );
+           exit( EXIT_FAILURE );
+        }
+        /** set index to be start_position **/
+        (this)->signal[ 0 ].index  = start_position; 
+        /** allocate read and write pointers **/
+        (this)->read_pt     = new Pointer( max_cap );
+        //FIXME, double check the pointer inc. 
+        (this)->write_pt    = new Pointer( max_cap, 1 ); 
+        (this)->read_stats  = new Blocked();
+        (this)->write_stats = new Blocked();
+        (this)->external_alloc = true;
    }
 
 
@@ -121,6 +125,8 @@ template < class T > struct Data< T,
       /** TODO, see if there are optimizations to be made with sizing and alignment **/
       (this)->read_pt   = new Pointer( max_cap );
       (this)->write_pt  = new Pointer( max_cap ); 
+      (this)->read_stats  = new Blocked();
+      (this)->write_stats = new Blocked();
    }
   
    /**
@@ -133,30 +139,31 @@ template < class T > struct Data< T,
     */
    virtual void copyFrom( DataBase< T > *other )
    {
-      //TODO, figure something better out for here 
-      if( other->external_alloc )
-      {
-         assert( false );
-      }
-      delete( (this)->read_pt );
-      (this)->read_pt = new Pointer( (other->read_pt),   (this)->max_cap );
-      delete( (this)->write_pt );
-      (this)->write_pt = new Pointer( (other->write_pt), (this)->max_cap );
+        if( other->external_alloc )
+        {
+            //FIXME: throw rafterror that is synchronized
+            std::cerr 
+                << "FATAL: Attempting to resize a FIFO that is statically alloc'd\n";
+            exit( EXIT_FAILURE );
+        }
+        delete( (this)->read_pt );
+        (this)->read_pt = new Pointer( (other->read_pt),   (this)->max_cap );
+        delete( (this)->write_pt );
+        (this)->write_pt = new Pointer( (other->write_pt), (this)->max_cap );
+        (this)->is_valid = other->is_valid;
 
-      (this)->src_kernel = other->src_kernel;
-      (this)->dst_kernel = other->dst_kernel;
-      
-      (this)->is_valid = other->is_valid;
-
-      /** buffer is already alloc'd, copy **/
-      std::memcpy( (void*)(this)->store /* dst */,
-                   (void*)other->store  /* src */,
-                   other->length_store );
-      /** copy signal buff **/
-      std::memcpy( (void*)(this)->signal /* dst */,
-                   (void*)other->signal  /* src */,
-                   other->length_signal );
-      /** everything should be put back together now **/
+        /** buffer is already alloc'd, copy **/
+        std::memcpy( (void*)(this)->store /* dst */,
+                     (void*)other->store  /* src */,
+                     other->length_store );
+        /** copy signal buff **/
+        std::memcpy( (void*)(this)->signal /* dst */,
+                     (void*)other->signal  /* src */,
+                     other->length_signal );
+        //copy over block stats objects
+        (this)->read_stats  = other->read_stats; 
+        (this)->write_stats = other->write_stats;
+        /** everything should be put back together now **/
    }
 
 
@@ -165,7 +172,8 @@ template < class T > struct Data< T,
       //DELETE USED HERE
       delete( (this)->read_pt );
       delete( (this)->write_pt );
-      
+      delete( (this)->read_stats );
+      delete( (this)->write_stats );
       //FREE USED HERE
       if( ! (this)->external_alloc )
       {
@@ -204,6 +212,8 @@ template < class T >
       /** allocate read and write pointers **/
       (this)->read_pt   = new Pointer( max_cap );
       (this)->write_pt  = new Pointer( max_cap, 1 ); 
+      (this)->read_stats  = new Blocked();
+      (this)->write_stats = new Blocked();
       
       (this)->external_alloc = true;
    }
@@ -253,34 +263,38 @@ template < class T >
       /** TODO, see if there are optimizations to be made with sizing and alignment **/
       (this)->read_pt   = new Pointer( max_cap );
       (this)->write_pt  = new Pointer( max_cap ); 
+      (this)->read_stats  = new Blocked();
+      (this)->write_stats = new Blocked();
    }
    
    virtual void copyFrom( ourtype_t *other )
    {
-      //TODO, figure something better out for here 
-      if( other->external_alloc )
-      {
-         assert( false );
-      }
-      delete( (this)->read_pt );
-      (this)->read_pt = new Pointer( (other->read_pt),   (this)->max_cap );
-      delete( (this)->write_pt );
-      (this)->write_pt = new Pointer( (other->write_pt), (this)->max_cap );
+        if( other->external_alloc )
+        {
+            //FIXME: throw rafterror that is synchronized
+            std::cerr << 
+                "FATAL: Attempting to resize a FIFO that is statically alloc'd\n";
+            exit( EXIT_FAILURE );
+        }
+        delete( (this)->read_pt );
+        (this)->read_pt = new Pointer( (other->read_pt),   (this)->max_cap );
+        delete( (this)->write_pt );
+        (this)->write_pt = new Pointer( (other->write_pt), (this)->max_cap );
 
-      (this)->src_kernel = other->src_kernel;
-      (this)->dst_kernel = other->dst_kernel;
-      
-      (this)->is_valid = other->is_valid;
+        (this)->is_valid = other->is_valid;
 
-      /** buffer is already alloc'd, copy **/
-      std::memcpy( (void*)(this)->store /* dst */,
-                   (void*)other->store  /* src */,
-                   other->length_store );
-      /** copy signal buff **/
-      std::memcpy( (void*)(this)->signal /* dst */,
-                   (void*)other->signal  /* src */,
-                   other->length_signal );
-      /** everything should be put back together now **/
+        /** buffer is already alloc'd, copy **/
+        std::memcpy( (void*)(this)->store /* dst */,
+                     (void*)other->store  /* src */,
+                     other->length_store );
+        /** copy signal buff **/
+        std::memcpy( (void*)(this)->signal /* dst */,
+                     (void*)other->signal  /* src */,
+                     other->length_signal );
+        //copy over block stats objects
+        (this)->read_stats  = other->read_stats; 
+        (this)->write_stats = other->write_stats;
+        /** everything should be put back together now **/
    }
 
 
@@ -289,6 +303,8 @@ template < class T >
       //DELETE USED HERE
       delete( (this)->read_pt );
       delete( (this)->write_pt );
+      delete( (this)->read_stats );
+      delete( (this)->write_stats );
       
       //FREE USED HERE
       if( ! (this)->external_alloc )
@@ -358,9 +374,7 @@ template < class T > struct Data< T, Type::SharedMemory > :
 
             (this)->write_pt = &(this)->read_pt[ 1 ];
             
-            auto * tempa( new ( (this)->read_ptr ) Pointer( max_cap ) );
             auto * tempb( new ( (this)->write_ptr ) Pointer( max_cap ) );
-            UNUSED( tempa );
             UNUSED( tempb );
 
             (this)->cookie   = (Cookie*) &(this)->read_pt[ 2 ];
@@ -415,9 +429,7 @@ template < class T > struct Data< T, Type::SharedMemory > :
             (this)->cookie    = (Cookie*)&(this)->read_pt[ 2 ]; 
             
             auto * tempa(  new ( (this)->read_ptr ) Pointer( max_cap ) );
-            auto * tempb(  new ( (this)->write_ptr ) Pointer( max_cap ) );
             UNUSED( tempa );
-            UNUSED( tempb );
 
             (this)->cookie->consumer = 0x1337;
             while( (this)->cookie->producer != 0x1337 )
@@ -447,17 +459,17 @@ template < class T > struct Data< T, Type::SharedMemory > :
    {
       /** three segments of SHM to close **/
       shm::close( store_key.c_str(), 
-                  (void*) (this)->store, 
+                  (void**) &(this)->store, 
                   (this)->length_store,
                   false,
                   true );
       shm::close( signal_key.c_str(),
-                  (void*) (this)->signal,
+                  (void**) &(this)->signal,
                   (this)->length_signal,
                   false,
                   true );
       shm::close( ptr_key.c_str(),   
-                  (void*) (this)->read_pt, 
+                  (void**) &(this)->read_pt, 
                   (sizeof( Pointer ) * 2) + sizeof( Cookie ),
                   false,
                   true );
