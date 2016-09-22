@@ -199,7 +199,10 @@ public:
    void enterBuffer( const dm::access_key key ) noexcept
    {
       /** see lambda below **/
-      set_helper( key, static_cast< dm::key_t >( 1 ) );
+      set_helper( key, 
+                  static_cast< dm::key_t >( 1 ),
+                  thread_access,
+                  &checking_size );
    }
 
    /**
@@ -211,7 +214,10 @@ public:
    void exitBuffer( const dm::access_key key ) noexcept
    {
       /** see lambda below **/
-      set_helper( key, static_cast< dm::key_t >( 0 ) );
+      set_helper( key, 
+                  static_cast< dm::key_t >( 0 ),
+                  thread_access,
+                  &checking_size );
    }
 
    /**
@@ -239,16 +245,20 @@ private:
          dm::key_t     flag[ 8 ];
       };
       std::uint8_t padding[ L1D_CACHE_LINE_SIZE - 8 /** 64 padding **/ ];
-   } 
+   }; 
+    
+   ThreadAccess 
 #if defined __APPLE__ || defined __linux   
     __attribute__((aligned( L1D_CACHE_LINE_SIZE ))) 
 #endif    
-    volatile thread_access[ 2 ];
+   thread_access[ 2 ];
   
    std::atomic< std::uint64_t >  checking_size = { 0 };
 
-   inline void set_helper( const dm::access_key key, 
-                           const dm::key_t      val ) noexcept
+   static void set_helper( const dm::access_key key, 
+                           const dm::key_t      val,
+                           ThreadAccess *thread_access,
+                           std::atomic< std::uint64_t > * const checking_size ) noexcept
    {
       switch( key )
       {
@@ -287,11 +297,11 @@ private:
             /** this one has to be atomic, multiple updaters **/
             if( val == 0 )
             {
-                checking_size.fetch_sub( 1, std::memory_order_relaxed );
+                checking_size->fetch_sub( 1, std::memory_order_relaxed );
             }
             else
             {
-                checking_size.fetch_add( 1, std::memory_order_relaxed );
+                checking_size->fetch_add( 1, std::memory_order_relaxed );
             }
          }
          break;
