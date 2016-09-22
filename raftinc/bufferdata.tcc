@@ -160,10 +160,13 @@ template < class T > struct Data< T,
         std::memcpy( (void*)(this)->signal /* dst */,
                      (void*)other->signal  /* src */,
                      other->length_signal );
-        //copy over block stats objects
+        /** stats objects are still valid, copy the ptrs over **/
         (this)->read_stats  = other->read_stats; 
         (this)->write_stats = other->write_stats;
+        /** since we might use this as a min size, make persistent **/
+        (this)->force_resize = other->force_resize;
         /** everything should be put back together now **/
+    
    }
 
 

@@ -190,7 +190,31 @@ TOP:
       copy.all       = buff_ptr_stats;
       buff_ptr_stats = 0;
    }
-
+    
+    virtual float get_frac_write_blocked()
+    {
+        auto * const wr_stats( (this)->datamanager.get()->write_stats );
+        const auto copy( *wr_stats );
+        wr_stats->all = 0;
+        if( copy.bec.blocked == 0 || copy.bec.count == 0 )
+        {
+            return( 0.0 );
+        }
+        /** else **/
+        return( (float) copy.bec.blocked / 
+                    (float) copy.bec.count );
+    }
+    
+    /**
+     * suggested size if the user asks for more than 
+     * is available. if that condition never occurs
+     * then this will always return zero. if it does
+     * then this value can serve as a minimum size
+     */
+    virtual std::size_t get_suggested_count()
+    {
+        return( (this)->datamanager.get()->force_resize );
+    }
    
 
 protected:

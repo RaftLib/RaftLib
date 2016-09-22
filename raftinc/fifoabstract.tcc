@@ -34,6 +34,15 @@ public:
    FIFOAbstract() : FIFO(){}
 
 protected:
+
+    inline void init() noexcept
+    {
+        auto * const buffer( datamanager.get() );
+        assert( buffer != nullptr );
+        producer_data.write_stats = buffer->write_stats;
+        consumer_data.read_stats  = buffer->read_stats;
+    }
+
     struct{
         volatile bool            allocate_called = false;
         Blocked::value_type      n_allocated     = 1;
@@ -42,9 +51,16 @@ protected:
          * calls the garbage collection function. these
          * two capture the addresses of output pointers
          */
-        ptr_set_t                   *out = nullptr;
-        ptr_set_t                   *out_peek = nullptr;
-    }producer_data;
+        ptr_set_t                   *out         = nullptr;
+        ptr_set_t                   *out_peek    = nullptr;
+        /** 
+         * this is set via init callback on fifo construction
+         * this prevents the re-calculating of the address
+         * over and over....pointer chasing is very bad
+         * for cache performance.
+         */
+        Blocked                     *write_stats = nullptr;
+    } __attribute__(( aligned( L1D_CACHE_LINE_SIZE ) )) producer_data;
    
    
     struct{
@@ -53,9 +69,10 @@ protected:
          * calls the garbage collection function. these
          * two capture the addresses of output pointers
          */
-        ptr_map_t                   *in = nullptr;
-        ptr_set_t                   *in_peek  = nullptr;
-    }consumer_data;
+        ptr_map_t                   *in         = nullptr;
+        ptr_set_t                   *in_peek    = nullptr;
+        Blocked                     *read_stats = nullptr;
+    } __attribute__(( aligned( L1D_CACHE_LINE_SIZE ) ))  consumer_data;
     
     /** 
      * upgraded the *data structure to be a DataManager

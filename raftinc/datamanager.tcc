@@ -166,7 +166,15 @@ public:
          resizing = false;
          std::this_thread::yield();
       }
-      /** nobody should have outstanding references to the old buff **/
+      /** 
+       * we can't do this with a simple copy constructor easily as 
+       * at the time of new buffer creation we don't know the state
+       * of the buffer at the time the conditions above were met, so
+       * we have to do it once the happen. 
+       * 
+       * At this point nobody should have outstanding references to 
+       * the old buff, free to copy.
+       */
       new_buffer->copyFrom( old_buffer );
       set( new_buffer );
       delete( old_buffer );

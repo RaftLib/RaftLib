@@ -490,6 +490,18 @@ public:
     */
    virtual float get_frac_write_blocked() = 0;
 
+
+    /**
+     * get_suggested_count - returns the suggested count
+     * for the dynamic allocator if the user has ever
+     * asked for more than is currently available 
+     * space in the FIFO. This could also serve as a 
+     * minimum size for future allocations (implementation
+     * dependent.
+     * @return  std::size_t suggested count
+     */
+     virtual std::size_t get_suggested_count() = 0;
+
    /**
     * invalidate - used by producer thread to label this
     * queue as invalid.  Could be for many differing reasons,

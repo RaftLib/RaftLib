@@ -31,6 +31,7 @@
 #include <utility>
 #include <vector>
 
+#include "fifoabstract.tcc"
 #include "ringbufferbase.tcc"
 #include "ringbuffertypes.hpp"
 //#include "sample.tcc"
@@ -57,7 +58,9 @@ public:
         : RingBufferBase<T, type>()
     {
         assert(n != 0);
-        (this)->datamanager.set(new Buffer::Data<T, type>(n, align));
+        (this)->datamanager.set( new Buffer::Data<T, type>(n, align) );
+        /** set call-backs to structures inside buffer **/
+        (this)->init();
     }
 
     /**
@@ -72,6 +75,8 @@ public:
         T* ptrcast = reinterpret_cast<T*>(ptr);
         (this)->datamanager.set(
             new Buffer::Data<T, type>(ptrcast, length, start_position));
+        /** set call-backs to structures inside buffer **/
+        (this)->init();
     }
 
     virtual ~RingBuffer()
@@ -122,19 +127,6 @@ public:
         return;
     }
 
-    virtual float get_frac_write_blocked()
-    {
-        auto * const wr_stats( (this)->datamanager.get()->write_stats );
-        const auto copy( *wr_stats );
-        wr_stats->all = 0;
-        if( copy.bec.blocked == 0 || copy.bec.count == 0 )
-        {
-            return( 0.0 );
-        }
-        /** else **/
-        return( (float) copy.bec.blocked / 
-                    (float) copy.bec.count );
-    }
 };
 
 
@@ -150,7 +142,7 @@ public:
         : RingBufferBase<T, type>(), term(false)
     {
         (this)->datamanager.set(new Buffer::Data<T, Type::Heap>(n, align));
-
+        (this)->init();
         /** add monitor types immediately after construction **/
         // sample_master.registerSample( new MeanSampleType< T, type >() );
         // sample_master.registerSample( new ArrivalRateSampleType< T, type >()
@@ -198,17 +190,6 @@ public:
         return;
     }
 
-    virtual float get_frac_write_blocked()
-    {
-        const auto copy((this)->write_stats);
-        (this)->write_stats.all = 0;
-        if(copy.bec.blocked == 0 || copy.bec.count == 0)
-        {
-            return (0.0);
-        }
-        return ((float)copy.bec.blocked / (float)copy.bec.count);
-    }
-
 protected:
     // std::thread       *monitor;
     volatile bool term;
@@ -238,7 +219,7 @@ public:
     {
         UNUSED( data );
         assert(data == nullptr);
-        return (new RingBuffer<T, Type::Heap, true>(n_items, align));
+        return( new RingBuffer<T, Type::Heap, true>(n_items, align) );
     }
 };
 
@@ -327,12 +308,6 @@ public:
         assert(false);
     }
 
-    virtual float get_frac_write_blocked()
-    {
-        /** TODO, implement me **/
-        assert(false);
-        return( static_cast< float >( 0.0 ) );
-    }
 };
 
 
@@ -409,11 +384,6 @@ public:
         return;
     }
 
-    virtual float get_frac_write_blocked()
-    {
-        assert(false);
-        return( static_cast< float >( 0.0 ) );
-    }
 
 protected:
     const std::string shm_key;
@@ -472,11 +442,6 @@ public:
         return;
     }
 
-    virtual float get_frac_write_blocked()
-    {
-        assert(false);
-        return( static_cast< float >( 0.0 ) );
-    }
 
 protected:
 };

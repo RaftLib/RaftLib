@@ -86,6 +86,8 @@ template < class T > struct DataBase
     Blocked                 *read_stats     = nullptr;
     Blocked                 *write_stats    = nullptr;
     
+    /** need to force resize, this has the count requested **/
+    std::size_t              force_resize   = 0;
 
      
     using value_type = T;
