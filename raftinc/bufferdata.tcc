@@ -77,6 +77,7 @@ template < class T > struct Data< T,
         (this)->write_pt    = new Pointer( max_cap, 1 ); 
         (this)->read_stats  = new Blocked();
         (this)->write_stats = new Blocked();
+        (this)->thread_access = new ThreadAccess[2];
         (this)->external_alloc = true;
    }
 

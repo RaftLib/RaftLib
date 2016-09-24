@@ -63,6 +63,12 @@ using kernel_it_pair = std::pair<
 
 using byte_t = std::uint8_t;
 
+/** for the datamanager.tcc keys **/
+namespace dm
+{
+    using key_t = std::uint8_t;
+}
+
 
 #if (defined __linux) || (defined __APPLE__ )
 

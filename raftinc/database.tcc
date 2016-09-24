@@ -24,6 +24,7 @@
 #include "signal.hpp"
 #include <cstddef>
 #include "blocked.hpp"
+#include "threadaccess.hpp"
 
 namespace raft
 {
@@ -42,7 +43,10 @@ template < class T > struct DataBase
 {
     DataBase( const std::size_t max_cap ) : max_cap ( max_cap ),
                                             length_store( sizeof( T ) * max_cap ),
-                                            length_signal( sizeof( T ) * max_cap ){}
+                                            length_signal( sizeof( T ) * max_cap ),
+                                            dynamic_alloc_size( length_store +
+                                                                length_signal )
+                                            {}
 
     /** 
      * copyFrom - implement in all sub-structs to 
@@ -60,16 +64,18 @@ template < class T > struct DataBase
     const std::size_t       length_store;
     const std::size_t       length_signal;
     
-    /** 
-     * allocating these as structs gives a bit
-     * more flexibility later in what to pass
-     * along with the queue.  It'll be more 
-     * efficient copy wise to pass extra items
-     * in the signal, but conceivably there could
-     * be a case for adding items in the store
-     * as well.
+    const std::size_t       dynamic_alloc_size;
+
+
+    /**
+     * read/write pointer. the thread_access is in 
+     * between as it's well accessed by both just
+     * as frequently as the pointers themselves, 
+     * so we get decent caching behavior out of 
+     * doing it this way. 
      */
-    Pointer                 *read_pt   = nullptr;
+    Pointer                 *read_pt       = nullptr;
+    ThreadAccess            *thread_access = nullptr;
     Pointer                 *write_pt  = nullptr;
     
     
@@ -91,6 +97,16 @@ template < class T > struct DataBase
 
      
     using value_type = T;
+
+    
+    const std::size_t       static_alloc_size =
+        (sizeof( ThreadAccess ) * 2) +
+        (sizeof( Pointer ) * 2 ) + 
+        (sizeof( external_alloc )) + 
+        (sizeof( is_valid )) +
+        (sizeof( Blocked ) * 2 ) + 
+        (sizeof( force_resize ) );
+
 };
 
 } /** end namespace Buffer **/

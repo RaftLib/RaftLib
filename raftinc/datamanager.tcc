@@ -28,10 +28,10 @@
 
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
+#include "defs.hpp"
 
 namespace dm
 {
-using key_t = std::uint8_t;
 /**
  * access_key - each one of these is to be used as a 
  * key for  buffer access functions.  Everything <= 
@@ -95,21 +95,24 @@ public:
        * if all fifo functions have completed
        * their operations.
        */
-      auto allclear = [&]() noexcept -> bool
+      auto allclear( []( ThreadAccess * const thread_access,
+                         std::atomic< std::uint64_t >  * checking_size ) noexcept -> bool
       {
-         for( const auto &flag_array : thread_access )
+         assert( thread_access != nullptr );
+         assert( checking_size != nullptr );
+         for( int i( 0 ); i < 2; i++ )
          {
-            if( flag_array.whole != 0 )
+            if( thread_access[ i ].whole != 0 )
             {
                return( false );
             }
          }
-         if( checking_size.load( std::memory_order_relaxed ) != 0 )
+         if( checking_size->load( std::memory_order_relaxed ) != 0 )
          {
             return( false );
          }
          return( true );
-      };
+      } );
 
       /**
        * buffercondition - call to see if the 
@@ -151,7 +154,7 @@ public:
          /** set resizing global flag **/
          resizing = true;
          /** see if everybody is done with the current buffer **/
-         if( allclear() )
+         if( allclear( thread_access, &checking_size ) )
          {
             /** check to see if the state of the buffer is good **/
             if( buffercondition() )
@@ -187,6 +190,7 @@ public:
     */
    auto get() noexcept -> Buffer::Data< T, B >*
    {
+      /** don't check for nullptr here b/c it's a valid return type **/
       return( buffer );
    }
 
@@ -227,7 +231,7 @@ public:
     */
    bool notResizing() noexcept
    {
-      return( ! resizing ); 
+      return( R_UNLIKELY( ! resizing ) ); 
    }
    
 
@@ -237,29 +241,20 @@ private:
 
    bool                  resizeable          = true;
    
-   struct ThreadAccess
-   {
-      union
-      {
-         std::uint64_t whole = 0; /** just in case, default zero **/
-         dm::key_t     flag[ 8 ];
-      };
-      std::uint8_t padding[ L1D_CACHE_LINE_SIZE - 8 /** 64 padding **/ ];
-   }; 
-    
-   ThreadAccess 
-#if defined __APPLE__ || defined __linux   
-    __attribute__((aligned( L1D_CACHE_LINE_SIZE ))) 
-#endif    
-   thread_access[ 2 ];
+   /** defined in threadaccess.hpp **/
+   ThreadAccess *thread_access = nullptr;
   
    std::atomic< std::uint64_t >  checking_size = { 0 };
 
-   static void set_helper( const dm::access_key key, 
-                           const dm::key_t      val,
-                           ThreadAccess *thread_access,
-                           std::atomic< std::uint64_t > * const checking_size ) noexcept
+   static inline void set_helper( const dm::access_key key, 
+                                  const dm::key_t      val,
+                                  ThreadAccess *thread_access,
+                                  std::atomic< 
+                                    std::uint64_t > * const checking_size ) noexcept
    {
+      assert( thread_access != nullptr );
+      assert( checking_size != nullptr );
+
       switch( key )
       {
          case( dm::allocate ):
