@@ -74,16 +74,16 @@ template < class T > struct DataBase
      * so we get decent caching behavior out of 
      * doing it this way. 
      */
-    Pointer                 *read_pt       = nullptr;
-    ThreadAccess            *thread_access = nullptr;
-    Pointer                 *write_pt  = nullptr;
+    Pointer                 *read_pt        = nullptr;
+    ThreadAccess            *thread_access  = nullptr;
+    Pointer                 *write_pt       = nullptr;
     
     
-    T                       *store         = nullptr;
-    Signal                  *signal        = nullptr;
-    bool                    external_alloc = false;
+    T                       *store          = nullptr;
+    Signal                  *signal         = nullptr;
+    bool                    external_alloc  = false;
     /** variable set by scheduler, used for shutdown **/
-    bool                    is_valid       = true;
+    bool                    is_valid        = true;
     
     /**
      * these keep reference over how many read/writes are

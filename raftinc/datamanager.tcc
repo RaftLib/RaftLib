@@ -30,23 +30,6 @@
 #include "bufferdata.tcc"
 #include "defs.hpp"
 
-namespace dm
-{
-/**
- * access_key - each one of these is to be used as a 
- * key for  buffer access functions.  Everything <= 
- * push is expected to be a write type function, everything
- * else is expected to be a read type operation.
- */
-enum access_key : key_t { allocate       = 0, 
-                          allocate_range = 1, 
-                          push           = 3, 
-                          recycle        = 4, 
-                          pop            = 5, 
-                          peek           = 6, 
-                          size           = 7,
-                          N };
-}
 
 template < class T, 
            Type::RingBufferType B,

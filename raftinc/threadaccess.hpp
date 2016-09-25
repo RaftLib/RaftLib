@@ -22,7 +22,28 @@
 #include <cstdint>
 #include "defs.hpp"
 
-struct ThreadAccess
+namespace dm
+{
+
+using key_t = std::uint8_t;
+
+/**
+ * access_key - each one of these is to be used as a 
+ * key for  buffer access functions.  Everything <= 
+ * push is expected to be a write type function, everything
+ * else is expected to be a read type operation.
+ */
+enum access_key : key_t { allocate       = 0, 
+                          allocate_range = 1, 
+                          push           = 3, 
+                          recycle        = 4, 
+                          pop            = 5, 
+                          peek           = 6, 
+                          size           = 7,
+                          N };
+}
+
+struct alignas( L1D_CACHE_LINE_SIZE ) ThreadAccess
 {
     union
     {
