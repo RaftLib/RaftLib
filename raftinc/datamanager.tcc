@@ -68,6 +68,12 @@ public:
       (this)->buffer = buffer;
       /** check to see if buffer is given is resizeable **/
       resizeable     = (  buffer->external_alloc ? false : true ); 
+      /** 
+       * need to set thread access structs, should be two of them, 
+       * one for producer anad other for the consumer. These are 
+       * kept as an array here so, only one ptr.
+       */
+      thread_access = buffer->thread_access;
    }
 
    inline bool is_resizeable() noexcept 
@@ -119,7 +125,7 @@ public:
        * current buffer state is amenable to
        * expanding.
        */
-      auto buffercondition = [&]() noexcept -> bool
+      auto buffercondition( []( Buffer::Data< T, B > * const buff_ptr ) noexcept -> bool
       {
          /** 
           * there's only a few conditions that you can copy
@@ -132,11 +138,10 @@ public:
           * in the size() function from the ringbufferheap.tcc 
           * file.
           */
-         auto * const buff_ptr( get() );
          const auto rpt( Pointer::val( buff_ptr->read_pt  ) );
          const auto wpt( Pointer::val( buff_ptr->write_pt ) );
          return( rpt < wpt );
-      };
+      } );
       
       auto *old_buffer( get() );
       for(;;)
@@ -157,7 +162,7 @@ public:
          if( allclear( thread_access, &checking_size ) )
          {
             /** check to see if the state of the buffer is good **/
-            if( buffercondition() )
+            if( buffercondition( old_buffer ) )
             {
                break;
             }
