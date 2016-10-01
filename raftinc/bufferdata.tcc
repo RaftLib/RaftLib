@@ -82,6 +82,7 @@ template < class T > struct Data< T,
    }
 
 
+
    Data( const std::size_t max_cap , 
          const std::size_t align = 16 ) : DataBase< T >( max_cap )
    {
@@ -128,6 +129,7 @@ template < class T > struct Data< T,
       (this)->write_pt  = new Pointer( max_cap ); 
       (this)->read_stats  = new Blocked();
       (this)->write_stats = new Blocked();
+      (this)->thread_access = new ThreadAccess[2];
    }
   
    /**
@@ -167,7 +169,7 @@ template < class T > struct Data< T,
         /** since we might use this as a min size, make persistent **/
         (this)->force_resize = other->force_resize;
         /** everything should be put back together now **/
-    
+        (this)->thread_access = other->thread_access; 
    }
 
 
@@ -218,7 +220,7 @@ template < class T >
       (this)->write_pt  = new Pointer( max_cap, 1 ); 
       (this)->read_stats  = new Blocked();
       (this)->write_stats = new Blocked();
-      
+      (this)->thread_access = new ThreadAccess[2];
       (this)->external_alloc = true;
    }
 
@@ -269,6 +271,7 @@ template < class T >
       (this)->write_pt  = new Pointer( max_cap ); 
       (this)->read_stats  = new Blocked();
       (this)->write_stats = new Blocked();
+      (this)->thread_access = new ThreadAccess[2];
    }
    
    virtual void copyFrom( ourtype_t *other )
@@ -298,6 +301,8 @@ template < class T >
         //copy over block stats objects
         (this)->read_stats  = other->read_stats; 
         (this)->write_stats = other->write_stats;
+        
+        (this)->thread_access = other->thread_access; 
         /** everything should be put back together now **/
    }
 
@@ -320,6 +325,8 @@ template < class T >
 
 }; /** end heap > Line Size **/
 
+
+#if 0
 template < class T > struct Data< T, Type::SharedMemory > : 
    public DataBase< T > 
 {
@@ -491,5 +498,8 @@ template < class T > struct Data< T, Type::SharedMemory > :
    const std::string signal_key;  
    const std::string ptr_key; 
 };
+
+#endif
+
 } //end namespace Buffer
 #endif /* END _BUFFERDATA_TCC_ */

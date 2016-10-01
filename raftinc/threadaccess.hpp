@@ -45,6 +45,13 @@ enum access_key : key_t { allocate       = 0,
 
 struct alignas( L1D_CACHE_LINE_SIZE ) ThreadAccess
 {
+    ThreadAccess() = default;
+
+    ThreadAccess( const ThreadAccess  &other )
+    {
+        (this)->whole = other.whole;
+    }
+    
     union
     {
         std::uint64_t whole = 0;
