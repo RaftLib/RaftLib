@@ -75,7 +75,7 @@ template < class T > struct DataBase
      * doing it this way. 
      */
     Pointer                 *read_pt        = nullptr;
-    ThreadAccess            *thread_access[ 2 ];
+    ThreadAccess            *thread_access  = nullptr;
     Pointer                 *write_pt       = nullptr;
     
     
