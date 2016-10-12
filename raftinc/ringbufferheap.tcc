@@ -218,6 +218,16 @@ protected:
          {
             break;
          }
+         /** 
+          * if capacity is in fact too little then:
+          * 1) signal exit buffer
+          * 2) spin
+          * 3) hope the resize thread hits soon
+          */
+         if( (this)->capacity() < n )
+         {
+            (this)->datamanager.get()->force_resize = n;
+         }
          (this)->datamanager.exitBuffer( dm::allocate_range );
          /** else, set stats,  spin **/
          auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
