@@ -36,6 +36,13 @@ else( NOT L1D_LINE_SIZE )
     message( INFO " Detected cache line size, set to: ${L1D_LINE_SIZE}" )
 endif( NOT L1D_LINE_SIZE )
 
+# Generate the pkg-config file.
+CONFIGURE_FILE(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/pkg-config.pc.cmake"
+   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
+)
+      
+
 ##
 # for cache line size
 ##

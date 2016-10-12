@@ -213,7 +213,7 @@ TOP:
      */
     virtual std::size_t get_suggested_count()
     {
-        return( (this)->datamanager.get()->force_resize );
+        return( *(this)->datamanager.get()->force_resize );
     }
    
 
