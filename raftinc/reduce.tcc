@@ -33,7 +33,8 @@ public:
       input.addPort< T >(  "0" );
       output.addPort< T >( "0" );
    }
-   
+  
+
    reduce()
    {
       input.addPort< T >(  "0" );
