@@ -36,17 +36,15 @@ else( NOT L1D_LINE_SIZE )
     message( INFO " Detected cache line size, set to: ${L1D_LINE_SIZE}" )
 endif( NOT L1D_LINE_SIZE )
 
-# Generate the pkg-config file.
-CONFIGURE_FILE(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/pkg-config.pc.cmake"
-   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
-)
+
+
       
 
 ##
 # for cache line size
 ##
-add_definitions( "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" ) 
+set( CACHE_LINE_FLAG "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" )
+add_definitions( ${CACHE_LINE_FLAG}  ) 
 ##
 # for tcmalloc
 ##
@@ -72,6 +70,19 @@ endif( BUILD_WOPENCV )
 # for random numbers too
 ##
 include( CheckBoostDep )
+mark_as_advanced( PKG_FLAGS "" )
+
+list( APPEND PKG_CFLAGS_PROTO ${CACHE_LINE_FLAG} )
+if( USEQTHREAD )
+list( APPEND PKG_CFLAGS_PROTO "-DUSEQTHREAD=1" )
+endif( USEQTHREAD )
+
+
+# Generate the pkg-config file.
+CONFIGURE_FILE(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/pkg-config.pc.cmake"
+   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
+)
 
 ##
 # Set up unit tests

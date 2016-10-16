@@ -11,6 +11,4 @@ Requires: ${_PKG_CONFIG_REQUIRES}
 Conflicts: ${_PKG_CONFIG_CONFLICTS}
 Libs: ${_PKG_CONFIG_LIBS}
 Libs.private: ${_PKG_CONFIG_LIBS_PRIVATE}
-Cflags: ${_PKG_CONFIG_CFLAGS}
-
-${PKG_CONFIG_EXTRA}
+Cflags: ${PKG_CFLAGS}
