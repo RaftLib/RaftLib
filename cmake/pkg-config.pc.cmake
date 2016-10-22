@@ -11,4 +11,4 @@ Requires: ${_PKG_CONFIG_REQUIRES}
 Conflicts: ${_PKG_CONFIG_CONFLICTS}
 Libs: ${_PKG_CONFIG_LIBS}
 Libs.private: ${_PKG_CONFIG_LIBS_PRIVATE}
-Cflags: ${PKG_CFLAGS}
+Cflags: ${PKG_CFLAGS} -I${CMAKE_INSTALL_PREFIX}/include

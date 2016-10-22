@@ -70,13 +70,14 @@ endif( BUILD_WOPENCV )
 # for random numbers too
 ##
 include( CheckBoostDep )
-mark_as_advanced( PKG_FLAGS "" )
+mark_as_advanced( PKG_CFLAGS "" )
 
-list( APPEND PKG_CFLAGS_PROTO ${CACHE_LINE_FLAG} )
+set( PKG_CFLAGS_PROTO "${PKG_CFLAGS_PROTO} ${CACHE_LINE_FLAG}" )
 if( USEQTHREAD )
-list( APPEND PKG_CFLAGS_PROTO "-DUSEQTHREAD=1" )
+set( PKG_CFLAGS_PROTO "${PKG_CFLAGS_PROTO} -DUSEQTHREAD=1" )
 endif( USEQTHREAD )
 
+set( PKG_CFLAGS ${PKG_CFLAGS_PROTO} )
 
 # Generate the pkg-config file.
 CONFIGURE_FILE(
