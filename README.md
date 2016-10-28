@@ -11,7 +11,7 @@ CI Test environment:
 Offline testing:
 * OS X - El Capitan, Apple LLVM version 7.0.2, CMake 3.6
 * Linux - kenrel v. 4.4, gcc-6.1/clang 3.8
-* 
+
 ### Pre-requisites
 
 ####OS X & Linux
@@ -33,6 +33,14 @@ If you want to use the Scotch partitioning library (Unix/Linux) for partitioning
 the following config line to your cmake invocation:
 ```bash
 -DUSESCOTCH=1
+```
+
+To use the [QThreads User space HPC threading library](http://www.cs.sandia.gov/qthreads/) 
+you will need to add the following (NOTE: The qthread library currently uses its own partitioner
+and does not worth with Scotch, it also has issues with OpenCV, will fix in next release 
+iteration):
+```bash
+-DUSEQTHREAD=1
 ```
 
 To build:
