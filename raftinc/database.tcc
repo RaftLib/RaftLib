@@ -59,7 +59,7 @@ template < class T > struct DataBase
     virtual void copyFrom( DataBase< T > *other ) = 0;
 
 
-    const std::size_t        max_cap;
+    const std::size_t       max_cap;
     /** sizes, might need to define a local type **/
     const std::size_t       length_store;
     const std::size_t       length_signal;
@@ -74,14 +74,14 @@ template < class T > struct DataBase
      * so we get decent caching behavior out of 
      * doing it this way. 
      */
-    Pointer                 *read_pt        = nullptr;
-    ThreadAccess            *thread_access  = nullptr;
-    Pointer                 *write_pt       = nullptr;
+    Pointer                 read_pt;
+    ThreadAccess            thread_access;
+    Pointer                 write_pt;
     
     
     T                       *store          = nullptr;
     Signal                  *signal         = nullptr;
-    bool                    external_alloc  = false;
+    bool                    external_alloc;
     /** variable set by scheduler, used for shutdown **/
     bool                    is_valid        = true;
     
@@ -89,24 +89,17 @@ template < class T > struct DataBase
      * these keep reference over how many read/writes are
      * blocked. used for dynamic adaptation.
      */
-    Blocked                 *read_stats     = nullptr;
-    Blocked                 *write_stats    = nullptr;
+    Blocked                 read_stats; 
+    Blocked                 write_stats;
     
     /** need to force resize, this has the count requested **/
-    std::size_t             *force_resize   = 0;
+    std::size_t             force_resize;
 
      
     using value_type = T;
 
     
-    const std::size_t       static_alloc_size =
-        (sizeof( ThreadAccess ) * 2) +
-        (sizeof( Pointer ) * 2 ) + 
-        (sizeof( external_alloc )) + 
-        (sizeof( is_valid )) +
-        (sizeof( Blocked ) * 2 ) + 
-        (sizeof( force_resize ) );
-
+    const std::size_t       static_alloc_size = sizeof( DataBase< T > );
 };
 
 } /** end namespace Buffer **/

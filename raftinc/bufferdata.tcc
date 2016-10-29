@@ -1,4 +1,12 @@
 /**
+ * TODO: Need to take the database struct (that we've designed)
+ * and make all these in-place allocations save for the actual
+ * data struct (FIFO elements) and the signal elements. This
+ * is far simpler of an arrangement, if not totally ideal...
+ */
+
+
+/**
  * bufferdata.tcc - 
  * @author: Jonathan Beard
  * @version: Fri May 16 13:08:25 2014
