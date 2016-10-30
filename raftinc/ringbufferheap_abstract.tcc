@@ -173,7 +173,9 @@ TOP:
     */
    virtual void get_zero_read_stats( Blocked &copy )
    {
-      auto &buff_ptr_stats( (this)->datamanager.get()->read_stats->all );
+      
+      auto &buff_ptr_stats( (this)->datamanager.get()->read_stats.all );
+      
       copy.all          = buff_ptr_stats;;
       buff_ptr_stats    = 0;
    }
@@ -186,16 +188,16 @@ TOP:
     */
    virtual void get_zero_write_stats( Blocked &copy )
    {
-      auto &buff_ptr_stats( (this)->datamanager.get()->write_stats->all );
+      auto &buff_ptr_stats( (this)->datamanager.get()->write_stats.all );
       copy.all       = buff_ptr_stats;
       buff_ptr_stats = 0;
    }
     
     virtual float get_frac_write_blocked()
     {
-        auto * const wr_stats( (this)->datamanager.get()->write_stats );
-        const auto copy( *wr_stats );
-        wr_stats->all = 0;
+        auto &wr_stats( (this)->datamanager.get()->write_stats );
+        const auto copy( wr_stats );
+        wr_stats.all = 0;
         if( copy.bec.blocked == 0 || copy.bec.count == 0 )
         {
             return( 0.0 );
@@ -213,7 +215,7 @@ TOP:
      */
     virtual std::size_t get_suggested_count()
     {
-        return( *(this)->datamanager.get()->force_resize );
+        return( (this)->datamanager.get()->force_resize );
     }
    
 

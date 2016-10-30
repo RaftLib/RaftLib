@@ -39,8 +39,8 @@ protected:
     {
         auto * const buffer( datamanager.get() );
         assert( buffer != nullptr );
-        producer_data.write_stats = buffer->write_stats;
-        consumer_data.read_stats  = buffer->read_stats;
+        producer_data.write_stats = &buffer->write_stats;
+        consumer_data.read_stats  = &buffer->read_stats;
     }
 
     struct{

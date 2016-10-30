@@ -226,7 +226,7 @@ protected:
           */
          if( (this)->capacity() < n )
          {
-            (*(this)->datamanager.get()->force_resize) = n;
+            ((this)->datamanager.get()->force_resize) = n;
          }
          (this)->datamanager.exitBuffer( dm::allocate_range );
          /** else, set stats,  spin **/

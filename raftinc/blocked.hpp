@@ -29,12 +29,10 @@
  */
 struct alignas( L1D_CACHE_LINE_SIZE ) Blocked
 {
-    using value_type = std::uint_fast32_t;
-    using whole_type = std::uint_fast64_t;
+    using value_type = std::uint32_t;
+    using whole_type = std::uint64_t;
     
-    static_assert( sizeof( value_type ) * 2 == sizeof( whole_type ),
-                   "Error, the whole type must be double the size of the half type" );
-    Blocked() = default;
+    Blocked(){};
 
     Blocked( const Blocked &other ) : all( other.all ){}
 
