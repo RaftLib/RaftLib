@@ -325,7 +325,6 @@ template < class T >
 }; /** end heap > Line Size **/
 
 
-#if 0
 template < class T > struct Data< T, Type::SharedMemory > : 
    public DataBase< T > 
 {
@@ -378,9 +377,6 @@ template < class T > struct Data< T, Type::SharedMemory > :
             alloc_with_error( (void**)&(this)->signal, 
                               (this)->length_signal, 
                               signal_key.c_str() );
-            alloc_with_error( (void**)&(this)->read_pt, 
-                              (sizeof( Pointer ) * 2 ) + sizeof( Cookie ), 
-                              ptr_key.c_str() );
 
             (this)->write_pt = &(this)->read_pt[ 1 ];
             
@@ -427,19 +423,15 @@ template < class T > struct Data< T, Type::SharedMemory > :
             };
             retry_func( (void**) &(this)->store,  store_key.c_str() );
             retry_func( (void**) &(this)->signal, signal_key.c_str() );
-            retry_func( (void**) &(this)->read_pt, ptr_key.c_str() );
             
             assert( (this)->store != nullptr );
             assert( (this)->signal != nullptr );
-            assert( (this)->read_pt   != nullptr );
             
             /** fix write_pt **/
             (this)->write_pt  = &(this)->read_pt[ 1 ];
             assert( (this)->write_pt  != nullptr );
             (this)->cookie    = (Cookie*)&(this)->read_pt[ 2 ]; 
             
-            auto * tempa(  new ( (this)->read_ptr ) Pointer( max_cap ) );
-            UNUSED( tempa );
 
             (this)->cookie->consumer = 0x1337;
             while( (this)->cookie->producer != 0x1337 )
@@ -478,11 +470,6 @@ template < class T > struct Data< T, Type::SharedMemory > :
                   (this)->length_signal,
                   false,
                   true );
-      shm::close( ptr_key.c_str(),   
-                  (void**) &(this)->read_pt, 
-                  (sizeof( Pointer ) * 2) + sizeof( Cookie ),
-                  false,
-                  true );
    }
    struct Cookie
    {
@@ -498,7 +485,6 @@ template < class T > struct Data< T, Type::SharedMemory > :
    const std::string ptr_key; 
 };
 
-#endif
 
 } //end namespace Buffer
 #endif /* END _BUFFERDATA_TCC_ */
