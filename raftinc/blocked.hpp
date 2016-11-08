@@ -56,7 +56,7 @@ struct alignas( L1D_CACHE_LINE_SIZE ) Blocked
         whole_type          all = 0;
     };
 
-    byte_t pad[ L1D_CACHE_LINE_SIZE - sizeof( whole_type ) ]; 
+    raft::byte_t pad[ L1D_CACHE_LINE_SIZE - sizeof( whole_type ) ]; 
 }
 #if __APPLE__ || __linux
 __attribute__ (( aligned( L1D_CACHE_LINE_SIZE )))

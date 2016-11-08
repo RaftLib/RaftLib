@@ -1,7 +1,7 @@
 /**
  * threadaccess.hpp - 
  * @author: Jonathan Beard
- * @version: Fri Sep 23 10:59:50 2016
+ * @version: Sun Oct 30 04:58 2016
  * 
  * Copyright 2016 Jonathan Beard
  * 
@@ -25,7 +25,7 @@
 namespace dm
 {
 
-using key_t = std::uint8_t;
+using key_t = raft::byte_t;
 
 /**
  * access_key - each one of these is to be used as a 
@@ -58,7 +58,7 @@ struct alignas( L1D_CACHE_LINE_SIZE ) ThreadAccess
         dm::key_t     flag[ 8 ];
     };
 
-    byte_t    padding[ L1D_CACHE_LINE_SIZE - 8 /** padd to cache line **/ ];
+    raft::byte_t    padding[ L1D_CACHE_LINE_SIZE - 8 /** padd to cache line **/ ];
 };
 
 

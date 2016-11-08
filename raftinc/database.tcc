@@ -78,8 +78,11 @@ template < class T > struct DataBase
     ThreadAccess            thread_access[ 2 ];
     Pointer                 write_pt;
     
-    
-    T                       *store          = nullptr;
+    /** 
+     * FIXME - decide if 32 is the best choice or have
+     * a macro that defines it per compile.
+     */
+    alignas( 32 ) T         *store          = nullptr;
     Signal                  *signal         = nullptr;
     bool                    external_alloc;
     /** variable set by scheduler, used for shutdown **/
