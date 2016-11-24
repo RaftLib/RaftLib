@@ -311,7 +311,6 @@ public:
 };
 
 
-#if 0
 /**
  * SharedMemory
  */
@@ -389,6 +388,7 @@ protected:
     const std::string shm_key;
 };
 
+#if 0
 /**
  * TCP w/ multiplexing
  */
