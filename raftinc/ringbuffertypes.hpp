@@ -1,7 +1,12 @@
 #ifndef __RINGBUFFERTYPES__ 
 #define __RINGBUFFERTYPES__ 1
 namespace Type{
-   enum RingBufferType { Heap, SharedMemory, TCP, Infinite, N};
+   enum RingBufferType { Heap, 
+                         SharedMemory, 
+                         SystemMemory /** either one of Heap or SharedMemory **/, 
+                         TCP, 
+                         Infinite, 
+                         N };
 }
    
    enum Direction { Producer, Consumer };
