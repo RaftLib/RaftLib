@@ -61,10 +61,10 @@ public:
 protected:   
 };
 
-
-/** heap implementation, uses thread shared memory or SHM **/
+/** implementation that uses malloc/jemalloc/tcmalloc **/
 #include "ringbufferheap.tcc"
-
+/** heap implementation, uses thread shared memory or SHM **/
+#include "ringbuffershm.tcc"
 /** infinite dummy implementation, can use shared memory or SHM **/
 #include "ringbufferinfinite.tcc"
 

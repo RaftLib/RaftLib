@@ -383,10 +383,13 @@ template < class T > struct Data< T, Type::SharedMemory > :
                               (this)->length_signal, 
                               signal_key.c_str() );
 
-            (this)->write_pt = &(this)->read_pt[ 1 ];
+//TODO come back here, jcb 27 Nov 2016            
+            new ( &(this)->write_pt ) Pointer( max_cap ); 
+            new ( &(this)->write_stats ) Blocked();
+      
+      new ( &(this)->read_pt ) Pointer( max_cap );
+      new ( &(this)->read_stats ) Blocked();
             
-            auto * tempb( new ( (this)->write_ptr ) Pointer( max_cap ) );
-            UNUSED( tempb );
 
             (this)->cookie   = (Cookie*) &(this)->read_pt[ 2 ];
             (this)->cookie->producer = 0x1337;

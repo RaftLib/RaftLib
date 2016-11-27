@@ -3,7 +3,6 @@
 namespace Type{
    enum RingBufferType { Heap, 
                          SharedMemory, 
-                         SystemMemory /** either one of Heap or SharedMemory **/, 
                          TCP, 
                          Infinite, 
                          N };
