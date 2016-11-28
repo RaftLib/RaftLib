@@ -58,6 +58,7 @@ class RingBufferBase
 {
 public:
     RingBufferBase() = default;
+    virtual ~RingBufferBase() = default;
 protected:   
 };
 

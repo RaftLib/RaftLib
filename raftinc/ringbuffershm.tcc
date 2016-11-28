@@ -28,10 +28,8 @@
 #include "alloc_traits.tcc"
 #include "prefetch.hpp"
 #include "defs.hpp"
+#include "sysschedutil.hpp"
 
-#ifdef USEQTHREADS
-#include <qthread/qthread.hpp>
-#endif
 
 /** inline alloc **/
 template < class T >
@@ -145,12 +143,7 @@ protected:
                }
             }
             (this)->datamanager.exitBuffer( dm::recycle );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+            raft::yield();
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          /**
@@ -188,8 +181,6 @@ protected:
          {
             wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -197,10 +188,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
@@ -235,8 +223,6 @@ protected:
          {
             wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
        __asm__ volatile("\
          pause"
@@ -244,10 +230,7 @@ protected:
          :
          : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto *container(
          reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
@@ -305,8 +288,6 @@ protected:
          {
             wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -314,10 +295,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
        const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
@@ -329,12 +307,6 @@ protected:
        }
       buff_ptr->signal[ write_index ]         = signal;
        Pointer::inc( buff_ptr->write_pt );
-#if 0       
-      if( signal == raft::quit )
-      {
-         (this)->write_finished = true;
-      }
-#endif      
       (this)->datamanager.exitBuffer( dm::push );
    }
 
@@ -372,12 +344,7 @@ protected:
             {
                rd_stats  = 1;
             }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+            raft::yield();
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -423,8 +390,6 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if  __x86_64
          __asm__ volatile("\
            pause"
@@ -432,10 +397,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const auto read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -478,8 +440,6 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if  __x86_64
          __asm__ volatile("\
            pause"
@@ -487,10 +447,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
 
       /**
@@ -515,8 +472,7 @@ template < class T >
 class RingBufferBase<
     T,
     Type::SharedMemory,
-    typename std::enable_if< inline_class_alloc< T >::value ||
-                             ext_alloc< T >::value >::type >
+    typename std::enable_if< ! inline_nonclass_alloc< T >::value >::type >
 : public RingBufferBaseHeap< T, Type::SharedMemory >
 {
 public:
@@ -623,12 +579,7 @@ protected:
                }
             }
             (this)->datamanager.exitBuffer( dm::recycle );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+            raft::yield();
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -667,8 +618,6 @@ protected:
          {
             wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -676,10 +625,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
@@ -704,8 +650,6 @@ protected:
          {
             wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
        __asm__ volatile("\
          pause"
@@ -713,10 +657,7 @@ protected:
          :
          : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto *container(
          reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
@@ -774,8 +715,6 @@ protected:
          {
             wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -783,10 +722,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
        const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
@@ -844,12 +780,7 @@ protected:
             {
                rd_stats  = 1;
             }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+            raft::yield();
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -895,8 +826,6 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if  __x86_64
          __asm__ volatile("\
            pause"
@@ -904,10 +833,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -950,8 +876,6 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if  __x86_64
          __asm__ volatile("\
            pause"
@@ -959,10 +883,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
 
       /**

@@ -352,7 +352,8 @@ template < class T > struct Data< T, Type::SharedMemory > :
          const size_t alignment ) : DataBase< T >( max_cap ),
                                     store_key( shm_key + "_store" ),
                                     signal_key( shm_key + "_key" ),
-                                    ptr_key( shm_key + "_ptr" )
+                                    ptr_key( shm_key + "_ptr" ),
+                                    dir( dir )
    {
       UNUSED( alignment );
       /** now work through opening SHM **/
@@ -383,18 +384,13 @@ template < class T > struct Data< T, Type::SharedMemory > :
                               (this)->length_signal, 
                               signal_key.c_str() );
 
-//TODO come back here, jcb 27 Nov 2016            
             new ( &(this)->write_pt ) Pointer( max_cap ); 
             new ( &(this)->write_stats ) Blocked();
-      
-      new ( &(this)->read_pt ) Pointer( max_cap );
-      new ( &(this)->read_stats ) Blocked();
             
 
-            (this)->cookie   = (Cookie*) &(this)->read_pt[ 2 ];
-            (this)->cookie->producer = 0x1337;
+            (this)->cookie.producer = 0x1337;
             
-            while( (this)->cookie->consumer != 0x1337 )
+            while( (this)->cookie.consumer != 0x1337 )
             {
                std::this_thread::yield();
             }
@@ -435,14 +431,12 @@ template < class T > struct Data< T, Type::SharedMemory > :
             assert( (this)->store != nullptr );
             assert( (this)->signal != nullptr );
             
-            /** fix write_pt **/
-            (this)->write_pt  = &(this)->read_pt[ 1 ];
-            assert( (this)->write_pt  != nullptr );
-            (this)->cookie    = (Cookie*)&(this)->read_pt[ 2 ]; 
+            new ( &(this)->read_pt ) Pointer( max_cap );
+            new ( &(this)->read_stats ) Blocked();
             
 
-            (this)->cookie->consumer = 0x1337;
-            while( (this)->cookie->producer != 0x1337 )
+            (this)->cookie.consumer = 0x1337;
+            while( (this)->cookie.producer != 0x1337 )
             {
                std::this_thread::yield();
             }
@@ -458,39 +452,64 @@ template < class T > struct Data< T, Type::SharedMemory > :
       /** should be all set now **/
    }
 
-   virtual void copyFrom( DataBase< T > *other )
+   virtual ~Data()
    {
-      UNUSED( other );
-      assert( false );
-      /** TODO, implement me **/
-   }
+      switch( dir )
+      {
+         case( Direction::Producer ):
+         {
+            delete( &(this)->write_pt ); 
+            delete( &(this)->write_stats );
+         }
+         break;
+         case( Direction::Consumer ):
+         { 
+            delete( &(this)->read_pt );
+            delete( &(this)->read_stats );
+         }
+         break;
+         default:
+            assert( false );
+      } /** end switch **/
+      
+       //FREE USED HERE
+       if( ! (this)->external_alloc )
+       {
+          /** three segments of SHM to close **/
+          shm::close( store_key.c_str(), 
+                      (void**) &(this)->store, 
+                      (this)->length_store,
+                      false,
+                      true );
 
-   ~Data()
-   {
-      /** three segments of SHM to close **/
-      shm::close( store_key.c_str(), 
-                  (void**) &(this)->store, 
-                  (this)->length_store,
-                  false,
-                  true );
-      shm::close( signal_key.c_str(),
-                  (void**) &(this)->signal,
-                  (this)->length_signal,
-                  false,
-                  true );
-   }
-   struct Cookie
-   {
-      std::int32_t producer;
-      std::int32_t consumer;
-   };
+       }
+       shm::close( signal_key.c_str(),
+                   (void**) &(this)->signal,
+                   (this)->length_signal,
+                   false,
+                   true );
+       }
 
-   volatile Cookie         *cookie;
+       virtual void copyFrom( DataBase< T > *other )
+       {
+          UNUSED( other );
+          assert( false );
+          /** TODO, implement me **/
+       }
+
+       struct Cookie
+       {
+          std::int32_t producer;
+          std::int32_t consumer;
+       };
+
+   volatile Cookie         cookie;
 
    /** process local key copies **/
    const std::string store_key; 
    const std::string signal_key;  
    const std::string ptr_key; 
+   const Direction   dir;
 };
 
 
