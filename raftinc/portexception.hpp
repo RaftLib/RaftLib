@@ -24,56 +24,56 @@
 class PortException : public std::exception
 {
 public:
-   PortException( const std::string message );
+   PortException( const std::string &message );
    virtual const char* what() const noexcept;
 private:
-   std::string message;
+   const std::string message;
 };
 
 class PortTypeException : public PortException
 {
 public:
-   PortTypeException( const std::string message );
+   PortTypeException( const std::string &message );
 };
 
 class PortNotFoundException : public PortException
 {
 public:
-   PortNotFoundException( const std::string message );
+   PortNotFoundException( const std::string &message );
 };
 
 class PortDoubleInitializeException : public PortException
 {
 public:
-   PortDoubleInitializeException( const std::string message );
+   PortDoubleInitializeException( const std::string &message );
 };
 
 class PortTypeMismatchException : public PortException
 {
 public:
-   PortTypeMismatchException( const std::string message );
+   PortTypeMismatchException( const std::string &message );
 };
 
 class AmbiguousPortAssignmentException : public PortException
 {
 public:
-   AmbiguousPortAssignmentException( const std::string message );
+   AmbiguousPortAssignmentException( const std::string &message );
 };
 
 class ClosedPortAccessException : public PortException
 {
 public:
-   ClosedPortAccessException( const std::string message );
+   ClosedPortAccessException( const std::string &message );
 };
 
 class NoMoreDataException : public PortException
 {
 public:
-   NoMoreDataException( const std::string message );
+   NoMoreDataException( const std::string &message );
 };
 class PortAlreadyExists : public PortException
 {
 public:
-   PortAlreadyExists( const std::string message );
+   PortAlreadyExists( const std::string &message );
 };
 #endif /* END _PORTEXCEPTION_HPP_ */

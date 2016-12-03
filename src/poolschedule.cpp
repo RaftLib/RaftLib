@@ -165,19 +165,11 @@ aligned_t pool_schedule::pool_run( void *data )
    }
 #endif   
    volatile bool done( false );
-   std::uint8_t run_count( 0 );
    while( ! done )
    {
       Schedule::kernelRun( thread_d->k, done );
-      //FIXME: add back in SystemClock user space timer
-      //set up one cache line per thread
-      if( run_count++ == 20 || done )
-      {
-        run_count = 0;
-        //takes care of peekset clearing too
-        Schedule::fifo_gc( &in, &out, &peekset );
-        qthread_yield();
-      }
+      Schedule::fifo_gc( &in, &out, &peekset );
+      qthread_yield();
    }
    thread_d->finished = true;
    return( 1 );

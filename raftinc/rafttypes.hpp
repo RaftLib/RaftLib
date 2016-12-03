@@ -22,7 +22,8 @@
 namespace raft{
 enum kstatus {
    stop,
-   proceed
+   proceed,
+   error
 };
 }
 #endif /* END _RAFTTYPES_HPP_ */
