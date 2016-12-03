@@ -29,9 +29,8 @@
 #include <cassert>
 #include <cstring>
 #include <mutex>
-#ifdef USEQTHREADS
-#include <qthread/qthread.hpp>
-#endif
+
+#include "sysschedutil.hpp"
 namespace raft
 {
    class kernel;
@@ -78,11 +77,7 @@ public:
       while( ! mutex.try_lock() )
       {
          //it's polite to yield
-#ifdef USEQTHREADS
-         qthread_yield();
-#else
-         std::this_thread::yield();
-#endif         
+         raft::yield();
       }
       //we have a lock, get id
 #if 0      

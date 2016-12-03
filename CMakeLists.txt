@@ -79,11 +79,6 @@ endif( USEQTHREAD )
 
 set( PKG_CFLAGS ${PKG_CFLAGS_PROTO} )
 
-# Generate the pkg-config file.
-CONFIGURE_FILE(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/pkg-config.pc.cmake"
-   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
-)
 
 ##
 # Set up unit tests
@@ -142,3 +137,10 @@ foreach( HFILE ${MAINHEADERS} )
  install( FILES ${CMAKE_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 endforeach( HFILE ${MAINHEADERS} )
 
+set( _PKG_CONFIG_LIBS  "${CMAKE_SCOTCH_LIBS} ${CMAKE_QTHREAD_LIBS} ${CMAKE_NUMA_LIBS} ${CMAKE_RT_LIBS} -lshm" )
+
+# Generate the pkg-config file.
+CONFIGURE_FILE(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/pkg-config.pc.cmake"
+   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
+)

@@ -82,9 +82,9 @@ template < class T > struct DataBase
      * FIXME - decide if 32 is the best choice or have
      * a macro that defines it per compile.
      */
-    alignas( 32 ) T         *store          = nullptr;
+    T                       *store          = nullptr;
     Signal                  *signal         = nullptr;
-    bool                    external_alloc;
+    bool                    external_alloc  = false;
     /** variable set by scheduler, used for shutdown **/
     bool                    is_valid        = true;
     
@@ -96,7 +96,7 @@ template < class T > struct DataBase
     Blocked                 write_stats;
     
     /** need to force resize, this has the count requested **/
-    std::size_t             force_resize;
+    std::size_t             force_resize    = 0;
 
      
     using value_type = T;
