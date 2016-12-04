@@ -37,7 +37,7 @@ the following config line to your cmake invocation:
 
 To use the [QThreads User space HPC threading library](http://www.cs.sandia.gov/qthreads/) 
 you will need to add the following (NOTE: The qthread library currently uses its own partitioner
-and does not worth with Scotch, it also has issues with OpenCV, will fix in next release 
+and does not work with Scotch, it also has issues with OpenCV, will fix in next release 
 iteration):
 ```bash
 -DUSEQTHREAD=1
