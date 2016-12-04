@@ -43,7 +43,6 @@
 
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
-    //assert( qthread_init( 1 ) == QTHREAD_SUCCESS );
     assert( qthread_initialize() == QTHREAD_SUCCESS );
     thread_data_pool.reserve( kernel_set.size() );
 }
@@ -71,73 +70,50 @@ pool_schedule::handleSchedule( raft::kernel * const kernel )
 void
 pool_schedule::start()
 {
-    //qt_sinc_t *sinc( qt_sinc_create(0, nullptr, nullptr, 0) );
-    //TODO, this needs to be fixed to ensure we can increment expect
-    //atomically from other threads, probably need to modify qthreads
-    //interface a bit
-    //std::size_t sinc_count( 0 );
     /** 
      * NOTE: this section is the same as the code in the "handleSchedule"
      * function so that it doesn't call the lock for the thread map.
      */
     auto &container( kernel_set.acquire() );
-    //const auto expected_dst_size( dst_kernels.size() );
-    //qt_sinc_expect( sinc /** sinc struct **/, expected_dst_size ); 
     for( auto * const k : container )
     {  
         auto *td( new thread_data( k ) );
         thread_data_pool.emplace_back( td );
         if( ! k->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
         {
-            tail.emplace_back( td );
             /** destination kernel **/
-            qthread_spawn( pool_schedule::pool_run,
-                           (void*) td,
-                           0,
-                           0,
-                           0,
-                           nullptr,
-                           1,
-                           0 );
-            /** inc number to expect for sync **/
-            //sinc_count++;
+            tail.emplace_back( td );
         }
-        else
-        {
-            /** else non-destination kerenl **/
-            qthread_spawn( pool_schedule::pool_run,
-                           (void*) td,
-                           0,
-                           0,
-                           0,
-                           nullptr,
-                           1,
-                           0 );
-        }
+        qthread_spawn( pool_schedule::pool_run,
+                       (void*) td,
+                       0,
+                       0,
+                       0,
+                       nullptr,
+                       NO_SHEPHERD,
+                       0 );
     }
+    /**
+     * NOTE: can't quite get the sync object behavior to work 
+     * quite well enough for this application. Should theoretically
+     * work according to the documentation here:
+     * http://www.cs.sandia.gov/qthreads/man/qthread_spawn.html
+     * however it seems that the wait segfaults. Adding on the
+     * TODO list I'll implement a better mwait monitor vs. spinning
+     * which is relatively bad.
+     */
     kernel_set.release();
-    /** wait on sync **/
-    //assert( sinc_count == expected_dst_size );
-    bool keep_going( true );
-    while( keep_going )
+START:        
+    std::chrono::milliseconds dura( 3 );
+    std::this_thread::sleep_for( dura );
+    std::lock_guard< std::mutex > lock( tail_mutex );
+    for( auto * const td : tail )
     {
-        std::chrono::milliseconds dura( 3 );
-        std::this_thread::sleep_for( dura );
-        
-        std::lock_guard< std::mutex > lock( tail_mutex );
-        keep_going = false;
-        
-        for( auto *td : tail )
+        if( ! td->finished  )
         {
-            if( ! td->finished  )
-            {
-                keep_going = true;
-                break;
-            }
+            goto START;
         }
     }
-    //qt_sinc_wait(   sinc /** sinc struct **/, 
-    //                nullptr /** ignore bytes copied, we don't care **/ );
     return;
 }
 
@@ -167,12 +143,19 @@ aligned_t pool_schedule::pool_run( void *data )
    }
 #endif   
    volatile bool done( false );
+   std::uint8_t run_count( 0 );
    while( ! done )
    {
       Schedule::kernelRun( thread_d->k, done );
-      //takes care of peekset clearing too
-      Schedule::fifo_gc( &in, &out, &peekset );
-      qthread_yield();
+      //FIXME: add back in SystemClock user space timer
+      //set up one cache line per thread
+      if( run_count++ == 20 || done )
+      {
+        run_count = 0;
+        //takes care of peekset clearing too
+        Schedule::fifo_gc( &in, &out, &peekset );
+        qthread_yield();
+      }
    }
    thread_d->finished = true;
    return( 1 );

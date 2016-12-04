@@ -9,45 +9,43 @@
 int
 main( int argc, char **argv )
 {
-   int count( 1000 );
-   if( argc == 2 )
-   {
-      count = atoi( argv[ 1 ] );
-   }
-   std::cout << "COUNT: " << count << "\n";
-   auto rndgen( raft::kernel::make< 
-      raft::test::generate< std::uint32_t > >( count ) );
-                                                              
-   
-   using sub = raft::lambdak< std::uint32_t >;
-   auto  l_sub( []( Port &input,
-                    Port &output ) -> raft::kstatus
-      {
-         std::uint32_t a;
-         input[ "0" ].pop( a );
-         output[ "0" ].push( a - 10 );
-         return( raft::proceed );
-      } );
+    int count( 1000 );
+    if( argc == 2 )
+    {
+       count = atoi( argv[ 1 ] );
+    }
+                                                               
+    raft::test::generate< std::uint32_t > rndgen( count );
+    raft::print< std::uint32_t, '\n' > p;
 
-   raft::map m;
+    using sub = raft::lambdak< std::uint32_t >;
+    auto  l_sub( []( Port &input,
+                     Port &output ) -> raft::kstatus
+       {
+          std::uint32_t a;
+          input[ "0" ].pop( a );
+          output[ "0" ].push( a - 10 );
+          return( raft::proceed );
+       } );
 
-   auto kernels = m.link( rndgen,
-                          raft::kernel::make< sub >( 1, 1, l_sub ) );
-   
-   for( int i( 0 ); i < 
+    raft::map m;
+    /** make one sub kernel, this one will live on the stack **/
+    sub s( 1, 1, l_sub );
+    kernel_pair_t::kernel_iterator_type BEGIN, END;
+    auto kernels( m += rndgen >> s );
+    for( int i( 0 ); i < 
 #ifdef USEQTHREADS
-   1000
+    1000
 #else
-   10
+    10
 #endif
-   ; i++ )
-   {
-      kernels = m.link( &kernels.getDst(),
-                        raft::kernel::make< sub >( 1, 1, l_sub ) );
-   }
-   m.link( &kernels.getDst(), 
-           raft::kernel::make< raft::print< std::uint32_t, '\n' > >() );
-   
-   m.exe();
-   return( EXIT_SUCCESS );
+    ; i++ )
+    {
+        std::tie( BEGIN, END ) = kernels.getDst();
+        kernels = ( m += (*BEGIN).get() >> raft::kernel::make< sub >( 1, 1, l_sub ) ); 
+    }
+    std::tie( BEGIN, END ) = kernels.getDst();
+    m += (*BEGIN).get() >> p;
+    m.exe();
+    return( EXIT_SUCCESS );
 }

@@ -25,13 +25,13 @@
 #include "kset.tcc"
 #include "portorder.hpp"
 #include "defs.hpp"
-#include "raftmanip.hpp"
 
 
 
 namespace raft
 {
     class kernel;
+    class kernel_wrapper;
     class map;
 }
 
@@ -45,19 +45,9 @@ template < class T, int N > struct PairBase
     T &value;
 };
 
-template < class T, class K, int N > struct ParaPair : PairBase< T, N >
-{
-    constexpr ParaPair( T &t, const K sp ) : PairBase< T, N >( t ),
-                                             sp( sp ){};
-    const K sp;
-};
 
-
-using LParaPair = ParaPair< raft::kernel,raft::parallel::type, 1 >;
-using RParaPair = ParaPair< kpair, raft::parallel::type, 1 >;
-
-using LOoOkpair = PairBase< raft::kernel, 2 >; 
-using ROoOkpair = PairBase< kpair, 2 >;
+using LOoOkpair = PairBase< raft::kernel, 0 >; 
+using ROoOkpair = PairBase< kpair,        0 >;
 
 
 class kpair
@@ -67,13 +57,38 @@ public:
            raft::kernel &b,
            const bool split,
            const bool join );
+    
+    kpair( raft::kernel &a, 
+           raft::kernel_wrapper &b,
+           const bool split,
+           const bool join );
+    
+    kpair( raft::kernel_wrapper &a, 
+           raft::kernel &b,
+           const bool split,
+           const bool join );
+    
+    kpair( raft::kernel_wrapper &a, 
+           raft::kernel_wrapper &b,
+           const bool split,
+           const bool join );
 
     kpair( kpair &a,
            raft::kernel  &b,
            const bool split,
            const bool join );
+    
+    kpair( kpair &a,
+           raft::kernel_wrapper  &b,
+           const bool split,
+           const bool join );
 
     kpair( raft::kernel &a,
+           kpair        &n,
+           const bool   split,
+           const bool   join );
+    
+    kpair( raft::kernel_wrapper &a,
            kpair        &n,
            const bool   split,
            const bool   join );
@@ -107,11 +122,15 @@ public:
            const bool       join );
 
     kpair( raft::kernel &a, raft::kernel &b );
+    
+    kpair( raft::kernel &a, 
+           raft::kernel_wrapper &b );
+    
+    kpair( raft::kernel_wrapper &a, 
+           raft::kernel  &b );
 
-    /** case of kernel >> raft::process >> kernel **/
-    kpair( LParaPair &lp, raft::kernel &b );
-    /** case of kernel >> kernel >> raft::process >> kernel **/
-    kpair( RParaPair &rp, raft::kernel &b );
+    kpair( raft::kernel_wrapper &a, 
+           raft::kernel_wrapper &b );
     
     void setOoO() noexcept;
 
@@ -150,55 +169,38 @@ protected:
 
     bool             out_of_order  = false;
     raft::parallel::type    context_type  = raft::parallel::system;  
-    
-    
     friend class raft::map;
-    friend kpair& operator >= ( kpair &a, raft::kernel &&b );
-    friend kpair& operator >= ( kpair &a, raft::kernel &b );
-    friend kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
-    friend kpair& operator <= ( raft::kernel &&a, raft::kernel &&b );
-    friend kpair& operator <= ( raft::kernel &a,  kpair &b );
-    friend kpair& operator <= ( raft::kernel &&a, kpair &b );
-    friend kpair& operator >= ( kpair &a, kpair &b );
-    friend kpair& operator >= ( raft::kernel &a, kpair &b );
-    friend kpair& operator >= ( raft::kernel &&a, kpair &b );
 };
 
 
 
 kpair& operator >> ( raft::kernel &a,  raft::kernel &b  );
-kpair& operator >> ( raft::kernel &&a, raft::kernel &&b );
+kpair& operator >> ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b );
+kpair& operator >> ( raft::kernel &a, raft::kernel_wrapper &&w );
+
 kpair& operator >> ( kpair &a, raft::kernel &b );
-kpair& operator >> ( kpair &a, raft::kernel &&b );
+kpair& operator >> ( kpair &a, raft::kernel_wrapper &&w );
 
 LOoOkpair& operator >> ( raft::kernel &a, const raft::order::spec &&order );
 kpair&     operator >> ( LOoOkpair &a, raft::kernel &b );
-kpair&     operator >> ( LOoOkpair &a, raft::kernel &&b );
+kpair&     operator >> ( LOoOkpair &a, raft::kernel_wrapper &&w );
 
 ROoOkpair& operator >> ( kpair &a, const raft::order::spec &&order );
 kpair&     operator >> ( ROoOkpair &a, raft::kernel &b );
-kpair&     operator >> ( ROoOkpair &a, raft::kernel &&b );
+kpair&     operator >> ( ROoOkpair &a, raft::kernel_wrapper &&w );
 
-LParaPair&  operator >> ( raft::kernel &a, const raft::parallel::type &&type );
-RParaPair&  operator >> ( kpair &a, const raft::parallel::type &&type );
 
 kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
-kpair& operator <= ( raft::kernel &&a, raft::kernel &&b );
+kpair& operator <= ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b );
 kpair& operator <= ( raft::kernel &a,  kpair &b );
-kpair& operator <= ( raft::kernel &&a, kpair &b );
+kpair& operator <= ( raft::kernel_wrapper &&w, kpair &b );
 
 kpair& operator >= ( kpair &a, raft::kernel &b );
-kpair& operator >= ( kpair &a, raft::kernel &&b );
+kpair& operator >= ( kpair &a, raft::kernel_wrapper &&w );
 kpair& operator >= ( kpair &a, kpair &b );
 
 kpair& operator >= ( raft::kernel &a, kpair &b );
-kpair& operator >= ( raft::kernel &&a, kpair &b );
-
-    
-kpair& operator >> ( LParaPair &a, raft::kernel &b );
-kpair& operator >> ( LParaPair &a, raft::kernel &&b );
-kpair& operator >> ( RParaPair &a, raft::kernel &b );
-kpair& operator >> ( RParaPair &a, raft::kernel &&b );
+kpair& operator >= ( raft::kernel_wrapper &&w, kpair &b );
 
 
 kpair& operator <= ( raft::kernel &a, raft::basekset &&b );

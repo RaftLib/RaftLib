@@ -29,7 +29,7 @@
 #include "port.hpp"
 #include "signalvars.hpp"
 #include "rafttypes.hpp"
-#include "raftmanip.hpp"
+#include "kernel_wrapper.hpp"
 
 /** pre-declare for friends **/ 
 class MapBase;
@@ -88,11 +88,11 @@ public:
 
    template < class T /** kernel type **/,
                class ... Args >
-      static kernel* make( Args&&... params )
+      static kernel_wrapper make( Args&&... params )
       {
          auto *output( new T( std::forward< Args >( params )... ) );
          output->internal_alloc = true;
-         return( output );
+         return( kernel_wrapper( output ) );
       }
    
    /** 
@@ -211,13 +211,6 @@ private:
    const            std::size_t kernel_id;
 
    bool             execution_done    = false;
-/** default pool w/qthreads, thread otherwise **/   
-   parallel::type   context_type      =
-#ifdef USEQTHREADS   
-   parallel::pool;
-#else
-   parallel::thread;
-#endif
 
    /** for operator syntax **/
    std::queue< std::string > enabled_port;

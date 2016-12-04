@@ -98,10 +98,15 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      ksetContContJoin
      splitKsetJoin 
      fixedMatchTest
-     fixedMatchTest 
      poolThreadRaftManip 
      poolThreadRaftManip2
-     forceProcess )
+     forceProcess 
+     splitchainRetStruct
+     staticContJoinRetStruct
+     staticJoinRetStruct 
+     staticLongSplitChainRetStruct
+     staticSplitChainJoinRetStruct
+     staticSplitJoinRetStruct ) 
 
 if( BUILDRANDOM )
     list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 

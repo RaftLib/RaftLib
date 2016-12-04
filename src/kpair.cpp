@@ -3,6 +3,7 @@
 #include "kpair.hpp"
 #include "kernel.hpp"
 #include "portorder.hpp"
+#include "kernel_wrapper.hpp"
 
 kpair::kpair( raft::kernel &a, 
               raft::kernel &b,
@@ -12,6 +13,24 @@ kpair::kpair( raft::kernel &a,
     split_to = split;
     join_from = join;
 }
+
+kpair::kpair( raft::kernel &a, 
+              raft::kernel_wrapper &b,
+              const bool split,
+              const bool join ) : kpair( a, *(*b), split, join )
+{}
+
+kpair::kpair( raft::kernel_wrapper &a, 
+              raft::kernel &b,
+              const bool split,
+              const bool join ) : kpair( *(*a), b, split, join )
+{}
+
+kpair::kpair( raft::kernel_wrapper &a, 
+              raft::kernel_wrapper &b,
+              const bool split,
+              const bool join ) : kpair( *(*a), *(*b), split, join )
+{}
 
 /**
  * kpair - for joining kpair on the left (src)
@@ -27,6 +46,14 @@ kpair::kpair( kpair &a,
     split_to    = split;
     join_from   = join;
 }
+
+kpair::kpair( kpair &a, 
+              raft::kernel_wrapper &b,
+              const bool split,
+              const bool join ) : kpair( a, *(*b), split, join )
+{}
+
+
 /**
  * opposite of above 
  */
@@ -40,6 +67,12 @@ kpair::kpair( raft::kernel &a,
     split_to    = split;
     join_from   = join;
 }
+
+kpair::kpair( raft::kernel_wrapper &a,
+              kpair        &n, 
+              const bool split,
+              const bool join ) : kpair( *(*a), n, split, join )
+{}
 
 kpair::kpair( kpair &a,
               kpair &b, 
@@ -143,14 +176,20 @@ kpair::kpair( raft::kernel &a, raft::kernel &b )
     head = this;
 }
 
-kpair::kpair( LParaPair &lp, raft::kernel &b ) : kpair( lp.value, b )
+
+kpair::kpair( raft::kernel &a, 
+              raft::kernel_wrapper &b ) : kpair( a, *(*b) )
 {
-   context_type = lp.sp;     
 }
 
-kpair::kpair( RParaPair &rp, raft::kernel &b ) : kpair( rp.value, b, false, false )
+kpair::kpair( raft::kernel_wrapper &a, 
+              raft::kernel &b ) : kpair( *(*a), b )
 {
-   context_type = rp.sp;     
+}
+
+kpair::kpair( raft::kernel_wrapper &a, 
+              raft::kernel_wrapper &b ) : kpair( *(*a), *(*b) )
+{
 }
 
 void 
@@ -168,11 +207,20 @@ operator >> ( raft::kernel &a, raft::kernel &b )
 }
 
 kpair&
-operator >> ( raft::kernel &&a, raft::kernel &&b )
+operator >> ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b )
 {
     auto *ptr( new kpair( a, b ) );
     return( *ptr );
 }
+
+kpair&
+operator >> ( raft::kernel &a, raft::kernel_wrapper &&w )
+{
+    auto *ptr( new kpair( a, w) );
+    return( *ptr );
+}
+
+
 
 kpair&  
 operator >> ( kpair &a, raft::kernel &b )
@@ -182,9 +230,9 @@ operator >> ( kpair &a, raft::kernel &b )
 }
 
 kpair&
-operator >> ( kpair &a, raft::kernel &&b )
+operator >> ( kpair &a, raft::kernel_wrapper &&w )
 {
-    auto *ptr( new kpair( a, b, false, false ) );
+    auto *ptr( new kpair( a, w, false, false ) );
     return( *ptr );
 }
 
@@ -216,10 +264,10 @@ operator >> ( LOoOkpair &a, raft::kernel &b )
 
 
 kpair&
-operator >> ( LOoOkpair &a, raft::kernel &&b )
+operator >> ( LOoOkpair &a, raft::kernel_wrapper &&w )
 {
     auto *ptr( 
-        new kpair( a.value, b, false, false ) 
+        new kpair( a.value, w, false, false ) 
     );
     delete( &a );
     ptr->setOoO();
@@ -250,111 +298,15 @@ operator >> ( ROoOkpair &a, raft::kernel &b )
 }
 
 kpair&
-operator >> ( ROoOkpair &a, raft::kernel &&b )
+operator >> ( ROoOkpair &a, raft::kernel_wrapper &&w )
 {
     auto * ptr(
-        new kpair( a.value, b, false, false )
+        new kpair( a.value, w, false, false )
     );
     delete( &a );
     ptr->setOoO();
     return( *ptr );
 }
-/**
- * check for valid types
- */
-inline void parallelTypeCheck( const raft::parallel::type type )
-{
-    /** kept switch since this could be a long non-contiguous list **/
-    switch( type )
-    {
-        case raft::parallel::thread:
-        {
-           /** do nothing **/ 
-        }
-        break;
-#ifdef USEQTHREADS        
-        case raft::parallel::pool:
-        {
-           /** do nothing **/ 
-        }
-#endif        
-        break;
-        case raft::parallel::process:
-        {
-           /** do nothing **/ 
-        }
-        break;
-        default:
-        {
-            //TODO throw exception
-            fprintf( stderr, "Invalid parallel type for this platform, check compiler flags\n" );
-            exit( EXIT_FAILURE );
-        }
-    }
-    return;
-}
-
-//FIXME
-
-LParaPair&  
-operator >> ( raft::kernel &a, const raft::parallel::type &&type )
-{
-    parallelTypeCheck( type ); 
-    auto *ptr( new LParaPair( a, type ) );
-    return( *ptr );
-}
-
-RParaPair&
-operator >> ( kpair &a, const raft::parallel::type &&type )
-{
-    parallelTypeCheck( type ); 
-    auto *ptr( new RParaPair( a, type ) );
-    return( *ptr );
-}
-
-kpair& 
-operator >> ( LParaPair &a, raft::kernel &b )
-{
-   auto *ptr( new kpair( a, b ) );
-   delete( &a );
-   return( *ptr );     
-}
-
-kpair& operator >> ( LParaPair &a, raft::kernel &&b )
-{
-   auto *ptr( new kpair( a, b ) );
-   delete( &a );
-   return( *ptr );     
-}
-
-kpair& 
-operator >> ( RParaPair &a, const raft::parallel::type &&type )
-{
-    //go ahead and throw an exception here, end it quickly
-    //mem freed at exit regardless, no external procs have
-    //started at this point
-    
-    throw NonsenseChainRaftManipException( a.sp, type );
-    
-
-    kpair *ptr( nullptr );
-    return( *ptr );     
-}
-
-kpair& operator >> ( RParaPair &a, raft::kernel &b )
-{
-    auto *ptr( new kpair( a, b ) );
-    delete( &a );
-    return( *ptr );
-}
-
-kpair& operator >> ( RParaPair &a, raft::kernel &&b )
-{
-    auto *ptr( new kpair( a, b ) );
-    delete( &a );
-    return( *ptr );
-}
-
 
 kpair&
 operator <= ( raft::kernel &a, raft::kernel &b )
@@ -364,7 +316,7 @@ operator <= ( raft::kernel &a, raft::kernel &b )
 }
 
 kpair&
-operator <= ( raft::kernel &&a, raft::kernel &&b )
+operator <= ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b )
 {
     auto *ptr( new kpair( a, b, true, false ) );
     return( *ptr );
@@ -378,16 +330,16 @@ operator <= ( raft::kernel &a, kpair &b )
 }
 
 kpair&
-operator <= ( raft::kernel &&a, kpair &b )
+operator <= ( raft::kernel_wrapper &&w, kpair &b )
 {
-    auto *ptr( new kpair( a, b, true, false ) );
+    auto *ptr( new kpair( w, b, true, false ) );
     return( *ptr );
 }
 
 kpair&
-operator >= ( kpair &a, raft::kernel &&b )
+operator >= ( kpair &a, raft::kernel_wrapper &&w )
 {
-    auto *ptr( new kpair( a, b, false, true ) );
+    auto *ptr( new kpair( a, w, false, true ) );
     return( *ptr );
 }
 
@@ -413,9 +365,9 @@ operator >= ( raft::kernel &a, kpair &b )
 }
 
 kpair& 
-operator >= ( raft::kernel &&a, kpair &b )
+operator >= ( raft::kernel_wrapper &&w, kpair &b )
 {
-    auto *ptr( new kpair( a, b, false, true ) );
+    auto *ptr( new kpair( w, b, false, true ) );
     return(*ptr);
 }
 

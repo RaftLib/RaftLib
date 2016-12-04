@@ -1,5 +1,5 @@
 /**
- * splitchain.cpp - test split syntax with continuation chain  
+ * staticSplitJoin.cpp - 
  * @author: Jonathan Beard
  * @version: Mon Mar  2 14:00:14 2015
  * 
@@ -19,8 +19,7 @@
  */
 
 #include <raft>
-/** ensures that the # of output ports is set to 3 **/
-#define STATICPORT 3
+#define STATICPORT 4
 #include <raftrandom>
 #undef DEBUG
 #include <cstdint>
@@ -50,7 +49,7 @@ public:
     {
         T a;
         input[ "0" ].pop( a );
-        output[ "0" ].push( a - 10 );
+        output[ "0" ].push( a - 10);
         return( raft::proceed );
     }
 };
@@ -59,28 +58,39 @@ public:
 int
 main()
 {
-  using namespace raft;
-  using type_t = std::uint32_t;
-  using gen = random_variate< std::default_random_engine,
-                              std::uniform_int_distribution,
-                              type_t >;
-  using p_out = raft::print< type_t, '\n' >;
-  
-  std::vector< type_t > output;
-  
-  const static auto min( 0 );
-  const static auto max( 100 );
-  gen g( 100, min, max );
-  
-  p_out print;
-  
-  sub< type_t > s;
+    using namespace raft;
+    using type_t = std::uint32_t;
+    using gen = random_variate< std::default_random_engine,
+                                std::uniform_int_distribution,
+                                type_t >;
+    using p_out = raft::print< type_t, '\n' >;
+    
+    std::vector< type_t > output;
+    
+    const static auto min( 0 );
+    const static auto max( 100 );
+    gen g( 100, min, max );
+    
+    p_out print;
+    
+    sub< type_t > s;
+    sub< type_t > s2;
+    raft::join< type_t > jo( STATICPORT );
 
+    raft::map m;
+    auto kernels( m += g <= s  >= jo >> print );
+    if( kernels.getSrcSize() != 1 )
+    {
+        std::cerr << "Return kernel_pair_t source should be of size 1 for this test\n";
+        return( EXIT_FAILURE ); 
+    }
+    if( kernels.getDstSize() != 1 )
+    {
+        std::cerr << "Return kernel_pair_t destination should be of size 1 for this test\n";
+        return( EXIT_FAILURE );
+    }
+    
+    m.exe();
 
-  raft::map m;
-  m += g <= s >> print;
-  
-  m.exe();
-
-  return( EXIT_SUCCESS );
+    return( EXIT_SUCCESS );
 }
