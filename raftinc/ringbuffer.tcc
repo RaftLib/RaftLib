@@ -30,6 +30,7 @@
 #include <thread>
 #include <utility>
 #include <vector>
+#include <shm>
 
 #include "fifoabstract.tcc"
 #include "ringbufferbase.tcc"
@@ -327,6 +328,10 @@ public:
                                       Type::SharedMemory >() ,
                       shm_key( key )
     {
+        //TODO this needs to be an shm::open
+        //TODO once open, needs to be an in-place allocate for
+        //the first object to get the open, otherwise..use cookie
+        //technique...all sub-keys will follow main key
         (this)->datamanager.set( 
             new Buffer::Data< T, Type::SharedMemory >( nitems, 
                                                        key, 
