@@ -29,8 +29,8 @@
 #include <vector>
 #include <cassert>
 #include <functional>
+#include <cstddef>
 #include "common.hpp"
-
 
 namespace raft
 {
@@ -69,6 +69,8 @@ struct basekset{
         assert( false );
         return( nullptr );
     }
+
+    virtual std::size_t getSize() = 0;
 };
 
 /** pre-declaration **/
@@ -156,6 +158,8 @@ using iterator       = typename basekset::iterator;
         this ) ) ) );
         return( ptr );
     }
+
+    virtual std::size_t getSize(){ return( (this)->size() ); };
 
     /**
      * get the number of kernels held.

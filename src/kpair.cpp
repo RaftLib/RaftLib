@@ -114,7 +114,7 @@ kpair::kpair( raft::basekset &a,
         dst_name.emplace_back( dst_temp_name );
     }
 
-    src_out_count = src_kset->size();
+    src_out_count = src_kset->getSize();
     dst_in_count  = dst->input.count();
 }
 
@@ -123,10 +123,15 @@ kpair::kpair( raft::basekset &a,
               const bool split,
               const bool join )
 {
+    /** 
+     * this one can either be the first in the list
+     * or could be added with some operators to the 
+     * source side, either way this one needs to have
+     * head and next set to this node
+     */
     head      = this;
-    next      = &b;
-    b.head    = head;
-
+    next      = this;
+    
     split_to  = split;
     join_from = join;
     
@@ -134,8 +139,7 @@ kpair::kpair( raft::basekset &a,
     /** we make a copy, don't need to keep a **/
     delete( &a );
 
-    assert( b.src != nullptr );
-    dst = b.src;
+    dst = &b;
     const auto dst_temp_name( dst->getEnabledPort() );
 
     if( dst_temp_name.length() > 0 )
@@ -145,8 +149,8 @@ kpair::kpair( raft::basekset &a,
         dst_name.emplace_back( dst_temp_name );
     }
 
-    src_out_count = src_kset->size();
-    dst_in_count  = dst->input.count();
+    src_out_count = src_kset->getSize();
+    dst_in_count  = b.input.count();
 }
 
 
