@@ -94,24 +94,28 @@ kpair::kpair( raft::basekset &a,
 {
     head      = this;
     next      = &b;
+    b.head    = head;
+
     split_to  = split;
     join_from = join;
     
     src_kset = a.getCopy(); 
-    //src_name = a.getEnabledPort();
-    //if( src_name.length() > 0 )
-    //{
-    //    /** set false by default **/
-    //    has_src_name = true;
-    //}
+    /** we make a copy, don't need to keep a **/
+    delete( &a );
+
     assert( b.src != nullptr );
     dst = b.src;
-    //dst_name = b.getEnabledPort();
-    //if( dst_name.length() > 0 )
-    //{
-    //    /** set false by default **/
-    //    has_dst_name = true;
-    //}
+    const auto dst_temp_name( dst->getEnabledPort() );
+
+    if( dst_temp_name.length() > 0 )
+    {
+        /** set false by default **/
+        has_dst_name = true;
+        dst_name.emplace_back( dst_temp_name );
+    }
+
+    src_out_count = src_kset->size();
+    dst_in_count  = dst->input.count();
 }
 
 kpair::kpair( raft::basekset &a,
@@ -119,7 +123,30 @@ kpair::kpair( raft::basekset &a,
               const bool split,
               const bool join )
 {
+    head      = this;
+    next      = &b;
+    b.head    = head;
 
+    split_to  = split;
+    join_from = join;
+    
+    src_kset = a.getCopy(); 
+    /** we make a copy, don't need to keep a **/
+    delete( &a );
+
+    assert( b.src != nullptr );
+    dst = b.src;
+    const auto dst_temp_name( dst->getEnabledPort() );
+
+    if( dst_temp_name.length() > 0 )
+    {
+        /** set false by default **/
+        has_dst_name = true;
+        dst_name.emplace_back( dst_temp_name );
+    }
+
+    src_out_count = src_kset->size();
+    dst_in_count  = dst->input.count();
 }
 
 
