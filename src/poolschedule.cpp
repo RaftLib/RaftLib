@@ -17,145 +17,165 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifdef USEQTHREADS 
+
 #include <cassert>
 #include <functional>
 #include <iostream>
 #include <algorithm>
-#include <chrono>
 #include <map>
-#include <thread>
+#include <cassert>
 #include "kernel.hpp"
 #include "map.hpp"
 #include "poolschedule.hpp"
 #include "rafttypes.hpp"
 #include "sched_cmd_t.hpp"
+#include <qthread/qthread.hpp>
+#include <qthread/sinc.h>
+#include <mutex>
+#include <chrono>
 
-pool_schedule::pool_schedule( raft::map &map ) : Schedule( map ),
-                                     n_threads( std::thread::hardware_concurrency() ),
-                                     pool( n_threads ),
-                                     container( n_threads )
+#include "affinity.hpp"
+#ifdef USE_PARTITION
+#include "partition_scotch.hpp"
+#endif
+#include "defs.hpp"
+
+pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
-   for( decltype( std::thread::hardware_concurrency() ) i( 0 ); i < n_threads; i++ )
-   {
-      /** initialize container objects **/
-      container[ i ] = new kernel_container();
-      /** initialize threads **/
-      pool[ i ] = new std::thread( kernel_container::container_run,
-                                   std::ref( *(container[ i ]) ) );
-   }
+    //assert( qthread_init( 1 ) == QTHREAD_SUCCESS );
+    assert( qthread_initialize() == QTHREAD_SUCCESS );
+    thread_data_pool.reserve( kernel_set.size() );
 }
 
 
 pool_schedule::~pool_schedule()
 {
-   assert( kernel_count == 0 );
-   /** join threads **/
-   for( std::thread *thr : pool )
-   {
-      thr->join();
-   }
-   /** delete threads **/
-   for( auto * const th : pool )
-   {
-      delete( th );
-   }
-   /** delete containers **/
-   for( auto * const c : container )
-   {
-      delete( c );
-   }
+    /** kill off the qthread structures **/
+    qthread_finalize();
+    /** delete thread data structs **/
+    for( auto *td : thread_data_pool )
+    {
+        delete( td );
+    }
 }
 
-bool
-pool_schedule::scheduleKernel( raft::kernel * const kernel )
+void
+pool_schedule::handleSchedule( raft::kernel * const kernel )
 {
-   assert( kernel != nullptr );
-   /** get a container **/
-   auto it( std::min_element( container.begin(), 
-                              container.end(),
-                              container_min_input ) );
-   auto &buffer( (*it)->getInputQueue() );
-   auto &new_cmd( buffer.allocate< sched_cmd_t >() );
-   new_cmd.cmd    = schedule::add;
-   new_cmd.kernel = kernel;
-   buffer.send();
-   kernel_count++;
-   return( true );
+   //TODO implement me 
+   UNUSED( kernel );
+   assert( false );
 }
-
 
 void
 pool_schedule::start()
 {
-   while( kernel_count > 0 )
-   {
-      auto it( std::max_element( container.begin(),
-                                 container.end(),
-                                 container_min_output ) );
-       
-      /** we want to get the max queue occupancy **/
-      auto &in_buff( (*it)->getOutputQueue() );
-      if( in_buff.size() > 0 )
-      {
-         /** some message exists **/
-         auto &rcvd_cmd( in_buff.peek< sched_cmd_t >() );
-         switch( rcvd_cmd.cmd )
-         {
-            case( schedule::reschedule ):
+    //qt_sinc_t *sinc( qt_sinc_create(0, nullptr, nullptr, 0) );
+    //TODO, this needs to be fixed to ensure we can increment expect
+    //atomically from other threads, probably need to modify qthreads
+    //interface a bit
+    //std::size_t sinc_count( 0 );
+    /** 
+     * NOTE: this section is the same as the code in the "handleSchedule"
+     * function so that it doesn't call the lock for the thread map.
+     */
+    auto &container( kernel_set.acquire() );
+    //const auto expected_dst_size( dst_kernels.size() );
+    //qt_sinc_expect( sinc /** sinc struct **/, expected_dst_size ); 
+    for( auto * const k : container )
+    {  
+        auto *td( new thread_data( k ) );
+        thread_data_pool.emplace_back( td );
+        if( ! k->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
+        {
+            tail.emplace_back( td );
+            /** destination kernel **/
+            qthread_spawn( pool_schedule::pool_run,
+                           (void*) td,
+                           0,
+                           0,
+                           0,
+                           nullptr,
+                           1,
+                           0 );
+            /** inc number to expect for sync **/
+            //sinc_count++;
+        }
+        else
+        {
+            /** else non-destination kerenl **/
+            qthread_spawn( pool_schedule::pool_run,
+                           (void*) td,
+                           0,
+                           0,
+                           0,
+                           nullptr,
+                           1,
+                           0 );
+        }
+    }
+    kernel_set.release();
+    /** wait on sync **/
+    //assert( sinc_count == expected_dst_size );
+    bool keep_going( true );
+    while( keep_going )
+    {
+        std::chrono::milliseconds dura( 3 );
+        std::this_thread::sleep_for( dura );
+        
+        std::lock_guard< std::mutex > lock( tail_mutex );
+        keep_going = false;
+        
+        for( auto *td : tail )
+        {
+            if( ! td->finished  )
             {
-               auto it_r( std::min_element( container.begin(), 
-                                            container.end(),
-                                            container_min_input ) );
-               const auto container_to_use
-               ( ( (*it_r)->getInputQueue().size() <
-                        (*it)->getInputQueue().size() * diff_weight ) ? it_r : it );
-               
-               auto &buffer( (*container_to_use)->getInputQueue() );
-               auto &send_cmd( buffer.allocate< sched_cmd_t >() );
-               send_cmd.cmd    = schedule::add;
-               send_cmd.kernel = rcvd_cmd.kernel;
-               buffer.send();
+                keep_going = true;
+                break;
             }
-            break;
-            case( schedule::kernelfinished ):
-            {
-               /** remove kernel **/
-               kernel_count--;
-            }
-            break;
-            default:
-            {
-               std::cerr << "Invalid signal: " << 
-                  schedule::sched_cmd_str[ rcvd_cmd.cmd ] << "\n";
-               exit( EXIT_FAILURE );
-            }
-         }
-         in_buff.unpeek();
-         in_buff.recycle( 1 );
-      }
-   }
-
-   /** all done, shutdown **/ 
-   for( auto * const c : container )
-   {
-      auto &out_buff( c->getInputQueue() );
-      auto &new_cmd( out_buff.allocate< sched_cmd_t >() );
-      new_cmd.cmd    = schedule::shutdown;
-      new_cmd.kernel = nullptr;
-      out_buff.send();
-   }
+        }
+    }
+    //qt_sinc_wait(   sinc /** sinc struct **/, 
+    //                nullptr /** ignore bytes copied, we don't care **/ );
+    return;
 }
 
-bool
-pool_schedule::container_min_input( kernel_container * const a,
-                                    kernel_container * const b )
+aligned_t pool_schedule::pool_run( void *data )
 {
-   return( a->getInputQueue().size() < b->getInputQueue().size() ? true : false ); 
+   assert( data != nullptr );
+   auto * const thread_d( reinterpret_cast< thread_data* >( data ) );
+   ptr_map_t in;
+   ptr_set_t out;
+   ptr_set_t peekset;
+
+   Schedule::setPtrSets( thread_d->k, 
+                        &in, 
+                        &out,
+                        &peekset );
+#if 0 //figure out pinning later                        
+   if( thread_d->loc != -1 )
+   {
+      /** call does nothing if not available **/
+      affinity::set( thread_d->loc );
+   }
+   else
+   {
+#ifdef USE_PARTITION
+       assert( false );
+#endif
+   }
+#endif   
+   volatile bool done( false );
+   while( ! done )
+   {
+      Schedule::kernelRun( thread_d->k, done );
+      //takes care of peekset clearing too
+      Schedule::fifo_gc( &in, &out, &peekset );
+      qthread_yield();
+   }
+   thread_d->finished = true;
+   return( 1 );
 }
 
-bool
-pool_schedule::container_min_output( kernel_container * const a,
-                                     kernel_container * const b )
-{
-   return( a->getOutputQueue().size() < b->getOutputQueue().size() ? true : false );
-}
+#endif

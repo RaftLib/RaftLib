@@ -33,6 +33,7 @@
 #include "port_info.hpp"
 #include "kernel.hpp"
 
+
 void
 GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
                  edge_func func,

@@ -26,6 +26,10 @@
 #include <cstdlib>
 #include <cassert>
 
+static std::vector< std::uintptr_t > A;
+static std::vector< std::uintptr_t > B;
+static std::vector< std::uintptr_t > C;
+
 template < std::size_t N > struct foo
 {
    foo() : length( N ){}
@@ -60,6 +64,7 @@ public:
     virtual raft::kstatus run()
     {
         auto &mem( output[ "y" ].allocate< obj_t >() );
+        A.emplace_back( reinterpret_cast< std::uintptr_t >( &mem ) ); 
         for( auto i( 0 ); i < mem.length; i++ )
         {
             mem.pad[ i ] = static_cast< int >( counter );
@@ -78,6 +83,25 @@ private:
 };
 
 
+class middle : public raft::kernel
+{
+public:
+    middle() : raft::kernel()
+    {
+        input.addPort< obj_t >( "x" );
+        output.addPort< obj_t >( "y" );
+    }
+
+    virtual raft::kstatus run()
+    {
+        auto &val( input[ "x" ].peek< obj_t >() );
+        B.emplace_back( reinterpret_cast< std::uintptr_t >( &val ) ); 
+        output[ "y" ].push( val );
+        input[ "x" ].unpeek();
+        input[ "x" ].recycle( 1 );
+        return( raft::proceed );
+    }
+};
 
 
 class last : public raft::kernel
@@ -94,7 +118,8 @@ public:
     {
         obj_t mem;
         input[ "x" ].pop( mem );
-
+        C.emplace_back( reinterpret_cast< std::uintptr_t >( &mem ) ); 
+        /** Jan 2016 - otherwise end up with a signed/unsigned compare w/auto **/
         using index_type = std::remove_const_t<decltype(mem.length)>;
         for( index_type i( 0 ); i < mem.length; i++ )
         {
@@ -118,9 +143,19 @@ main()
 {
     start s;
     last l;
+    middle m;
 
     raft::map M;
-    M += s >> l;
+    M += s >> m >> l;
     M.exe();
+    for( std::size_t  i( 0 ); i < A.size(); i++ )
+    {
+        if( ( A[ i ] != B[ i ] ) && ( B[ i ] == C[ i ] ) )
+        {
+            std::cout << "test failed, first, middle should be equal, last should be diff & always the same\n";
+            std::cout << std::hex << A[ i ] << " - " << B[ i ] << " - " << C[ i ] << "\n";
+            return( EXIT_FAILURE );
+        }
+    }
     return( EXIT_SUCCESS );
 }

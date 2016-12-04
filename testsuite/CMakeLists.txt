@@ -41,7 +41,9 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      KsetJoin
      splitKsetJoin
      ksettest 
-     fixedMatchTest )
+     fixedMatchTest 
+     poolThreadRaftManip
+     poolThreadRaftManip2 )
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 
@@ -53,7 +55,9 @@ foreach( APP ${TESTAPPS} )
  add_executable( ${APP} "${APP}.cpp" )
  target_link_libraries( ${APP} raft  ${CMAKE_THREAD_LIBS_INIT} 
                                      ${CMAKE_SCOTCH_LIBS}
-                                     ${CMAKE_RT_LIBS} )
+                                     ${CMAKE_RT_LIBS} 
+                                     ${CMAKE_QTHREAD_LIBS}
+                                     )
 endforeach( APP ${TESTAPPS} )
 
 file( COPY alice.txt

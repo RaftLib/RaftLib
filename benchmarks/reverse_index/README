@@ -1,0 +1,39 @@
+Phoenix Project
+Reverseindex Example Application Readme
+Last revised 15th April 2007
+
+
+1. Application Overview
+-----------------------
+
+The reverseindex application constructs a reverse-index of links to the html 
+pages that they appear in. It is able to recursively traverse a collection of
+folders that contain html files and extract <a href> tags from html pages to
+build the reverse-index.
+
+2. Provided Files
+-----------------
+
+reverseindex.c: The version of the file that uses the MapReduce engine
+reverseindex-seq.c: The sequential version of the application
+reverseindex-pthread.c: The pthread version of the application
+stddefines.h: Contains declarations of commonly used functions and constants
+MapReduceScheduler.c/h: The MapReduce engine used by the application
+Makefile: Compiles all 3 versions of the application
+datafiles/*: Collection of folders that contain html files that can be used as 
+             input to this application
+README: This file
+
+
+3. Running the Application
+--------------------------
+
+run 'make' to compile all 3 versions of the application. 
+
+./reverseindex <path_to_html_collection>
+./reverseindex-pthread <path_to_html_collection>
+./reverseindex-seq <path_to_html_collection>
+
+runs the MapReduce, Pthreads and sequential version of the application
+respectively
+
