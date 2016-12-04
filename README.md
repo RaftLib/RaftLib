@@ -1,5 +1,5 @@
 ### Warning
-This is the dev branch, not guaranteed to work! Please see origin.
+This is the dev branch, not guaranteed to work! Please see master.
 
 ### Description
 [RaftLib](http://raftlib.io) is a C++ Library for enabling stream/data-flow parallel computation. Using simple right shift operators (just like the C++ streams that you would use for string manipulation), you can link parallel compute kernels together. With RaftLib, we do away with explicit use of pthreads, std::thread, OpenMP, or any other parallel "threading" library. These are often mis-used, creating non-deterministic behavior. RaftLib's model allows lock-free FIFO-like access to the communications channels connecting each compute kernel. The full system has many auto-parallelization, optimization, and convenience features that enable relatively simple authoring of performant applications. This project is currently in the alpha stage (recently emerging from a PhD thesis). The beta release will bring back multi-node support, along with (planned) container support for the remote machines. Feel free to give it a shot, if you have any issues, also feel free to send the authors an e-mail.
@@ -98,6 +98,6 @@ in a few weeks. ( 5 Jan 2016, jcb )
 
 Added in prefetch for object types larger than a single cache line. Profiling
 shows that it's really not beneficial on most platforms with good prefetch
-algorithms. (25 March 2016, jcb )
+algorithms (in hardware). (25 March 2016, jcb )
 
 
