@@ -88,7 +88,7 @@ public:
 #endif             
              , 
              class allocator           = dynalloc,
-             class parallelism_monitor = no_parallel > 
+             class parallelism_monitor = basic_parallel > 
       void exe()
    {
       {

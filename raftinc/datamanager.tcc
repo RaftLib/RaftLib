@@ -28,25 +28,8 @@
 
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
+#include "defs.hpp"
 
-namespace dm
-{
-using key_t = std::uint8_t;
-/**
- * access_key - each one of these is to be used as a 
- * key for  buffer access functions.  Everything <= 
- * push is expected to be a write type function, everything
- * else is expected to be a read type operation.
- */
-enum access_key : key_t { allocate       = 0, 
-                          allocate_range = 1, 
-                          push           = 3, 
-                          recycle        = 4, 
-                          pop            = 5, 
-                          peek           = 6, 
-                          size           = 7,
-                          N };
-}
 
 template < class T, 
            Type::RingBufferType B,
@@ -68,6 +51,12 @@ public:
       (this)->buffer = buffer;
       /** check to see if buffer is given is resizeable **/
       resizeable     = (  buffer->external_alloc ? false : true ); 
+      /** 
+       * need to set thread access structs, should be two of them, 
+       * one for producer anad other for the consumer. These are 
+       * kept as an array here so, only one ptr.
+       */
+      thread_access = buffer->thread_access;
    }
 
    inline bool is_resizeable() noexcept 
@@ -95,28 +84,31 @@ public:
        * if all fifo functions have completed
        * their operations.
        */
-      auto allclear = [&]() noexcept -> bool
+      auto allclear( []( ThreadAccess * const thread_access,
+                         std::atomic< std::uint64_t >  * checking_size ) noexcept -> bool
       {
-         for( const auto &flag_array : thread_access )
+         assert( thread_access != nullptr );
+         assert( checking_size != nullptr );
+         for( int i( 0 ); i < 2; i++ )
          {
-            if( flag_array.whole != 0 )
+            if( thread_access[ i ].whole != 0 )
             {
                return( false );
             }
          }
-         if( checking_size.load( std::memory_order_relaxed ) != 0 )
+         if( checking_size->load( std::memory_order_relaxed ) != 0 )
          {
             return( false );
          }
          return( true );
-      };
+      } );
 
       /**
        * buffercondition - call to see if the 
        * current buffer state is amenable to
        * expanding.
        */
-      auto buffercondition = [&]() noexcept -> bool
+      auto buffercondition( []( Buffer::Data< T, B > * const buff_ptr ) noexcept -> bool
       {
          /** 
           * there's only a few conditions that you can copy
@@ -129,11 +121,10 @@ public:
           * in the size() function from the ringbufferheap.tcc 
           * file.
           */
-         auto * const buff_ptr( get() );
          const auto rpt( Pointer::val( buff_ptr->read_pt  ) );
          const auto wpt( Pointer::val( buff_ptr->write_pt ) );
          return( rpt < wpt );
-      };
+      } );
       
       auto *old_buffer( get() );
       for(;;)
@@ -151,10 +142,10 @@ public:
          /** set resizing global flag **/
          resizing = true;
          /** see if everybody is done with the current buffer **/
-         if( allclear() )
+         if( allclear( thread_access, &checking_size ) )
          {
             /** check to see if the state of the buffer is good **/
-            if( buffercondition() )
+            if( buffercondition( old_buffer ) )
             {
                break;
             }
@@ -166,7 +157,15 @@ public:
          resizing = false;
          std::this_thread::yield();
       }
-      /** nobody should have outstanding references to the old buff **/
+      /** 
+       * we can't do this with a simple copy constructor easily as 
+       * at the time of new buffer creation we don't know the state
+       * of the buffer at the time the conditions above were met, so
+       * we have to do it once the happen. 
+       * 
+       * At this point nobody should have outstanding references to 
+       * the old buff, free to copy.
+       */
       new_buffer->copyFrom( old_buffer );
       set( new_buffer );
       delete( old_buffer );
@@ -179,6 +178,7 @@ public:
     */
    auto get() noexcept -> Buffer::Data< T, B >*
    {
+      /** don't check for nullptr here b/c it's a valid return type **/
       return( buffer );
    }
 
@@ -191,7 +191,10 @@ public:
    void enterBuffer( const dm::access_key key ) noexcept
    {
       /** see lambda below **/
-      set_helper( key, static_cast< dm::key_t >( 1 ) );
+      set_helper( key, 
+                  static_cast< dm::key_t >( 1 ),
+                  thread_access,
+                  &checking_size );
    }
 
    /**
@@ -203,7 +206,10 @@ public:
    void exitBuffer( const dm::access_key key ) noexcept
    {
       /** see lambda below **/
-      set_helper( key, static_cast< dm::key_t >( 0 ) );
+      set_helper( key, 
+                  static_cast< dm::key_t >( 0 ),
+                  thread_access,
+                  &checking_size );
    }
 
    /**
@@ -213,7 +219,7 @@ public:
     */
    bool notResizing() noexcept
    {
-      return( ! resizing ); 
+      return( R_UNLIKELY( ! resizing ) ); 
    }
    
 
@@ -223,25 +229,20 @@ private:
 
    bool                  resizeable          = true;
    
-   struct ThreadAccess
-   {
-      union
-      {
-         std::uint64_t whole = 0; /** just in case, default zero **/
-         dm::key_t     flag[ 8 ];
-      };
-      std::uint8_t padding[ L1D_CACHE_LINE_SIZE - 8 /** 64 padding **/ ];
-   } 
-#if defined __APPLE__ || defined __linux   
-    __attribute__((aligned( L1D_CACHE_LINE_SIZE ))) 
-#endif    
-    volatile thread_access[ 2 ];
+   /** defined in threadaccess.hpp **/
+   ThreadAccess *thread_access = nullptr;
   
    std::atomic< std::uint64_t >  checking_size = { 0 };
 
-   inline void set_helper( const dm::access_key key, 
-                           const dm::key_t      val ) noexcept
+   static inline void set_helper( const dm::access_key key, 
+                                  const dm::key_t      val,
+                                  ThreadAccess *thread_access,
+                                  std::atomic< 
+                                    std::uint64_t > * const checking_size ) noexcept
    {
+      assert( thread_access != nullptr );
+      assert( checking_size != nullptr );
+
       switch( key )
       {
          case( dm::allocate ):
@@ -279,11 +280,11 @@ private:
             /** this one has to be atomic, multiple updaters **/
             if( val == 0 )
             {
-                checking_size.fetch_sub( 1, std::memory_order_relaxed );
+                checking_size->fetch_sub( 1, std::memory_order_relaxed );
             }
             else
             {
-                checking_size.fetch_add( 1, std::memory_order_relaxed );
+                checking_size->fetch_add( 1, std::memory_order_relaxed );
             }
          }
          break;

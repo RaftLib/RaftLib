@@ -36,10 +36,15 @@ else( NOT L1D_LINE_SIZE )
     message( INFO " Detected cache line size, set to: ${L1D_LINE_SIZE}" )
 endif( NOT L1D_LINE_SIZE )
 
+
+
+      
+
 ##
 # for cache line size
 ##
-add_definitions( "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" ) 
+set( CACHE_LINE_FLAG "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" )
+add_definitions( ${CACHE_LINE_FLAG}  ) 
 ##
 # for tcmalloc
 ##
@@ -65,6 +70,15 @@ endif( BUILD_WOPENCV )
 # for random numbers too
 ##
 include( CheckBoostDep )
+mark_as_advanced( PKG_CFLAGS "" )
+
+set( PKG_CFLAGS_PROTO "${PKG_CFLAGS_PROTO} ${CACHE_LINE_FLAG}" )
+if( USEQTHREAD )
+set( PKG_CFLAGS_PROTO "${PKG_CFLAGS_PROTO} -DUSEQTHREAD=1" )
+endif( USEQTHREAD )
+
+set( PKG_CFLAGS ${PKG_CFLAGS_PROTO} )
+
 
 ##
 # Set up unit tests
@@ -106,7 +120,8 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      staticJoinRetStruct 
      staticLongSplitChainRetStruct
      staticSplitChainJoinRetStruct
-     staticSplitJoinRetStruct ) 
+     staticSplitJoinRetStruct 
+     chainMultiplePorts ) 
 
 if( BUILDRANDOM )
     list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 
@@ -124,9 +139,15 @@ set( MAINHEADERS
      raftio 
      raftmath 
      raftrandom
-     raftmanip
      raftstat )
 foreach( HFILE ${MAINHEADERS} )
  install( FILES ${CMAKE_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 endforeach( HFILE ${MAINHEADERS} )
 
+set( _PKG_CONFIG_LIBS  "${CMAKE_SCOTCH_LIBS} ${CMAKE_QTHREAD_LIBS} ${CMAKE_NUMA_LIBS} ${CMAKE_RT_LIBS} -lshm" )
+
+# Generate the pkg-config file.
+CONFIGURE_FILE(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/pkg-config.pc.cmake"
+   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
+)

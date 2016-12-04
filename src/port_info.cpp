@@ -52,7 +52,11 @@ PortInfo::getFIFO()
       FIFO *a;
       FIFO *b;
    }copy = { fifo_a, fifo_b };
-   /** for most architectures that don't need this, it'll be optimized out after the first iteration **/
+   /** 
+    * most architectures won't need this, but branch predictor will optimize
+    * regardless for others so doesn't really hurt after the first time
+    * hitting the loop.
+    */
    while( copy.a != copy.b )
    {
       copy.a = fifo_a;

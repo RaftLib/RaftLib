@@ -170,6 +170,13 @@ Schedule::kernelRun( raft::kernel * const kernel,
          invalidateOutputPorts( kernel );
          finished = true;
       }
+      else if( sig_status == raft::error )
+      {
+        //FIXME, need more graceful shutdown...right now kill everything
+        invalidateOutputPorts( kernel );
+        finished = true;
+        exit( EXIT_SUCCESS );
+      }
    }
    /**
     * must recheck data items again after port valid check, there could

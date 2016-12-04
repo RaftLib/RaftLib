@@ -490,6 +490,18 @@ public:
     */
    virtual float get_frac_write_blocked() = 0;
 
+
+    /**
+     * get_suggested_count - returns the suggested count
+     * for the dynamic allocator if the user has ever
+     * asked for more than is currently available 
+     * space in the FIFO. This could also serve as a 
+     * minimum size for future allocations (implementation
+     * dependent.
+     * @return  std::size_t suggested count
+     */
+     virtual std::size_t get_suggested_count() = 0;
+
    /**
     * invalidate - used by producer thread to label this
     * queue as invalid.  Could be for many differing reasons,
@@ -525,20 +537,6 @@ protected:
     * setOutPeekSet -
     */
    virtual void setOutPeekSet( ptr_set_t * const peekset );
-   /**
-    * set_src_kernel - sets teh protected source
-    * kernel for this fifo, necessary for preemption,
-    * see comments on variables below.
-    * @param   k - raft::kernel*
-    */
-   virtual void set_src_kernel( raft::kernel * const k ) = 0;
-   /**
-    * set_dst_kernel - sets the protected destination
-    * kernel for this fifo, necessary for preemption,
-    * see comments on variables below.
-    * @param   k - raft::kernel*
-    */
-   virtual void set_dst_kernel( raft::kernel * const k ) = 0;
    /**
     * signal_peek - special function for the scheduler
     * to peek at a signal on the head of the queue.

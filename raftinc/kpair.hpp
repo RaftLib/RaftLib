@@ -194,6 +194,8 @@ kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
 kpair& operator <= ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b );
 kpair& operator <= ( raft::kernel &a,  kpair &b );
 kpair& operator <= ( raft::kernel_wrapper &&w, kpair &b );
+kpair& operator <= ( kpair &a, raft::kernel &b );
+
 
 kpair& operator >= ( kpair &a, raft::kernel &b );
 kpair& operator >= ( kpair &a, raft::kernel_wrapper &&w );

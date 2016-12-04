@@ -19,6 +19,7 @@
  */
 #include "kernel_wrapper.hpp"
 #include "kernel.hpp"
+#include <cassert>
 
 using namespace raft;
 

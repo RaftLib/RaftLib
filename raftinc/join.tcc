@@ -37,12 +37,18 @@ public:
          addPort();
       }
    }
+   
 
    virtual ~join() = default;
 
    virtual raft::kstatus run()
    {
-      /** multiple calls to allocate will return same reference **/
+      /** 
+       * NOTE: multiple calls to allocate will return same reference,
+       * however we need to deallocate if we want the run-time to be 
+       * able to dynamically re-allocate or move the memory backing
+       * the stream, so call deallocate below if unused
+       */
       auto &output_port( output[ "0" ] );
       T &mem( output_port.template allocate< T >() );
       raft::signal temp_signal;

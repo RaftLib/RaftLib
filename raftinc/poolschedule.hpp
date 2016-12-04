@@ -96,6 +96,7 @@ protected:
        bool          finished  = false;
        core_id_t     loc       = -1;
     };
+    std::mutex                  thread_data_mutex;
     std::vector< thread_data* > thread_data_pool;
     std::mutex                  tail_mutex;
     std::vector< thread_data* > tail;

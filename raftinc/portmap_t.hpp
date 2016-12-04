@@ -24,14 +24,15 @@
 #include <string>
 #include <mutex>
 #include "port_info.hpp"
+#include <cstddef>
 
 struct portmap_t
 {
-   portmap_t() = default;
-   virtual ~portmap_t() = default;
-
-   std::map< std::string, PortInfo > map;
-   std::mutex                        mutex_map;
+   using key_type = std::string;
+   using map_type = std::map< key_type, PortInfo >;
+   
+   map_type     map;
+   std::mutex   mutex_map;
 };
 
 #endif /* END _PORTMAP_T_HPP_ */

@@ -61,7 +61,10 @@ using kernel_it_pair = std::pair<
                                     typename kernel_list_t::const_iterator
                                 >;
 
-using byte_t = std::uint8_t;
+namespace raft
+{
+    using byte_t = std::uint8_t;
+}
 
 
 #if (defined __linux) || (defined __APPLE__ )

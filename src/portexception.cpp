@@ -17,55 +17,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <utility>
+#include <cstring>
 #include "portexception.hpp"
 
-PortException::PortException( const std::string message )
+PortException::PortException( const std::string &message ) : message( std::move( message ) )
 {
-   (this)->message = message;
 }
 
 const char*
 PortException::what() const noexcept
 {
-   return( message.c_str() );
+   return( strdup( message.c_str() ) );
 }
 
-PortTypeException::PortTypeException( const std::string message ) :
+PortTypeException::PortTypeException( const std::string &message ) :
    PortException( message )
 {
 }
 
-PortNotFoundException::PortNotFoundException( const std::string message ) :
+PortNotFoundException::PortNotFoundException( const std::string &message ) :
    PortException( message )
 {
 }
 
 PortDoubleInitializeException::PortDoubleInitializeException( 
-   const std::string message ) : PortException( message )
+   const std::string &message ) : PortException( message )
 {
 }
 
 PortTypeMismatchException::PortTypeMismatchException(
-   const std::string message ) : PortException( message )
+   const std::string &message ) : PortException( message )
 {
 }
 
 AmbiguousPortAssignmentException::AmbiguousPortAssignmentException(
-   const std::string message ) : PortException( message )
+   const std::string &message ) : PortException( message )
 {
 }
 
 ClosedPortAccessException::ClosedPortAccessException(
-   const std::string message ) : PortException( message )
+   const std::string &message ) : PortException( message )
 {
 }
 
 NoMoreDataException::NoMoreDataException(
-   const std::string message ) : PortException( message )
+   const std::string &message ) : PortException( message )
 {
 }
 
 PortAlreadyExists::PortAlreadyExists(
-   const std::string message ) : PortException( message )
+   const std::string &message ) : PortException( message )
 {
 }

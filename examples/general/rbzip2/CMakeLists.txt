@@ -46,7 +46,9 @@ target_link_libraries( ${APP}
                        bz2
                        ${CMAKE_SCOTCH_LIBS}
                        ${CMAKE_THREAD_LIBS_INIT} 
-                       ${CMAKE_RT_LIBS} )
+                       shm
+                       ${CMAKE_RT_LIBS}
+                       )
 
 file( COPY alice.txt
       DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
