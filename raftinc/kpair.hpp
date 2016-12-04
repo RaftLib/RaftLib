@@ -25,7 +25,7 @@
 #include "kset.tcc"
 #include "portorder.hpp"
 #include "defs.hpp"
-
+#include "raftmanip.hpp"
 
 
 namespace raft

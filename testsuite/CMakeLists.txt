@@ -14,13 +14,33 @@ find_package( Scotch )
 
 
 
-set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
-     join lambdatest allocate_s foreach peekrange  
-     partitionTest parallel peek 
-     bracketsTest uniform chain 
-     splitchain staticLongSplitChain 
-     staticSplitJoin staticSplitChainJoin 
-     staticJoin staticContJoin 
+set( TESTAPPS 
+    allocate 
+    portTypeException 
+    dynallocate 
+    stdlibsupport 
+    split 
+     join 
+     lambdatest 
+     allocate_s 
+     foreach 
+     peekrange  
+     partitionTest 
+     parallel 
+     peek 
+     bracketsTest 
+     gamma
+     uniform 
+     gaussian
+     exponential
+     sequential
+     chain 
+     splitchain 
+     staticLongSplitChain 
+     staticSplitJoin 
+     staticSplitChainJoin 
+     staticJoin 
+     staticContJoin 
      fitInCacheLine
      isExtClass
      doesntFitInCacheLine
@@ -41,6 +61,8 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      KsetJoin
      splitKsetJoin
      ksettest 
+     poolThreadRaftManip 
+     poolThreadRaftManip2
      fixedMatchTest 
      splitchainRetStruct 
      staticContJoinRetStruct
@@ -50,9 +72,6 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      staticSplitJoinRetStruct 
      chainMultiplePorts )
 
-if( BUILDRANDOM )
-list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 
-endif( BUILDRANDOM )
 
 include_directories( ${CMAKE_SCOTCH_INCS} )
 
@@ -62,6 +81,7 @@ foreach( APP ${TESTAPPS} )
                                      ${CMAKE_SCOTCH_LIBS}
                                      ${CMAKE_RT_LIBS} 
                                      ${CMAKE_QTHREAD_LIBS}
+                                     shm
                                      )
 endforeach( APP ${TESTAPPS} )
 

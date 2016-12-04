@@ -85,47 +85,64 @@ set( PKG_CFLAGS ${PKG_CFLAGS_PROTO} )
 ##
 add_subdirectory( testsuite )
 enable_testing()
-set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
-     join lambdatest allocate_s foreach peekrange 
-     partitionTest parallel peek
-     bracketsTest uniform splitchain
-     staticLongSplitChain staticSplitJoin 
-     staticSplitChainJoin staticJoin staticContJoin
-     fitInCacheLine
-     isExtClass
-     doesntFitInCacheLine
-     isInlineClass
-     isExtArray
-     isExtAlloc 
-     isInlineNonClass 
-     allocateSendPush 
-     allocateSendRandomPush 
-     allocatePopPush 
-     allocatePopInternal
-     allocatePopInternalObject
-     allocatePopExternal
-     prefetchEffective 
-     parallelchain 
-     ksettest
-     splitKsetCont
-     KsetJoin
-     ksetContContJoin
-     splitKsetJoin 
-     fixedMatchTest
-     poolThreadRaftManip 
-     poolThreadRaftManip2
-     forceProcess 
-     splitchainRetStruct
-     staticContJoinRetStruct
-     staticJoinRetStruct 
-     staticLongSplitChainRetStruct
-     staticSplitChainJoinRetStruct
-     staticSplitJoinRetStruct 
-     chainMultiplePorts ) 
+set( TESTAPPS 
+        allocate 
+        portTypeException 
+        dynallocate 
+        stdlibsupport 
+        split 
+        join 
+        lambdatest 
+        allocate_s 
+        foreach 
+        peekrange 
+        partitionTest 
+        parallel 
+        peek
+        bracketsTest 
+        uniform 
+        gamma 
+        gaussian 
+        exponential 
+        sequential 
+        splitchain
+        staticLongSplitChain 
+        staticSplitJoin 
+        staticSplitChainJoin 
+        staticJoin 
+        staticContJoin
+        fitInCacheLine
+        isExtClass
+        doesntFitInCacheLine
+        isInlineClass
+        isExtArray
+        isExtAlloc 
+        isInlineNonClass 
+        allocateSendPush 
+        allocateSendRandomPush 
+        allocatePopPush 
+        allocatePopInternal
+        allocatePopInternalObject
+        allocatePopExternal
+        prefetchEffective 
+        parallelchain 
+        ksettest
+        splitKsetCont
+        KsetJoin
+        ksetContContJoin
+        splitKsetJoin 
+        fixedMatchTest
+        poolThreadRaftManip 
+        poolThreadRaftManip2
+        forceProcess 
+        splitchainRetStruct
+        staticContJoinRetStruct
+        staticJoinRetStruct 
+        staticLongSplitChainRetStruct
+        staticSplitChainJoinRetStruct
+        staticSplitJoinRetStruct 
+        chainMultiplePorts ) 
 
-if( BUILDRANDOM )
-    list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 
-endif( BUILDRANDOM )
 
 foreach( TEST ${TESTAPPS} )
     add_test( NAME "${TEST}_test" COMMAND ${TEST} )
@@ -137,7 +154,8 @@ endforeach( TEST ${TESTAPPS} )
 set( MAINHEADERS 
      raft 
      raftio 
-     raftmath 
+     raftmath
+     raftmanip
      raftrandom
      raftstat )
 foreach( HFILE ${MAINHEADERS} )
