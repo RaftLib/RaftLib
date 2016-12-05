@@ -1,0 +1,276 @@
+\hypertarget{classbasic__parallel}{}\section{basic\+\_\+parallel Class Reference}
+\label{classbasic__parallel}\index{basic\+\_\+parallel@{basic\+\_\+parallel}}
+
+
+Collaboration diagram for basic\+\_\+parallel\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classbasic__parallel__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classbasic__parallel_a8c444469221caca20b1b04762636df78}{basic\+\_\+parallel} (\hyperlink{classraft_1_1map}{raft\+::map} \&map, \hyperlink{class_allocate}{Allocate} \&alloc, \hyperlink{class_schedule}{Schedule} \&sched, volatile bool \&exit\+\_\+para)
+\item 
+virtual void \hyperlink{classbasic__parallel_a85ea2560d40ad50482468e39d626a52b}{start} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+kernelkeeper \& \hyperlink{classbasic__parallel_a969b8832b2f6eaea5e985d4582d9e4dc}{source\+\_\+kernels}
+\item 
+\hypertarget{classbasic__parallel_a028feb03732d5fef0e9d184ddc18ce7b}{}\label{classbasic__parallel_a028feb03732d5fef0e9d184ddc18ce7b} 
+kernelkeeper \& {\bfseries all\+\_\+kernels}
+\item 
+\hypertarget{classbasic__parallel_aab09daae41a9d218568115be037a8357}{}\label{classbasic__parallel_aab09daae41a9d218568115be037a8357} 
+\hyperlink{class_allocate}{Allocate} \& {\bfseries alloc}
+\item 
+\hypertarget{classbasic__parallel_a9124d0bfd5d75277ddd44fb59814435a}{}\label{classbasic__parallel_a9124d0bfd5d75277ddd44fb59814435a} 
+\hyperlink{class_schedule}{Schedule} \& {\bfseries sched}
+\item 
+\hypertarget{classbasic__parallel_ac648d03dceed09e7834d656f561da33b}{}\label{classbasic__parallel_ac648d03dceed09e7834d656f561da33b} 
+volatile bool \& {\bfseries exit\+\_\+para}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 51 of file basicparallel.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classbasic__parallel_a8c444469221caca20b1b04762636df78}{}\label{classbasic__parallel_a8c444469221caca20b1b04762636df78} 
+\index{basic\+\_\+parallel@{basic\+\_\+parallel}!basic\+\_\+parallel@{basic\+\_\+parallel}}
+\index{basic\+\_\+parallel@{basic\+\_\+parallel}!basic\+\_\+parallel@{basic\+\_\+parallel}}
+\subsubsection{\texorpdfstring{basic\+\_\+parallel()}{basic\_parallel()}}
+{\footnotesize\ttfamily basic\+\_\+parallel\+::basic\+\_\+parallel (\begin{DoxyParamCaption}\item[{\hyperlink{classraft_1_1map}{raft\+::map} \&}]{map,  }\item[{\hyperlink{class_allocate}{Allocate} \&}]{alloc,  }\item[{\hyperlink{class_schedule}{Schedule} \&}]{sched,  }\item[{volatile bool \&}]{exit\+\_\+para }\end{DoxyParamCaption})}
+
+\hyperlink{basicparallel_8cpp_source}{basicparallel.\+cpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Mon Aug 10 20\+:00\+:25 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License. nothing to do here, move along 
+
+Definition at line 29 of file basicparallel.\+cpp.
+
+
+\begin{DoxyCode}
+33    : \hyperlink{classbasic__parallel_a969b8832b2f6eaea5e985d4582d9e4dc}{source\_kernels}( map.\hyperlink{class_map_base_a2541cb37a237e66fc88129f9f0b02f50}{source\_kernels} ),
+34      all\_kernels(    map.\hyperlink{class_map_base_a2220cd630c5d00708f08d9bc70a48220}{all\_kernels} ),
+35      alloc( alloc ),
+36      sched( sched ),
+37      exit\_para( exit\_para )
+38 \{\textcolor{comment}{}
+39 \textcolor{comment}{   /** nothing to do here, move along **/}
+40 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classbasic__parallel_a85ea2560d40ad50482468e39d626a52b}{}\label{classbasic__parallel_a85ea2560d40ad50482468e39d626a52b} 
+\index{basic\+\_\+parallel@{basic\+\_\+parallel}!start@{start}}
+\index{start@{start}!basic\+\_\+parallel@{basic\+\_\+parallel}}
+\subsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily void basic\+\_\+parallel\+::start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+since we have to have a lock on the ports for both B\+FS and duplication, we\textquotesingle{}ll mark the kernels inside of B\+FS and duplicate outside of it.
+
+start checking stats
+
+input stats
+
+apply criteria
+
+F\+I\+X\+ME, logic below only works for single input, single output..intended to get it working
+
+clone
+
+attach ports
+
+connecting a.\+y -\/$>$ b.\+x new\+\_\+other\+\_\+outprt == port y on a new\+\_\+port\+\_\+in == port x on b
+
+connecting b.\+y -\/$>$ c.\+x newoutport == port y on b new\+\_\+other\+\_\+inport == port x on c
+
+schedule new kernel 
+
+Definition at line 44 of file basicparallel.\+cpp.
+
+
+
+References Graph\+Tools\+::\+B\+F\+S(), raft\+::kernel\+::clone(), Port\+::count(), Port\+::get\+Port\+Info(), Port\+::has\+Ports(), raft\+::kernel\+::input, Schedule\+::schedule\+Kernel(), and source\+\_\+kernels.
+
+
+\begin{DoxyCode}
+45 \{
+46    \textcolor{keyword}{using} hash\_t = std::uintptr\_t;
+47    \textcolor{comment}{//FIXME, need to add the code that'll limit this without a count}
+48    \textcolor{keywordflow}{while}( ! exit\_para )
+49    \{
+50       kernelkeeper::value\_type &kernels( \hyperlink{classbasic__parallel_a969b8832b2f6eaea5e985d4582d9e4dc}{source\_kernels}.acquire() );\textcolor{comment}{}
+51 \textcolor{comment}{      /**}
+52 \textcolor{comment}{       * since we have to have a lock on the ports}
+53 \textcolor{comment}{       * for both BFS and duplication, we'll mark}
+54 \textcolor{comment}{       * the kernels inside of BFS and duplicate}
+55 \textcolor{comment}{       * outside of it.}
+56 \textcolor{comment}{       */}
+57       std::vector< raft::kernel* > dup\_list;
+58       \hyperlink{class_graph_tools_ade51007699cbd681c1a37946609c46ee}{GraphTools::BFS}(  kernels,
+59                         (vertex\_func) [&dup\_list]( \hyperlink{classraft_1_1kernel}{raft::kernel} *kernel,
+60                                            \textcolor{keywordtype}{void} *data )
+61                         \{
+62                            \textcolor{keyword}{static} std::map< hash\_t, stats > hashmap;
+63                            \textcolor{keyword}{static} uint64\_t count( 0 );
+64 
+65                            UNUSED( data );
+66 
+67                            \textcolor{keywordflow}{if}( kernel->dup\_enabled )
+68                            \{\textcolor{comment}{}
+69 \textcolor{comment}{                              /** start checking stats **/}
+70                               \textcolor{keyword}{auto} hash(
+71                                  reinterpret\_cast< std::uintptr\_t >( kernel ) );\textcolor{comment}{}
+72 \textcolor{comment}{                              /** input  stats **/}
+73                               raft::streamingstat< float > in;
+74                               raft::streamingstat< float > out;
+75                               \textcolor{keywordflow}{if}( kernel->\hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}.\hyperlink{class_port_a7042f5b5c2ab14c9591a4984811a6012}{hasPorts}() )
+76                               \{
+77                                  \textcolor{keyword}{auto} &input( kernel->\hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}.\hyperlink{class_port_a4af1cb062940ca3b83c569f024b9a8d1}{getPortInfo}() );
+78                                  \textcolor{keyword}{auto} *fifo( input.getFIFO() );
+79                                  in.update( static\_cast< float >( fifo->size() )/ 
+80                                                 static\_cast< float >( fifo->capacity() ) );
+81                               \}
+82                               \textcolor{keywordflow}{if}( kernel->output.\hyperlink{class_port_a7042f5b5c2ab14c9591a4984811a6012}{hasPorts}() )
+83                               \{
+84                                  \textcolor{keyword}{auto} &output( kernel->output.\hyperlink{class_port_a4af1cb062940ca3b83c569f024b9a8d1}{getPortInfo}() );
+85                                  \textcolor{keyword}{auto} *fifo( output.getFIFO() );
+86                                  out.update( static\_cast< float >( fifo->size() )/ 
+87                                                   static\_cast< float >( fifo->capacity() ) );
+88                               \}\textcolor{comment}{}
+89 \textcolor{comment}{                              /** apply criteria **/}
+90                               \textcolor{keywordflow}{if}( ( kernel->\hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}.\hyperlink{class_port_a33562ea87ac7e83a32441da40cbd9279}{count}() == 0 ||
+91                                     in.mean< \textcolor{keywordtype}{float} >() > .5  ) &&
+92                                   ( out.mean< \textcolor{keywordtype}{float} >() < .5   ||
+93                                     kernel->output.\hyperlink{class_port_a33562ea87ac7e83a32441da40cbd9279}{count}() == 0 ) )
+94                               \{
+95                                  hashmap[ hash ].occ\_in++;
+96                               \}
+97                               \textcolor{keywordflow}{if}( hashmap[ hash ].occ\_in > 3 && count < 2 )
+98                               \{
+99                                  count++;
+100                                  dup\_list.emplace\_back( kernel );
+101                                  hashmap[ hash ].occ\_in = 0;
+102                               \}
+103                            \}
+104                         \},
+105                         nullptr );
+106       \hyperlink{classbasic__parallel_a969b8832b2f6eaea5e985d4582d9e4dc}{source\_kernels}.release();
+107 
+108       \textcolor{keywordflow}{for}( \textcolor{keyword}{auto} * kernel : dup\_list )
+109       \{\textcolor{comment}{}
+110 \textcolor{comment}{         /**}
+111 \textcolor{comment}{          * FIXME, logic below only works for}
+112 \textcolor{comment}{          * single input, single output..intended}
+113 \textcolor{comment}{          * to get it working}
+114 \textcolor{comment}{          */}\textcolor{comment}{}
+115 \textcolor{comment}{         /** clone **/}
+116          \textcolor{keyword}{auto} *ptr( kernel->\hyperlink{classraft_1_1kernel_a71bfffbbb3d40949e19be32e3d8f467f}{clone}() );\textcolor{comment}{}
+117 \textcolor{comment}{         /** attach ports **/}
+118          \textcolor{keywordflow}{if}( kernel->\hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}.\hyperlink{class_port_a33562ea87ac7e83a32441da40cbd9279}{count}() != 0 )
+119          \{
+120             \textcolor{keyword}{auto} &old\_port\_in( kernel->\hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}.\hyperlink{class_port_a4af1cb062940ca3b83c569f024b9a8d1}{getPortInfo}() );
+121             old\_port\_in.other\_kernel->lock();
+122             \textcolor{keyword}{const} \textcolor{keyword}{auto} portid(
+123                old\_port\_in.other\_kernel->addPort() );
+124             \textcolor{keyword}{auto} &new\_other\_outport(
+125                old\_port\_in.other\_kernel->output.getPortInfoFor(
+126                   std::to\_string( portid )
+127                )
+128             );
+129             \textcolor{keyword}{auto} &new\_port\_in( ptr->input.getPortInfo() );\textcolor{comment}{}
+130 \textcolor{comment}{            /**}
+131 \textcolor{comment}{             * connecting a.y -> b.x}
+132 \textcolor{comment}{             * new\_other\_outprt == port y on a}
+133 \textcolor{comment}{             * new\_port\_in      == port x on b}
+134 \textcolor{comment}{             */}
+135             alloc.allocate( new\_other\_outport,
+136                             new\_port\_in,
+137                             \textcolor{keyword}{nullptr} );
+138             old\_port\_in.other\_kernel->unlock();
+139          \}
+140          \textcolor{keywordflow}{if}( kernel->output.\hyperlink{class_port_a33562ea87ac7e83a32441da40cbd9279}{count}() != 0 )
+141          \{
+142             \textcolor{keyword}{auto} &old\_port\_out( kernel->output.\hyperlink{class_port_a4af1cb062940ca3b83c569f024b9a8d1}{getPortInfo}() );
+143             old\_port\_out.other\_kernel->lock();
+144             \textcolor{keyword}{const} \textcolor{keyword}{auto} portid(
+145                old\_port\_out.other\_kernel->addPort() );
+146             \textcolor{keyword}{auto} &new\_other\_inport(
+147                old\_port\_out.other\_kernel->input.getPortInfoFor(
+148                   std::to\_string( portid ) ) );
+149 
+150             \textcolor{keyword}{auto} &newoutport( ptr->output.getPortInfo() );\textcolor{comment}{}
+151 \textcolor{comment}{            /**}
+152 \textcolor{comment}{             * connecting b.y -> c.x}
+153 \textcolor{comment}{             * newoutport       == port y on b}
+154 \textcolor{comment}{             * new\_other\_inport == port x on c}
+155 \textcolor{comment}{             */}
+156             alloc.allocate( newoutport,
+157                             new\_other\_inport,
+158                             \textcolor{keyword}{nullptr} );
+159 
+160             old\_port\_out.other\_kernel->unlock();
+161          \}\textcolor{comment}{}
+162 \textcolor{comment}{         /** schedule new kernel **/}
+163          sched.\hyperlink{class_schedule_a6a722f6e76c8b8dc67874d9974b6d641}{scheduleKernel}( ptr );
+164       \}
+165 
+166 
+167       dup\_list.clear();
+168       std::chrono::microseconds dura( 100 );
+169       std::this\_thread::sleep\_for( dura );
+170    \}
+171    \textcolor{keywordflow}{return};
+172 \}
+\end{DoxyCode}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classbasic__parallel_a85ea2560d40ad50482468e39d626a52b_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classbasic__parallel_a969b8832b2f6eaea5e985d4582d9e4dc}{}\label{classbasic__parallel_a969b8832b2f6eaea5e985d4582d9e4dc} 
+\index{basic\+\_\+parallel@{basic\+\_\+parallel}!source\+\_\+kernels@{source\+\_\+kernels}}
+\index{source\+\_\+kernels@{source\+\_\+kernels}!basic\+\_\+parallel@{basic\+\_\+parallel}}
+\subsubsection{\texorpdfstring{source\+\_\+kernels}{source\_kernels}}
+{\footnotesize\ttfamily kernelkeeper\& basic\+\_\+parallel\+::source\+\_\+kernels\hspace{0.3cm}{\ttfamily [protected]}}
+
+both convenience structs, hold exactly what the names say 
+
+Definition at line 65 of file basicparallel.\+hpp.
+
+
+
+Referenced by start().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+basicparallel.\+hpp\item 
+basicparallel.\+cpp\end{DoxyCompactItemize}

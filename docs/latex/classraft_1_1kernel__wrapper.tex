@@ -1,0 +1,180 @@
+\hypertarget{classraft_1_1kernel__wrapper}{}\section{raft\+:\+:kernel\+\_\+wrapper Class Reference}
+\label{classraft_1_1kernel__wrapper}\index{raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}}
+
+
+Collaboration diagram for raft\+:\+:kernel\+\_\+wrapper\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classraft_1_1kernel__wrapper__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classraft_1_1kernel__wrapper_a4d8b3a7bb72e1c09bd0088e4b3751ea3}{kernel\+\_\+wrapper} (const \hyperlink{classraft_1_1kernel__wrapper}{kernel\+\_\+wrapper} \&other)
+\item 
+virtual \hyperlink{classraft_1_1kernel__wrapper_a3555642f75df44b60d5cd3f6f2a6b0bd}{$\sim$kernel\+\_\+wrapper} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classraft_1_1kernel__wrapper_adecf16d07a9e14109e584b7c4b93bf13}{kernel\+\_\+wrapper} (\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$const k)
+\item 
+\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ \hyperlink{classraft_1_1kernel__wrapper_a3275179f2fabef65a683a24eeff2088e}{operator$\ast$} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classraft_1_1kernel__wrapper_af9ee0b682077cba73280fdd50386c669}{}\label{classraft_1_1kernel__wrapper_af9ee0b682077cba73280fdd50386c669} 
+\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ {\bfseries k} = reinterpret\+\_\+cast$<$ \hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$ $>$( sentinel )
+\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classraft_1_1kernel__wrapper_aaae51189d6e1e8b24b5654e3704ff50b}{kernel}
+\item 
+class \hyperlink{classraft_1_1kernel__wrapper_ae07b02dff85bd74c2d4d69d55bafe0a2}{\+::kpair}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 42 of file kernel\+\_\+wrapper.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classraft_1_1kernel__wrapper_a4d8b3a7bb72e1c09bd0088e4b3751ea3}{}\label{classraft_1_1kernel__wrapper_a4d8b3a7bb72e1c09bd0088e4b3751ea3} 
+\index{raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}!kernel\+\_\+wrapper@{kernel\+\_\+wrapper}}
+\index{kernel\+\_\+wrapper@{kernel\+\_\+wrapper}!raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}}
+\subsubsection{\texorpdfstring{kernel\+\_\+wrapper()}{kernel\_wrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily kernel\+\_\+wrapper\+::kernel\+\_\+wrapper (\begin{DoxyParamCaption}\item[{const \hyperlink{classraft_1_1kernel__wrapper}{kernel\+\_\+wrapper} \&}]{other }\end{DoxyParamCaption})}
+
+\hyperlink{classraft_1_1kernel__wrapper}{kernel\+\_\+wrapper} -\/ copy constructor. Takes ownership of the kernel wrapped by other, sets other to the sentinel value so that it no longer has a valid kernel to own, and it also prevents a double free. 
+\begin{DoxyParams}{Parameters}
+{\em other} & -\/ const \hyperlink{classraft_1_1kernel__wrapper}{kernel\+\_\+wrapper} \\
+\hline
+\end{DoxyParams}
+ensures other wrapper no longer valid, also prevents double free.
+
+Definition at line 27 of file kernel\+\_\+wrapper.\+cpp.
+
+
+\begin{DoxyCode}
+27                                                             : k( other.k )
+28 \{\textcolor{comment}{}
+29 \textcolor{comment}{    /** }
+30 \textcolor{comment}{     * ensures other wrapper no longer valid, also prevents}
+31 \textcolor{comment}{     * double free.}
+32 \textcolor{comment}{     */}
+33     \textcolor{keyword}{const\_cast<}\hyperlink{classraft_1_1kernel__wrapper}{kernel\_wrapper}&\textcolor{keyword}{>}( other ).k 
+34         = reinterpret\_cast< raft::kernel* >( kernel\_wrapper::sentinel ); 
+35 \}
+\end{DoxyCode}
+\hypertarget{classraft_1_1kernel__wrapper_a3555642f75df44b60d5cd3f6f2a6b0bd}{}\label{classraft_1_1kernel__wrapper_a3555642f75df44b60d5cd3f6f2a6b0bd} 
+\index{raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}!````~kernel\+\_\+wrapper@{$\sim$kernel\+\_\+wrapper}}
+\index{````~kernel\+\_\+wrapper@{$\sim$kernel\+\_\+wrapper}!raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}}
+\subsubsection{\texorpdfstring{$\sim$kernel\+\_\+wrapper()}{~kernel\_wrapper()}}
+{\footnotesize\ttfamily kernel\+\_\+wrapper\+::$\sim$kernel\+\_\+wrapper (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+destructor deletes stored kernel if it exits scope...should exit scope if it\textquotesingle{}s actually being used check for sentinal value, if it\textquotesingle{}s there..then we don\textquotesingle{}t need to delete this one as the map object already has ownership
+
+set sentinal value just in case this one happens to belong to two wrapper objects. It also helps to make sure you can\textquotesingle{}t accidentally pass the map an invalid wrapped kernel
+
+Definition at line 37 of file kernel\+\_\+wrapper.\+cpp.
+
+
+\begin{DoxyCode}
+38 \{\textcolor{comment}{}
+39 \textcolor{comment}{    /** }
+40 \textcolor{comment}{     * check for sentinal value, if it's there..then we don't need}
+41 \textcolor{comment}{     * to delete this one as the map object already has ownership}
+42 \textcolor{comment}{     */}
+43     \textcolor{keywordflow}{if}( reinterpret\_cast< std::uintptr\_t >( k ) != kernel\_wrapper::sentinel )
+44     \{
+45         \textcolor{keyword}{delete}( k );\textcolor{comment}{}
+46 \textcolor{comment}{        /** }
+47 \textcolor{comment}{         * set sentinal value just in case this one happens to belong to two}
+48 \textcolor{comment}{         * wrapper objects. It also helps to make sure you can't accidentally}
+49 \textcolor{comment}{         * pass the map an invalid wrapped kernel}
+50 \textcolor{comment}{         */}
+51         k = \textcolor{keyword}{reinterpret\_cast<} \hyperlink{classraft_1_1kernel}{raft::kernel}* \textcolor{keyword}{>}( kernel\_wrapper::sentinel );
+52     \}
+53 \}
+\end{DoxyCode}
+\hypertarget{classraft_1_1kernel__wrapper_adecf16d07a9e14109e584b7c4b93bf13}{}\label{classraft_1_1kernel__wrapper_adecf16d07a9e14109e584b7c4b93bf13} 
+\index{raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}!kernel\+\_\+wrapper@{kernel\+\_\+wrapper}}
+\index{kernel\+\_\+wrapper@{kernel\+\_\+wrapper}!raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}}
+\subsubsection{\texorpdfstring{kernel\+\_\+wrapper()}{kernel\_wrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily kernel\+\_\+wrapper\+::kernel\+\_\+wrapper (\begin{DoxyParamCaption}\item[{\hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$const}]{k }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\hyperlink{classraft_1_1kernel__wrapper}{kernel\+\_\+wrapper} -\/ constructor for the wrapper object, this does exactly what it says and sets the wrapper to the parameter kernel. 
+\begin{DoxyParams}{Parameters}
+{\em k} & -\/ \hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$ const \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 25 of file kernel\+\_\+wrapper.\+cpp.
+
+
+\begin{DoxyCode}
+25 : k( k )\{\}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classraft_1_1kernel__wrapper_a3275179f2fabef65a683a24eeff2088e}{}\label{classraft_1_1kernel__wrapper_a3275179f2fabef65a683a24eeff2088e} 
+\index{raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}}
+\subsubsection{\texorpdfstring{operator$\ast$()}{operator*()}}
+{\footnotesize\ttfamily \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ kernel\+\_\+wrapper\+::operator$\ast$ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+operator $\ast$ -\/ this function will be used by the kpair object when it takes ownership of the pointer. This will then be passed to the map object. The wrapped pointer will be set with the sentinal value so that it isn\textquotesingle{}t double freed. \begin{DoxyReturn}{Returns}
+\hyperlink{classraft_1_1kernel}{raft\+::kernel}$\ast$ 
+\end{DoxyReturn}
+reset sentinel value so that the delete doesn\textquotesingle{}t accidentally delete it 
+
+Definition at line 55 of file kernel\+\_\+wrapper.\+cpp.
+
+
+\begin{DoxyCode}
+58 \{
+59     \textcolor{keyword}{auto} * \textcolor{keyword}{const} ptr( k );\textcolor{comment}{}
+60 \textcolor{comment}{    /** reset sentinel value so that the delete doesn't accidentally delete it **/}
+61     k = \textcolor{keyword}{reinterpret\_cast<} \hyperlink{classraft_1_1kernel}{raft::kernel}* \textcolor{keyword}{>}( kernel\_wrapper::sentinel );
+62     \textcolor{keywordflow}{return}( ptr );
+63 \}
+\end{DoxyCode}
+
+
+\subsection{Friends And Related Function Documentation}
+\hypertarget{classraft_1_1kernel__wrapper_ae07b02dff85bd74c2d4d69d55bafe0a2}{}\label{classraft_1_1kernel__wrapper_ae07b02dff85bd74c2d4d69d55bafe0a2} 
+\index{raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}!\+::kpair@{\+::kpair}}
+\index{\+::kpair@{\+::kpair}!raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}}
+\subsubsection{\texorpdfstring{\+::kpair}{::kpair}}
+{\footnotesize\ttfamily friend class \+::\hyperlink{classkpair}{kpair}\hspace{0.3cm}{\ttfamily [friend]}}
+
+kpair will need to access so it can get to the operator$\ast$ overload 
+
+Definition at line 96 of file kernel\+\_\+wrapper.\+hpp.
+
+\hypertarget{classraft_1_1kernel__wrapper_aaae51189d6e1e8b24b5654e3704ff50b}{}\label{classraft_1_1kernel__wrapper_aaae51189d6e1e8b24b5654e3704ff50b} 
+\index{raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}!kernel@{kernel}}
+\index{kernel@{kernel}!raft\+::kernel\+\_\+wrapper@{raft\+::kernel\+\_\+wrapper}}
+\subsubsection{\texorpdfstring{kernel}{kernel}}
+{\footnotesize\ttfamily friend class \hyperlink{classraft_1_1kernel}{kernel}\hspace{0.3cm}{\ttfamily [friend]}}
+
+kernel will need to access the constructor for the static make function 
+
+Definition at line 91 of file kernel\+\_\+wrapper.\+hpp.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+kernel\+\_\+wrapper.\+hpp\item 
+kernel\+\_\+wrapper.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,41 @@
+\hypertarget{class_system_signal_f_i_f_o}{}\section{System\+Signal\+F\+I\+FO Class Reference}
+\label{class_system_signal_f_i_f_o}\index{System\+Signal\+F\+I\+FO@{System\+Signal\+F\+I\+FO}}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \hyperlink{class_system_signal_f_i_f_o_ad427887bcb14067abd1ca7ed8c316d4d}{send\+\_\+system\+\_\+signal} (const raft\+::signal \&\&signal)=0
+\item 
+virtual raft\+::signal \hyperlink{class_system_signal_f_i_f_o_a2321fb65ff3a64dd694eff891db52131}{get\+\_\+system\+\_\+signal} ()=0
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 27 of file systemsignalfifo.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_system_signal_f_i_f_o_a2321fb65ff3a64dd694eff891db52131}{}\label{class_system_signal_f_i_f_o_a2321fb65ff3a64dd694eff891db52131} 
+\index{System\+Signal\+F\+I\+FO@{System\+Signal\+F\+I\+FO}!get\+\_\+system\+\_\+signal@{get\+\_\+system\+\_\+signal}}
+\index{get\+\_\+system\+\_\+signal@{get\+\_\+system\+\_\+signal}!System\+Signal\+F\+I\+FO@{System\+Signal\+F\+I\+FO}}
+\subsubsection{\texorpdfstring{get\+\_\+system\+\_\+signal()}{get\_system\_signal()}}
+{\footnotesize\ttfamily virtual raft\+::signal System\+Signal\+F\+I\+F\+O\+::get\+\_\+system\+\_\+signal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+get\+\_\+system\+\_\+signal -\/ returns the current signal, pops it from the \hyperlink{class_f_i_f_o}{F\+I\+FO} afterwards. If no signal exists then raft\+::none is returned.
+
+\begin{DoxyReturn}{Returns}
+raft\+::signal 
+\end{DoxyReturn}
+\hypertarget{class_system_signal_f_i_f_o_ad427887bcb14067abd1ca7ed8c316d4d}{}\label{class_system_signal_f_i_f_o_ad427887bcb14067abd1ca7ed8c316d4d} 
+\index{System\+Signal\+F\+I\+FO@{System\+Signal\+F\+I\+FO}!send\+\_\+system\+\_\+signal@{send\+\_\+system\+\_\+signal}}
+\index{send\+\_\+system\+\_\+signal@{send\+\_\+system\+\_\+signal}!System\+Signal\+F\+I\+FO@{System\+Signal\+F\+I\+FO}}
+\subsubsection{\texorpdfstring{send\+\_\+system\+\_\+signal()}{send\_system\_signal()}}
+{\footnotesize\ttfamily virtual void System\+Signal\+F\+I\+F\+O\+::send\+\_\+system\+\_\+signal (\begin{DoxyParamCaption}\item[{const raft\+::signal \&\&}]{signal }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+send\+\_\+system\+\_\+signal -\/ send a signal that isn\textquotesingle{}t aligned with the data.  -\/ const raft\+::signal 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+systemsignalfifo.\+hpp\end{DoxyCompactItemize}

@@ -1,0 +1,78 @@
+\hypertarget{struct_blocked}{}\section{Blocked Struct Reference}
+\label{struct_blocked}\index{Blocked@{Blocked}}
+
+
+{\ttfamily \#include $<$blocked.\+hpp$>$}
+
+
+
+Collaboration diagram for Blocked\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{struct_blocked__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{struct_blocked_1_1blocked__and__counter}{blocked\+\_\+and\+\_\+counter}
+\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{struct_blocked_a5c1d9f4d77e4940785c83a43ce81729f}{}\label{struct_blocked_a5c1d9f4d77e4940785c83a43ce81729f} 
+using {\bfseries value\+\_\+type} = std\+::uint32\+\_\+t
+\item 
+\hypertarget{struct_blocked_a0b0291787b8f79d99ae9a60ad84cd3e0}{}\label{struct_blocked_a0b0291787b8f79d99ae9a60ad84cd3e0} 
+using {\bfseries whole\+\_\+type} = std\+::uint64\+\_\+t
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{struct_blocked_aab6ec9e4b1fd78fa02c50db7d3c1d623}{}\label{struct_blocked_aab6ec9e4b1fd78fa02c50db7d3c1d623} 
+{\bfseries Blocked} (const \hyperlink{struct_blocked}{Blocked} \&other)
+\item 
+\hypertarget{struct_blocked_afe38f1192d5feef760dc1992fdd0bef4}{}\label{struct_blocked_afe38f1192d5feef760dc1992fdd0bef4} 
+\hyperlink{struct_blocked}{Blocked} \& {\bfseries operator+=} (const \hyperlink{struct_blocked}{Blocked} \&rhs)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{struct_blocked_a8a4071ed2ac86920e4fcd21bc39cae48}{}\label{struct_blocked_a8a4071ed2ac86920e4fcd21bc39cae48} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>\hyperlink{struct_blocked_1_1blocked__and__counter}{blocked\_and\_counter} {\bfseries bec}\\
+\>whole\_type {\bfseries all} = 0\\
+\}; \\
+
+\end{tabbing}\item 
+\hypertarget{struct_blocked_a655f1539c05155f99a1b016331a89b90}{}\label{struct_blocked_a655f1539c05155f99a1b016331a89b90} 
+char {\bfseries pad} \mbox{[}L1\+D\+\_\+\+C\+A\+C\+H\+E\+\_\+\+L\+I\+N\+E\+\_\+\+S\+I\+ZE -\/ sizeof(whole\+\_\+type)\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{blocked_8hpp_source}{blocked.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sun Jun 29 14\+:06\+:10 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License. F\+I\+X\+ME...should probably align these to cache line then zero extend pad for producer/consumer. 
+
+Definition at line 29 of file blocked.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+blocked.\+hpp\end{DoxyCompactItemize}

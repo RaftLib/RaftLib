@@ -1,0 +1,88 @@
+\hypertarget{classraft_1_1randombase}{}\section{raft\+:\+:randombase Class Reference}
+\label{classraft_1_1randombase}\index{raft\+::randombase@{raft\+::randombase}}
+
+
+Collaboration diagram for raft\+:\+:randombase\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=172pt]{classraft_1_1randombase__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classraft_1_1randombase_a52ce4d35a23a557706015dfcda80ea2f}{randombase} (const raft\+::rndgenerator gen, const std\+::uint64\+\_\+t seed)
+\item 
+\hyperlink{classraft_1_1randombase_a266855acd0445688838787a7c1bcdee7}{randombase} (const raft\+::rndgenerator gen)
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static std\+::uint64\+\_\+t \hyperlink{classraft_1_1randombase_a50348491bf2bdba0de927582c0fee493}{sample\+\_\+system\+\_\+rng} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+gsl\+\_\+rng $\ast$ \hyperlink{classraft_1_1randombase_a0e76811a01930066c262f9cecfd684b9}{rng} = nullptr
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 28 of file randombase.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classraft_1_1randombase_a52ce4d35a23a557706015dfcda80ea2f}{}\label{classraft_1_1randombase_a52ce4d35a23a557706015dfcda80ea2f} 
+\index{raft\+::randombase@{raft\+::randombase}!randombase@{randombase}}
+\index{randombase@{randombase}!raft\+::randombase@{raft\+::randombase}}
+\subsubsection{\texorpdfstring{randombase()}{randombase()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily raft\+::randombase\+::randombase (\begin{DoxyParamCaption}\item[{const raft\+::rndgenerator}]{gen,  }\item[{const std\+::uint64\+\_\+t}]{seed }\end{DoxyParamCaption})}
+
+randombase -\/ initialize random number generator, provide a seed. useful for debugging, however for a more random source it is advisable to use the non-\/seeded version which uses system entropy. The first parameter is the random number generator. For the moment these are entirely sourced from G\+NU G\+SL so feel free to consult their docs here (\href{http://goo.gl/tfElhG}{\tt http\+://goo.\+gl/tf\+ElhG}). 
+\begin{DoxyParams}{Parameters}
+{\em gen} & -\/ raft\+::rndgenerator \\
+\hline
+{\em seed} & -\/ const std\+::uint64\+\_\+t \\
+\hline
+\end{DoxyParams}
+\hypertarget{classraft_1_1randombase_a266855acd0445688838787a7c1bcdee7}{}\label{classraft_1_1randombase_a266855acd0445688838787a7c1bcdee7} 
+\index{raft\+::randombase@{raft\+::randombase}!randombase@{randombase}}
+\index{randombase@{randombase}!raft\+::randombase@{raft\+::randombase}}
+\subsubsection{\texorpdfstring{randombase()}{randombase()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily raft\+::randombase\+::randombase (\begin{DoxyParamCaption}\item[{const raft\+::rndgenerator}]{gen }\end{DoxyParamCaption})}
+
+randombase -\/ initialize random number generator, uses system entropy for a more random seed to the random number generator. The first parameter is the random number generator. For the moment these are entirely sourced from G\+NU G\+SL so feel free to consult their docs here (\href{http://goo.gl/tfElhG}{\tt http\+://goo.\+gl/tf\+ElhG}). 
+
+\subsection{Member Function Documentation}
+\hypertarget{classraft_1_1randombase_a50348491bf2bdba0de927582c0fee493}{}\label{classraft_1_1randombase_a50348491bf2bdba0de927582c0fee493} 
+\index{raft\+::randombase@{raft\+::randombase}!sample\+\_\+system\+\_\+rng@{sample\+\_\+system\+\_\+rng}}
+\index{sample\+\_\+system\+\_\+rng@{sample\+\_\+system\+\_\+rng}!raft\+::randombase@{raft\+::randombase}}
+\subsubsection{\texorpdfstring{sample\+\_\+system\+\_\+rng()}{sample\_system\_rng()}}
+{\footnotesize\ttfamily static std\+::uint64\+\_\+t raft\+::randombase\+::sample\+\_\+system\+\_\+rng (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [protected]}}
+
+sample\+\_\+system\+\_\+rng -\/ returns system provided uint64\+\_\+t from /dev/urandom. Normally I\textquotesingle{}d say use /dev/random however then we have to handle blocking for lack of entropy and this seems a bit simpler at the moment. \begin{DoxyReturn}{Returns}
+std\+::uint64\+\_\+t 
+\end{DoxyReturn}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classraft_1_1randombase_a0e76811a01930066c262f9cecfd684b9}{}\label{classraft_1_1randombase_a0e76811a01930066c262f9cecfd684b9} 
+\index{raft\+::randombase@{raft\+::randombase}!rng@{rng}}
+\index{rng@{rng}!raft\+::randombase@{raft\+::randombase}}
+\subsubsection{\texorpdfstring{rng}{rng}}
+{\footnotesize\ttfamily gsl\+\_\+rng$\ast$ raft\+::randombase\+::rng = nullptr\hspace{0.3cm}{\ttfamily [protected]}}
+
+vars 
+
+Definition at line 64 of file randombase.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+randombase.\+hpp\end{DoxyCompactItemize}

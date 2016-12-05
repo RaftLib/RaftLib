@@ -1,0 +1,125 @@
+\hypertarget{class_option_base}{}\section{Option\+Base Class Reference}
+\label{class_option_base}\index{Option\+Base@{Option\+Base}}
+
+
+{\ttfamily \#include $<$command\+\_\+option\+\_\+base.\+hpp$>$}
+
+
+
+Collaboration diagram for Option\+Base\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=148pt]{class_option_base__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_option_base_a029eeb909ef442e37b60695d36f76304}{}\label{class_option_base_a029eeb909ef442e37b60695d36f76304} 
+{\bfseries Option\+Base} (const std\+::string flag, const std\+::string description, bool is\+Mandatory=false, bool is\+Bool=false)
+\item 
+\hypertarget{class_option_base_a9d0096b696a7981b56f7f8967fa88ce0}{}\label{class_option_base_a9d0096b696a7981b56f7f8967fa88ce0} 
+virtual bool {\bfseries set\+Value} (const char $\ast$value)=0
+\item 
+\hypertarget{class_option_base_a0f73d962b8ee7356c4b37a79b5be7547}{}\label{class_option_base_a0f73d962b8ee7356c4b37a79b5be7547} 
+virtual std\+::string {\bfseries to\+String} ()=0
+\item 
+\hypertarget{class_option_base_a2604824b0aaaa07711eceec8abb278bc}{}\label{class_option_base_a2604824b0aaaa07711eceec8abb278bc} 
+virtual std\+::string {\bfseries get\+Value} ()=0
+\item 
+bool \hyperlink{class_option_base_a9cbf7eb440a51dde21dadba4d4844c6d}{is\+\_\+set} ()
+\item 
+\hypertarget{class_option_base_a336e3c9a12991bd753010b3a5c649f78}{}\label{class_option_base_a336e3c9a12991bd753010b3a5c649f78} 
+bool {\bfseries is\+\_\+mandatory} ()
+\item 
+bool \hyperlink{class_option_base_a082825b91ec72a250b6c04a4d65ec1ec}{is\+\_\+bool} ()
+\item 
+\hypertarget{class_option_base_a56f57277a738713bfa096113854591fd}{}\label{class_option_base_a56f57277a738713bfa096113854591fd} 
+std\+::string \& {\bfseries get\+\_\+flag} ()
+\item 
+\hypertarget{class_option_base_a85d970613c917b92194f3dae27ac337a}{}\label{class_option_base_a85d970613c917b92194f3dae27ac337a} 
+std\+::string \& {\bfseries get\+\_\+description} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_option_base_a91c9f6d8694c4267e7d0698a3f81b7a6}{}\label{class_option_base_a91c9f6d8694c4267e7d0698a3f81b7a6} 
+{\footnotesize template$<$class T , typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::string $>$\+::value $>$\+::type $\ast$  = nullptr$>$ }\\bool {\bfseries set\+Value\+Helper} (T \&realV, const char $\ast$value)
+\item 
+\hypertarget{class_option_base_a91c9f6d8694c4267e7d0698a3f81b7a6}{}\label{class_option_base_a91c9f6d8694c4267e7d0698a3f81b7a6} 
+{\footnotesize template$<$class T , typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, bool $>$\+::value $>$\+::type $\ast$  = nullptr$>$ }\\bool {\bfseries set\+Value\+Helper} (T \&realV, const char $\ast$value)
+\item 
+\hypertarget{class_option_base_a91c9f6d8694c4267e7d0698a3f81b7a6}{}\label{class_option_base_a91c9f6d8694c4267e7d0698a3f81b7a6} 
+{\footnotesize template$<$class T , typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+signed$<$ T $>$\+::value \&\&! std\+::is\+\_\+same$<$ T, bool $>$\+::value $>$\+::type $\ast$  = nullptr$>$ }\\bool {\bfseries set\+Value\+Helper} (T \&realV, const char $\ast$value)
+\item 
+\hypertarget{class_option_base_a91c9f6d8694c4267e7d0698a3f81b7a6}{}\label{class_option_base_a91c9f6d8694c4267e7d0698a3f81b7a6} 
+{\footnotesize template$<$class T , typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+unsigned$<$ T $>$\+::value \&\&! std\+::is\+\_\+same$<$ T, bool $>$\+::value $>$\+::type $\ast$  = nullptr$>$ }\\bool {\bfseries set\+Value\+Helper} (T \&realV, const char $\ast$value)
+\item 
+\hypertarget{class_option_base_a4eaffeb0bb14c986a99209240985dec1}{}\label{class_option_base_a4eaffeb0bb14c986a99209240985dec1} 
+std\+::string {\bfseries to\+String} (const std\+::string default\+Value)
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_option_base_a120e0c3f781c5894a8a2e95ed4ed21fd}{}\label{class_option_base_a120e0c3f781c5894a8a2e95ed4ed21fd} 
+bool {\bfseries set}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{command__option__base_8hpp_source}{command\+\_\+option\+\_\+base.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Tue May 21 13\+:56\+:51 2013 
+\end{DoxyVersion}
+
+
+Definition at line 14 of file command\+\_\+option\+\_\+base.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_option_base_a082825b91ec72a250b6c04a4d65ec1ec}{}\label{class_option_base_a082825b91ec72a250b6c04a4d65ec1ec} 
+\index{Option\+Base@{Option\+Base}!is\+\_\+bool@{is\+\_\+bool}}
+\index{is\+\_\+bool@{is\+\_\+bool}!Option\+Base@{Option\+Base}}
+\subsubsection{\texorpdfstring{is\+\_\+bool()}{is\_bool()}}
+{\footnotesize\ttfamily bool Option\+Base\+::is\+\_\+bool (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+needed to see if a follow-\/on char is actually required 
+
+Definition at line 113 of file command\+\_\+option\+\_\+base.\+cpp.
+
+
+\begin{DoxyCode}
+114 \{
+115    \textcolor{keywordflow}{return}( (\textcolor{keyword}{this})->isbool );
+116 \}
+\end{DoxyCode}
+\hypertarget{class_option_base_a9cbf7eb440a51dde21dadba4d4844c6d}{}\label{class_option_base_a9cbf7eb440a51dde21dadba4d4844c6d} 
+\index{Option\+Base@{Option\+Base}!is\+\_\+set@{is\+\_\+set}}
+\index{is\+\_\+set@{is\+\_\+set}!Option\+Base@{Option\+Base}}
+\subsubsection{\texorpdfstring{is\+\_\+set()}{is\_set()}}
+{\footnotesize\ttfamily bool Option\+Base\+::is\+\_\+set (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns true if the value has been set, useful for mandatory arguments \begin{DoxyReturn}{Returns}
+bool 
+\end{DoxyReturn}
+
+
+Definition at line 101 of file command\+\_\+option\+\_\+base.\+cpp.
+
+
+\begin{DoxyCode}
+102 \{
+103    \textcolor{keywordflow}{return}( (\textcolor{keyword}{this})->\textcolor{keyword}{set} );
+104 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+command\+\_\+option\+\_\+base.\+hpp\item 
+command\+\_\+option\+\_\+base.\+cpp\end{DoxyCompactItemize}

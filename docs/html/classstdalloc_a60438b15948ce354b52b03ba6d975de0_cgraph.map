@@ -1,0 +1,9 @@
+<map id="stdalloc::run" name="stdalloc::run">
+<area shape="rect" id="node2" href="$class_graph_tools.html#ade51007699cbd681c1a37946609c46ee" title="GraphTools::BFS" alt="" coords="151,31,274,56"/>
+<area shape="rect" id="node3" href="$class_allocate.html#a1d5c71b5cd6fc9671ed82d9c1d04965c" title="Allocate::initialize" alt="" coords="151,80,275,105"/>
+<area shape="rect" id="node8" href="$class_allocate.html#a4cf36bb704e43f5736a0e736d9e1a81b" title="Allocate::setReady" alt="" coords="147,129,279,155"/>
+<area shape="rect" id="node4" href="$struct_port_info.html#a483d162fbe356e07381c6c5cfccb4f48" title="PortInfo::getFIFO" alt="" coords="338,5,462,31"/>
+<area shape="rect" id="node5" href="$class_f_i_f_o.html#a11422695c75c05ad2c60e662553f2667" title="FIFO::set_dst_kernel" alt="" coords="327,55,473,80"/>
+<area shape="rect" id="node6" href="$class_f_i_f_o.html#aa9c1f679b4e2585047af2c09a2518209" title="FIFO::set_src_kernel" alt="" coords="327,104,473,129"/>
+<area shape="rect" id="node7" href="$struct_port_info.html#a43a57cd624dcc44ccd9dcaba1d07a000" title="PortInfo::setFIFO" alt="" coords="338,153,462,179"/>
+</map>

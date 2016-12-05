@@ -1,0 +1,94 @@
+\hypertarget{class_generate}{}\section{Generate$<$ T $>$ Class Template Reference}
+\label{class_generate}\index{Generate$<$ T $>$@{Generate$<$ T $>$}}
+
+
+Inheritance diagram for Generate$<$ T $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=161pt]{class_generate__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Generate$<$ T $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_generate__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_generate_a7c3f2c1b2ae8b2202c5441b60c5f0e6b}{}\label{class_generate_a7c3f2c1b2ae8b2202c5441b60c5f0e6b} 
+{\bfseries Generate} (T count=1000)
+\item 
+virtual raft\+::kstatus \hyperlink{class_generate_aa8253370207e1457b9b79e62253c2925}{run} ()
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class Generate$<$ T $>$}
+
+
+
+Definition at line 9 of file brackets\+Test.\+cpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_generate_aa8253370207e1457b9b79e62253c2925}{}\label{class_generate_aa8253370207e1457b9b79e62253c2925} 
+\index{Generate@{Generate}!run@{run}}
+\index{run@{run}!Generate@{Generate}}
+\subsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+virtual raft\+::kstatus \hyperlink{class_generate}{Generate}$<$ T $>$\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+run -\/ function to be extended for the actual execution. Code can be executed outside of the run function, i.\+e., with any function call, however the scheduler will only call the run function so it must initiate any follow-\/on behavior desired by the user. else 
+
+Implements \hyperlink{classraft_1_1kernel_a05094286d7577360fb1b91c91fc05901}{raft\+::kernel}.
+
+
+
+Definition at line 18 of file brackets\+Test.\+cpp.
+
+
+
+References raft\+::map\+::exe().
+
+
+\begin{DoxyCode}
+19    \{
+20       \textcolor{keywordflow}{if}( count-- > 1 )
+21       \{
+22          \textcolor{keyword}{auto} &ref( output[ \textcolor{stringliteral}{"number\_stream"} ].\textcolor{keyword}{template} allocate< T >() );
+23          ref = count;
+24          output[ \textcolor{stringliteral}{"number\_stream"}].send();
+25          
+26          \textcolor{keywordflow}{return}( raft::proceed );
+27       \}\textcolor{comment}{}
+28 \textcolor{comment}{      /** else **/}
+29       \textcolor{keyword}{auto} &ref( output[ \textcolor{stringliteral}{"number\_stream"} ].\textcolor{keyword}{template} allocate< T >() );
+30       ref = count;
+31       output[ \textcolor{stringliteral}{"number\_stream"} ].send( raft::eof );
+32       \textcolor{keywordflow}{return}( raft::stop );
+33    \}
+\end{DoxyCode}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_generate_aa8253370207e1457b9b79e62253c2925_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+brackets\+Test.\+cpp\end{DoxyCompactItemize}

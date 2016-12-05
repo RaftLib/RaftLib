@@ -1,0 +1,6 @@
+<map id="Allocate::initialize" name="Allocate::initialize">
+<area shape="rect" id="node2" href="$struct_port_info.html#a483d162fbe356e07381c6c5cfccb4f48" title="PortInfo::getFIFO" alt="" coords="188,5,312,31"/>
+<area shape="rect" id="node3" href="$class_f_i_f_o.html#a11422695c75c05ad2c60e662553f2667" title="FIFO::set_dst_kernel" alt="" coords="177,55,323,80"/>
+<area shape="rect" id="node4" href="$class_f_i_f_o.html#aa9c1f679b4e2585047af2c09a2518209" title="FIFO::set_src_kernel" alt="" coords="177,104,323,129"/>
+<area shape="rect" id="node5" href="$struct_port_info.html#a43a57cd624dcc44ccd9dcaba1d07a000" title="PortInfo::setFIFO" alt="" coords="188,153,312,179"/>
+</map>

@@ -1,0 +1,109 @@
+\hypertarget{classpartition__basic}{}\section{partition\+\_\+basic Class Reference}
+\label{classpartition__basic}\index{partition\+\_\+basic@{partition\+\_\+basic}}
+
+
+{\ttfamily \#include $<$partition\+\_\+basic.\+hpp$>$}
+
+
+
+Inheritance diagram for partition\+\_\+basic\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=175pt]{classpartition__basic__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for partition\+\_\+basic\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=175pt]{classpartition__basic__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \hyperlink{classpartition__basic_a3dc4106326788887f9a7c6ac49bb46d4}{partition} (kernelkeeper \&c)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\hyperlink{partition__basic_8hpp_source}{partition\+\_\+basic.\+hpp} -\/ the most simple of partitioning algorithms. invoked in two cases, if there are fewer or equal to kernels than cores...or if we simply have no other partitioning scheme (library) available.
+
+\begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Fri Mar 20 08\+:53\+:12 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License. 
+
+Definition at line 33 of file partition\+\_\+basic.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classpartition__basic_a3dc4106326788887f9a7c6ac49bb46d4}{}\label{classpartition__basic_a3dc4106326788887f9a7c6ac49bb46d4} 
+\index{partition\+\_\+basic@{partition\+\_\+basic}!partition@{partition}}
+\index{partition@{partition}!partition\+\_\+basic@{partition\+\_\+basic}}
+\subsubsection{\texorpdfstring{partition()}{partition()}}
+{\footnotesize\ttfamily void partition\+\_\+basic\+::partition (\begin{DoxyParamCaption}\item[{kernelkeeper \&}]{c }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+simple -\/ partiion the kernels in kernelkeeper using a simple partitioning scheme evenly as possible amongst the given run\+\_\+containers in run\+\_\+container. 
+\begin{DoxyParams}{Parameters}
+{\em c} & -\/ kernelkeeper\& \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classinterface__partition_a7161f6277517624347fda38c8ffa019d}{interface\+\_\+partition}.
+
+
+
+Definition at line 6 of file partition\+\_\+basic.\+cpp.
+
+
+
+References interface\+\_\+partition\+::set\+Core().
+
+
+\begin{DoxyCode}
+7 \{
+8     \textcolor{keyword}{const} \textcolor{keyword}{auto} num\_cores( std::thread::hardware\_concurrency() );
+9     core\_id\_t i( 0 );
+10     \textcolor{keyword}{auto} &container( c.acquire() );
+11     \textcolor{keywordflow}{for}( \textcolor{keyword}{auto} *kernel : container )
+12     \{
+13        (\textcolor{keyword}{this})->\hyperlink{classinterface__partition_af7c257c87d13508274e934328ee90f52}{setCore}( *kernel, i );
+14        \textcolor{comment}{//FIXME, too simple should be based on locality if hwloc avail}
+15        i = ( i + 1 ) % num\_cores;
+16     \}
+17     c.release();
+18     \textcolor{keywordflow}{return};
+19 \}
+\end{DoxyCode}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=333pt]{classpartition__basic_a3dc4106326788887f9a7c6ac49bb46d4_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+partition\+\_\+basic.\+hpp\item 
+partition\+\_\+basic.\+cpp\end{DoxyCompactItemize}

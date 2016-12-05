@@ -1,0 +1,101 @@
+\href{http://raftlib.io}{\tt Raft\+Lib} is a C++ Library for enabling stream/data-\/flow parallel computation. Using simple right shift operators (just like the C++ streams that you would use for string manipulation), you can link parallel compute kernels together. With Raft\+Lib, we do away with explicit use of pthreads, std\+::thread, Open\+MP, or any other parallel \char`\"{}threading\char`\"{} library. These are often mis-\/used, creating non-\/deterministic behavior. Raft\+Lib\textquotesingle{}s model allows lock-\/free F\+I\+F\+O-\/like access to the communications channels connecting each compute kernel. The full system has many auto-\/parallelization, optimization, and convenience features that enable relatively simple authoring of performant applications. This project is currently in the alpha stage (recently emerging from a PhD thesis). The beta release will bring back multi-\/node support, along with (planned) container support for the remote machines. Feel free to give it a shot, if you have any issues, also feel free to send the authors an e-\/mail. 
+
+
+
+\subsubsection*{Build status}
+
+\href{https://travis-ci.org/RaftLib/RaftLib}{\tt }
+
+CI Test environment\+:
+\begin{DoxyItemize}
+\item Linux -\/ kernel v. 3.\+13, Ubuntu 5.\+2.\+1-\/23ubuntu1$\sim$12.04, (gcc-\/5.\+2.\+1/\+Clang 3.\+7.\+1), C\+Make 3.\+5
+\end{DoxyItemize}
+
+Offline testing\+:
+\begin{DoxyItemize}
+\item OS X -\/ El Capitan, Apple L\+L\+VM version 7.\+0.\+2, C\+Make 3.\+6
+\item Linux -\/ kenrel v. 4.\+4, gcc-\/6.\+1/clang 3.\+8
+\end{DoxyItemize}
+
+\subsubsection*{Pre-\/requisites}
+
+\paragraph*{OS X \& Linux}
+
+Compiler\+: c++14 capable -\/$>$ Clang, G\+NU G\+CC 5.\+0+, or Intel icc Libraries\+:
+\begin{DoxyItemize}
+\item Boost, if not installed, needed headers automatically downloaded with cmake
+\end{DoxyItemize}
+
+\paragraph*{Windows}
+
+In progress
+
+\subsubsection*{Install}
+
+Make a build directory (for the instructions below, we\textquotesingle{}ll write \mbox{[}build\mbox{]}). If you want to build the Open\+CV example, then you\textquotesingle{}ll need to add to your cmake invocation\+: 
+\begin{DoxyCode}
+-DBUILD\_WOPENCV=true 
+\end{DoxyCode}
+ If you want to use the Scotch partitioning library (Unix/\+Linux) for partitioning kernel threads amongst physical resources, add the following config line to your cmake invocation\+: 
+\begin{DoxyCode}
+-DUSESCOTCH=1
+\end{DoxyCode}
+
+
+To use the \href{http://www.cs.sandia.gov/qthreads/}{\tt Q\+Threads User space H\+PC threading library} you will need to add the following (N\+O\+TE\+: The qthread library currently uses its own partitioner and does not work with Scotch, it also has issues with Open\+CV, will fix in next release iteration)\+: 
+\begin{DoxyCode}
+-DUSEQTHREAD=1
+\end{DoxyCode}
+
+
+To build\+:
+
+
+\begin{DoxyCode}
+mkdir [build]
+cd [build]
+cmake ..
+make && make test
+sudo make install
+\end{DoxyCode}
+ N\+O\+TE\+: The default prefix in the makefile is\+: 
+\begin{DoxyCode}
+PREFIX ?= /usr/local
+\end{DoxyCode}
+ Feel free to substitute your favorite build tool. I use Ninja and make depending on which machine I\textquotesingle{}m on. To change out, use cmake to generate the appropriate build files with the -\/\+Gxxx flag.
+
+\subsubsection*{Citation}
+
+If you use this framework for something that gets published, please cite it as\+: 
+\begin{DoxyCode}
+@inproceedings\{blc15,
+  author = \{Beard, Jonathan C. and Li, Peng and Chamberlain, Roger D.\},
+  title = \{RaftLib: A \{C++\} Template Library for High Performance Stream Parallel Processing\},
+  publisher = \{ACM\},
+  address = \{New York, NY, USA\},
+  year = \{2015\},
+  month = feb,
+  series = \{PMAM 2015\},
+  booktitle = \{Proceedings of Programming Models and Applications on Multicores and Manycores\},
+  pages = \{96-105\},
+\}
+\end{DoxyCode}
+ \subsubsection*{Other Info Sources}
+
+
+\begin{DoxyItemize}
+\item \href{http://raftlib.io}{\tt Project web page}
+\item \href{https://github.com/jonathan-beard/RaftLib/wiki}{\tt Project wiki page}
+\item \href{https://goo.gl/4VDlbr}{\tt Blog post intro}
+\item \href{http://goo.gl/obkWUh}{\tt Jonathan Beard\textquotesingle{}s thesis}
+\item \href{https://goo.gl/R5fQAl}{\tt Views on parallel computing, general philosphy}
+\item Feel free to e-\/mail one of the authors of the repo
+\end{DoxyItemize}
+
+\subsubsection*{Random Notes}
+
+The old Makefile had an uninstall script, I need to add an object to the cmake file so that we can have similar functionality. Theres also a bit of cleanup to do as I transition fully from Make to C\+Make.
+
+A lot of the auto-\/optimization stuff has been pulled out temporarily while I\textquotesingle{}m working on cross-\/platform compatibility. A lot of the low level A\+PI calls are well, low level and Linux/\+Unix/\+OS X specific so I\textquotesingle{}m working on building in Windows versions of those specific calls. Should be done in a few weeks. ( 5 Jan 2016, jcb )
+
+Added in prefetch for object types larger than a single cache line. Profiling shows that it\textquotesingle{}s really not beneficial on most platforms with good prefetch algorithms. (25 March 2016, jcb ) 

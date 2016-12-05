@@ -1,0 +1,96 @@
+\hypertarget{class_no_signal_handler_found_exception}{}\section{No\+Signal\+Handler\+Found\+Exception Class Reference}
+\label{class_no_signal_handler_found_exception}\index{No\+Signal\+Handler\+Found\+Exception@{No\+Signal\+Handler\+Found\+Exception}}
+
+
+{\ttfamily \#include $<$systemsignalhandler.\+hpp$>$}
+
+
+
+Inheritance diagram for No\+Signal\+Handler\+Found\+Exception\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=244pt]{class_no_signal_handler_found_exception__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for No\+Signal\+Handler\+Found\+Exception\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=244pt]{class_no_signal_handler_found_exception__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_no_signal_handler_found_exception_aedbbde0eab386ffcef936bb04da96862}{No\+Signal\+Handler\+Found\+Exception} (const std\+::string message)
+\item 
+\hypertarget{class_no_signal_handler_found_exception_a1d8b54d32f398d37b8e94212ec73029e}{}\label{class_no_signal_handler_found_exception_a1d8b54d32f398d37b8e94212ec73029e} 
+virtual const char $\ast$ {\bfseries what} () const noexcept
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{systemsignalhandler_8hpp_source}{systemsignalhandler.\+hpp} -\/ container for signal handlers, also handles calling of the signal handler, assumes that the handler has all the state it needs to execute.
+
+\begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sat Dec 6 18\+:19\+:13 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License. simple exception for when an exception handler is expected to be defined but actually is not. 
+
+Definition at line 35 of file systemsignalhandler.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_no_signal_handler_found_exception_aedbbde0eab386ffcef936bb04da96862}{}\label{class_no_signal_handler_found_exception_aedbbde0eab386ffcef936bb04da96862} 
+\index{No\+Signal\+Handler\+Found\+Exception@{No\+Signal\+Handler\+Found\+Exception}!No\+Signal\+Handler\+Found\+Exception@{No\+Signal\+Handler\+Found\+Exception}}
+\index{No\+Signal\+Handler\+Found\+Exception@{No\+Signal\+Handler\+Found\+Exception}!No\+Signal\+Handler\+Found\+Exception@{No\+Signal\+Handler\+Found\+Exception}}
+\subsubsection{\texorpdfstring{No\+Signal\+Handler\+Found\+Exception()}{NoSignalHandlerFoundException()}}
+{\footnotesize\ttfamily No\+Signal\+Handler\+Found\+Exception\+::\+No\+Signal\+Handler\+Found\+Exception (\begin{DoxyParamCaption}\item[{const std\+::string}]{message }\end{DoxyParamCaption})}
+
+\hyperlink{systemsignalhandler_8cpp_source}{systemsignalhandler.\+cpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sat Dec 6 18\+:19\+:13 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License. 
+
+Definition at line 24 of file systemsignalhandler.\+cpp.
+
+
+
+Referenced by System\+Signal\+Handler\+::call\+Handler().
+
+
+\begin{DoxyCode}
+26 \{
+27    (\textcolor{keyword}{this})->message = message;
+28 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+systemsignalhandler.\+hpp\item 
+systemsignalhandler.\+cpp\end{DoxyCompactItemize}

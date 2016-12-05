@@ -1,0 +1,389 @@
+\hypertarget{namespaceraft}{}\section{raft Namespace Reference}
+\label{namespaceraft}\index{raft@{raft}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classraft_1_1join}{join}
+\item 
+class \hyperlink{classraft_1_1kernel}{kernel}
+\item 
+class \hyperlink{classraft_1_1kernel__wrapper}{kernel\+\_\+wrapper}
+\item 
+class \hyperlink{classraft_1_1map}{map}
+\item 
+class \hyperlink{classraft_1_1parallel__k}{parallel\+\_\+k}
+\item 
+class \hyperlink{classraft_1_1randombase}{randombase}
+\item 
+class \hyperlink{classraft_1_1split}{split}
+\item 
+class \hyperlink{classraft_1_1submap}{submap}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{namespaceraft_a8fa5dc256d5e10b99cc367c0f7e67214}{}\label{namespaceraft_a8fa5dc256d5e10b99cc367c0f7e67214} 
+{\footnotesize template$<$typename A , typename B $>$ }\\using {\bfseries common\+\_\+t} = typename std\+::common\+\_\+type$<$ A, B $>$\+::type
+\item 
+\hypertarget{namespaceraft_a5ebab943f6e6118ff08b5f32b741059c}{}\label{namespaceraft_a5ebab943f6e6118ff08b5f32b741059c} 
+{\footnotesize template$<$typename A , typename B $>$ }\\using {\bfseries common\+\_\+v\+\_\+t} = std\+::vector$<$ common\+\_\+t$<$ A, B $>$ $>$
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{namespaceraft_aa5b30239b85dd904f012b8982a9436b9}{Mem\+Action} \+: std\+::int32\+\_\+t \{ {\bfseries R\+E\+AD} = 0, 
+{\bfseries W\+R\+I\+TE} = 1
+ \}
+\item 
+enum \hyperlink{namespaceraft_ae150b57b2cf963cc45ea81e0c504a46c}{Locality} \+: std\+::int32\+\_\+t \{ {\bfseries NO} = 0, 
+{\bfseries L\+OW} = 1, 
+{\bfseries M\+OD} = 2, 
+{\bfseries L\+O\+TS} = 3
+ \}
+\item 
+\hypertarget{namespaceraft_a0d60fc92faf93d85edd021f6b32b9a38}{}\label{namespaceraft_a0d60fc92faf93d85edd021f6b32b9a38} 
+enum {\bfseries kstatus} \{ {\bfseries stop}, 
+{\bfseries proceed}
+ \}
+\item 
+\hypertarget{namespaceraft_ad471cb5d2da1a6b7e321456abebe8036}{}\label{namespaceraft_ad471cb5d2da1a6b7e321456abebe8036} 
+enum {\bfseries signal} \+: std\+::uint32\+\_\+t \{ {\bfseries none} = 0, 
+{\bfseries quit}, 
+{\bfseries term}, 
+{\bfseries eof} = M\+A\+X\+\_\+\+S\+Y\+S\+T\+E\+M\+\_\+\+S\+I\+G\+N\+AL
+ \}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{basicparallel_8hpp_source}{basicparallel.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Mon Aug 10 20\+:00\+:25 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{defs_8hpp_source}{defs.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sun Feb 7 05\+:46\+:48 2016
+\end{DoxyVersion}
+Copyright 2016 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.\+predeclare \hyperlink{classraft_1_1kernel}{raft\+::kernel} for kernel\+\_\+list\+\_\+t below
+
+\hyperlink{dynalloc_8hpp_source}{dynalloc.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Mon Oct 13 16\+:36\+:18 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{randombase_8hpp_source}{randombase.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sun Feb 22 10\+:41\+:44 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{kernel__pair__t_8hpp_source}{kernel\+\_\+pair\+\_\+t.\+hpp} -\/ class returned by the (relatively) deprecated link operators. These should only be used in the run-\/time...however some older code may still have it exposed and running around.
+
+\begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Mon Apr 18 20\+:39\+:53 2016
+\end{DoxyVersion}
+Copyright 2016 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.\+pre-\/declare some stuff
+
+\hyperlink{kernelpreempt_8hpp_source}{kernelpreempt.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Fri May 22 15\+:26\+:59 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{kpair_8hpp_source}{kpair.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Wed Dec 9 11\+:36\+:08 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{map_8hpp_source}{map.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Fri Sep 12 10\+:28\+:33 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.\+includes all partitioners
+
+\hyperlink{noparallel_8hpp_source}{noparallel.\+hpp} -\/ dummy package to remove auto-\/parallelization \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Mon Aug 10 20\+:00\+:25 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+need to pre-\/declare this
+
+\hyperlink{port__info_8hpp_source}{port\+\_\+info.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Wed Sep 3 20\+:22\+:56 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{port__info__types_8hpp_source}{port\+\_\+info\+\_\+types.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Mon Sep 22 20\+:01\+:43 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{portorder_8hpp_source}{portorder.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Wed Mar 16 13\+:11\+:49 2016
+\end{DoxyVersion}
+Copyright 2016 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{rafttypes_8hpp_source}{rafttypes.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Fri Sep 26 12\+:26\+:53 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{sched__cmd__t_8hpp_source}{sched\+\_\+cmd\+\_\+t.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sat Mar 21 11\+:05\+:19 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.\+full def in \hyperlink{kernel_8hpp_source}{kernel.\+hpp}
+
+\hyperlink{schedule_8hpp_source}{schedule.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Thu Sep 11 15\+:42\+:28 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{signalvars_8hpp_source}{signalvars.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sun May 11 08\+:26\+:13 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{simpleschedule_8hpp_source}{simpleschedule.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Thu Sep 11 15\+:49\+:57 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{stdalloc_8hpp_source}{stdalloc.\+hpp} -\/ simple allocation, just initializes the \hyperlink{class_f_i_f_o}{F\+I\+FO} with a fixed size buffer (512 items) with an alignment of 16-\/bytes. This can easily be changed by changing the constants below. \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sat Sep 20 19\+:56\+:49 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{submap_8hpp_source}{submap.\+hpp} -\/ Defines an interface to create sub-\/mappings which are basically maps that are allowed to have unconnected inputs and/or outputs that will be connected within a main mapping. The only real rule to these \char`\"{}sub-\/maps\char`\"{} is that the names of the output ports must be unique.
+
+\begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sun Nov 30 06\+:12\+:23 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{systemsignal_8hpp_source}{systemsignal.\+hpp} -\/ definition header file for signal handler function
+
+\begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sat Dec 6 18\+:19\+:13 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+\hyperlink{utility_8hpp_source}{utility.\+hpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sat Mar 21 22\+:12\+:15 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License. 
+
+\subsection{Enumeration Type Documentation}
+\hypertarget{namespaceraft_ae150b57b2cf963cc45ea81e0c504a46c}{}\label{namespaceraft_ae150b57b2cf963cc45ea81e0c504a46c} 
+\index{raft@{raft}!Locality@{Locality}}
+\index{Locality@{Locality}!raft@{raft}}
+\subsubsection{\texorpdfstring{Locality}{Locality}}
+{\footnotesize\ttfamily enum \hyperlink{namespaceraft_ae150b57b2cf963cc45ea81e0c504a46c}{raft\+::\+Locality} \+: std\+::int32\+\_\+t}
+
+locality hints also pretty self explanatory 
+
+Definition at line 17 of file prefetch.\+hpp.
+
+
+\begin{DoxyCode}
+17 : std::int32\_t \{ NO = 0, LOW = 1, MOD = 2, LOTS = 3 \};
+\end{DoxyCode}
+\hypertarget{namespaceraft_aa5b30239b85dd904f012b8982a9436b9}{}\label{namespaceraft_aa5b30239b85dd904f012b8982a9436b9} 
+\index{raft@{raft}!Mem\+Action@{Mem\+Action}}
+\index{Mem\+Action@{Mem\+Action}!raft@{raft}}
+\subsubsection{\texorpdfstring{Mem\+Action}{MemAction}}
+{\footnotesize\ttfamily enum \hyperlink{namespaceraft_aa5b30239b85dd904f012b8982a9436b9}{raft\+::\+Mem\+Action} \+: std\+::int32\+\_\+t}
+
+enums for prefetch, read/write pretty self explanatory 
+
+Definition at line 13 of file prefetch.\+hpp.
+
+
+\begin{DoxyCode}
+13 : std::int32\_t \{ READ= 0, WRITE = 1 \};
+\end{DoxyCode}

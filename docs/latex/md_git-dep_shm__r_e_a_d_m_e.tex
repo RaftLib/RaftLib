@@ -1,0 +1,15 @@
+\#\+Description Easy S\+HM library for C++, still a work in progress but it\textquotesingle{}s a easier way to code up an anonymous S\+HM mapping, protect the last page and generate a key to access it....I\textquotesingle{}ve used similar code quite a bit and was tired of re-\/coding it. If I find time I\textquotesingle{}ll make it a bit more advanced, like adding a monitor process to cleanup if for some reason the code crashes (you know, things happen right?). I\textquotesingle{}ve tested the code on OS X and Linux, but as usual your mileage may vary greatly.
+
+\#\+Build Status \href{https://travis-ci.org/RaftLib/shm}{\tt }
+
+\#\+Important Notes So I\textquotesingle{}ve checked the functions found in the testsuite. I\textquotesingle{}ve used the code quite a bit in various forms so it should work rather well...however if you find bugs please submit a pull request and I\textquotesingle{}ll get it fixed A\+S\+AP.
+
+\#\+Compilation Notes To build this library on OS X you\textquotesingle{}ll need to run\+: glibtoolize aclocal autoconf automake --add-\/missing make make check sudo make intall
+
+The only changes for linux will be libtoolize for call to libtool instead of glibtoolize...on OS X the binary might be named differently depending on how you\textquotesingle{}ve installed it so your mileage may vary. If you\textquotesingle{}re advanced enough to install libtool on OS X you should be able to figure this out.
+
+\#\+Usage To use this library, simply\+: \#include $<$shm$>$
+
+When compiling your code that uses it, link with -\/lshm. On Linux you\textquotesingle{}ll have to compile with the -\/lrt, -\/lpthread and -\/lnuma in order to fully utilize all the features. In the future I might add a flag to compile without the N\+U\+MA features so that you can use the library without having to install libnuma.
+
+\#\+Parting Thoughts Hopefully everything will work well....there are fairly good comments if you\textquotesingle{}re interested in the S\+HM header file under /include. 

@@ -1,0 +1,104 @@
+\hypertarget{classprint}{}\section{print$<$ T $>$ Class Template Reference}
+\label{classprint}\index{print$<$ T $>$@{print$<$ T $>$}}
+
+
+Inheritance diagram for print$<$ T $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=143pt]{classprint__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for print$<$ T $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classprint__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual raft\+::kstatus \hyperlink{classprint_aa547f61c584b4044e4a0dfc2410e5adc}{run} ()
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class print$<$ T $>$}
+
+
+
+Definition at line 11 of file peekrange.\+cpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classprint_aa547f61c584b4044e4a0dfc2410e5adc}{}\label{classprint_aa547f61c584b4044e4a0dfc2410e5adc} 
+\index{print@{print}!run@{run}}
+\index{run@{run}!print@{print}}
+\subsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily template$<$typename T$>$ \\
+virtual raft\+::kstatus \hyperlink{classprint}{print}$<$ T $>$\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+run -\/ function to be extended for the actual execution. Code can be executed outside of the run function, i.\+e., with any function call, however the scheduler will only call the run function so it must initiate any follow-\/on behavior desired by the user. nothing bad, just no more data
+
+nothing bad, just no more data 
+
+Implements \hyperlink{classraft_1_1kernel_a05094286d7577360fb1b91c91fc05901}{raft\+::kernel}.
+
+
+
+Definition at line 19 of file peekrange.\+cpp.
+
+
+
+References raft\+::map\+::exe(), and raft\+::kernel\+::input.
+
+
+\begin{DoxyCode}
+20    \{
+21       \textcolor{keyword}{auto} &port( \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}[ \textcolor{stringliteral}{"in"} ] );
+22       \textcolor{keywordflow}{try}
+23       \{
+24          \textcolor{keyword}{auto} range( port.template peek\_range< T >( 5 ) );
+25          \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i( 0 ); i < 5; i++ )
+26          \{
+27             std::cout << \textcolor{stringliteral}{" "} << range[ i ].ele;
+28          \}
+29       \} 
+30       \textcolor{keywordflow}{catch}( \hyperlink{class_no_more_data_exception}{NoMoreDataException} &ex )
+31       \{
+32          std::cerr << ex.what() << \textcolor{stringliteral}{"\(\backslash\)n"};\textcolor{comment}{}
+33 \textcolor{comment}{         /** nothing bad, just no more data **/}
+34          \textcolor{keywordflow}{return}( raft::stop );
+35       \}
+36       \textcolor{keywordflow}{catch}( \hyperlink{class_closed_port_access_exception}{ClosedPortAccessException} &ex )
+37       \{
+38          UNUSED( ex );\textcolor{comment}{}
+39 \textcolor{comment}{         /** nothing bad, just no more data **/}
+40          \textcolor{keywordflow}{return}( raft::stop );
+41       \}
+42       std::cout << \textcolor{stringliteral}{"\(\backslash\)n"};
+43       port.recycle( 2 );
+44       \textcolor{keywordflow}{return}( raft::proceed );
+45    \}
+\end{DoxyCode}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classprint_aa547f61c584b4044e4a0dfc2410e5adc_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+peekrange.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,177 @@
+\hypertarget{classstdalloc}{}\section{stdalloc Class Reference}
+\label{classstdalloc}\index{stdalloc@{stdalloc}}
+
+
+Inheritance diagram for stdalloc\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=132pt]{classstdalloc__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for stdalloc\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=323pt]{classstdalloc__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classstdalloc_afbca819760927fd8ccaac09f22c41834}{stdalloc} (\hyperlink{classraft_1_1map}{raft\+::map} \&map, volatile bool \&\hyperlink{class_allocate_a4d10076b88ab1297c89b8a05e117b510}{exit\+\_\+alloc})
+\item 
+virtual \hyperlink{classstdalloc_a46d60193ee113f34caf4ddf4385c9f0d}{$\sim$stdalloc} ()
+\item 
+virtual void \hyperlink{classstdalloc_a60438b15948ce354b52b03ba6d975de0}{run} ()
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 31 of file stdalloc.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classstdalloc_afbca819760927fd8ccaac09f22c41834}{}\label{classstdalloc_afbca819760927fd8ccaac09f22c41834} 
+\index{stdalloc@{stdalloc}!stdalloc@{stdalloc}}
+\index{stdalloc@{stdalloc}!stdalloc@{stdalloc}}
+\subsubsection{\texorpdfstring{stdalloc()}{stdalloc()}}
+{\footnotesize\ttfamily stdalloc\+::stdalloc (\begin{DoxyParamCaption}\item[{\hyperlink{classraft_1_1map}{raft\+::map} \&}]{map,  }\item[{volatile bool \&}]{exit\+\_\+alloc }\end{DoxyParamCaption})}
+
+stdalloc -\/ default constructor, calls base allocate constructor of Allcoate which sets the map object. After setting this object loose in a thread, the not\+Ready() function must be called so that the queue sees fully allocated buffers as opposed ot null objects. 
+\begin{DoxyParams}{Parameters}
+{\em map} & -\/ Map\&, map with full application \\
+\hline
+{\em exit\+\_\+alloc} & -\/ bool whose value is set by the map object owning this one. Controls when the loop within the run thread is exited.\\
+\hline
+\end{DoxyParams}
+\hyperlink{stdalloc_8cpp_source}{stdalloc.\+cpp} -\/ simple allocation, just initializes the \hyperlink{class_f_i_f_o}{F\+I\+FO} with a fixed size buffer (512 items) with an alignment of 16-\/bytes. This can easily be changed by changing the constants below.
+
+\begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sat Sep 20 19\+:56\+:49 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License. 
+
+Definition at line 31 of file stdalloc.\+cpp.
+
+
+\begin{DoxyCode}
+32                                                : \hyperlink{class_allocate_ab2b82e7fab9d0fccb9702effec93917b}{Allocate}( map, 
+      \hyperlink{class_allocate_a4d10076b88ab1297c89b8a05e117b510}{exit\_alloc} )
+33 \{
+34 \}
+\end{DoxyCode}
+\hypertarget{classstdalloc_a46d60193ee113f34caf4ddf4385c9f0d}{}\label{classstdalloc_a46d60193ee113f34caf4ddf4385c9f0d} 
+\index{stdalloc@{stdalloc}!````~stdalloc@{$\sim$stdalloc}}
+\index{````~stdalloc@{$\sim$stdalloc}!stdalloc@{stdalloc}}
+\subsubsection{\texorpdfstring{$\sim$stdalloc()}{~stdalloc()}}
+{\footnotesize\ttfamily stdalloc\+::$\sim$stdalloc (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+destructor, doesn\textquotesingle{}t really do much at he moment. 
+
+Definition at line 36 of file stdalloc.\+cpp.
+
+
+\begin{DoxyCode}
+37 \{
+38 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classstdalloc_a60438b15948ce354b52b03ba6d975de0}{}\label{classstdalloc_a60438b15948ce354b52b03ba6d975de0} 
+\index{stdalloc@{stdalloc}!run@{run}}
+\index{run@{run}!stdalloc@{stdalloc}}
+\subsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void stdalloc\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+run -\/ call within a thread, internally we could have a loop before exiting but this version simply allocates and exits. assume everyone needs a heap for the moment to get working
+
+check and see if a has a defined allocation
+
+check for pre-\/existing alloc size for test purposes
+
+size
+
+align 
+
+Implements \hyperlink{class_allocate_a44f9b51c382fec159233609e21b9d272}{Allocate}.
+
+
+
+Definition at line 41 of file stdalloc.\+cpp.
+
+
+
+References Graph\+Tools\+::\+B\+F\+S(), Port\+Info\+::const\+\_\+map, Allocate\+::initialize(), Allocate\+::set\+Ready(), Allocate\+::source\+\_\+kernels, and Port\+Info\+::type.
+
+
+\begin{DoxyCode}
+42 \{
+43    \textcolor{keyword}{auto} alloc\_func = [&]( \hyperlink{struct_port_info}{PortInfo} &a,
+44                           \hyperlink{struct_port_info}{PortInfo} &b,
+45                           \textcolor{keywordtype}{void} *data )
+46    \{
+47       (void) data;
+48 
+49       assert( a.\hyperlink{struct_port_info_a669818f0fde1da7b4a294c46e08d5980}{type} == b.type );\textcolor{comment}{}
+50 \textcolor{comment}{      /** assume everyone needs a heap for the moment to get working **/}
+51       instr\_map\_t *func\_map( a.\hyperlink{struct_port_info_a714592b5ab1fa47b599903639b102a66}{const\_map}[ Type::Heap ] );
+52       \hyperlink{class_f_i_f_o}{FIFO} *fifo( \textcolor{keyword}{nullptr} );
+53       \textcolor{keyword}{auto} test\_func( (*func\_map)[ \textcolor{keyword}{false} ] );\textcolor{comment}{}
+54 \textcolor{comment}{      /** check and see if a has a defined allocation **/}
+55       \textcolor{keywordflow}{if}( a.existing\_buffer != \textcolor{keyword}{nullptr} )
+56       \{
+57          fifo = test\_func( a.nitems,
+58                            a.start\_index,
+59                            a.existing\_buffer );
+60       \}
+61       \textcolor{keywordflow}{else}
+62       \{\textcolor{comment}{}
+63 \textcolor{comment}{         /** check for pre-existing alloc size for test purposes **/}
+64          fifo = test\_func( a.fixed\_buffer\_size != 0 ?
+65                               a.fixed\_buffer\_size : 4 \textcolor{comment}{/** size **/},
+66                            16 \textcolor{comment}{/** align **/},
+67                            \textcolor{keyword}{nullptr} \textcolor{comment}{/* data struct **/});
+68       \}
+69       assert( fifo != \textcolor{keyword}{nullptr} );
+70       (\textcolor{keyword}{this})->\hyperlink{class_allocate_a1d5c71b5cd6fc9671ed82d9c1d04965c}{initialize}( &a, &b, fifo );
+71    \};
+72    \textcolor{keyword}{auto} &container( (\textcolor{keyword}{this})->\hyperlink{class_allocate_a93e612d7ea7eb686fc88b5dee7a1407b}{source\_kernels}.acquire() );
+73    \hyperlink{class_graph_tools_ade51007699cbd681c1a37946609c46ee}{GraphTools::BFS}( container, alloc\_func );
+74    (\textcolor{keyword}{this})->\hyperlink{class_allocate_a93e612d7ea7eb686fc88b5dee7a1407b}{source\_kernels}.release();
+75    (\textcolor{keyword}{this})->\hyperlink{class_allocate_a4cf36bb704e43f5736a0e736d9e1a81b}{setReady}();
+76    \textcolor{keywordflow}{return};
+77 \}
+\end{DoxyCode}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classstdalloc_a60438b15948ce354b52b03ba6d975de0_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+stdalloc.\+hpp\item 
+stdalloc.\+cpp\end{DoxyCompactItemize}

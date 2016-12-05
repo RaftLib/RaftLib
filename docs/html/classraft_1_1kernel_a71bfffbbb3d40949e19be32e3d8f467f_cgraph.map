@@ -1,0 +1,5 @@
+<map id="raft::kernel::clone" name="raft::kernel::clone">
+<area shape="rect" id="node2" href="$classraft_1_1kernel.html#abd7f3bf1f689840f7d61f472f520c258" title="raft::kernel::lock" alt="" coords="194,5,309,31"/>
+<area shape="rect" id="node3" href="$classraft_1_1kernel.html#a186ea784c5b1ac8fd90f2112c1c62675" title="raft::kernel::operator[]" alt="" coords="177,55,326,80"/>
+<area shape="rect" id="node4" href="$classraft_1_1kernel.html#a7966dcabb0ed65ac52f6f78918256861" title="raft::kernel::unlock" alt="" coords="186,104,316,129"/>
+</map>

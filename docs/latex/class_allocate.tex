@@ -1,0 +1,296 @@
+\hypertarget{class_allocate}{}\section{Allocate Class Reference}
+\label{class_allocate}\index{Allocate@{Allocate}}
+
+
+Inheritance diagram for Allocate\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{class_allocate__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Allocate\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=323pt]{class_allocate__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_allocate_ab2b82e7fab9d0fccb9702effec93917b}{Allocate} (\hyperlink{classraft_1_1map}{raft\+::map} \&map, volatile bool \&\hyperlink{class_allocate_a4d10076b88ab1297c89b8a05e117b510}{exit\+\_\+alloc})
+\item 
+virtual \hyperlink{class_allocate_a68cd61da26f3b82da094b6d3e5d556f5}{$\sim$\+Allocate} ()
+\item 
+virtual void \hyperlink{class_allocate_a44f9b51c382fec159233609e21b9d272}{run} ()=0
+\item 
+void \hyperlink{class_allocate_a3123c2c1d9584974ce19b47fe6ceea17}{wait\+Till\+Ready} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{class_allocate_a1d5c71b5cd6fc9671ed82d9c1d04965c}{initialize} (\hyperlink{struct_port_info}{Port\+Info} $\ast$const src, \hyperlink{struct_port_info}{Port\+Info} $\ast$const dst, \hyperlink{class_f_i_f_o}{F\+I\+FO} $\ast$const fifo)
+\item 
+\hypertarget{class_allocate_a901eb0fdb6cffd56019c9ab9f2b25f92}{}\label{class_allocate_a901eb0fdb6cffd56019c9ab9f2b25f92} 
+virtual void {\bfseries allocate} (\hyperlink{struct_port_info}{Port\+Info} \&a, \hyperlink{struct_port_info}{Port\+Info} \&b, void $\ast$data)
+\item 
+void \hyperlink{class_allocate_a4cf36bb704e43f5736a0e736d9e1a81b}{set\+Ready} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+kernelkeeper \& \hyperlink{class_allocate_a93e612d7ea7eb686fc88b5dee7a1407b}{source\+\_\+kernels}
+\item 
+\hypertarget{class_allocate_a91e8c7d69ab7b309ea45439aea54fb4f}{}\label{class_allocate_a91e8c7d69ab7b309ea45439aea54fb4f} 
+kernelkeeper \& {\bfseries all\+\_\+kernels}
+\item 
+std\+::set$<$ \hyperlink{class_f_i_f_o}{F\+I\+FO} $\ast$$>$ \hyperlink{class_allocate_a037410210c0d10578f87de1ec68f47ba}{allocated\+\_\+fifo}
+\item 
+volatile bool \& \hyperlink{class_allocate_a4d10076b88ab1297c89b8a05e117b510}{exit\+\_\+alloc}
+\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_allocate_a901ac6fe1c35f3c114cf9e83f75dde0c}{}\label{class_allocate_a901ac6fe1c35f3c114cf9e83f75dde0c} 
+class {\bfseries basic\+\_\+parallel}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 58 of file allocate.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_allocate_ab2b82e7fab9d0fccb9702effec93917b}{}\label{class_allocate_ab2b82e7fab9d0fccb9702effec93917b} 
+\index{Allocate@{Allocate}!Allocate@{Allocate}}
+\index{Allocate@{Allocate}!Allocate@{Allocate}}
+\subsubsection{\texorpdfstring{Allocate()}{Allocate()}}
+{\footnotesize\ttfamily Allocate\+::\+Allocate (\begin{DoxyParamCaption}\item[{\hyperlink{classraft_1_1map}{raft\+::map} \&}]{map,  }\item[{volatile bool \&}]{exit\+\_\+alloc }\end{DoxyParamCaption})}
+
+\hyperlink{class_allocate}{Allocate} -\/ base constructor, really doesn\textquotesingle{}t do too much save for setting the global variables all\+\_\+kernels and source\+\_\+kernels from the Map object. 
+\begin{DoxyParams}{Parameters}
+{\em map} & -\/ \hyperlink{classraft_1_1map}{raft\+::map}\& \\
+\hline
+{\em exit\+\_\+alloc} & -\/ bool used to terminate loop, for monitoring allocations, controlled by map object.\\
+\hline
+\end{DoxyParams}
+allocate.\+cpp -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Tue Sep 16 20\+:20\+:06 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License. 
+
+Definition at line 30 of file src/allocate.\+cpp.
+
+
+\begin{DoxyCode}
+30                                                             :
+31    \hyperlink{class_allocate_a93e612d7ea7eb686fc88b5dee7a1407b}{source\_kernels}( map.\hyperlink{class_map_base_a2541cb37a237e66fc88129f9f0b02f50}{source\_kernels} ),
+32    all\_kernels(    map.\hyperlink{class_map_base_a2220cd630c5d00708f08d9bc70a48220}{all\_kernels} ),
+33    \hyperlink{class_allocate_a4d10076b88ab1297c89b8a05e117b510}{exit\_alloc}( \hyperlink{class_allocate_a4d10076b88ab1297c89b8a05e117b510}{exit\_alloc} )
+34 \{
+35 \}
+\end{DoxyCode}
+\hypertarget{class_allocate_a68cd61da26f3b82da094b6d3e5d556f5}{}\label{class_allocate_a68cd61da26f3b82da094b6d3e5d556f5} 
+\index{Allocate@{Allocate}!````~Allocate@{$\sim$\+Allocate}}
+\index{````~Allocate@{$\sim$\+Allocate}!Allocate@{Allocate}}
+\subsubsection{\texorpdfstring{$\sim$\+Allocate()}{~Allocate()}}
+{\footnotesize\ttfamily Allocate\+::$\sim$\+Allocate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+destructor 
+
+Definition at line 37 of file src/allocate.\+cpp.
+
+
+
+References allocated\+\_\+fifo.
+
+
+\begin{DoxyCode}
+38 \{
+39    \textcolor{keywordflow}{for}( \hyperlink{class_f_i_f_o}{FIFO} *f : \hyperlink{class_allocate_a037410210c0d10578f87de1ec68f47ba}{allocated\_fifo} )
+40    \{
+41       \textcolor{keyword}{delete}( f );
+42    \}
+43 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_allocate_a1d5c71b5cd6fc9671ed82d9c1d04965c}{}\label{class_allocate_a1d5c71b5cd6fc9671ed82d9c1d04965c} 
+\index{Allocate@{Allocate}!initialize@{initialize}}
+\index{initialize@{initialize}!Allocate@{Allocate}}
+\subsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily void Allocate\+::initialize (\begin{DoxyParamCaption}\item[{\hyperlink{struct_port_info}{Port\+Info} $\ast$const}]{src,  }\item[{\hyperlink{struct_port_info}{Port\+Info} $\ast$const}]{dst,  }\item[{\hyperlink{class_f_i_f_o}{F\+I\+FO} $\ast$const}]{fifo }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+initialize -\/ internal method to be used within the run method takes care of the initialization using the already allocated \hyperlink{class_f_i_f_o}{F\+I\+FO} object passed as a param. This function will throw an exception if either port (src or dst) have already been allocated. 
+\begin{DoxyParams}{Parameters}
+{\em src} & -\/ Port\+Info$\ast$, nullptr if not to be set \\
+\hline
+{\em dst} & -\/ Port\+Info$\ast$, nullptr if not to be set \\
+\hline
+{\em fifo} & -\/ F\+I\+F\+O$\ast$ \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{class_port_double_initialize_exception}{Port\+Double\+Initialize\+Exception}} & -\/ if either port is already initialized. \\
+\hline
+\end{DoxyExceptions}
+N\+O\+TE\+: this list simply speeds up the monitoring if we want it 
+
+Definition at line 58 of file src/allocate.\+cpp.
+
+
+
+References allocated\+\_\+fifo, Port\+Info\+::const\+\_\+map, Port\+Info\+::get\+F\+I\+F\+O(), F\+I\+F\+O\+::set\+\_\+dst\+\_\+kernel(), F\+I\+F\+O\+::set\+\_\+src\+\_\+kernel(), and Port\+Info\+::set\+F\+I\+F\+O().
+
+
+
+Referenced by stdalloc\+::run().
+
+
+\begin{DoxyCode}
+61 \{
+62    assert( fifo != \textcolor{keyword}{nullptr} );
+63    assert( dst  != \textcolor{keyword}{nullptr} );
+64    assert( src  != \textcolor{keyword}{nullptr} );
+65    \textcolor{keywordflow}{if}( src->\hyperlink{struct_port_info_a483d162fbe356e07381c6c5cfccb4f48}{getFIFO}() != nullptr )
+66    \{
+67       \textcolor{keywordflow}{throw} \hyperlink{class_port_double_initialize_exception}{PortDoubleInitializeException}(
+68          \textcolor{stringliteral}{"Source port \(\backslash\)""} + src->my\_name + \textcolor{stringliteral}{"\(\backslash\)" already initialized!"} );
+69    \}
+70    \textcolor{keywordflow}{if}( dst->\hyperlink{struct_port_info_a483d162fbe356e07381c6c5cfccb4f48}{getFIFO}() !=  nullptr )
+71    \{
+72       \textcolor{keywordflow}{throw} \hyperlink{class_port_double_initialize_exception}{PortDoubleInitializeException}(
+73          \textcolor{stringliteral}{"Destination port \(\backslash\)""} + dst->my\_name +  \textcolor{stringliteral}{"\(\backslash\)" already initialized!"} );
+74    \}
+75    src->\hyperlink{struct_port_info_a43a57cd624dcc44ccd9dcaba1d07a000}{setFIFO}( fifo );
+76    fifo->\hyperlink{class_f_i_f_o_aa9c1f679b4e2585047af2c09a2518209}{set\_src\_kernel}( src->my\_kernel );
+77    dst->\hyperlink{struct_port_info_a43a57cd624dcc44ccd9dcaba1d07a000}{setFIFO}( fifo );
+78    fifo->\hyperlink{class_f_i_f_o_a11422695c75c05ad2c60e662553f2667}{set\_dst\_kernel}( dst->my\_kernel );\textcolor{comment}{}
+79 \textcolor{comment}{   /** NOTE: this list simply speeds up the monitoring if we want it **/}
+80    \hyperlink{class_allocate_a037410210c0d10578f87de1ec68f47ba}{allocated\_fifo}.insert( fifo );
+81 \}
+\end{DoxyCode}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=318pt]{class_allocate_a1d5c71b5cd6fc9671ed82d9c1d04965c_cgraph}
+\end{center}
+\end{figure}
+\hypertarget{class_allocate_a44f9b51c382fec159233609e21b9d272}{}\label{class_allocate_a44f9b51c382fec159233609e21b9d272} 
+\index{Allocate@{Allocate}!run@{run}}
+\index{run@{run}!Allocate@{Allocate}}
+\subsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily virtual void Allocate\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+run -\/ implement this function to create a new allocator, will be run inside a thread so exits when done but if run-\/time monitoring is desired then this is the place to do it. 
+
+Implemented in \hyperlink{classstdalloc_a60438b15948ce354b52b03ba6d975de0}{stdalloc}, and \hyperlink{classdynalloc_a2a52b86ec09bd6dd52e49062137b2e37}{dynalloc}.
+
+\hypertarget{class_allocate_a4cf36bb704e43f5736a0e736d9e1a81b}{}\label{class_allocate_a4cf36bb704e43f5736a0e736d9e1a81b} 
+\index{Allocate@{Allocate}!set\+Ready@{set\+Ready}}
+\index{set\+Ready@{set\+Ready}!Allocate@{Allocate}}
+\subsubsection{\texorpdfstring{set\+Ready()}{setReady()}}
+{\footnotesize\ttfamily void Allocate\+::set\+Ready (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+set\+Ready -\/ call within the implemented run function to signal that the initial allocations have been completed. 
+
+Definition at line 52 of file src/allocate.\+cpp.
+
+
+
+Referenced by dynalloc\+::run(), and stdalloc\+::run().
+
+
+\begin{DoxyCode}
+53 \{
+54    ready = \textcolor{keyword}{true};
+55 \}
+\end{DoxyCode}
+\hypertarget{class_allocate_a3123c2c1d9584974ce19b47fe6ceea17}{}\label{class_allocate_a3123c2c1d9584974ce19b47fe6ceea17} 
+\index{Allocate@{Allocate}!wait\+Till\+Ready@{wait\+Till\+Ready}}
+\index{wait\+Till\+Ready@{wait\+Till\+Ready}!Allocate@{Allocate}}
+\subsubsection{\texorpdfstring{wait\+Till\+Ready()}{waitTillReady()}}
+{\footnotesize\ttfamily void Allocate\+::wait\+Till\+Ready (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+wait\+Till\+Ready -\/ call after initializing the allocate thread, returns when the initial allocation is complete. 
+
+Definition at line 46 of file src/allocate.\+cpp.
+
+
+\begin{DoxyCode}
+47 \{
+48    \textcolor{keywordflow}{while}( ! ready );
+49 \}
+\end{DoxyCode}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{class_allocate_a037410210c0d10578f87de1ec68f47ba}{}\label{class_allocate_a037410210c0d10578f87de1ec68f47ba} 
+\index{Allocate@{Allocate}!allocated\+\_\+fifo@{allocated\+\_\+fifo}}
+\index{allocated\+\_\+fifo@{allocated\+\_\+fifo}!Allocate@{Allocate}}
+\subsubsection{\texorpdfstring{allocated\+\_\+fifo}{allocated\_fifo}}
+{\footnotesize\ttfamily std\+::set$<$ \hyperlink{class_f_i_f_o}{F\+I\+FO}$\ast$ $>$ Allocate\+::allocated\+\_\+fifo\hspace{0.3cm}{\ttfamily [protected]}}
+
+keeps a list of all currently allocated \hyperlink{class_f_i_f_o}{F\+I\+FO} objects, set from within the initialize function. 
+
+Definition at line 124 of file allocate.\+hpp.
+
+
+
+Referenced by initialize(), and $\sim$\+Allocate().
+
+\hypertarget{class_allocate_a4d10076b88ab1297c89b8a05e117b510}{}\label{class_allocate_a4d10076b88ab1297c89b8a05e117b510} 
+\index{Allocate@{Allocate}!exit\+\_\+alloc@{exit\+\_\+alloc}}
+\index{exit\+\_\+alloc@{exit\+\_\+alloc}!Allocate@{Allocate}}
+\subsubsection{\texorpdfstring{exit\+\_\+alloc}{exit\_alloc}}
+{\footnotesize\ttfamily volatile bool\& Allocate\+::exit\+\_\+alloc\hspace{0.3cm}{\ttfamily [protected]}}
+
+exit\+\_\+alloc -\/ bool whose value is set by the map object, controls when the loop within the alloc thread is exited. 
+
+Definition at line 131 of file allocate.\+hpp.
+
+
+
+Referenced by dynalloc\+::run().
+
+\hypertarget{class_allocate_a93e612d7ea7eb686fc88b5dee7a1407b}{}\label{class_allocate_a93e612d7ea7eb686fc88b5dee7a1407b} 
+\index{Allocate@{Allocate}!source\+\_\+kernels@{source\+\_\+kernels}}
+\index{source\+\_\+kernels@{source\+\_\+kernels}!Allocate@{Allocate}}
+\subsubsection{\texorpdfstring{source\+\_\+kernels}{source\_kernels}}
+{\footnotesize\ttfamily kernelkeeper\& Allocate\+::source\+\_\+kernels\hspace{0.3cm}{\ttfamily [protected]}}
+
+both convenience structs, hold exactly what the names say 
+
+Definition at line 117 of file allocate.\+hpp.
+
+
+
+Referenced by dynalloc\+::run(), and stdalloc\+::run().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+allocate.\+hpp\item 
+src/allocate.\+cpp\end{DoxyCompactItemize}

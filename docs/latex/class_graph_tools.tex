@@ -1,0 +1,128 @@
+\hypertarget{class_graph_tools}{}\section{Graph\+Tools Class Reference}
+\label{class_graph_tools}\index{Graph\+Tools@{Graph\+Tools}}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{class_graph_tools_ade51007699cbd681c1a37946609c46ee}{B\+FS} (std\+::set$<$ \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ $>$ \&source\+\_\+kernels, edge\+\_\+func func, void $\ast$data=nullptr, bool connected\+\_\+error=false)
+\item 
+static void \hyperlink{class_graph_tools_afc9c2852a351fe8b1a881b5d8b6c97f5}{B\+FS} (std\+::vector$<$ \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ $>$ \&source\+\_\+kernels, edge\+\_\+func func, void $\ast$data=nullptr, bool connected\+\_\+error=false)
+\item 
+\hypertarget{class_graph_tools_a4223eca1b9bdb5b2b551f79b1faa155f}{}\label{class_graph_tools_a4223eca1b9bdb5b2b551f79b1faa155f} 
+static void {\bfseries B\+FS} (std\+::set$<$ \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ $>$ \&source\+\_\+kernels, vertex\+\_\+func func, void $\ast$data)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 56 of file graphtools.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_graph_tools_ade51007699cbd681c1a37946609c46ee}{}\label{class_graph_tools_ade51007699cbd681c1a37946609c46ee} 
+\index{Graph\+Tools@{Graph\+Tools}!B\+FS@{B\+FS}}
+\index{B\+FS@{B\+FS}!Graph\+Tools@{Graph\+Tools}}
+\subsubsection{\texorpdfstring{B\+F\+S()}{BFS()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Graph\+Tools\+::\+B\+FS (\begin{DoxyParamCaption}\item[{std\+::set$<$ \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ $>$ \&}]{source\+\_\+kernels,  }\item[{edge\+\_\+func}]{func,  }\item[{void $\ast$}]{data = {\ttfamily nullptr},  }\item[{bool}]{connected\+\_\+error = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+B\+FS -\/ perform a breadth first search of the graph given by \textquotesingle{}source\+\_\+kernels\textquotesingle{}. The function \textquotesingle{}func\textquotesingle{} matches the typedef above and is called on each edge of the graph exactly once. For state between calls, the user can define a data struct and pass it via the void ptr data which is passed to the func. 
+\begin{DoxyParams}{Parameters}
+{\em source\+\_\+kernels} & -\/ set of source kernels. \\
+\hline
+{\em func} & -\/ edge\+\_\+func, funciton to be called \\
+\hline
+{\em data} & -\/ void$\ast$, data struct for persistent state \\
+\hline
+{\em connected\+\_\+error,throw} & an error if not connected\\
+\hline
+\end{DoxyParams}
+\hyperlink{graphtools_8cpp_source}{graphtools.\+cpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sat Sep 20 13\+:15\+:09 2014
+\end{DoxyVersion}
+Copyright 2014 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License. 
+
+Definition at line 38 of file graphtools.\+cpp.
+
+
+
+Referenced by B\+F\+S(), raft\+::map\+::check\+Edges(), raft\+::map\+::enable\+Duplication(), dynalloc\+::run(), stdalloc\+::run(), and basic\+\_\+parallel\+::start().
+
+
+\begin{DoxyCode}
+42 \{
+43    std::set< raft::kernel* > visited\_set;
+44    std::queue< raft::kernel* >     queue;
+45    std::for\_each( source\_kernels.begin(),
+46                   source\_kernels.end(),
+47                   [&]( \hyperlink{classraft_1_1kernel}{raft::kernel} *k )
+48                   \{
+49                      queue.push( k );
+50                      visited\_set.insert( k );
+51                   \} );
+52    GraphTools::\_\_BFS( queue, visited\_set, func, data, connected\_error );
+53 \}
+\end{DoxyCode}
+\hypertarget{class_graph_tools_afc9c2852a351fe8b1a881b5d8b6c97f5}{}\label{class_graph_tools_afc9c2852a351fe8b1a881b5d8b6c97f5} 
+\index{Graph\+Tools@{Graph\+Tools}!B\+FS@{B\+FS}}
+\index{B\+FS@{B\+FS}!Graph\+Tools@{Graph\+Tools}}
+\subsubsection{\texorpdfstring{B\+F\+S()}{BFS()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Graph\+Tools\+::\+B\+FS (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \hyperlink{classraft_1_1kernel}{raft\+::kernel} $\ast$ $>$ \&}]{source\+\_\+kernels,  }\item[{edge\+\_\+func}]{func,  }\item[{void $\ast$}]{data = {\ttfamily nullptr},  }\item[{bool}]{connected\+\_\+error = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+B\+FS -\/ perform a breadth first search of the graph given by \textquotesingle{}source\+\_\+kernels\textquotesingle{}. The function \textquotesingle{}func\textquotesingle{} matches the typedef above and is called on each edge of the graph exactly once. For state between calls, the user can define a data struct and pass it via the void ptr data which is passed to the func. 
+\begin{DoxyParams}{Parameters}
+{\em source\+\_\+kernels} & -\/ set of source kernels. \\
+\hline
+{\em func} & -\/ edge\+\_\+func, funciton to be called \\
+\hline
+{\em data} & -\/ void$\ast$, data struct for persistent state \\
+\hline
+{\em connected\+\_\+error,throw} & an error if not connected \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 56 of file graphtools.\+cpp.
+
+
+
+References B\+F\+S(), Port\+::get\+Port\+Info\+For(), raft\+::kernel\+::input, Port\+::portmap, and common\+::print\+Class\+Name().
+
+
+\begin{DoxyCode}
+60 \{
+61    std::set< raft::kernel* >       visited\_set;
+62    std::queue< raft::kernel* >     queue;
+63    std::for\_each( source\_kernels.begin(),
+64                   source\_kernels.end(),
+65                   [&]( \hyperlink{classraft_1_1kernel}{raft::kernel} *k )
+66                   \{
+67                      queue.push( k );
+68                      visited\_set.insert( k );
+69                   \} );
+70    GraphTools::\_\_BFS( queue, visited\_set, func, data, connected\_error );
+71 \}
+\end{DoxyCode}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_graph_tools_afc9c2852a351fe8b1a881b5d8b6c97f5_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+graphtools.\+hpp\item 
+graphtools.\+cpp\end{DoxyCompactItemize}

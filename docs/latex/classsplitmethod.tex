@@ -1,0 +1,96 @@
+\hypertarget{classsplitmethod}{}\section{splitmethod Class Reference}
+\label{classsplitmethod}\index{splitmethod@{splitmethod}}
+
+
+{\ttfamily \#include $<$splitmethod.\+hpp$>$}
+
+
+
+Inheritance diagram for splitmethod\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=147pt]{classsplitmethod__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsplitmethod_a8ccafddc675963367cbff3939373e7b8}{}\label{classsplitmethod_a8ccafddc675963367cbff3939373e7b8} 
+{\footnotesize template$<$class T , typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+fundamental$<$ T $>$\+::value $>$\+::type $\ast$  = nullptr$>$ }\\bool {\bfseries send} (T \&item, const raft\+::signal signal, \hyperlink{class_port}{Port} \&outputs)
+\item 
+{\footnotesize template$<$class T , typename std\+::enable\+\_\+if$<$ ! std\+::is\+\_\+base\+\_\+of$<$ autoreleasebase, T $>$\+::value $>$\+::type $\ast$  = nullptr$>$ }\\bool \hyperlink{classsplitmethod_af9067e627d58d344cd1b11bc9d3e92d6}{send} (T \&range, \hyperlink{class_port}{Port} \&outputs)
+\item 
+\hypertarget{classsplitmethod_a72e3c5295001d5370c19d56b7ed1d07a}{}\label{classsplitmethod_a72e3c5295001d5370c19d56b7ed1d07a} 
+{\footnotesize template$<$class T $>$ }\\bool {\bfseries get} (T \&item, raft\+::signal \&signal, \hyperlink{class_port}{Port} \&inputs)
+\end{DoxyCompactItemize}
+\subsection*{Protected Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsplitmethod_a55be00e14bebb5a2df32666ca46a1592}{}\label{classsplitmethod_a55be00e14bebb5a2df32666ca46a1592} 
+enum {\bfseries functype} \{ {\bfseries sendtype}, 
+{\bfseries gettype}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsplitmethod_af9abd140d6baab12921bbd6bc397b514}{}\label{classsplitmethod_af9abd140d6baab12921bbd6bc397b514} 
+virtual \hyperlink{class_f_i_f_o}{F\+I\+FO} $\ast$ {\bfseries select\+\_\+fifo} (\hyperlink{class_port}{Port} \&port\+\_\+list, const functype type)=0
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+F\+I\+X\+ME, it\textquotesingle{}s relativly easy to do zero copy....so implement 
+
+Definition at line 35 of file splitmethod.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classsplitmethod_af9067e627d58d344cd1b11bc9d3e92d6}{}\label{classsplitmethod_af9067e627d58d344cd1b11bc9d3e92d6} 
+\index{splitmethod@{splitmethod}!send@{send}}
+\index{send@{send}!splitmethod@{splitmethod}}
+\subsubsection{\texorpdfstring{send()}{send()}}
+{\footnotesize\ttfamily template$<$class T , typename std\+::enable\+\_\+if$<$ ! std\+::is\+\_\+base\+\_\+of$<$ autoreleasebase, T $>$\+::value $>$\+::type $\ast$  = nullptr$>$ \\
+bool splitmethod\+::send (\begin{DoxyParamCaption}\item[{T \&}]{range,  }\item[{\hyperlink{class_port}{Port} \&}]{outputs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+send -\/ this version is intended for the peekrange object from autorelease.\+tcc in the fifo dir. I\textquotesingle{}ll add some code to enable only on the autorelease object shortly, but for now this will get it working. 
+\begin{DoxyParams}{Parameters}
+{\em range} & -\/ T\&, autorelease object \\
+\hline
+{\em outputs} & -\/ output port list \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 70 of file splitmethod.\+hpp.
+
+
+\begin{DoxyCode}
+71    \{
+72       \textcolor{keyword}{auto} * \textcolor{keyword}{const} fifo( select\_fifo( outputs, sendtype ) );
+73       \textcolor{keywordflow}{if}( fifo != \textcolor{keyword}{nullptr} )
+74       \{
+75          \textcolor{keyword}{const} \textcolor{keyword}{auto} space\_avail(
+76             std::min( fifo->space\_avail(), range.size() ) );
+77 
+78          \textcolor{keyword}{using} index\_type = std::remove\_const\_t<decltype(space\_avail)>;
+79          \textcolor{keywordflow}{for}( index\_type i( 0 ); i < space\_avail; i++ )
+80          \{
+81             fifo->push( range[ i ].ele, range[ i ].sig );
+82          \}
+83          \textcolor{keywordflow}{return}( \textcolor{keyword}{true} );
+84       \}
+85       \textcolor{keywordflow}{else}
+86       \{
+87          \textcolor{keywordflow}{return}( \textcolor{keyword}{false} );
+88       \}
+89    \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+splitmethod.\+hpp\end{DoxyCompactItemize}

@@ -1,0 +1,4 @@
+<map id="Schedule::checkSystemSignal" name="Schedule::checkSystemSignal">
+<area shape="rect" id="node2" href="$class_system_signal_handler.html#ac66db8af116e4f887706e58acb0781bb" title="SystemSignalHandler\l::callHandler" alt="" coords="254,5,404,44"/>
+<area shape="rect" id="node3" href="$class_no_signal_handler_found_exception.html#aedbbde0eab386ffcef936bb04da96862" title="NoSignalHandlerFoundException\l::NoSignalHandlerFoundException" alt="" coords="452,5,677,44"/>
+</map>

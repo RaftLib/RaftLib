@@ -1,0 +1,76 @@
+\hypertarget{class_signal_data}{}\section{Signal\+Data Class Reference}
+\label{class_signal_data}\index{Signal\+Data@{Signal\+Data}}
+
+
+{\ttfamily \#include $<$signaldata.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+raft\+::signal \hyperlink{class_signal_data_a565e9b24fa291fffacf3182a60b95bbf}{get\+\_\+signal} (const std\+::thread\+::id id)
+\item 
+\hypertarget{class_signal_data_abb937d8c51f7be2b08b1b5824f98e02d}{}\label{class_signal_data_abb937d8c51f7be2b08b1b5824f98e02d} 
+void {\bfseries set\+\_\+signal} (const std\+::thread\+::id id, const raft\+::signal signal)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{signaldata_8hpp_source}{signaldata.\+hpp} -\/ current version only supports single signals, future versions will support more, for right now this is all it really needs to work.
+
+N\+O\+T\+ES\+: This class is still largely unused so lets leave the attributes as is. We\textquotesingle{}ll come back and fix once we actually start needing more advanced signaling, or if I\textquotesingle{}m convinced that we really don\textquotesingle{}t need it (almost am now) then we\textquotesingle{}ll delete this and move on to grander things. -\/ jcb 16\+May2016
+
+\begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sat Jan 10 20\+:29\+:38 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License. 
+
+Definition at line 37 of file signaldata.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_signal_data_a565e9b24fa291fffacf3182a60b95bbf}{}\label{class_signal_data_a565e9b24fa291fffacf3182a60b95bbf} 
+\index{Signal\+Data@{Signal\+Data}!get\+\_\+signal@{get\+\_\+signal}}
+\index{get\+\_\+signal@{get\+\_\+signal}!Signal\+Data@{Signal\+Data}}
+\subsubsection{\texorpdfstring{get\+\_\+signal()}{get\_signal()}}
+{\footnotesize\ttfamily raft\+::signal Signal\+Data\+::get\+\_\+signal (\begin{DoxyParamCaption}\item[{const std\+::thread\+::id}]{id }\end{DoxyParamCaption})}
+
+\hyperlink{signaldata_8cpp_source}{signaldata.\+cpp} -\/ \begin{DoxyAuthor}{Author}
+\+: Jonathan Beard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+\+: Sat Jan 10 20\+:29\+:38 2015
+\end{DoxyVersion}
+Copyright 2015 Jonathan Beard
+
+Licensed under the Apache License, Version 2.\+0 (the \char`\"{}\+License\char`\"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at\+:
+
+\href{http://www.apache.org/licenses/LICENSE-2.0}{\tt http\+://www.\+apache.\+org/licenses/\+L\+I\+C\+E\+N\+S\+E-\/2.\+0}
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \char`\"{}\+A\+S I\+S\char`\"{} B\+A\+S\+IS, W\+I\+T\+H\+O\+UT W\+A\+R\+R\+A\+N\+T\+I\+ES OR C\+O\+N\+D\+I\+T\+I\+O\+NS OF A\+NY K\+I\+ND, either express or implied. See the License for the specific language governing permissions and limitations under the License.\+T\+O\+DO\+: come back here and remodel, and well...make these functions do something N\+O\+TE\+: see notes in header file 
+
+Definition at line 27 of file signaldata.\+cpp.
+
+
+\begin{DoxyCode}
+28 \{
+29     UNUSED( \textcolor{keywordtype}{id} );
+30     assert( \textcolor{keyword}{false} );
+31     \textcolor{keywordflow}{return}( static\_cast< raft::signal >( 0 ) ); 
+32 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+signaldata.\+hpp\item 
+signaldata.\+cpp\end{DoxyCompactItemize}

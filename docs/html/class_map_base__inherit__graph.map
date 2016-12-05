@@ -1,0 +1,4 @@
+<map id="MapBase" name="MapBase">
+<area shape="rect" id="node2" href="$classraft_1_1map.html" title="raft::map" alt="" coords="5,79,79,104"/>
+<area shape="rect" id="node3" href="$classraft_1_1submap.html" title="raft::submap" alt="" coords="104,79,199,104"/>
+</map>

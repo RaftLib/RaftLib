@@ -1,0 +1,4 @@
+<map id="simple_schedule" name="simple_schedule">
+<area shape="rect" id="node2" href="$class_schedule.html" title="Schedule" alt="" coords="100,125,177,151"/>
+<area shape="rect" id="node4" href="$class_system_signal_handler.html" title="SystemSignalHandler" alt="" coords="141,5,290,31"/>
+</map>

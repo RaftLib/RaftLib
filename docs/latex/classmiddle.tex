@@ -1,0 +1,156 @@
+\hypertarget{classmiddle}{}\section{middle Class Reference}
+\label{classmiddle}\index{middle@{middle}}
+
+
+Inheritance diagram for middle\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=143pt]{classmiddle__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for middle\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmiddle__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual raft\+::kstatus \hyperlink{classmiddle_a9aa7415c102af751be9c7af4771b6f16}{run} ()
+\item 
+virtual raft\+::kstatus \hyperlink{classmiddle_a9aa7415c102af751be9c7af4771b6f16}{run} ()
+\item 
+virtual raft\+::kstatus \hyperlink{classmiddle_a9aa7415c102af751be9c7af4771b6f16}{run} ()
+\item 
+virtual raft\+::kstatus \hyperlink{classmiddle_a9aa7415c102af751be9c7af4771b6f16}{run} ()
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 86 of file allocate\+Pop\+External.\+cpp.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classmiddle_a9aa7415c102af751be9c7af4771b6f16}{}\label{classmiddle_a9aa7415c102af751be9c7af4771b6f16} 
+\index{middle@{middle}!run@{run}}
+\index{run@{run}!middle@{middle}}
+\subsubsection{\texorpdfstring{run()}{run()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily virtual raft\+::kstatus middle\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+run -\/ function to be extended for the actual execution. Code can be executed outside of the run function, i.\+e., with any function call, however the scheduler will only call the run function so it must initiate any follow-\/on behavior desired by the user. 
+
+Implements \hyperlink{classraft_1_1kernel_a05094286d7577360fb1b91c91fc05901}{raft\+::kernel}.
+
+
+
+Definition at line 90 of file allocate\+Pop\+Push.\+cpp.
+
+
+\begin{DoxyCode}
+91     \{
+92         \hyperlink{structfoo}{obj\_t} obj;
+93         \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}[ \textcolor{stringliteral}{"x"} ].pop( obj );
+94         output[ \textcolor{stringliteral}{"y"} ].push( obj );
+95         \textcolor{keywordflow}{return}( raft::proceed );
+96     \}
+\end{DoxyCode}
+\hypertarget{classmiddle_a9aa7415c102af751be9c7af4771b6f16}{}\label{classmiddle_a9aa7415c102af751be9c7af4771b6f16} 
+\index{middle@{middle}!run@{run}}
+\index{run@{run}!middle@{middle}}
+\subsubsection{\texorpdfstring{run()}{run()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily virtual raft\+::kstatus middle\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+run -\/ function to be extended for the actual execution. Code can be executed outside of the run function, i.\+e., with any function call, however the scheduler will only call the run function so it must initiate any follow-\/on behavior desired by the user. 
+
+Implements \hyperlink{classraft_1_1kernel_a05094286d7577360fb1b91c91fc05901}{raft\+::kernel}.
+
+
+
+Definition at line 90 of file allocate\+Send\+Random\+Push.\+cpp.
+
+
+\begin{DoxyCode}
+91     \{
+92         \textcolor{keyword}{auto} &mem( \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}[ \textcolor{stringliteral}{"x"} ].peek< obj\_t >() );
+93         \textcolor{keywordflow}{if}( send )
+94         \{
+95             output[ \textcolor{stringliteral}{"y"} ].push( mem );
+96             send = \textcolor{keyword}{false};
+97         \}
+98         \textcolor{keywordflow}{else}
+99         \{
+100             send = \textcolor{keyword}{true};
+101         \}
+102         \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}[ \textcolor{stringliteral}{"x"} ].unpeek();
+103         \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}[ \textcolor{stringliteral}{"x"} ].recycle();
+104         \textcolor{keywordflow}{return}( raft::proceed );
+105     \}
+\end{DoxyCode}
+\hypertarget{classmiddle_a9aa7415c102af751be9c7af4771b6f16}{}\label{classmiddle_a9aa7415c102af751be9c7af4771b6f16} 
+\index{middle@{middle}!run@{run}}
+\index{run@{run}!middle@{middle}}
+\subsubsection{\texorpdfstring{run()}{run()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily virtual raft\+::kstatus middle\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+run -\/ function to be extended for the actual execution. Code can be executed outside of the run function, i.\+e., with any function call, however the scheduler will only call the run function so it must initiate any follow-\/on behavior desired by the user. 
+
+Implements \hyperlink{classraft_1_1kernel_a05094286d7577360fb1b91c91fc05901}{raft\+::kernel}.
+
+
+
+Definition at line 90 of file allocate\+Send\+Push.\+cpp.
+
+
+\begin{DoxyCode}
+91     \{
+92         \textcolor{keyword}{auto} &mem( \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}[ \textcolor{stringliteral}{"x"} ].peek< obj\_t >() );
+93         output[ \textcolor{stringliteral}{"y"} ].push( mem );
+94         \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}[ \textcolor{stringliteral}{"x"} ].unpeek();
+95         \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}[ \textcolor{stringliteral}{"x"} ].recycle();
+96         \textcolor{keywordflow}{return}( raft::proceed );
+97     \}
+\end{DoxyCode}
+\hypertarget{classmiddle_a9aa7415c102af751be9c7af4771b6f16}{}\label{classmiddle_a9aa7415c102af751be9c7af4771b6f16} 
+\index{middle@{middle}!run@{run}}
+\index{run@{run}!middle@{middle}}
+\subsubsection{\texorpdfstring{run()}{run()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily virtual raft\+::kstatus middle\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+run -\/ function to be extended for the actual execution. Code can be executed outside of the run function, i.\+e., with any function call, however the scheduler will only call the run function so it must initiate any follow-\/on behavior desired by the user. 
+
+Implements \hyperlink{classraft_1_1kernel_a05094286d7577360fb1b91c91fc05901}{raft\+::kernel}.
+
+
+
+Definition at line 95 of file allocate\+Pop\+External.\+cpp.
+
+
+\begin{DoxyCode}
+96     \{
+97         \textcolor{keyword}{auto} &val( \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}[ \textcolor{stringliteral}{"x"} ].peek< obj\_t >() );
+98         B.emplace\_back( reinterpret\_cast< std::uintptr\_t >( &val ) ); 
+99         output[ \textcolor{stringliteral}{"y"} ].push( val );
+100         \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}[ \textcolor{stringliteral}{"x"} ].unpeek();
+101         \hyperlink{classraft_1_1kernel_a6edbe35a56409d402e719b3ac36d6554}{input}[ \textcolor{stringliteral}{"x"} ].recycle( 1 );
+102         \textcolor{keywordflow}{return}( raft::proceed );
+103     \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+allocate\+Pop\+External.\+cpp\item 
+allocate\+Send\+Random\+Push.\+cpp\item 
+allocate\+Pop\+Push.\+cpp\item 
+allocate\+Send\+Push.\+cpp\end{DoxyCompactItemize}
