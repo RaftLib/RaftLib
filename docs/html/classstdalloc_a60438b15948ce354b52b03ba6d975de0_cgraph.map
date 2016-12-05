@@ -1,7 +1,0 @@
-<map id="stdalloc::run" name="stdalloc::run">
-<area shape="rect" id="node2" href="$class_allocate.html#a143df0dcd693ee1ba72060a06aca3b8c" title="Allocate::initialize" alt="" coords="152,30,275,58"/>
-<area shape="rect" id="node5" href="$class_graph_tools.html#ade51007699cbd681c1a37946609c46ee" title="GraphTools::BFS" alt="" coords="151,82,275,110"/>
-<area shape="rect" id="node6" href="$class_allocate.html#a4cf36bb704e43f5736a0e736d9e1a81b" title="Allocate::setReady" alt="" coords="147,134,280,162"/>
-<area shape="rect" id="node3" href="$struct_port_info.html#a9045e2d4e4d53e6a876cd277060fecb0" title="PortInfo::getFIFO" alt="" coords="329,5,453,33"/>
-<area shape="rect" id="node4" href="$struct_port_info.html#a8eadd0276864dc2d7752381ff0cfeb8b" title="PortInfo::setFIFO" alt="" coords="329,57,452,85"/>
-</map>

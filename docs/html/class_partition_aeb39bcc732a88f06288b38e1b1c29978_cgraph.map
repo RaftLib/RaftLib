@@ -1,4 +1,0 @@
-<map id="Partition::utilization_weighted" name="Partition::utilization_weighted">
-<area shape="rect" id="node2" href="$struct_port_info.html#a9045e2d4e4d53e6a876cd277060fecb0" title="PortInfo::getFIFO" alt="" coords="187,5,311,33"/>
-<area shape="rect" id="node3" href="$class_f_i_f_o.html#ae80b8555fc249168560c67cd0a13e574" title="FIFO::size" alt="" coords="208,57,291,85"/>
-</map>

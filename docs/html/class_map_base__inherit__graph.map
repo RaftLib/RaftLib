@@ -1,4 +1,0 @@
-<map id="MapBase" name="MapBase">
-<area shape="rect" id="node2" href="$class_map.html" title="Map" alt="" coords="4,83,51,111"/>
-<area shape="rect" id="node3" href="$class_sub_map.html" title="SubMap" alt="" coords="75,83,145,111"/>
-</map>
