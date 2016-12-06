@@ -160,6 +160,10 @@ protected:
     * return a copy, right now this is the behavior I want
     * so that way if we copy compute kernels we won't have
     * multiple kernels potentially pointing to the same reference.
+    * Each port name is only returned once, and then never again.
+    * This doesn't mean that you are getting rid of the port, it 
+    * means that the port name is not going to be returned as "enabled"
+    * twice. 
     * @return   std::string - currently active port name
     */
    std::string getEnabledPort();

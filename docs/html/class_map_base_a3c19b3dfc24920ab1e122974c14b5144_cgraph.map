@@ -1,5 +1,0 @@
-<map id="MapBase::link" name="MapBase::link">
-<area shape="rect" id="node2" href="$class_port.html#a7042f5b5c2ab14c9591a4984811a6012" title="Port::hasPorts" alt="" coords="167,5,273,33"/>
-<area shape="rect" id="node3" href="$class_port.html#a4af1cb062940ca3b83c569f024b9a8d1" title="Port::getPortInfo" alt="" coords="161,57,279,85"/>
-<area shape="rect" id="node4" href="$class_map_base.html#a2624d7b81f0078dcc78e524045403e28" title="MapBase::join" alt="" coords="167,109,273,137"/>
-</map>

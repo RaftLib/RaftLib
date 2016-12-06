@@ -161,7 +161,10 @@ protected:
     kpair                       *head          = nullptr;
     raft::kernel                *src           = nullptr;
     bool                         has_src_name  = false;
-    /** vector to accomodate kset structures **/
+    /** 
+     * vector to accomodate kset structures with specific 
+     * port names such as x <= raft::kset( y[ "a" ], z[ "b" ] )
+     **/
     std::vector< std::string >   src_name;
     raft::kernel                *dst           = nullptr;
     bool                         has_dst_name  = false;

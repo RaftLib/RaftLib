@@ -102,7 +102,14 @@ kpair::kpair( raft::basekset &a,
     src_kset = a.getCopy(); 
     /** we make a copy, don't need to keep a **/
     delete( &a );
-
+    for( const auto &name : (*src_kset) )
+    {
+        /** 
+         * pops the name from the enabled port, so we
+         * can only call this exactly once.
+         */
+        src_name.emplace_back( name->getEnabledPort() );
+    }
     assert( b.src != nullptr );
     dst = b.src;
     const auto dst_temp_name( dst->getEnabledPort() );
@@ -138,8 +145,18 @@ kpair::kpair( raft::basekset &a,
     src_kset = a.getCopy(); 
     /** we make a copy, don't need to keep a **/
     delete( &a );
+    for( const auto &name : (*src_kset) )
+    {
+        /** 
+         * pops the name from the enabled port, so we
+         * can only call this exactly once.
+         */
+        src_name.emplace_back( name->getEnabledPort() );
+    }
+    /** get port names for src_kset **/
 
     dst = &b;
+    
     const auto dst_temp_name( dst->getEnabledPort() );
 
     if( dst_temp_name.length() > 0 )
@@ -157,6 +174,20 @@ kpair::kpair( raft::basekset &a,
 kpair::kpair( raft::basekset &a,
               raft::basekset &b )
 {
+    /** 
+     * this one can either be the first in the list
+     * or could be added with some operators to the 
+     * source side, either way this one needs to have
+     * head and next set to this node
+     */
+    head      = this;
+    next      = this;
+    
+    src_kset = a.getCopy(); 
+    /** we make a copy, don't need to keep a **/
+    delete( &a );
+
+    UNUSED( b );
 
 }
 
@@ -165,7 +196,10 @@ kpair::kpair( kpair          &a,
               const bool split,
               const bool join )
 {
-
+    UNUSED( a );
+    UNUSED( b );
+    UNUSED( split );
+    UNUSED( join );
 }
 
 kpair::kpair( raft::kernel   &a,
@@ -173,7 +207,10 @@ kpair::kpair( raft::kernel   &a,
               const bool split,
               const bool join )
 {
-
+    UNUSED( a );
+    UNUSED( b );
+    UNUSED( split );
+    UNUSED( join );
 }
 
 

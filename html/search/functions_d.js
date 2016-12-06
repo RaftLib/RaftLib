@@ -1,5 +1,0 @@
-var searchData=
-[
-  ['operator_3d_3d',['operator==',['../class_port_iterator.html#ad41e4cf00699a49d6e0a30c8af3e7469',1,'PortIterator']]],
-  ['operator_5b_5d',['operator[]',['../class_port.html#a08cf165426982d83e5a191ba74cc6e5d',1,'Port::operator[]()'],['../class_port_base.html#ad034502b053f3cd7939d651b2d72cd0a',1,'PortBase::operator[]()']]]
-];
