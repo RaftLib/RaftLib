@@ -165,7 +165,10 @@ kpair::kpair( raft::basekset &a,
         has_dst_name = true;
         dst_name.emplace_back( dst_temp_name );
     }
-
+    /** 
+     * re-evaluate if this makes any sense to 
+     * count each of these as a separate out
+     */
     src_out_count = src_kset->getSize();
     dst_in_count  = b.input.count();
 }
@@ -186,8 +189,21 @@ kpair::kpair( raft::basekset &a,
     src_kset = a.getCopy(); 
     /** we make a copy, don't need to keep a **/
     delete( &a );
+    /**
+     * TODO throw exceptions here to be caught in operator
+     * overload syntax if either set has more than one
+     * port or more than one enabled port. 
+     */
+    for( const auto &k : (*src_kset) )
+    {
+        /** 
+         * pops the k from the enabled port, so we
+         * can only call this exactly once.
+         */
+        if( k.input.count() > 1 ) //FINISH ME
+        src_name.emplace_back( name->getEnabledPort() );
+    }
 
-    UNUSED( b );
 
 }
 

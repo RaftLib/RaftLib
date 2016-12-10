@@ -86,6 +86,12 @@ kernel::getEnabledPort()
     return( head );
 }
 
+std::size_t 
+kernel::getEnabledPortCount()
+{
+    return( enabled_port.size() );
+}
+
 //std::string
 //kernel::getName()
 //{

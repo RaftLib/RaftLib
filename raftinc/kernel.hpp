@@ -167,6 +167,12 @@ protected:
     * @return   std::string - currently active port name
     */
    std::string getEnabledPort();
+
+   /**
+    * getEnabledPortCount - returns the number of enabled ports
+    * withint this container.
+    */
+   std::size_t getEnabledPortCount();
    
    /** in namespace raft **/
    friend class map;
