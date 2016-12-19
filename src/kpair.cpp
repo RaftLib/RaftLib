@@ -1,48 +1,49 @@
-#include <cassert>
-
+#include <cassert> 
+#include <utility>
+#include "portexception.hpp"
 #include "kpair.hpp"
 #include "kernel.hpp"
 #include "portorder.hpp"
 #include "kernel_wrapper.hpp"
 
-kpair::kpair( raft::kernel &a, 
-              raft::kernel &b,
+kpair::kpair( raft::kernel &src, 
+              raft::kernel &dst,
               const bool split,
-              const bool join ) : kpair( a, b )
+              const bool join ) : kpair( src, dst )
 {
     split_to = split;
     join_from = join;
 }
 
-kpair::kpair( raft::kernel &a, 
-              raft::kernel_wrapper &b,
+kpair::kpair( raft::kernel &src, 
+              raft::kernel_wrapper &dst,
               const bool split,
-              const bool join ) : kpair( a, *(*b), split, join )
+              const bool join ) : kpair( src, *(*dst), split, join )
 {}
 
-kpair::kpair( raft::kernel_wrapper &a, 
-              raft::kernel &b,
+kpair::kpair( raft::kernel_wrapper &src, 
+              raft::kernel &dst,
               const bool split,
-              const bool join ) : kpair( *(*a), b, split, join )
+              const bool join ) : kpair( *(*src), dst, split, join )
 {}
 
-kpair::kpair( raft::kernel_wrapper &a, 
-              raft::kernel_wrapper &b,
+kpair::kpair( raft::kernel_wrapper &src, 
+              raft::kernel_wrapper &dst,
               const bool split,
-              const bool join ) : kpair( *(*a), *(*b), split, join )
+              const bool join ) : kpair( *(*src), *(*dst), split, join )
 {}
 
 /**
  * kpair - for joining kpair on the left (src)
  * and dst on right.
  */
-kpair::kpair( kpair &a, 
-              raft::kernel &b,
+kpair::kpair( kpair &src, 
+              raft::kernel &dst,
               const bool split,
-              const bool join ) : kpair( *(a.dst), b )
+              const bool join ) : kpair( *(src.out.k), dst )
 {
-    head        = a.head;
-    a.next  = this;
+    head        = src.head;
+    src.next  = this;
     split_to    = split;
     join_from   = join;
 }
@@ -60,7 +61,7 @@ kpair::kpair( kpair &a,
 kpair::kpair( raft::kernel &a,
               kpair        &n, 
               const bool split,
-              const bool join ) : kpair( a, *(n.src) )
+              const bool join ) : kpair( a, *(n.in.k) )
 {
     head        = this;
     next        = &n;
@@ -77,7 +78,7 @@ kpair::kpair( raft::kernel_wrapper &a,
 kpair::kpair( kpair &a,
               kpair &b, 
               const bool split,
-              const bool join ) : kpair( *(a.dst), *(b.src) )
+              const bool join ) : kpair( *(a.out.k), *(b.in.k) )
 {
     head = a.head;
     a.next = this;
@@ -99,30 +100,48 @@ kpair::kpair( raft::basekset &a,
     split_to  = split;
     join_from = join;
     
-    src_kset = a.getCopy(); 
+    in.kset = a.getCopy(); 
     /** we make a copy, don't need to keep a **/
     delete( &a );
-    for( const auto &name : (*src_kset) )
+    for( const auto &k : (*in.kset) )
     {
         /** 
-         * pops the name from the enabled port, so we
+         * pops the k from the enabled port, so we
          * can only call this exactly once.
          */
-        src_name.emplace_back( name->getEnabledPort() );
+        if( k->getEnabledPortCount() == 1 )
+        {
+            /** push enabled port **/
+            src_name.insert( std::make_pair( 
+                reinterpret_cast< std::uintptr_t >( k ),
+                k->getEnabledPort() ) /** end make pair **/
+            );
+        }
+        else if( k->output.count() > 1 )
+        {
+            /** 
+             * TODO: throw exception since we have more than 
+             * one portential port to tie from this source's 
+             * output side and we don't know which to use. The
+             * user should have specified via the bracket syntax
+             * or else made sure the kernel only had one 
+             * output port.
+             */
+            throw PortNotSpecifiedForKSet( "Port must be specified when including a kernel with more than one outgoing port within a kernel set." );
+        }
     }
-    assert( b.src != nullptr );
-    dst = b.src;
-    const auto dst_temp_name( dst->getEnabledPort() );
+    assert( b.in.k != nullptr );
+    out.k = b.in.k;
+    const auto dst_temp_name( out.k->getEnabledPort() );
 
     if( dst_temp_name.length() > 0 )
     {
         /** set false by default **/
-        has_dst_name = true;
-        dst_name.emplace_back( dst_temp_name );
+        dst_name.insert( std::make_pair( reinterpret_cast< std::uintptr_t >( out.k ), dst_temp_name )  );
     }
 
-    src_out_count = src_kset->getSize();
-    dst_in_count  = dst->input.count();
+    src_out_count = in.kset->getSize();
+    dst_in_count  = out.k->input.count();
 }
 
 kpair::kpair( raft::basekset &a,
@@ -142,35 +161,53 @@ kpair::kpair( raft::basekset &a,
     split_to  = split;
     join_from = join;
     
-    src_kset = a.getCopy(); 
+    in.kset = a.getCopy(); 
     /** we make a copy, don't need to keep a **/
     delete( &a );
-    for( const auto &name : (*src_kset) )
+    
+    for( const auto &k : (*in.kset) )
     {
         /** 
-         * pops the name from the enabled port, so we
+         * pops the k from the enabled port, so we
          * can only call this exactly once.
          */
-        src_name.emplace_back( name->getEnabledPort() );
+        if( k->getEnabledPortCount() == 1 )
+        {
+            /** push enabled port **/
+            src_name.insert( std::make_pair( 
+                reinterpret_cast< std::uintptr_t >( k ),
+                k->getEnabledPort() ) /** end make pair **/
+            );
+        }
+        else if( k->output.count() > 1 )
+        {
+            /** 
+             * TODO: throw exception since we have more than 
+             * one portential port to tie from this source's 
+             * output side and we don't know which to use. The
+             * user should have specified via the bracket syntax
+             * or else made sure the kernel only had one 
+             * output port.
+             */
+            throw PortNotSpecifiedForKSet( "Port must be specified when including a kernel with more than one outgoing port within a kernel set." );
+        }
     }
     /** get port names for src_kset **/
 
-    dst = &b;
+    out.k = &b;
     
-    const auto dst_temp_name( dst->getEnabledPort() );
+    const auto dst_temp_name( out.k->getEnabledPort() );
 
     if( dst_temp_name.length() > 0 )
     {
-        /** set false by default **/
-        has_dst_name = true;
-        dst_name.emplace_back( dst_temp_name );
+        dst_name.insert( std::make_pair( reinterpret_cast< std::uintptr_t >( out.k ), dst_temp_name ) );
     }
     /** 
      * re-evaluate if this makes any sense to 
      * count each of these as a separate out
      */
-    src_out_count = src_kset->getSize();
-    dst_in_count  = b.input.count();
+    src_out_count = in.kset->getSize();
+    dst_in_count  = out.k->input.count();
 }
 
 
@@ -186,7 +223,38 @@ kpair::kpair( raft::basekset &a,
     head      = this;
     next      = this;
     
-    src_kset = a.getCopy(); 
+    in.kset = a.getCopy(); 
+    /** we make a copy, don't need to keep a **/
+    delete( &a );
+    for( const auto &k : (*in.kset) )
+    {
+        /** 
+         * pops the k from the enabled port, so we
+         * can only call this exactly once.
+         */
+        if( k->getEnabledPortCount() == 1 )
+        {
+            /** push enabled port **/
+            src_name.insert( std::make_pair( 
+                reinterpret_cast< std::uintptr_t >( k ),
+                k->getEnabledPort() ) /** end make pair **/
+            );
+        }
+        else if( k->output.count() > 1 )
+        {
+            /** 
+             * TODO: throw exception since we have more than 
+             * one portential port to tie from this source's 
+             * output side and we don't know which to use. The
+             * user should have specified via the bracket syntax
+             * or else made sure the kernel only had one 
+             * output port.
+             */
+            throw PortNotSpecifiedForKSet( "Port must be specified when including a kernel with more than one outgoing port within a kernel set." );
+        }
+    }
+    
+    out.kset = a.getCopy(); 
     /** we make a copy, don't need to keep a **/
     delete( &a );
     /**
@@ -194,14 +262,32 @@ kpair::kpair( raft::basekset &a,
      * overload syntax if either set has more than one
      * port or more than one enabled port. 
      */
-    for( const auto &k : (*src_kset) )
+    for( const auto &k : (*out.kset) )
     {
         /** 
          * pops the k from the enabled port, so we
          * can only call this exactly once.
          */
-        if( k.input.count() > 1 ) //FINISH ME
-        src_name.emplace_back( name->getEnabledPort() );
+        if( k->getEnabledPortCount() == 1 )
+        {
+            /** push enabled port **/
+            dst_name.insert( std::make_pair( 
+                reinterpret_cast< std::uintptr_t >( k ),
+                k->getEnabledPort() ) /** end make pair **/
+            );
+        }
+        else if( k->input.count() > 1 )
+        {
+            /** 
+             * TODO: throw exception since we have more than 
+             * one portential port to tie from this source's 
+             * output side and we don't know which to use. The
+             * user should have specified via the bracket syntax
+             * or else made sure the kernel only had one 
+             * output port.
+             */
+            throw PortNotSpecifiedForKSet( "Port must be specified when including a kernel with more than one outgoing port within a kernel set." );
+        }
     }
 
 
@@ -234,29 +320,26 @@ kpair::kpair( raft::kernel   &a,
 
 kpair::kpair( raft::kernel &a, raft::kernel &b )
 {
-    src = &a;
+    in.k = &a;
     /** see if the source has a name **/
     const auto src_temp_name( a.getEnabledPort() );
     if( src_temp_name.length() > 0 )
     {
         /** set false by default **/
-        has_src_name = true;
-        src_name.emplace_back( src_temp_name );
+        src_name.insert( std::make_pair( reinterpret_cast< std::uintptr_t >( in.k ), src_temp_name  ) );
     }
 
     /** see if the destination has a name **/
-    dst = &b;
+    out.k = &b;
     const auto dst_temp_name( b.getEnabledPort() );
-
     if( dst_temp_name.length() > 0 )
     {
         /** set false by default **/
-        has_dst_name = true;
-        dst_name.emplace_back( dst_temp_name );
+        dst_name.insert( std::make_pair( reinterpret_cast< std::uintptr_t >( out.k ), dst_temp_name ) );
     }
 
-    src_out_count = a.output.count();
-    dst_in_count  = b.input.count();
+    src_out_count = in.k->output.count();
+    dst_in_count  = out.k->input.count();
     head = this;
 }
 
@@ -275,6 +358,25 @@ kpair::kpair( raft::kernel_wrapper &a,
               raft::kernel_wrapper &b ) : kpair( *(*a), *(*b) )
 {
 }
+
+kpair::~kpair()
+{
+    /**
+     * delete the kset structures, everything else
+     * is deleted by the map structure
+     */
+     if( src_name.size() > 0 )
+     {
+        delete( in.kset );
+        in.kset = nullptr;
+     }
+     if( dst_name.size() > 0 )
+     {
+        delete( out.kset );
+        out.kset = nullptr;
+     }
+}
+
 
 void 
 kpair::setOoO() noexcept

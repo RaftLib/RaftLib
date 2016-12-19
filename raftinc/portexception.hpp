@@ -21,6 +21,7 @@
 #define _PORTEXCEPTION_HPP_  1
 #include <exception>
 #include <string>
+
 class PortException : public std::exception
 {
 public:
@@ -30,50 +31,66 @@ private:
    const std::string message;
 };
 
-class PortTypeException : public PortException
+template < int N > class TemplatePortException : public PortException 
 {
 public:
-   PortTypeException( const std::string &message );
+    TemplatePortException(  const std::string &message ) : PortException( message ){};
 };
 
-class PortNotFoundException : public PortException
-{
-public:
-   PortNotFoundException( const std::string &message );
-};
+/**
+ * PortNotFoundException - throw me if there isn't a port by the
+ * given name on the input nor output port.
+ */
+using PortNotFoundException             = TemplatePortException< 2 >;
+/**
+ * PortDoubleInitializeException - throw me if the port has been 
+ * doubly allocated somehow..this should likely be caught internal
+ * to the runtime but worst case it gets thrown out to the user
+ * to likely file a bug report with.
+ */
+using PortDoubleInitializeException     = TemplatePortException< 3 >; 
+/**
+ * PortTypeMismatchException - use me if there is a port type mis-match
+ * ports in raftlib are checked dynamically...given we could have
+ * dynamic type conversion, we should allow this, however throw
+ * this exception if the types are totally not compatible. 
+ */
+using PortTypeMismatchException         = TemplatePortException< 4 >;
+/**
+ * AmbiguousPortAssignmentException - throw me if there is a link
+ * without a specified name to a source or destination kernel that
+ * has multiple potential mates for the link, hence ambiguous. These
+ * links must have names. 
+ */
+using AmbiguousPortAssignmentException  = TemplatePortException< 5 >; 
+/**
+ * ClosedPortAccessException - Throw me if the user attempts an access
+ * to a port that has been closed, i.e. if the upstream kernels are 
+ * not going to send anymore data then the port is closed. This could
+ * happen for many different reasons though so there is another exception
+ * to catch just the case of no more data. 
+ */
+using ClosedPortAccessException         = TemplatePortException< 6 >;
+/**
+ * NoMoreDataException - case of no more data to be sent...if a user
+ * tries to access the port when nothing more is coming then we throw
+ * this exception.
+ */
+using NoMoreDataException               = TemplatePortException< 7 >; 
+/**
+ * PortAlreadyExists - the port must exist only once, i.e. not conflict
+ * for the input or output to a kernel. Therefore each prot name must
+ * be unique for a given side, and if not this exception is thrown. 
+ */
+using PortAlreadyExists                 = TemplatePortException< 8 >;
+/**
+ * PortNotSpecifiedForKSet - thrown if the user attempts to specify
+ * a connection to a kernel within a kernel set structure that has
+ * more than one input or output port without specifying which port
+ * to connect to. This exception is similar to the ambiguous port
+ * exception above, except specific to kernel sets (kset).
+ */
+using PortNotSpecifiedForKSet           = TemplatePortException< 9 >;
 
-class PortDoubleInitializeException : public PortException
-{
-public:
-   PortDoubleInitializeException( const std::string &message );
-};
 
-class PortTypeMismatchException : public PortException
-{
-public:
-   PortTypeMismatchException( const std::string &message );
-};
-
-class AmbiguousPortAssignmentException : public PortException
-{
-public:
-   AmbiguousPortAssignmentException( const std::string &message );
-};
-
-class ClosedPortAccessException : public PortException
-{
-public:
-   ClosedPortAccessException( const std::string &message );
-};
-
-class NoMoreDataException : public PortException
-{
-public:
-   NoMoreDataException( const std::string &message );
-};
-class PortAlreadyExists : public PortException
-{
-public:
-   PortAlreadyExists( const std::string &message );
-};
-#endif /* END _PORTEXCEPTION_HPP_ */
+#endif

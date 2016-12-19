@@ -31,6 +31,7 @@ PortException::what() const noexcept
    return( strdup( message.c_str() ) );
 }
 
+#if 0
 PortTypeException::PortTypeException( const std::string &message ) :
    PortException( message )
 {
@@ -70,3 +71,5 @@ PortAlreadyExists::PortAlreadyExists(
    const std::string &message ) : PortException( message )
 {
 }
+
+#endif

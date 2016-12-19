@@ -63,125 +63,153 @@ using ROoOkpair = PairBase< kpair, 2 >;
 class kpair
 {
 public:
-    kpair( raft::kernel &a, 
-           raft::kernel &b,
+    kpair( raft::kernel &src, 
+           raft::kernel &dst,
            const bool split,
            const bool join );
     
-    kpair( raft::kernel &a, 
-           raft::kernel_wrapper &b,
+    kpair( raft::kernel &src, 
+           raft::kernel_wrapper &dst,
            const bool split,
            const bool join );
     
-    kpair( raft::kernel_wrapper &a, 
-           raft::kernel &b,
+    kpair( raft::kernel_wrapper &src, 
+           raft::kernel &dst,
            const bool split,
            const bool join );
     
-    kpair( raft::kernel_wrapper &a, 
-           raft::kernel_wrapper &b,
+    kpair( raft::kernel_wrapper &src, 
+           raft::kernel_wrapper &dst,
            const bool split,
            const bool join );
 
-    kpair( kpair &a,
-           raft::kernel  &b,
+    kpair( kpair &src,
+           raft::kernel  &dst,
            const bool split,
            const bool join );
     
-    kpair( kpair &a,
-           raft::kernel_wrapper  &b,
+    kpair( kpair &src,
+           raft::kernel_wrapper  &dst,
            const bool split,
            const bool join );
 
-    kpair( raft::kernel &a,
-           kpair        &n,
+    kpair( raft::kernel &src,
+           kpair        &dst,
            const bool   split,
            const bool   join );
     
-    kpair( raft::kernel_wrapper &a,
-           kpair        &n,
+    kpair( raft::kernel_wrapper &src,
+           kpair        &dst,
            const bool   split,
            const bool   join );
 
-    kpair( kpair &a,
-           kpair &b,
+    kpair( kpair &src,
+           kpair &dst,
            const bool split,
            const bool join );
 
-    kpair( raft::basekset &a,
-           kpair &b,
+    kpair( raft::basekset &src,
+           kpair &dst,
            const bool split,
            const bool join );
     
-    kpair( raft::basekset   &a,
-           raft::kernel     &b,
+    kpair( raft::basekset   &src,
+           raft::kernel     &dst,
            const bool       split,
            const bool       join );
 
-    kpair( raft::basekset &a,
-           raft::basekset &b );
+    kpair( raft::basekset &src,
+           raft::basekset &dst );
 
-    kpair( kpair &a,
-           raft::basekset &b,
+    kpair( kpair &src,
+           raft::basekset &dst,
            const bool split,
            const bool join );
 
-    kpair( raft::kernel     &a,
-           raft::basekset   &b,
+    kpair( raft::kernel     &src,
+           raft::basekset   &dst,
            const bool       split,
            const bool       join );
 
-    kpair( raft::kernel &a, raft::kernel &b );
+    kpair( raft::kernel &src, raft::kernel &dst );
     
-    kpair( raft::kernel &a, 
-           raft::kernel_wrapper &b );
+    kpair( raft::kernel &src, 
+           raft::kernel_wrapper &dst );
     
-    kpair( raft::kernel_wrapper &a, 
-           raft::kernel  &b );
+    kpair( raft::kernel_wrapper &src, 
+           raft::kernel  &dst );
 
-    kpair( raft::kernel_wrapper &a, 
-           raft::kernel_wrapper &b );
+    kpair( raft::kernel_wrapper &src, 
+           raft::kernel_wrapper &dst );
     
     void setOoO() noexcept;
 
-    virtual ~kpair()
-    {
-        /**
-         * delete the kset structures, everything else
-         * is deleted by the map structure
-         */
-         delete( src_kset );
-         src_kset = nullptr;
-         delete( dst_kset );
-         dst_kset = nullptr;
-    }
+    virtual ~kpair();
 
 protected:
+    /** 
+     * Head and next pointers so we can make a linked list
+     * of the chain created by the >> from the user. These
+     * will be used to create the graph structure by the
+     * map class.
+     */
     kpair                       *next          = nullptr;
     kpair                       *head          = nullptr;
-    raft::kernel                *src           = nullptr;
-    bool                         has_src_name  = false;
+    
     /** 
-     * vector to accomodate kset structures with specific 
-     * port names such as x <= raft::kset( y[ "a" ], z[ "b" ] )
-     **/
-    std::vector< std::string >   src_name;
-    raft::kernel                *dst           = nullptr;
-    bool                         has_dst_name  = false;
-    /** vector to accomodate kset structures **/
-    std::vector< std::string >   dst_name;
-    /** created via getCopy so these need to be deleted **/
-    raft::basekset  *src_kset     = nullptr;
-    raft::basekset  *dst_kset     = nullptr;
-         
+     * I didn't feel like using 8-bytes more than I had to
+     * these structure pointers are mutually exlusive, 
+     * meaning we're either using one or the other and
+     * its totall apparent within the context of use which
+     * is in fact valid - jcb.
+     */
+    union
+    {
+        raft::kernel    *k      = nullptr;
+        raft::basekset  *kset;
+    } in;
+
+    /**
+     * map to accomodate kset structures, it is indexed
+     * on the memory location of the kernel that the
+     * name is valid to, i.e. a[ " out" ] is referenced
+     * on the kernel memory location (&a) as a ptr int
+     */
+    std::map< std::uintptr_t, std::string >     src_name;
+    
+    /** 
+     * I didn't feel like using 8-bytes more than I had to
+     * these structure pointers are mutually exlusive, 
+     * meaning we're either using one or the other and
+     * its totall apparent within the context of use which
+     * is in fact valid - jcb.
+     */
+    union
+    {
+        raft::kernel    *k      = nullptr;
+        raft::basekset  *kset;
+    } out;
+    /**
+     * map to accomodate kset structures, it is indexed
+     * on the memory location of the kernel that the
+     * name is valid to, i.e. a[ " out" ] is referenced
+     * on the kernel memory location (&a) as a ptr int
+     */
+    std::map< std::uintptr_t, std::string >     dst_name;
+
     
     bool             split_to      = false;
+    
     core_id_t        src_out_count = 0;
+    
     bool             join_from     = false;
+    
     core_id_t        dst_in_count  = 0;
 
     bool             out_of_order  = false;
+    
     raft::parallel::type    context_type  = raft::parallel::system;  
+    
     friend class raft::map;
 };
 
