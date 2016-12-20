@@ -22,28 +22,64 @@
 
 #include <exception>
 #include <string>
+#include <climit>
+#include <cassert>
 
 namespace raft
 {
-    namespace parallel
+
+/** 
+ * type for stream manipulation, currently
+ * this means that there are 64 available
+ * modifiers.
+ */
+
+using manip_vec_t = std::uint64_t;
+
+/** raft::parallel **/
+namespace parallel
+{
+    enum type : manip_vec_t { system = 0  /** do whatever the runtime wants, I don't care  **/,
+                              thread      /** specify a thread for each kernel **/, 
+                              pool        /** thread pool, one kernel thread per core, many kernels in each **/, 
+                              process     /** open a new process from this point **/,
+                              NPARALLEL };
+    
+}
+/** raft::vm **/
+namespace vm
+{
+    enum type { flat = NPARALLEL        /** not yet implemented, likely using segment  **/, 
+                standard                /** threads share VM space, processes have sep **/, 
+                partition               /** partition graph at this point into a new VM space, platform dependent **/ }; 
+}
+
+
+template < manip_vec_t... VECLIST > struct manip_helper{};
+
+template <> struct manip_helper<>
+{
+    constexpr static manip_vec_t get_value()
     {
-        enum type { system = 0  /** do whatever the runtime wants, I don't care  **/,
-                    thread      /** specify a thread for each kernel **/, 
-                    pool        /** thread pool, one kernel thread per core, many kernels in each **/, 
-                    process     /** open a new process from this point **/,
-                    N };
-        
-        const std::string  type_name[ N ] = { "raft::parallel::system",
-                                              "raft::parallel::thread",
-                                              "raft::parallel::pool",
-                                              "raft::parallel::process" };
+        return( static_cast< manip_vac_t >( 0 ) );
     }
-    namespace vm
+};
+
+template < manip_vec_t N, manip_vec_t... VECLIST > struct manip_helper< N, VECLIST... >
+{
+    constexpr static manip_vec_t get_value( )
     {
-        enum type { flat        /** not yet implemented **/, 
-                    standard    /** threads share VM space, processes have sep **/, 
-                    partition   /** partition graph at this point into a new VM space, platform dependent **/ }; 
+        static_assert( N <= sizeof( manip_vec_t ) * CHAR_BIT, "Stream manipulator can only have 64 states [0:63], please check code" );
+        return( ( static_cast< manip_vec_t >( 1 ) << N ) | manip_helper< VECLIST... >::get_value() ); 
     }
+};
+
+
+template < manip_vec_t... VECLIST > struct manip
+{
+    constexpr static manip_vec_t value      = manip_helper< VECLIST... >::get_value();
+};
+
 } /** end namespace raft **/
 
 

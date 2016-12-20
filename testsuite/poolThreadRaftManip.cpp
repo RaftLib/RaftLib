@@ -137,7 +137,7 @@ int
 main()
 {
     start s;
-    auto force_last( std::parallel::thread( last() ) );
+    auto force_last( raft::parallel::thread( last() ) );
     middle m;
 
     raft::map M;
