@@ -26,6 +26,7 @@
 #include <cstdint>
 #include <vector>
 #include <utility>
+#include <climits>
 
 
 /** predeclare raft::kernel for kernel_list_t below **/
@@ -82,19 +83,22 @@ using manip_vec_t = std::uint64_t;
 /** raft::parallel **/
 namespace parallel
 {
-    enum type : manip_vec_t { system = 0  /** do whatever the runtime wants, I don't care  **/,
-                              thread      /** specify a thread for each kernel **/, 
-                              pool        /** thread pool, one kernel thread per core, many kernels in each **/, 
-                              process     /** open a new process from this point **/,
-                              NPARALLEL };
+
+enum type : manip_vec_t { 
+    system = 0  /** do whatever the runtime wants, I don't care  **/,
+    thread      /** specify a thread for each kernel **/, 
+    pool        /** thread pool, one kernel thread per core, many kernels in each **/, 
+    process     /** open a new process from this point **/,
+    NPARALLEL };
     
 }
 /** raft::vm **/
 namespace vm
 {
-    enum type { flat = parallel::NPARALLEL        /** not yet implemented, likely using segment  **/, 
-                standard                /** threads share VM space, processes have sep **/, 
-                partition               /** partition graph at this point into a new VM space, platform dependent **/ }; 
+enum type : manip_vec_t { 
+    flat = parallel::NPARALLEL        /** not yet implemented, likely using segment  **/, 
+    standard                /** threads share VM space, processes have sep **/, 
+    partition               /** partition graph at this point into a new VM space, platform dependent **/ }; 
 }
 
 }

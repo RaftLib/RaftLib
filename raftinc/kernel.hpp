@@ -215,7 +215,9 @@ protected:
     * system and standard for vm 
     */
    manip_vec_t  system_configs  = 
-    raft::manip< raft::parallel::system, raft::vm::standard >::value;
+        raft::manip< 
+            raft::parallel::system, 
+            raft::vm::standard >::value;
 private:
    /** TODO, replace dup with bit vector **/
    bool             dup_enabled       = false;
