@@ -19,25 +19,12 @@
  */
 #ifndef _MAPEXCEPTION_HPP_
 #define _MAPEXCEPTION_HPP_  1
-#include <exception>
-#include <string>
+#include "raftexception.hpp"
 
+template < int N > using MapException = 
+    TemplateRaftException< N >;
 
-class MapException : public std::exception
-{
-public:
-   MapException( const std::string message ) : message( message ){};
-
-   virtual const char* what() const noexcept;
-private:
-   const std::string message;
-};
-
-class InvalidTopologyOperationException : public MapException
-{
-public:
-    InvalidTopologyOperationException( const std::string message ) 
-        : MapException( message ){};
-};
+using InvalidTopologyOperationException
+    = KernelException< __COUNTER__ >;
 
 #endif /* END _MAPEXCEPTION_HPP_ */

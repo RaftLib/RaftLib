@@ -19,7 +19,7 @@
  */
 #ifndef _KERNELEXCEPTION_HPP_
 #define _KERNELEXCEPTION_HPP_  1
-#include <string>
+
 #include "raftexception.hpp"
 
 template < int N > using KernelException = 

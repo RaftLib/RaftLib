@@ -151,6 +151,7 @@ public:
          std::stringstream ss;
          ss << "Index (" << index << ") out of bounds, "
          << "max value is (" << (n_items - 1) << ")\n";
+         //FIXME, needs to throw something that extends the raft exception
          throw std::length_error( ss.str() );
       }
       else
