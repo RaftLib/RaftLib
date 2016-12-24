@@ -186,7 +186,7 @@ protected:
    friend class ::kpair;
    friend class ::interface_partition;
    friend class ::pool_schedule;
-   friend void raft::_local::apply_help( const manip_vec_t value, 
+   friend void raft::manip_local::apply_help( const manip_vec_t value, 
                                          raft::kernel &k );
 
    /**

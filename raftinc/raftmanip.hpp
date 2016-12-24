@@ -71,10 +71,10 @@ template < manip_vec_t value > struct bind_helper< value >
     }
 };
 
-namespace _local
+struct  manip_local
 {
-    static inline void apply_help( const manip_vec_t value, raft::kernel &k );
-}
+    static void apply_help( const manip_vec_t value, raft::kernel &k );
+};
 
 /** END HELPERS TO BIND **/
 template < manip_vec_t value, class KERNEL, class... KERNELS > 
@@ -83,7 +83,7 @@ template < manip_vec_t value, class KERNEL, class... KERNELS >
     static void bind( KERNEL &&kernel, KERNELS&&... kernels )
     {
         /** recursively call for each kernel **/
-        _local::apply_help( value, kernel );
+        manip_local::apply_help( value, kernel );
         bind_helper< value, KERNELS... >::bind( 
             std::forward< KERNELS >( kernels )... );
         return;
