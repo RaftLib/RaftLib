@@ -1,7 +1,7 @@
 /**
- * kernelexception.cpp - 
+ * raftexception.hpp - 
  * @author: Jonathan Beard
- * @version: Wed Sep  3 14:52:27 2014
+ * @version: Fri Dec 23 13:59:44 2016
  * 
  * Copyright 2016 Jonathan Beard
  * 
@@ -17,13 +17,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "kernelexception.hpp"
+#ifndef _RAFTEXCEPTION_HPP_
+#define _RAFTEXCEPTION_HPP_  1
+#include <exception>
+#include <string>
 
-const char*
-KernelException::what() const noexcept
+class RaftException : public std::exception
 {
-   return( message.c_str() );
-}
+public:
+   RaftException( const std::string &message );
+   
+   RaftException( const std::string &&message );
+   
+   virtual const char* what() const noexcept;
+private:
+   const std::string message;
+};
 
+template < int N > class TemplateRaftException : public RaftException 
+{
+public:
+    TemplateRaftException(  const std::string &message ) : RaftException( message ){};
+};
 
-
+#endif /* END _RAFTEXCEPTION_HPP_ */

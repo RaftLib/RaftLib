@@ -64,6 +64,39 @@ using kernel_it_pair = std::pair<
 namespace raft
 {
     using byte_t = std::uint8_t;
+    const static std::uint8_t bits_per_byte = CHAR_BIT;
+}
+
+/** system config defs **/
+namespace raft
+{
+
+/** 
+ * type for stream manipulation, currently
+ * this means that there are 64 available
+ * modifiers.
+ */
+
+using manip_vec_t = std::uint64_t;
+
+/** raft::parallel **/
+namespace parallel
+{
+    enum type : manip_vec_t { system = 0  /** do whatever the runtime wants, I don't care  **/,
+                              thread      /** specify a thread for each kernel **/, 
+                              pool        /** thread pool, one kernel thread per core, many kernels in each **/, 
+                              process     /** open a new process from this point **/,
+                              NPARALLEL };
+    
+}
+/** raft::vm **/
+namespace vm
+{
+    enum type { flat = parallel::NPARALLEL        /** not yet implemented, likely using segment  **/, 
+                standard                /** threads share VM space, processes have sep **/, 
+                partition               /** partition graph at this point into a new VM space, platform dependent **/ }; 
+}
+
 }
 
 

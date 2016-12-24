@@ -33,7 +33,7 @@ kernel::kernel( void * const ptr,
 
 
 std::size_t
-kernel::get_id()
+kernel::get_id() const noexcept
 {
    return( kernel_id );
 }
@@ -58,6 +58,12 @@ std::size_t
 kernel::addPort()
 {
    return( 0 );
+}
+   
+core_id_t 
+kernel::getCoreAssignment() noexcept
+{
+    return( core_assign );
 }
 
 void
@@ -90,6 +96,18 @@ std::size_t
 kernel::getEnabledPortCount()
 {
     return( enabled_port.size() );
+}
+   
+void 
+kernel::setCore( const core_id_t id ) noexcept
+{
+    core_assign = id;
+}
+   
+void 
+kernel::apply( const raft::manip_vec_t settings ) noexcept
+{
+    system_configs = settings;
 }
 
 //std::string

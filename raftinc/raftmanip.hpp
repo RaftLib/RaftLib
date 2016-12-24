@@ -20,48 +20,26 @@
 #ifndef _RAFTMANIP_HPP_
 #define _RAFTMANIP_HPP_  1
 
-#include <exception>
 #include <string>
-#include <climit>
+#include <utility>
 #include <cassert>
+#include "raftexception.hpp"
+#include "defs.hpp"
 
 namespace raft
 {
 
-/** 
- * type for stream manipulation, currently
- * this means that there are 64 available
- * modifiers.
- */
+class kernel;
 
-using manip_vec_t = std::uint64_t;
-
-/** raft::parallel **/
-namespace parallel
-{
-    enum type : manip_vec_t { system = 0  /** do whatever the runtime wants, I don't care  **/,
-                              thread      /** specify a thread for each kernel **/, 
-                              pool        /** thread pool, one kernel thread per core, many kernels in each **/, 
-                              process     /** open a new process from this point **/,
-                              NPARALLEL };
-    
-}
-/** raft::vm **/
-namespace vm
-{
-    enum type { flat = NPARALLEL        /** not yet implemented, likely using segment  **/, 
-                standard                /** threads share VM space, processes have sep **/, 
-                partition               /** partition graph at this point into a new VM space, platform dependent **/ }; 
-}
-
-
+/** BEGIN MANIP SETTERS FOR VALUE **/
 template < manip_vec_t... VECLIST > struct manip_helper{};
 
+/** catch tail end of recursion **/
 template <> struct manip_helper<>
 {
     constexpr static manip_vec_t get_value()
     {
-        return( static_cast< manip_vac_t >( 0 ) );
+        return( static_cast< manip_vec_t >( 0 ) );
     }
 };
 
@@ -69,34 +47,97 @@ template < manip_vec_t N, manip_vec_t... VECLIST > struct manip_helper< N, VECLI
 {
     constexpr static manip_vec_t get_value( )
     {
-        static_assert( N <= sizeof( manip_vec_t ) * CHAR_BIT, "Stream manipulator can only have 64 states [0:63], please check code" );
-        return( ( static_cast< manip_vec_t >( 1 ) << N ) | manip_helper< VECLIST... >::get_value() ); 
+        /** basic sanity check **/
+        static_assert( N <= ( sizeof( manip_vec_t ) * raft::bits_per_byte ), 
+            "Stream manipulator can only have 64 states [0:63], please check code" );
+        return( 
+            ( static_cast< manip_vec_t >( 1 ) << N ) | 
+            manip_helper< VECLIST... >::get_value() ); 
+    }
+};
+/** END MANIP SETTERS FOR VALUE **/
+/** BEGIN HELPERS FOR BIND **/
+template < manip_vec_t value, class... KERNELS > struct bind_helper{};
+
+/** 
+ * struct that doesn't do anything, just catch the end
+ * condition for the recursion 
+ */
+template < manip_vec_t value > struct bind_helper< value >
+{
+    constexpr static void bind()
+    {
+        return;
+    }
+};
+
+namespace _local
+{
+    static inline void apply_help( const manip_vec_t value, raft::kernel &k );
+}
+
+/** END HELPERS TO BIND **/
+template < manip_vec_t value, class KERNEL, class... KERNELS > 
+    struct bind_helper< value, KERNEL, KERNELS... >
+{
+    static void bind( KERNEL &&kernel, KERNELS&&... kernels )
+    {
+        /** recursively call for each kernel **/
+        _local::apply_help( value, kernel );
+        bind_helper< value, KERNELS... >::bind( 
+            std::forward< KERNELS >( kernels )... );
+        return;
     }
 };
 
 
 template < manip_vec_t... VECLIST > struct manip
 {
-    constexpr static manip_vec_t value      = manip_helper< VECLIST... >::get_value();
+    /**
+     * value set at compile time so that all kernels that
+     * have had a programmer override have the appropriate
+     * vector stored. Can be set in-line to the stream, or
+     * can be set via constructor.
+     */
+    constexpr static manip_vec_t value      
+        = manip_helper< VECLIST... >::get_value();
+    
+    /**
+     * bind - use this function to set the programmer specified
+     * manipulate settings (stream manipulate) for the kernel,
+     * future versions will return a ref wrapper object so that
+     * the wrapped version can be caught with std::tie, but 
+     * setting "decorator" style works for now and will be maintained
+     * going forward.
+     * @param kernels - parameter pack for kernels
+     */
+    template < class... KERNELS > static void bind( KERNELS&&... kernels )
+    {
+       
+        bind_helper< value, KERNELS... >::bind( 
+            std::forward< KERNELS >( kernels )... );
+        return;
+    }
 };
 
 } /** end namespace raft **/
 
+/**
+ * RaftManipException - thrown if the programmer provides
+ * a set of specifications that do not exist (either 
+ * outside the range of 64 states provided, or are 
+ * reserved bits.
+ */
+using RaftManipException 
+    = TemplateRaftException< __COUNTER__ >;
+/** 
+ * NonsenseChainRaftManipException - thrown if the programmer
+ * provides a set fo stream modifers that make no sense 
+ * together or if the user provides a set of contradictory
+ * stream modifiers back to back without a kernel in between.
+ */
+using NonsenseChainRaftManipException
+    = TemplateRaftException< __COUNTER__ >;
 
-class RaftManipException : public std::exception
-{
-public:
-   RaftManipException( const std::string message ) : message( message ){};
-   virtual const char* what() const noexcept;
-private:
-   std::string message;
-};
-
-class NonsenseChainRaftManipException : public RaftManipException
-{
-public:
-    NonsenseChainRaftManipException( const raft::parallel::type a,
-                                     const raft::parallel::type b );
-};
 
 #endif /* END _RAFTMANIP_HPP_ */

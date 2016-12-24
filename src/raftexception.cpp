@@ -1,7 +1,7 @@
 /**
- * kernelexception.hpp - 
+ * raftexception.cpp - 
  * @author: Jonathan Beard
- * @version: Wed Sep  3 14:52:27 2014
+ * @version: Fri Dec 23 13:59:44 2016
  * 
  * Copyright 2016 Jonathan Beard
  * 
@@ -17,15 +17,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _KERNELEXCEPTION_HPP_
-#define _KERNELEXCEPTION_HPP_  1
-#include <string>
+
+#include <utility>
+#include <cstring>
 #include "raftexception.hpp"
 
-template < int N > using KernelException = 
-    TemplateRaftException< N >;
+RaftException::RaftException( const std::string &message ) : 
+    message( std::move( message ) )
+{
+}
 
-using CloneNotImplementedException = KernelException< __COUNTER__ >;
+RaftException::RaftException( const std::string &&message ) : 
+    message( message  )
+{
+}
 
-
-#endif /* END _KERNELEXCEPTION_HPP_ */
+const char*
+RaftException::what() const noexcept
+{
+   return( strdup( message.c_str() ) );
+}

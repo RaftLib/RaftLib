@@ -25,11 +25,13 @@
 #include <cstdint>
 #include <queue>
 #include <string>
+#include "defs.hpp"
 #include "kernelexception.hpp"
 #include "port.hpp"
 #include "signalvars.hpp"
 #include "rafttypes.hpp"
 #include "kernel_wrapper.hpp"
+#include "raftmanip.hpp"
 
 /** pre-declare for friends **/ 
 class MapBase;
@@ -61,6 +63,9 @@ virtual raft::kernel* clone()\
 #endif
 
 namespace raft {
+/** predeclare template **/
+template < manip_vec_t... VECLIST > struct manip;
+
 class kernel
 {
 public:
@@ -111,7 +116,11 @@ public:
       return( nullptr );
    }
 
-   std::size_t get_id();
+   /** 
+    * get_id - returns this kernels id, won't change for the
+    * lifetime of this kernel once set.
+    */
+   std::size_t get_id() const noexcept;
    
    /**
     * operator[] - returns the current kernel with the 
@@ -121,20 +130,12 @@ public:
     */
    raft::kernel& operator []( const std::string &&portname );
 
-   /** 
-    * getCoreAssignment - returns the current compute kernel
-    * id, which is unique and constant for the life fo the
-    * object within a single process. This ID is not 
-    * guaranteed to be unique across processes, the overhead
-    * of synchronizing on ID's would be far too high for the
-    * little gain that we'd get. I am, however, open to convincing 
-    * otherwise.
+   /**
+    * getCoreAssignent - returns the core that this kernel
+    * is assigned to. 
     * @return core_id_t
     */
-   core_id_t getCoreAssignment() noexcept
-   {
-       return( core_assign );
-   }
+   core_id_t getCoreAssignment() noexcept;
 
 protected:
    /**
@@ -185,6 +186,8 @@ protected:
    friend class ::kpair;
    friend class ::interface_partition;
    friend class ::pool_schedule;
+   friend void raft::_local::apply_help( const manip_vec_t value, 
+                                         raft::kernel &k );
 
    /**
     * NOTE: doesn't need to be atomic since only one thread
@@ -195,25 +198,24 @@ protected:
     
    bool internal_alloc = false;
 
+   void setCore( const core_id_t id ) noexcept;
    
-   void  retire() noexcept
-   {
-       (this)->execution_done = true;
-   }
-
-   bool isRetired() noexcept
-   {
-       return( (this)->execution_done );
-   }
-   
-   void setCore( const core_id_t id ) noexcept
-   {
-       core_assign = id;
-   }
+   /** 
+    * apply - set system settings from stream manipulate
+    * or bind calls.
+    * @param settings - const raft::manip_vec_t
+    */
+   void apply( const raft::manip_vec_t settings ) noexcept;
 
 
    core_id_t core_assign    = -1;
-
+   
+   /** 
+    * set to parallel method to default 
+    * system and standard for vm 
+    */
+   manip_vec_t  system_configs  = 
+    raft::manip< raft::parallel::system, raft::vm::standard >::value;
 private:
    /** TODO, replace dup with bit vector **/
    bool             dup_enabled       = false;
