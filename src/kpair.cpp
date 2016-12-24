@@ -254,9 +254,9 @@ kpair::kpair( raft::basekset &a,
         }
     }
     
-    out.kset = a.getCopy(); 
+    out.kset = b.getCopy(); 
     /** we make a copy, don't need to keep a **/
-    delete( &a );
+    delete( &b );
     /**
      * TODO throw exceptions here to be caught in operator
      * overload syntax if either set has more than one
@@ -566,29 +566,39 @@ operator >= ( raft::kernel_wrapper &&w, kpair &b )
 
 kpair& operator <= ( raft::kernel &a, raft::basekset &&b )
 {
+    UNUSED( a );
+    UNUSED( b );
     kpair *out( nullptr );
     return(*out );
 }
 
 kpair& operator >> ( raft::basekset &&a, raft::kernel &b )
 {
+    UNUSED( a );
+    UNUSED( b );
     kpair *out( nullptr );
     return(*out);
 }
 
 kpair& operator >> ( raft::basekset &&a, raft::basekset &&b )
 {
+    UNUSED( a );
+    UNUSED( b );
     kpair *out( nullptr );
     return( *out );
 }
 kpair& operator >= ( raft::basekset &&a, raft::kernel &b )
 {
+    UNUSED( a );
+    UNUSED( b );
     kpair *out( nullptr );
     return( *out );
 }
 
 kpair& operator >= ( raft::basekset &&a, kpair &b )
 {
+    UNUSED( a );
+    UNUSED( b );
     kpair *out( nullptr );
     return( *out );
 }

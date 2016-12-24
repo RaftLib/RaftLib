@@ -182,51 +182,55 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
 void
 raft::map::joink( kpair * const next )
 {
+        const auto src_size( src_name.size() );
+        const auto dst_size( dst_name.size() );
+        
         /** might be able to do better by re-doing with templates **/
-        if( next->has_src_name && next->has_dst_name )
+        if( src_size == 1 && dst_size == 1 )
         {
             if( next->out_of_order )
             {
-                (this)->link< raft::order::out >( next->src,
-                                                  next->src_name,
-                                                  next->dst,
+                (this)->link< raft::order::out >( next->in.k,
+                                                  next->
+                                                    src_name[ reinterpret_cast< std::uintptr_t >( next->in.k ) ],
+                                                  next->out.k,
                                                   next->dst_name );
             }
             else
             {
-                (this)->link( next->src,
+                (this)->link( next->in.k,
                               next->src_name,
-                              next->dst,
+                              next->out.k,
                               next->dst_name );
             }
         }
-        else if( next->has_src_name && ! next->has_dst_name )
+        else if( src_size == 1 &&  dst_size == 0 )
         {
             if( next->out_of_order )
             {
-                (this)->link< raft::order::out >( next->src,
+                (this)->link< raft::order::out >( next->in.k,
                                                   next->src_name,
-                                                  next->dst );
+                                                  next->out.k );
             }
             else
             {
-                (this)->link( next->src,
+                (this)->link( next->in.k,
                               next->src_name,
-                              next->dst );
+                              next->out.k );
             }
         }
-        else if( ! next->has_src_name && next->has_dst_name )
+        else if( src_size == 0 && dst_size == 1 )
         {
             if( next->out_of_order )
             {
-                (this)->link< raft::order::out >( next->src,
-                                                  next->dst,
+                (this)->link< raft::order::out >( next->in.k,
+                                                  next->out.k,
                                                   next->dst_name );
             }
             else
             {
-                (this)->link( next->src,
-                              next->dst,
+                (this)->link( next->in.k,
+                              next->out.k,
                               next->dst_name );
             }
         }
@@ -234,13 +238,13 @@ raft::map::joink( kpair * const next )
         {
             if( next->out_of_order )
             {
-                (this)->link< raft::order::out >( next->src,
-                                                  next->dst );
+                (this)->link< raft::order::out >( next->in.k,
+                                                  next->out.k );
             }
             else
             {
-                (this)->link( next->src,
-                              next->dst );
+                (this)->link( next->in.k,
+                              next->out.k );
             }
         }
 }
