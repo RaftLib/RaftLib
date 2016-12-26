@@ -182,70 +182,49 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
 void
 raft::map::joink( kpair * const next )
 {
-        const auto src_size( src_name.size() );
-        const auto dst_size( dst_name.size() );
-        
+        const auto src_size( next->src_name.size() );
+        const auto dst_size( next->dst_name.size() );
+        const auto order( next->out_of_order ? raft::order::out : raft::order::in );      
         /** might be able to do better by re-doing with templates **/
         if( src_size == 1 && dst_size == 1 )
         {
-            if( next->out_of_order )
-            {
-                (this)->link< raft::order::out >( next->in.k,
-                                                  next->
-                                                    src_name[ reinterpret_cast< std::uintptr_t >( next->in.k ) ],
-                                                  next->out.k,
-                                                  next->dst_name );
-            }
-            else
-            {
-                (this)->link( next->in.k,
-                              next->src_name,
-                              next->out.k,
-                              next->dst_name );
-            }
+            const auto &src_name( 
+                next->src_name[ reinterpret_cast< std::uintptr_t >( next->in.k ) ]
+            );
+            const auto &dst_name( 
+                next->dst_name[ reinterpret_cast< std::uintptr_t >( next->in.k ) ]
+            );
+            (this)->link( next->in.k,
+                          src_name,
+                          next->out.k,
+                          dst_name,
+                          order );
         }
         else if( src_size == 1 &&  dst_size == 0 )
         {
-            if( next->out_of_order )
-            {
-                (this)->link< raft::order::out >( next->in.k,
-                                                  next->src_name,
-                                                  next->out.k );
-            }
-            else
-            {
-                (this)->link( next->in.k,
-                              next->src_name,
-                              next->out.k );
-            }
+            const auto &src_name( 
+                next->src_name[ reinterpret_cast< std::uintptr_t >( next->in.k ) ]
+            );
+            (this)->link( next->in.k,
+                          src_name,
+                          next->out.k,
+                          order );
         }
         else if( src_size == 0 && dst_size == 1 )
         {
-            if( next->out_of_order )
-            {
-                (this)->link< raft::order::out >( next->in.k,
-                                                  next->out.k,
-                                                  next->dst_name );
-            }
-            else
-            {
-                (this)->link( next->in.k,
-                              next->out.k,
-                              next->dst_name );
-            }
+            const auto &dst_name( 
+                next->dst_name[ reinterpret_cast< std::uintptr_t >( next->in.k ) ]
+            );
+            (this)->link( next->in.k,
+                          next->out.k,
+                          dst_name,
+                          order );
         }
-        else /** single input, single output, hopefully **/
+        else /** single input, single output **/
         {
-            if( next->out_of_order )
-            {
-                (this)->link< raft::order::out >( next->in.k,
-                                                  next->out.k );
-            }
-            else
-            {
-                (this)->link( next->in.k,
-                              next->out.k );
-            }
+            (this)->link( next->in.k,
+                          next->out.k,
+                          order );
         }
 }
 
