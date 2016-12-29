@@ -33,6 +33,7 @@
 #include "./raftinc/simpleschedule.hpp"
 #include "./raftinc/stdalloc.hpp"
 #include "./raftinc/rafttypes.hpp"
+#include "./raftinc/streamparse.hpp"
 
 /** parallel headers **/
 #include "./raftinc/parallelk.hpp"

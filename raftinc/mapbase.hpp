@@ -44,9 +44,9 @@
 #include "allocate.hpp"
 #include "dynalloc.hpp"
 #include "stdalloc.hpp"
-#include "kpair.hpp"
 #include "portorder.hpp"
 #include "kernel_pair_t.hpp"
+
 
 class MapBase
 {
@@ -173,7 +173,7 @@ protected:
                           const raft::order::spec t ) noexcept;
    
 
-   void updateKernels( raft::kernel &a, raft::kernel &b );
+   void updateKernels( raft::kernel * const a, raft::kernel * const b );
 
    static void portNotFound( bool src, 
                              PortNotFoundException &ex, 

@@ -5,6 +5,7 @@ find_package( Threads )
 # check for Scotch, use if there
 ##
 find_package( Scotch )
+find_package( NUMA )
 ##
 # c/c++ std
 ##
@@ -48,6 +49,7 @@ target_link_libraries( ${APP}
                        ${CMAKE_THREAD_LIBS_INIT} 
                        shm
                        ${CMAKE_RT_LIBS}
+                       ${CMAKE_NUMA_LIBS}
                        )
 
 file( COPY alice.txt

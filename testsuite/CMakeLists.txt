@@ -11,7 +11,7 @@ find_package( LIBRT )
 # check for Scotch, use if there
 ##
 find_package( Scotch )
-
+find_package( NUMA )
 
 
 set( TESTAPPS 
@@ -82,6 +82,7 @@ foreach( APP ${TESTAPPS} )
                                      ${CMAKE_RT_LIBS} 
                                      ${CMAKE_QTHREAD_LIBS}
                                      shm
+                                     ${CMAKE_NUMA_LIBS}
                                      )
 endforeach( APP ${TESTAPPS} )
 

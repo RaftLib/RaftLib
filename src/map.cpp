@@ -233,6 +233,10 @@ raft::map::joink( kpair * const next )
 kernel_pair_t
 raft::map::operator += ( kpair &p )
 {
+    UNUSED( p );
+    /** init return struct **/
+    kernel_pair_t ret_kernel_pair;
+#if 0
     kpair * const pair( &p );
     assert( pair != nullptr );
     
@@ -240,8 +244,6 @@ raft::map::operator += ( kpair &p )
     kpair *next = pair->head;
     assert( next != nullptr );
     
-    /** init return struct **/
-    kernel_pair_t ret_kernel_pair;
     
     /** 
      * set to true when we've done the first pass
@@ -330,10 +332,10 @@ raft::map::operator += ( kpair &p )
             break;
             case( split ):
             {
-                inline_split( split_out_edges,
-                              groups,
-                              temp_groups,
-                              next );
+                //inline_split( split_out_edges,
+                //              groups,
+                //              temp_groups,
+                //              next );
             }
             break;
             case( join ):
@@ -349,9 +351,9 @@ raft::map::operator += ( kpair &p )
                      */
                     ret_kernel_pair.clearSrc();
                     initialized = false;
-                    inline_dup_join( groups,
-                                     temp_groups,
-                                     next );
+                    //inline_dup_join( groups,
+                    //                 temp_groups,
+                    //                 next );
                 }
                 else if( stack.top() == split )
                 {
@@ -428,9 +430,10 @@ raft::map::operator += ( kpair &p )
      * the user might not get the returns that
      * the expected.
      */
+#endif
     return( ret_kernel_pair );
 }
-
+#if 0
 void
 raft::map::inline_cont( kernels_t &groups,
                         kernels_t &temp_groups,
@@ -707,3 +710,4 @@ raft::map::inline_dup_join( kernels_t &groups,
     assert( gp->size() == dst_inport_count );
     return;
 }
+#endif

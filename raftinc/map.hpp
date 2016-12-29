@@ -193,6 +193,7 @@ protected:
    friend class ::Allocate;
 
 private:
+#if 0
     using split_stack_t = std::stack< std::size_t >;
     using group_t = std::vector< raft::kernel* >;
     using up_group_t = std::unique_ptr< group_t >;
@@ -237,7 +238,7 @@ private:
     void inline_dup_join( kernels_t &groups,
                           kernels_t &temp_groups,
                           kpair * const next );
-
+#endif
 }; /** end map decl **/
 
 } /** end namespace raft **/

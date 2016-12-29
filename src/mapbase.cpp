@@ -28,6 +28,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "kpair.hpp"
 #include "common.hpp"
 #include "mapbase.hpp"
 #include "graphtools.hpp"
@@ -57,7 +58,7 @@ kernel_pair_t
 MapBase::link( raft::kernel *a, 
                raft::kernel *b,
                const raft::order::spec t,
-               const std::size_t buffer = 0 )
+               const std::size_t buffer )
 {
    updateKernels( a, b );
    PortInfo *port_info_a;
@@ -94,7 +95,7 @@ MapBase::link( raft::kernel *a,
                const std::string  a_port, 
                raft::kernel *b,
                const raft::order::spec t,
-               const std::size_t buffer = 0 )
+               const std::size_t buffer )
 {
    updateKernels( a, b );
    PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
@@ -121,7 +122,7 @@ MapBase::link( raft::kernel *a,
                raft::kernel *b, 
                const std::string b_port,
                const raft::order::spec t,
-               const std::size_t buffer = 0 )
+               const std::size_t buffer )
 {
    updateKernels( a, b );
    PortInfo *port_info_a;
@@ -151,7 +152,7 @@ MapBase::link( raft::kernel *a,
                raft::kernel *b, 
                const std::string b_port,
                const raft::order::spec t,
-               const std::size_t buffer = 0 )
+               const std::size_t buffer )
 {
    updateKernels( a, b );
    auto &port_info_a( a->output.getPortInfoFor( a_port ) );
@@ -214,7 +215,7 @@ MapBase::set_order( PortInfo &port_info_a,
 }
    
 void 
-MapBase::updateKernels( raft::kernel &a, raft::kernel &b )
+MapBase::updateKernels( raft::kernel * const a, raft::kernel * const b )
 {
    if( ! a->input.hasPorts() )
    {
