@@ -21,9 +21,9 @@
 #define _KPAIR_HPP_  1
 
 #include <string>
-#include <vector>
+#include <map>
+#include <cstdint>
 #include "kset.tcc"
-#include "portorder.hpp"
 #include "defs.hpp"
 #include "raftmanip.hpp"
 
@@ -34,31 +34,6 @@ namespace raft
     class kernel_wrapper;
     class map;
 }
-
-class kpair;
-
-template < class T, int N > struct PairBase
-{
-    constexpr PairBase( T &t ) : value( t ){};
-    virtual ~PairBase() = default;
-
-    T &value;
-};
-
-template < class T, class K, int N > struct ParaPair : PairBase< T, N >
-{
-    constexpr ParaPair( T &t, const K sp ) : PairBase< T, N >( t ),
-                                             sp( sp ){};
-    const K sp;
-};
-
-
-using LParaPair = ParaPair< raft::kernel,raft::parallel::type, 1 >;
-using RParaPair = ParaPair< kpair, raft::parallel::type, 1 >;
-
-using LOoOkpair = PairBase< raft::kernel, 2 >; 
-using ROoOkpair = PairBase< kpair, 2 >;
-
 
 class kpair
 {

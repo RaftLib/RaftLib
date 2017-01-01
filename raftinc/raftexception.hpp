@@ -34,6 +34,13 @@ private:
    const std::string message;
 };
 
+/** 
+ * TO MAKE AN EXCEPTION 
+ * 1) MAKE AN EMPTY DERIVED CLASSS OF RaftException
+ * 2) MAKE ONE OF THESE TEMPLATES WHICH DERIVES FROM THAT
+ *    EMPTY CLASS
+ * THEN ADD A using MYNEWEXCEPTION = Template< # >
+ */
 template < int N > class TemplateRaftException : public RaftException 
 {
 public:

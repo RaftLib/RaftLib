@@ -149,7 +149,7 @@ main()
     catch( NonsenseChainRaftManipException ex )
     {
         std::cerr << ex.what() << "\n";
-        std::cerr << "cought exception properly\n";
+        std::cerr << "caught exception properly\n";
         exit( EXIT_SUCCESS );
     }
     M.exe();

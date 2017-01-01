@@ -28,6 +28,8 @@
 #include <utility>
 #include <climits>
 
+/** for port order enum **/
+#include "portorder.hpp"
 
 /** predeclare raft::kernel for kernel_list_t below **/
 namespace raft

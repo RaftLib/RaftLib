@@ -28,11 +28,11 @@
 #include "./raftinc/port.hpp"
 #include "./raftinc/port_info.hpp"
 #include "./raftinc/port_info_types.hpp"
-#include "./raftinc/portexception.hpp"
 #include "./raftinc/schedule.hpp"
 #include "./raftinc/simpleschedule.hpp"
 #include "./raftinc/stdalloc.hpp"
 #include "./raftinc/rafttypes.hpp"
+#include "./raftinc/kpair.hpp"
 #include "./raftinc/streamparse.hpp"
 
 /** parallel headers **/
@@ -68,5 +68,10 @@
 
 #include "./raftinc/lambdak.tcc"
 
+/** exceptions **/
+#include "./raftinc/portexception.hpp"
+#include "./raftinc/kernelexception.hpp"
+#include "./raftinc/mapexception.hpp"
+#include "./raftinc/streamparseexception.tcc"
 
 #endif /* END _RAFT_HPP_ */

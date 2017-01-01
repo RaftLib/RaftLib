@@ -23,7 +23,6 @@
 #include <string>
 #include <utility>
 #include <cassert>
-#include "raftexception.hpp"
 #include "defs.hpp"
 
 namespace raft
@@ -121,23 +120,5 @@ template < manip_vec_t... VECLIST > struct manip
 };
 
 } /** end namespace raft **/
-
-/**
- * RaftManipException - thrown if the programmer provides
- * a set of specifications that do not exist (either 
- * outside the range of 64 states provided, or are 
- * reserved bits.
- */
-using RaftManipException 
-    = TemplateRaftException< __COUNTER__ >;
-/** 
- * NonsenseChainRaftManipException - thrown if the programmer
- * provides a set fo stream modifers that make no sense 
- * together or if the user provides a set of contradictory
- * stream modifiers back to back without a kernel in between.
- */
-using NonsenseChainRaftManipException
-    = TemplateRaftException< __COUNTER__ >;
-
 
 #endif /* END _RAFTMANIP_HPP_ */

@@ -29,11 +29,6 @@ set( TESTAPPS
      parallel 
      peek 
      bracketsTest 
-     gamma
-     uniform 
-     gaussian
-     exponential
-     sequential
      chain 
      splitchain 
      staticLongSplitChain 

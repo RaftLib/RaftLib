@@ -22,6 +22,42 @@
 
 #include "kpair.hpp"
 
+namespace raft
+{
+    class kernel;
+    class kernel_wrapper;
+}
+
+
+template < class T, int N > struct Wrapper
+{
+    constexpr Wrapper( T &t ) : value( t ){};
+    
+    virtual ~Wrapper() = default;
+
+    T &value;
+};
+
+template < class T, class K, int N > struct WrapperPlusConstant : Wrapper< T, N >
+{
+    constexpr WrapperPlusConstant( T &t, const K sp ) : Wrapper< T, N >( t ),
+                                                        sp( sp ){};
+    const K sp;
+};
+
+
+
+using LOoOkpair     = Wrapper<  raft::kernel, 
+                                0 >; 
+using ROoOkpair     = Wrapper<  kpair, 
+                                1 >;
+using ManipVecPair  = WrapperPlusConstant<  kpair, 
+                                            raft::manip_vec_t, 
+                                            2 >;
+using ManipVecKern  = WrapperPlusConstant<  raft::kernel, 
+                                            raft::manip_vec_t , 
+                                            3 >;
+
 kpair& operator >> ( raft::kernel &a,  raft::kernel &b  );
 kpair& operator >> ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b );
 kpair& operator >> ( raft::kernel &a, raft::kernel_wrapper &&w );
@@ -29,13 +65,13 @@ kpair& operator >> ( raft::kernel &a, raft::kernel_wrapper &&w );
 kpair& operator >> ( kpair &a, raft::kernel &b );
 kpair& operator >> ( kpair &a, raft::kernel_wrapper &&w );
 
-LOoOkpair& operator >> ( raft::kernel &a, const raft::order::spec &&order );
-kpair&     operator >> ( LOoOkpair &a, raft::kernel &b );
-kpair&     operator >> ( LOoOkpair &a, raft::kernel_wrapper &&w );
+LOoOkpair operator >> ( raft::kernel &a, const raft::order::spec &&order );
+kpair&     operator >> ( const LOoOkpair &&a, raft::kernel &b );
+kpair&     operator >> ( const LOoOkpair &&a, raft::kernel_wrapper &&w );
 
-ROoOkpair& operator >> ( kpair &a, const raft::order::spec &&order );
-kpair&     operator >> ( ROoOkpair &a, raft::kernel &b );
-kpair&     operator >> ( ROoOkpair &a, raft::kernel_wrapper &&w );
+ROoOkpair operator >> ( kpair &a, const raft::order::spec &&order );
+kpair&     operator >> ( const ROoOkpair &&a, raft::kernel &b );
+kpair&     operator >> ( const ROoOkpair &&a, raft::kernel_wrapper &&w );
 
 
 kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
@@ -54,10 +90,12 @@ kpair& operator >= ( raft::kernel_wrapper &&w, kpair &b );
 
 
 kpair& operator <= ( raft::kernel &a, raft::basekset &&b );
-kpair& operator >> ( RParaPair &a, const raft::parallel::type &&type );
 
 kpair& operator >> ( raft::basekset &&a, raft::kernel &b );
 kpair& operator >> ( raft::basekset &&a, raft::basekset &&b );
+
+
+
 /**
  * this case looks like this:
  * m += raft::kset( g0, g1, g2 ) >= j;
@@ -69,5 +107,46 @@ kpair& operator >= ( raft::basekset &&a, raft::kernel &b );
  * due to >> operator precendent in c++
  */
 kpair& operator >= ( raft::basekset &&a, kpair &b ); 
+
+/**
+ * raft::kernel >> manip_vec_t (bare) 
+ */
+ManipVecKern operator >> ( raft::kernel &a, raft::manip_vec_t &&b );
+
+/**
+ * kpair >> manip_vec_t (bare) 
+ */
+ManipVecPair operator >> ( kpair &a, raft::manip_vec_t &&b );
+
+/** 
+ * TODO, need to duplicate states for ManipVecKern or 
+ * figure out a clever way not to have to...
+ */
+
+
+
+/**
+ * BEGIN ERROR STATES FOR PARSE 
+ **/
+
+
+/**
+ * error state:
+ * raft::kernel >=  manip_vec_t (bare) 
+ * NOTE: you can have a <= or >= after the bare op just not before
+ */
+
+/**
+ * error state:
+ * raft::kernel <=  manip_vec_t (bare) 
+ * NOTE: you can have a <= or >= after the bare op just not before
+ */
+kpair& operator >> ( const ManipVecKern &&a, raft::manip_vec_t &&b );
+
+/**
+ * error state:
+ * ManipVecKernel >> raft::manip_vec_t
+ */
+kpair& operator >> ( const ManipVecPair &&a, raft::manip_vec_t &&b );
 
 #endif /* END _STREAMPARSE_HPP_ */

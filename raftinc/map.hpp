@@ -39,6 +39,7 @@
 #include "noparallel.hpp"
 /** includes all partitioners **/
 #include "partitioners.hpp"
+#include "streamparse.hpp"
 
 namespace raft
 {

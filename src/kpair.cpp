@@ -127,7 +127,6 @@ kpair::kpair( raft::basekset &a,
              * or else made sure the kernel only had one 
              * output port.
              */
-            throw PortNotSpecifiedForKSet( "Port must be specified when including a kernel with more than one outgoing port within a kernel set." );
         }
     }
     assert( b.in.k != nullptr );
@@ -189,7 +188,6 @@ kpair::kpair( raft::basekset &a,
              * or else made sure the kernel only had one 
              * output port.
              */
-            throw PortNotSpecifiedForKSet( "Port must be specified when including a kernel with more than one outgoing port within a kernel set." );
         }
     }
     /** get port names for src_kset **/
@@ -250,7 +248,6 @@ kpair::kpair( raft::basekset &a,
              * or else made sure the kernel only had one 
              * output port.
              */
-            throw PortNotSpecifiedForKSet( "Port must be specified when including a kernel with more than one outgoing port within a kernel set." );
         }
     }
     
@@ -286,7 +283,6 @@ kpair::kpair( raft::basekset &a,
              * or else made sure the kernel only had one 
              * output port.
              */
-            throw PortNotSpecifiedForKSet( "Port must be specified when including a kernel with more than one outgoing port within a kernel set." );
         }
     }
 

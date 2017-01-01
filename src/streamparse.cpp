@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 #include "streamparse.hpp"
+#include "streamparseexception.tcc"
 
 kpair& 
 operator >> ( raft::kernel &a, raft::kernel &b )
@@ -60,16 +61,16 @@ operator >> ( kpair &a, raft::kernel_wrapper &&w )
  * >>, we're using the raft::order::spec as a linquistic tool
  * at this point. It's only used for disambiguating functions.
  */
-LOoOkpair&
+LOoOkpair
 operator >> ( raft::kernel &a, const raft::order::spec &&order )
 {
     UNUSED( order );
-    auto *ptr( new LOoOkpair( a ) );
-    return( *ptr );
+    LOoOkpair out( a );
+    return( out );
 }
 
 kpair&
-operator >> ( LOoOkpair &a, raft::kernel &b )
+operator >> ( const LOoOkpair &&a, raft::kernel &b )
 {
     auto *ptr( 
         new kpair( a.value, 
@@ -77,19 +78,17 @@ operator >> ( LOoOkpair &a, raft::kernel &b )
                    false, 
                    false ) 
     );
-    delete( &a );
     ptr->setOoO();
     return( *ptr );
 }
 
 
 kpair&
-operator >> ( LOoOkpair &a, raft::kernel_wrapper &&w )
+operator >> ( const LOoOkpair &&a, raft::kernel_wrapper &&w )
 {
     auto *ptr( 
         new kpair( a.value, w, false, false ) 
     );
-    delete( &a );
     ptr->setOoO();
     return( *ptr );
 }
@@ -98,32 +97,30 @@ operator >> ( LOoOkpair &a, raft::kernel_wrapper &&w )
  * >>, we're using the raft::order::spec as a linquistic tool
  * at this point. It's only used for disambiguating functions.
  */
-ROoOkpair& 
+ROoOkpair
 operator >> ( kpair &a, const raft::order::spec &&order )
 {
-    auto *ptr( new ROoOkpair( a ) );
+    ROoOkpair out( a );
     UNUSED( order );
-    return( *ptr );
+    return( out );
 }
 
 kpair&
-operator >> ( ROoOkpair &a, raft::kernel &b )
+operator >> ( const ROoOkpair &&a, raft::kernel &b )
 {
     auto * ptr(
         new kpair( a.value, b, false, false )
     );
-    delete( &a );
     ptr->setOoO();
     return( *ptr );
 }
 
 kpair&
-operator >> ( ROoOkpair &a, raft::kernel_wrapper &&w )
+operator >> ( const ROoOkpair &&a, raft::kernel_wrapper &&w )
 {
     auto * ptr(
         new kpair( a.value, w, false, false )
     );
-    delete( &a );
     ptr->setOoO();
     return( *ptr );
 }
@@ -236,3 +233,27 @@ kpair& operator >= ( raft::basekset &&a, kpair &b )
     kpair *out( nullptr );
     return( *out );
 }
+
+ManipVecKern operator >> ( raft::kernel &a, raft::manip_vec_t &&b )
+{
+    return( ManipVecKern( a, b ) );
+}
+
+ManipVecPair operator >> ( kpair &a, raft::manip_vec_t &&b )
+{    
+    return( ManipVecPair( a, b ) );
+}
+
+kpair& operator >> ( const ManipVecKern &&a, raft::manip_vec_t &&b )
+{
+    kpair *out( nullptr );
+    return( *out );
+}
+
+
+kpair& operator >> ( const ManipVecPair &&a, raft::manip_vec_t &&b )
+{
+    kpair *out( nullptr );
+    return( *out );
+}
+

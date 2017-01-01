@@ -21,10 +21,22 @@
 #define _MAPEXCEPTION_HPP_  1
 #include "raftexception.hpp"
 
-template < int N > using MapException = 
-    TemplateRaftException< N >;
+
+class MapException : public RaftException{};
+
+
+template < int N > class MapExceptionBase : public MapException 
+{
+public:
+    MapExceptionBase(  const std::string &message ) : 
+        MapException( message ){};
+    
+    MapExceptionBase(  const std::string &&message ) : 
+        MapException( std::forward< decltype( message ) >( message ) ){};
+};
+
 
 using InvalidTopologyOperationException
-    = KernelException< __COUNTER__ >;
+    = MapExceptionBase< 0 >;
 
 #endif /* END _MAPEXCEPTION_HPP_ */
