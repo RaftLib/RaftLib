@@ -150,14 +150,6 @@ using iterator       = typename basekset::iterator;
         return( k.cend() );
     }
     
-    virtual basekset* getCopy()
-    {
-        auto *ptr( 
-           new typename std::remove_reference< decltype( *this ) >::type( ( *(
-        (typename std::decay< decltype( *this ) >::type * ) 
-        this ) ) ) );
-        return( ptr );
-    }
 
     virtual std::size_t getSize(){ return( (this)->size() ); };
 

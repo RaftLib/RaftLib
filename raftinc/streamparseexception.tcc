@@ -20,9 +20,22 @@
 #ifndef _STREAMPARSEEXCEPTION_TCC_
 #define _STREAMPARSEEXCEPTION_TCC_  1
 
+#include <string>
+#include <utility> 
+
 #include "raftexception.hpp"
 
-class StreamParseException : public RaftException{};
+
+class StreamParseException : public RaftException
+{
+public:
+    StreamParseException(  const std::string &message ) : 
+        RaftException( message ){};
+    StreamParseException(  const std::string &&message ) : 
+        RaftException(  std::move( message ) ){};
+
+};
+
 
 template < int N > class TemplateStreamParseException : public StreamParseException 
 {
@@ -31,7 +44,7 @@ public:
         StreamParseException( message ){};
     
     TemplateStreamParseException(  const std::string &&message ) : 
-        StreamParseException( std::forward< decltype( message ) >( message ) ){};
+        StreamParseException(  std::move( message ) ){};
 };
 
 

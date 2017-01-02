@@ -41,10 +41,12 @@ private:
  *    EMPTY CLASS
  * THEN ADD A using MYNEWEXCEPTION = Template< # >
  */
+#if 0
 template < int N > class TemplateRaftException : public RaftException 
 {
 public:
     TemplateRaftException(  const std::string &message ) : RaftException( message ){};
 };
+#endif 
 
 #endif /* END _RAFTEXCEPTION_HPP_ */

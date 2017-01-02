@@ -100,7 +100,6 @@ kpair::kpair( raft::basekset &a,
     split_to  = split;
     join_from = join;
     
-    in.kset = a.getCopy(); 
     /** we make a copy, don't need to keep a **/
     delete( &a );
     for( const auto &k : (*in.kset) )
@@ -160,7 +159,6 @@ kpair::kpair( raft::basekset &a,
     split_to  = split;
     join_from = join;
     
-    in.kset = a.getCopy(); 
     /** we make a copy, don't need to keep a **/
     delete( &a );
     
@@ -221,7 +219,6 @@ kpair::kpair( raft::basekset &a,
     head      = this;
     next      = this;
     
-    in.kset = a.getCopy(); 
     /** we make a copy, don't need to keep a **/
     delete( &a );
     for( const auto &k : (*in.kset) )
@@ -251,7 +248,6 @@ kpair::kpair( raft::basekset &a,
         }
     }
     
-    out.kset = b.getCopy(); 
     /** we make a copy, don't need to keep a **/
     delete( &b );
     /**

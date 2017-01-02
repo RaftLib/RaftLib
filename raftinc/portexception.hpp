@@ -20,6 +20,8 @@
 #ifndef _PORTEXCEPTION_HPP_
 #define _PORTEXCEPTION_HPP_  1
 #include <string>
+#include <utility> 
+
 #include "raftexception.hpp"
 
 class PortException : public RaftException
@@ -28,7 +30,7 @@ public:
     PortException(  const std::string &message ) : 
         RaftException( message ){};
     PortException(  const std::string &&message ) : 
-        RaftException(  message ){};
+        RaftException(  std::move( message ) ){};
 
 };
 
@@ -39,7 +41,7 @@ public:
         PortException( message ){};
     
     PortExceptionBase(  const std::string &&message ) : 
-        PortException( message ){};
+        PortException( std::move( message ) ){};
 };
 
 /**

@@ -244,15 +244,26 @@ ManipVecPair operator >> ( kpair &a, raft::manip_vec_t &&b )
     return( ManipVecPair( a, b ) );
 }
 
+
+/**
+ * TODO, for both of the below, we can add more specific exceptions
+ * that will tell the user if they're doing something really stupid
+ */
 kpair& operator >> ( const ManipVecKern &&a, raft::manip_vec_t &&b )
 {
+    throw NonsenseChainRaftManipException( 
+        "multiple stream parse manipulators should be combined as in (raft::manip< [manip 1], [manip 2] >::value" );
+    UNUSED( a );
+    UNUSED( b );
     kpair *out( nullptr );
     return( *out );
 }
-
-
 kpair& operator >> ( const ManipVecPair &&a, raft::manip_vec_t &&b )
 {
+    throw NonsenseChainRaftManipException( 
+        "multiple stream parse manipulators should be combined as in (raft::manip< [manip 1], [manip 2] >::value" );
+    UNUSED( a );
+    UNUSED( b );
     kpair *out( nullptr );
     return( *out );
 }

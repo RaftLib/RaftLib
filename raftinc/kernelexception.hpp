@@ -31,7 +31,7 @@ public:
         RaftException( message ){};
     
     KernelException(  const std::string &&message ) : 
-        RaftException( message ){};
+        RaftException( std::move( message ) ){};
 };
 
 
@@ -42,7 +42,7 @@ public:
         KernelException( message ){};
     
     KernelExceptionBase(  const std::string &&message ) : 
-        KernelException( message ){};
+        KernelException( std::move( message ) ){};
 };
 
 

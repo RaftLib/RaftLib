@@ -19,10 +19,22 @@
  */
 #ifndef _MAPEXCEPTION_HPP_
 #define _MAPEXCEPTION_HPP_  1
+#include <string>
+#include <utility>
+
 #include "raftexception.hpp"
 
 
-class MapException : public RaftException{};
+
+class MapException : public RaftException 
+{
+public:
+    MapException(  const std::string &message ) : 
+        RaftException( message ){};
+    
+    MapException(  const std::string &&message ) : 
+        RaftException( std::move( message ) ){};
+};
 
 
 template < int N > class MapExceptionBase : public MapException 
@@ -32,7 +44,7 @@ public:
         MapException( message ){};
     
     MapExceptionBase(  const std::string &&message ) : 
-        MapException( std::forward< decltype( message ) >( message ) ){};
+        MapException( std::move( message ) ){};
 };
 
 
