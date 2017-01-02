@@ -131,22 +131,53 @@ ManipVecPair operator >> ( kpair &a, raft::manip_vec_t &&b );
 
 
 /**
- * error state:
- * raft::kernel >=  manip_vec_t (bare) 
+ * error state: #4 (for test cases)
+ * manip_vec_t >=  raft::kernel 
  * NOTE: you can have a <= or >= after the bare op just not before
  */
+kpair& operator >= ( const ManipVecKern  &&a, const raft::kernel &b  );
+
+/** error state: #4a (for test cases) **/
+kpair& operator >= ( const ManipVecKern  &&a, kpair &b  );
+
+/** error state: #4b (for test cases) **/
+kpair& operator >= ( const raft::manip_vec_t &&a, kpair &b  );
+/** error state: #4c (for test cases) **/
+kpair& operator >= ( const raft::manip_vec_t &&a, const raft::kernel &b  );
+
 
 /**
- * error state:
+ * error state: #3 (for test cases)
  * raft::kernel <=  manip_vec_t (bare) 
  * NOTE: you can have a <= or >= after the bare op just not before
  */
-kpair& operator >> ( const ManipVecKern &&a, raft::manip_vec_t &&b );
+kpair& operator <= ( const raft::kernel &a, const raft::manip_vec_t &&b );
+
+/** error state: #3a (for test cases) **/
+kpair& operator <= ( kpair &a,  const raft::manip_vec_t &&b );
+
+
+/** 
+ * errorstate: #2 (for test cases)
+ * raft::manip_vec_tl >> raft::manip_vec_t
+ */ 
+kpair& operator >> ( const ManipVecKern &&a, const raft::manip_vec_t &&b );
 
 /**
- * error state:
- * ManipVecKernel >> raft::manip_vec_t
+ * error state: #1 (for test cases)
+ * raft::manip_vec_tl >> raft::manip_vec_t
  */
-kpair& operator >> ( const ManipVecPair &&a, raft::manip_vec_t &&b );
+kpair& operator >> ( const ManipVecPair &&a, const raft::manip_vec_t &&b );
+
+/** 
+ * error state: #5 (for test cases )
+ * raft::manip_vec_tl <= raft::manip_vec_t
+ */
+//TODO, not a good way to catch this one without some extremely fancy templates
+/** 
+ * error state: #5 (for test cases )
+ * raft::manip_vec_tl => raft::manip_vec_t
+ */
+//TODO, not a good way to catch this one without some extremely fancy templates
 
 #endif /* END _STREAMPARSE_HPP_ */

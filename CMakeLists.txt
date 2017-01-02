@@ -133,7 +133,6 @@ set( TESTAPPS
         splitKsetJoin 
         fixedMatchTest
         poolThreadRaftManip 
-        poolThreadRaftManip2
         forceProcess 
         splitchainRetStruct
         staticContJoinRetStruct
@@ -141,7 +140,16 @@ set( TESTAPPS
         staticLongSplitChainRetStruct
         staticSplitChainJoinRetStruct
         staticSplitJoinRetStruct 
-        chainMultiplePorts ) 
+        chainMultiplePorts 
+     streamManipOne
+     streamManipTwo
+     streamManipThree
+     streamManipThreeA
+     streamManipFour
+     streamManipFourA
+     streamManipFourB
+     streamManipFourC
+        ) 
 
 
 foreach( TEST ${TESTAPPS} )

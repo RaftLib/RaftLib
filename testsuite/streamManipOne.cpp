@@ -136,13 +136,24 @@ private:
 int
 main()
 {
-    start   s;
-    middle  m;
-    last    l;
-    raft::manip< raft::parallel::process  >::bind( l ); 
+    start s;
+    last l;
+    middle m;
 
     raft::map M;
-    M += s >> m >> l;
+    /** should throw an exception **/
+    try
+    {
+        M += s >> m >> 
+            /** shouldn't be two of these in a row **/
+                raft::parallel::thread >> raft::parallel::system >> l;
+    }
+    catch( NonsenseChainRaftManipException ex )
+    {
+        std::cerr << ex.what() << "\n";
+        std::cerr << "caught exception properly\n";
+        exit( EXIT_SUCCESS );
+    }
     M.exe();
-    return( EXIT_SUCCESS );
+    return( EXIT_FAILURE );
 }

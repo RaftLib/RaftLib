@@ -182,6 +182,8 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
 void
 raft::map::joink( kpair * const next )
 {
+    UNUSED( next );
+#if 0
         const auto src_size( next->src_name.size() );
         const auto dst_size( next->dst_name.size() );
         const auto order( next->out_of_order ? raft::order::out : raft::order::in );      
@@ -226,6 +228,7 @@ raft::map::joink( kpair * const next )
                           next->out.k,
                           order );
         }
+#endif        
 }
 
 

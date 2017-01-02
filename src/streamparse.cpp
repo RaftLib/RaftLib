@@ -249,7 +249,7 @@ ManipVecPair operator >> ( kpair &a, raft::manip_vec_t &&b )
  * TODO, for both of the below, we can add more specific exceptions
  * that will tell the user if they're doing something really stupid
  */
-kpair& operator >> ( const ManipVecKern &&a, raft::manip_vec_t &&b )
+kpair& operator >> ( const ManipVecKern &&a, const raft::manip_vec_t &&b )
 {
     throw NonsenseChainRaftManipException( 
         "multiple stream parse manipulators should be combined as in (raft::manip< [manip 1], [manip 2] >::value" );
@@ -258,7 +258,7 @@ kpair& operator >> ( const ManipVecKern &&a, raft::manip_vec_t &&b )
     kpair *out( nullptr );
     return( *out );
 }
-kpair& operator >> ( const ManipVecPair &&a, raft::manip_vec_t &&b )
+kpair& operator >> ( const ManipVecPair &&a, const raft::manip_vec_t &&b )
 {
     throw NonsenseChainRaftManipException( 
         "multiple stream parse manipulators should be combined as in (raft::manip< [manip 1], [manip 2] >::value" );
@@ -268,3 +268,62 @@ kpair& operator >> ( const ManipVecPair &&a, raft::manip_vec_t &&b )
     return( *out );
 }
 
+kpair& operator <= ( const raft::kernel &a, const raft::manip_vec_t &&b )
+{
+    throw RaftManipException( 
+        "raft::manip_vec_t should be before the \"<=\" operator, not after" );
+    UNUSED( a );
+    UNUSED( b );
+    kpair *out( nullptr );
+    return( *out );
+}
+
+kpair& operator <= ( kpair &a, const raft::manip_vec_t &&b )
+{
+    throw RaftManipException( 
+        "raft::manip_vec_t should be before the \"<=\" operator, not after" );
+    UNUSED( a );
+    UNUSED( b );
+    kpair *out( nullptr );
+    return( *out );
+}
+
+ kpair& operator >= ( const ManipVecKern &&a, const raft::kernel &b  )
+ {
+    throw RaftManipException( 
+        "raft::manip_vec_t should be after the \"=>\" operator, not before" );
+    UNUSED( a );
+    UNUSED( b );
+    kpair *out( nullptr );
+    return( *out );
+ }
+
+ kpair& operator >= ( const ManipVecKern  &&a, kpair &b  )
+ {
+    throw RaftManipException( 
+        "raft::manip_vec_t should be after the \"=>\" operator, not before" );
+    UNUSED( a );
+    UNUSED( b );
+    kpair *out( nullptr );
+    return( *out );
+ }
+
+  kpair& operator >= ( const raft::manip_vec_t &&a, kpair &b  )
+  {
+    throw RaftManipException( 
+        "raft::manip_vec_t shouldn't be bare before the \"=>\" operator, please check code" );
+    UNUSED( a );
+    UNUSED( b );
+    kpair *out( nullptr );
+    return( *out );
+  }
+  
+  kpair& operator >= ( const raft::manip_vec_t &&a, const raft::kernel &b  )
+  {
+    throw RaftManipException( 
+        "raft::manip_vec_t shouldn't be bare before the \"=>\" operator, please check code" );
+    UNUSED( a );
+    UNUSED( b );
+    kpair *out( nullptr );
+    return( *out );
+  }

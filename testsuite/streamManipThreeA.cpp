@@ -144,7 +144,7 @@ main()
     /** should throw an exception **/
     try
     {
-        M += s >> m >> raft::parallel::thread >> raft::parallel::system >> l;
+        M += ( ( s >> m ) <=  raft::parallel::thread ) >> l;
     }
     catch( NonsenseChainRaftManipException ex )
     {

@@ -57,7 +57,6 @@ set( TESTAPPS
      splitKsetJoin
      ksettest 
      poolThreadRaftManip 
-     poolThreadRaftManip2
      fixedMatchTest 
      splitchainRetStruct 
      staticContJoinRetStruct
@@ -65,7 +64,16 @@ set( TESTAPPS
      staticLongSplitChainRetStruct
      staticSplitChainJoinRetStruct
      staticSplitJoinRetStruct 
-     chainMultiplePorts )
+     chainMultiplePorts 
+     streamManipOne
+     streamManipTwo
+     streamManipThree
+     streamManipThreeA
+     streamManipFour
+     streamManipFourA
+     streamManipFourB
+     streamManipFourC
+     )
 
 
 include_directories( ${CMAKE_SCOTCH_INCS} )

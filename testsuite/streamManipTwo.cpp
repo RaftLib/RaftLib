@@ -136,13 +136,26 @@ private:
 int
 main()
 {
-    start   s;
-    middle  m;
-    last    l;
-    raft::manip< raft::parallel::process  >::bind( l ); 
+    start s;
+    last l;
+    middle m;
 
     raft::map M;
-    M += s >> m >> l;
+    /** should throw an exception **/
+    try
+    {
+        
+        M += s >>  
+            /** this pairing should return a ManipVecKern vs. pair
+                but throw a same exception than test case one. **/
+                raft::parallel::thread >> raft::parallel::system >> m >>l;
+    }
+    catch( NonsenseChainRaftManipException ex )
+    {
+        std::cerr << ex.what() << "\n";
+        std::cerr << "caught exception properly\n";
+        exit( EXIT_SUCCESS );
+    }
     M.exe();
-    return( EXIT_SUCCESS );
+    return( EXIT_FAILURE );
 }

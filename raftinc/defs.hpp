@@ -99,8 +99,10 @@ namespace vm
 {
 enum type : manip_vec_t { 
     flat = parallel::NPARALLEL        /** not yet implemented, likely using segment  **/, 
-    standard                /** threads share VM space, processes have sep **/, 
-    partition               /** partition graph at this point into a new VM space, platform dependent **/ }; 
+    standard                          /** threads share VM space, processes have sep **/, 
+    partition                         /** partition graph at this point into a 
+                                        * new VM space, platform dependent **/ 
+}; 
 }
 
 }
