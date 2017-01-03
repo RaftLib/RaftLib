@@ -108,6 +108,11 @@ kpair& operator >= ( raft::basekset &&a, raft::kernel &b );
  */
 kpair& operator >= ( raft::basekset &&a, kpair &b ); 
 
+/** 
+ * TODO, add the states for ManipVecKernt to feed back into 
+ * the graph.
+ */
+
 /**
  * raft::kernel >> manip_vec_t (bare) 
  */
