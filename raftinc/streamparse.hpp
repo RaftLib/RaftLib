@@ -116,19 +116,22 @@ kpair& operator >= ( raft::basekset &&a, kpair &b );
 /**
  * raft::kernel >> manip_vec_t (bare) 
  */
-ManipVecKern operator >> ( raft::kernel &a, raft::manip_vec_t &&b );
+ManipVecKern operator >> ( raft::kernel &a, const raft::manip_vec_t b );
 
 /**
  * kpair >> manip_vec_t (bare) 
  */
-ManipVecPair operator >> ( kpair &a, raft::manip_vec_t &&b );
+ManipVecPair operator >> ( kpair &a, const raft::manip_vec_t b );
 
 /** 
  * TODO, need to duplicate states for ManipVecKern or 
  * figure out a clever way not to have to...
  */
+/** see manipVectorZeroA.cpp for test case **/
+kpair& operator >> ( const ManipVecKern &&a, raft::kernel &b );
 
-
+/** see manipVectorZeroB.cpp for test case **/
+kpair& operator >> ( const ManipVecPair &&a, raft::kernel &b );
 
 /**
  * BEGIN ERROR STATES FOR PARSE 

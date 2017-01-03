@@ -234,14 +234,30 @@ kpair& operator >= ( raft::basekset &&a, kpair &b )
     return( *out );
 }
 
-ManipVecKern operator >> ( raft::kernel &a, raft::manip_vec_t &&b )
+ManipVecKern operator >> ( raft::kernel &a, const raft::manip_vec_t b )
 {
     return( ManipVecKern( a, b ) );
 }
 
-ManipVecPair operator >> ( kpair &a, raft::manip_vec_t &&b )
+ManipVecPair operator >> ( kpair &a, const raft::manip_vec_t b )
 {    
     return( ManipVecPair( a, b ) );
+}
+
+kpair& operator >> ( const ManipVecKern &&a, raft::kernel &b )
+{
+    UNUSED( a );
+    UNUSED( b );
+    kpair *out( nullptr );
+    return( *out );
+}
+
+kpair& operator >> ( const ManipVecPair &&a, raft::kernel &b )
+{
+    UNUSED( a );
+    UNUSED( b );
+    kpair *out( nullptr );
+    return( *out );
 }
 
 

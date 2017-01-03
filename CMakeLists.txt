@@ -149,6 +149,8 @@ set( TESTAPPS
      streamManipFourA
      streamManipFourB
      streamManipFourC
+     streamManipZeroA
+     streamManipZeroB
         ) 
 
 
