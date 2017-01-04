@@ -75,6 +75,10 @@ set( TESTAPPS
      streamManipFourC
      streamManipZeroA
      streamManipZeroB
+     streamManipZeroC
+     streamManipZeroD
+     streamManipZeroE
+     streamManipZeroF
      )
 
 

@@ -58,6 +58,10 @@ using ManipVecKern  = WrapperPlusConstant<  raft::kernel,
                                             raft::manip_vec_t , 
                                             3 >;
 
+using RHSManipVecKern = WrapperPlusConstant< raft::kernel,
+                                             raft::manip_vec_t,
+                                             4 >;
+
 kpair& operator >> ( raft::kernel &a,  raft::kernel &b  );
 kpair& operator >> ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b );
 kpair& operator >> ( raft::kernel &a, raft::kernel_wrapper &&w );
@@ -80,6 +84,14 @@ kpair& operator <= ( raft::kernel &a,  kpair &b );
 kpair& operator <= ( raft::kernel_wrapper &&w, kpair &b );
 kpair& operator <= ( kpair &a, raft::kernel &b );
 
+//streamManipZeroD.cpp
+kpair& operator <= ( const ManipVecPair &&a, kpair &b );
+//streamManipZeroE.cpp
+kpair& operator <= ( const ManipVecKern &&a, kpair &b );
+
+//kpair& operator >= ( kpair &a, const ManipVecPair &&b );
+//streamManipZeroF.cpp
+kpair& operator >= ( raft::kernel &a, const ManipVecPair &&b );
 
 kpair& operator >= ( kpair &a, raft::kernel &b );
 kpair& operator >= ( kpair &a, raft::kernel_wrapper &&w );
@@ -108,15 +120,18 @@ kpair& operator >= ( raft::basekset &&a, raft::kernel &b );
  */
 kpair& operator >= ( raft::basekset &&a, kpair &b ); 
 
-/** 
- * TODO, add the states for ManipVecKernt to feed back into 
- * the graph.
- */
-
 /**
  * raft::kernel >> manip_vec_t (bare) 
  */
 ManipVecKern operator >> ( raft::kernel &a, const raft::manip_vec_t b );
+
+/**
+ * different from one above b/c this needs soemthing to 
+ * the left of it in order to be valid...so return a 
+ * distinct type.
+ * manip_vec_t >> raft::kernel
+ */
+RHSManipVecKern operator >> ( raft::manip_vec_t, raft::kernel );
 
 /**
  * kpair >> manip_vec_t (bare) 
@@ -176,6 +191,8 @@ kpair& operator >> ( const ManipVecKern &&a, const raft::manip_vec_t &&b );
  * raft::manip_vec_tl >> raft::manip_vec_t
  */
 kpair& operator >> ( const ManipVecPair &&a, const raft::manip_vec_t &&b );
+
+
 
 /** 
  * error state: #5 (for test cases )

@@ -160,6 +160,22 @@ operator <= ( kpair &a, raft::kernel &b )
     return( *ptr );
 }
 
+kpair& operator <= ( const ManipVecPair &&a, kpair &b )
+{
+    UNUSED( a );
+    UNUSED( b );
+    kpair *out( nullptr );
+    return( *out );
+}
+kpair& operator <= ( const ManipVecKern &&a, kpair &b )
+{
+    UNUSED( a );
+    UNUSED( b );
+    kpair *out( nullptr );
+    return( *out );
+}
+
+
 kpair&
 operator >= ( kpair &a, raft::kernel_wrapper &&w )
 {
@@ -343,3 +359,11 @@ kpair& operator <= ( kpair &a, const raft::manip_vec_t &&b )
     kpair *out( nullptr );
     return( *out );
   }
+
+kpair& operator >= ( raft::kernel &a, const ManipVecPair &&b )
+{
+    UNUSED( a );
+    UNUSED( b );
+    kpair *out( nullptr );
+    return( *out );
+}
