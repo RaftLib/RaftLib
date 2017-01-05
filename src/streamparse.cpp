@@ -255,6 +255,11 @@ ManipVecKern operator >> ( raft::kernel &a, const raft::manip_vec_t b )
     return( ManipVecKern( a, b ) );
 }
 
+RHSManipVecKern operator >> ( const raft::manip_vec_t &&a, raft::kernel &b )
+{
+    return( RHSManipVecKern( a, b ) );    
+}
+
 ManipVecPair operator >> ( kpair &a, const raft::manip_vec_t b )
 {    
     return( ManipVecPair( a, b ) );

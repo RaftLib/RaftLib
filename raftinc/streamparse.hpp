@@ -131,7 +131,7 @@ ManipVecKern operator >> ( raft::kernel &a, const raft::manip_vec_t b );
  * distinct type.
  * manip_vec_t >> raft::kernel
  */
-RHSManipVecKern operator >> ( raft::manip_vec_t, raft::kernel );
+RHSManipVecKern operator >> ( const raft::manip_vec_t &&a, raft::kernel &b );
 
 /**
  * kpair >> manip_vec_t (bare) 
