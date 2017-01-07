@@ -92,6 +92,8 @@ kpair& operator <= ( const ManipVecKern &&a, kpair &b );
 //kpair& operator >= ( kpair &a, const ManipVecPair &&b );
 //streamManipZeroF.cpp
 kpair& operator >= ( raft::kernel &a, const ManipVecPair &&b );
+/** see streamManipZeroG.cpp for example **/
+kpair& operator >= ( raft::kernel &a, const RHSManipVecKern &&b );
 
 kpair& operator >= ( kpair &a, raft::kernel &b );
 kpair& operator >= ( kpair &a, raft::kernel_wrapper &&w );
@@ -130,8 +132,10 @@ ManipVecKern operator >> ( raft::kernel &a, const raft::manip_vec_t b );
  * the left of it in order to be valid...so return a 
  * distinct type.
  * manip_vec_t >> raft::kernel
+ * see streamManipZeroG.cpp for example
  */
-RHSManipVecKern operator >> ( const raft::manip_vec_t &&a, raft::kernel &b );
+RHSManipVecKern operator >> ( const raft::manip_vec_t a, raft::kernel &b );
+kpair& operator >> ( const RHSManipVecKern &&a, raft::kernel &b );
 
 /**
  * kpair >> manip_vec_t (bare) 
@@ -198,11 +202,11 @@ kpair& operator >> ( const ManipVecPair &&a, const raft::manip_vec_t &&b );
  * error state: #5 (for test cases )
  * raft::manip_vec_tl <= raft::manip_vec_t
  */
-//TODO, not a good way to catch this one without some extremely fancy templates
+//TODO, make exception
 /** 
  * error state: #5 (for test cases )
  * raft::manip_vec_tl => raft::manip_vec_t
  */
-//TODO, not a good way to catch this one without some extremely fancy templates
+//TODO, make exception
 
 #endif /* END _STREAMPARSE_HPP_ */

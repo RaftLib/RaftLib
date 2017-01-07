@@ -79,6 +79,7 @@ set( TESTAPPS
      streamManipZeroD
      streamManipZeroE
      streamManipZeroF
+     streamManipZeroG
      )
 
 
