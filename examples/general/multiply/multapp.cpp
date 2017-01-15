@@ -16,6 +16,8 @@ public:
       output.template addPort< T  >( "mult" );
    }
    
+   IMPL_CLONE();
+
    virtual raft::kstatus run()
    {
       auto out( output[ "mult" ].template allocate_s< T >() );

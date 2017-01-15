@@ -22,6 +22,8 @@ public:
       }
    }
 
+   IMPL_CLONE();
+
    virtual ~source()
    {
        stream1.release();
@@ -52,6 +54,8 @@ public:
 
    virtual ~canny() = default;
 
+   IMPL_CLONE();
+   
    virtual raft::kstatus run()
    {
       fprintf( stdout, "source processing frame %" PRIu64 "\n", counter++ );
@@ -91,6 +95,8 @@ public:
    }
 
    virtual ~findcontours() = default;
+
+   IMPL_CLONE();
 
    virtual raft::kstatus run()
    {
@@ -146,6 +152,8 @@ public:
    
    virtual ~display() = default;
    
+   IMPL_NO_CLONE();
+
    virtual raft::kstatus run()
    {
       const auto &frame( input[ "0" ].template peek< cvm >() );

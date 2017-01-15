@@ -29,10 +29,12 @@ template < typename T > class generate : public raft::kernel
 {
 public:
    generate( std::int64_t count = 1000 ) : raft::kernel(),
-                                         count( count )
+                                           count( count )
    {
       output.addPort< T >( "number_stream" );
    }
+   
+   IMPL_CLONE();
 
    virtual raft::kstatus run()
    {

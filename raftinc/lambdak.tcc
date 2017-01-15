@@ -53,8 +53,7 @@ public:
    }
 
 
-    //FIXME, add copy constructor
-
+   IMPL_CLONE();
 
    /**
     * run - implement the run function for this kernel,

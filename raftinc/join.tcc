@@ -38,6 +38,7 @@ public:
       }
    }
    
+   IMPL_CLONE();
 
    virtual ~join() = default;
 

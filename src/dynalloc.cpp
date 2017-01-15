@@ -39,9 +39,7 @@ dynalloc::dynalloc( raft::map &map,
 }
 
 
-dynalloc::~dynalloc()
-{
-}
+dynalloc::~dynalloc() = default;
 
 std::size_t
 dynalloc::hash( PortInfo &a, PortInfo &b )

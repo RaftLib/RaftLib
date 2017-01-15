@@ -91,6 +91,23 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
    return;
 }
 
+raft::kernel*
+DuplicateFromVertex( raft::kernel * const start )
+{
+    /** 
+     * add structure to hold newly cloned head, since
+     * function should return the clone of "start"
+     */
+    //auto 
+    ///** make structure to hold previously cloned kernel **/
+    //vertex_func f( []( raft::kernel *k,
+    //                   void         *data )
+    //{
+    //    /** call clone **/
+    //    
+    //};
+    return( nullptr );
+}
 
 void
 GraphTools::__BFS( std::queue< raft::kernel* > &queue,

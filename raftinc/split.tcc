@@ -38,6 +38,8 @@ public:
    }
 
    virtual ~split() = default;
+   
+   IMPL_CLONE();
 
    virtual raft::kstatus run()
    {

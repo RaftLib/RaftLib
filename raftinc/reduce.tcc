@@ -41,6 +41,9 @@ public:
       output.addPort< T >( "0" );
    }
 
+    
+   IMPL_CLONE();
+
    virtual ~reduce() = default;
 
    virtual rat::kstatus run()

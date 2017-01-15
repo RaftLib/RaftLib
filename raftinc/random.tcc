@@ -70,8 +70,7 @@ public:
 
     virtual ~random_variate() = default;
 
-    /** enable cloning **/
-    CLONE();
+    IMPL_CPY_CLONE();
 
     virtual raft::kstatus run()
     {

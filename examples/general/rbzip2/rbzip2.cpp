@@ -40,6 +40,8 @@ public:
         std::fflush( out_fp );
         std::fclose( out_fp );
     }
+    
+    IMPL_NO_CLONE();
 
     virtual raft::kstatus run()
     {
@@ -153,7 +155,7 @@ public:
     }
 
     /** enable cloning **/
-    CLONE();
+    IMPL_CPY_CLONE();
 
 private:
     const int blocksize;

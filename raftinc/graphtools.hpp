@@ -57,51 +57,55 @@ using vertex_func = std::function< void( raft::kernel*,
 class GraphTools
 {
 public:
-   GraphTools() = delete;
-   
-   /**
-    * BFS - perform a breadth first search of the
-    * graph given by 'source_kernels'.  The function
-    * 'func' matches the typedef above and is 
-    * called on each edge of the graph exactly once.
-    * For state between calls, the user can define
-    * a data struct and pass it via the void ptr data
-    * which is passed to the func.
-    * @param source_kernels - set of source kernels.
-    * @param func - edge_func, funciton to be called
-    * @param data - void*, data struct for persistent state
-    * @param connected_error, throw an error if not connected
-    */
-   static void BFS( std::set< raft::kernel* > &source_kernels,  
-                    edge_func func,
-                    void *data = nullptr,
-                    bool connected_error = false );
-   
-   
-   /**
-    * BFS - perform a breadth first search of the
-    * graph given by 'source_kernels'.  The function
-    * 'func' matches the typedef above and is 
-    * called on each edge of the graph exactly once.
-    * For state between calls, the user can define
-    * a data struct and pass it via the void ptr data
-    * which is passed to the func.
-    * @param source_kernels - set of source kernels.
-    * @param func - edge_func, funciton to be called
-    * @param data - void*, data struct for persistent state
-    * @param connected_error, throw an error if not connected
-    */
-   static void BFS( std::vector< raft::kernel* > &source_kernels,  
-                    edge_func func,
-                    void *data = nullptr,
-                    bool connected_error = false );
+    GraphTools() = delete;
     
+    /**
+     * BFS - perform a breadth first search of the
+     * graph given by 'source_kernels'.  The function
+     * 'func' matches the typedef above and is 
+     * called on each edge of the graph exactly once.
+     * For state between calls, the user can define
+     * a data struct and pass it via the void ptr data
+     * which is passed to the func.
+     * @param source_kernels - set of source kernels.
+     * @param func - edge_func, funciton to be called
+     * @param data - void*, data struct for persistent state
+     * @param connected_error, throw an error if not connected
+     */
+    static void BFS( std::set< raft::kernel* > &source_kernels,  
+                     edge_func func,
+                     void *data = nullptr,
+                     bool connected_error = false );
+    
+    
+    /**
+     * BFS - perform a breadth first search of the
+     * graph given by 'source_kernels'.  The function
+     * 'func' matches the typedef above and is 
+     * called on each edge of the graph exactly once.
+     * For state between calls, the user can define
+     * a data struct and pass it via the void ptr data
+     * which is passed to the func.
+     * @param source_kernels - set of source kernels.
+     * @param func - edge_func, funciton to be called
+     * @param data - void*, data struct for persistent state
+     * @param connected_error, throw an error if not connected
+     */
+    static void BFS( std::vector< raft::kernel* > &source_kernels,  
+                     edge_func func,
+                     void *data = nullptr,
+                     bool connected_error = false );
+     
 
 
-   static void
-   BFS( std::set< raft::kernel* > &source_kernels,
-        vertex_func                 func,
-        void                        *data );
+    static void
+    BFS( std::set< raft::kernel* > &source_kernels,
+         vertex_func                 func,
+         void                        *data );
+
+
+    static raft::kernel*
+    DuplicateFromVertex( raft::kernel * const start );
 
 private:
    /**

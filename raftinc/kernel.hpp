@@ -49,7 +49,8 @@ namespace raft
 {
    class kernel;
 }
-#define CLONE() \
+
+#define IMPL_CPY_CLONE() \
 virtual raft::kernel* clone()\
 { \
    auto *ptr( \
@@ -60,7 +61,26 @@ virtual raft::kernel* clone()\
    ptr->internal_alloc = true;\
    return( ptr );\
 }
-#endif
+
+#define IMPL_CLONE() \
+virtual raft::kernel* clone()\
+{ \
+   auto *ptr( \
+      new typename std::remove_reference< decltype( *this ) >::type() );\
+   /** RL needs to dealloc this one **/\
+   ptr->internal_alloc = true;\
+   return( ptr );\
+}
+
+#define IMPL_NO_CLONE() \
+virtual raft::kernel* clone()\
+{ \
+    return( nullptr );\
+}
+#define CLONE 1
+#endif /** end CLONE impls **/
+
+
 
 namespace raft {
 /** predeclare template **/
@@ -68,6 +88,8 @@ template < manip_vec_t... VECLIST > struct manip;
 
 class kernel
 {
+using clone_helper = std::function< raft::kernel* () >;
+
 public:
    /** default constructor **/
    kernel();
@@ -109,13 +131,8 @@ public:
     * @return  kernel*   - takes base type, however is same as 
     * allocated by copy constructor for T.
     */
-   virtual raft::kernel* clone()
-   {
-      throw CloneNotImplementedException( "Sub-class has failed to implement clone function, please use the CLONE() macro to add functionality" );
-      /** won't be reached **/
-      return( nullptr );
-   }
-
+   virtual raft::kernel* clone() = 0;
+   
    /** 
     * get_id - returns this kernels id, won't change for the
     * lifetime of this kernel once set.
@@ -218,6 +235,7 @@ protected:
         raft::manip< 
             raft::parallel::system, 
             raft::vm::standard >::value;
+
 private:
    /** TODO, replace dup with bit vector **/
    bool             dup_enabled       = false;
