@@ -91,7 +91,7 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
    return;
 }
 
-raft::kernel*
+raft::submap*
 DuplicateFromVertexToSource( raft::kernel * const start )
 {
     /** 
@@ -109,7 +109,7 @@ DuplicateFromVertexToSource( raft::kernel * const start )
     return( nullptr );
 }
 
-raft::kernel*
+raft::submap*
 DuplicateFromVertexToSink( raft::kernel * const start )
 {
     /** 
