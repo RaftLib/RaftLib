@@ -60,6 +60,8 @@ public:
     }
 
     virtual ~start() = default;
+    
+    IMPL_CLONE();
 
     virtual raft::kstatus run()
     {
@@ -92,6 +94,7 @@ public:
         output.addPort< obj_t >( "y" );
     }
 
+    IMPL_CLONE();
     virtual raft::kstatus run()
     {
         auto &val( input[ "x" ].peek< obj_t >() );
@@ -114,6 +117,7 @@ public:
 
     virtual ~last() = default;
 
+    IMPL_CLONE();
     virtual raft::kstatus run()
     {
         obj_t mem;

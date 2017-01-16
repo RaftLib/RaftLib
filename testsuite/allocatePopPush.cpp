@@ -55,6 +55,7 @@ public:
 
     virtual ~start() = default;
 
+    IMPL_CLONE();
     virtual raft::kstatus run()
     {
         auto &mem( output[ "y" ].allocate< obj_t >() );
@@ -87,6 +88,7 @@ public:
 
     virtual ~middle() = default;
 
+    IMPL_CLONE();
     virtual raft::kstatus run()
     {
         obj_t obj;
@@ -107,6 +109,7 @@ public:
 
     virtual ~last() = default;
 
+    IMPL_CLONE();
     virtual raft::kstatus run()
     {
         auto &mem( input[ "x" ].peek< obj_t >() );

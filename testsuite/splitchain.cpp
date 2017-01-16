@@ -44,7 +44,7 @@ public:
 
     virtual ~sub() = default;
 
-    CLONE();
+    IMPL_CLONE();
 
     virtual raft::kstatus run()
     {

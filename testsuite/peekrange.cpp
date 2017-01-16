@@ -16,6 +16,8 @@ public:
       input.addPort< T >( "in" );
    }
 
+   IMPL_NO_CLONE();
+
    virtual raft::kstatus run()
    {
       auto &port( input[ "in" ] );

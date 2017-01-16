@@ -105,7 +105,10 @@ public:
 
 
     static raft::kernel*
-    DuplicateFromVertex( raft::kernel * const start );
+    DuplicateFromVertexToSource( raft::kernel * const start );
+    
+    static raft::kernel*
+    DuplicateFromVertexToSink( raft::kernel * const start );
 
 private:
    /**

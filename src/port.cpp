@@ -59,10 +59,12 @@ Port::Port( const Port &other )
     * to clean up.
     */
 }
+
 void 
 Port::afterCopyKernelUpdate( raft::kernel * const k )
 {
-    for( auto &pair : portmap )
+    assert( k != nullptr );
+    for( auto &pair : portmap.map )
     {
         pair.second.my_kernel = k;
     }
