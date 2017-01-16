@@ -28,11 +28,16 @@
 
 struct portmap_t
 {
-   using key_type = std::string;
-   using map_type = std::map< key_type, PortInfo >;
-   
-   map_type     map;
-   std::mutex   mutex_map;
+    using key_type = std::string;
+    using map_type = std::map< key_type, PortInfo >;
+    
+    portmap_t()  = default;
+    ~portmap_t() = default;
+
+    portmap_t( const portmap_t &other );
+    portmap_t& operator = ( const portmap_t &other );
+    map_type     map;
+    std::mutex   mutex_map;
 };
 
 #endif /* END _PORTMAP_T_HPP_ */

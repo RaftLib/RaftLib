@@ -12,12 +12,17 @@ kernel::kernel() : kernel_id( kernel::kernel_count )
    kernel::kernel_count++;
 }
 
-kernel::kernel( const kernel &other ) : core_assign( other.core_assign ),
+kernel::kernel( const kernel &other ) : 
+                                        input( other.input ),
+                                        output( other.output ),
+                                        core_assign( other.core_assign ),
                                         dup_enabled( other.dup_enabled ),
                                         dup_candidate( other.dup_candidate ),
                                         kernel_id( kernel::kernel_count )
 {
     kernel::kernel_count++;
+    input.afterCopyKernelUpdate( this );
+    output.afterCopyKernelUpdate( this );
 }
 
 

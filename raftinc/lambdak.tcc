@@ -52,8 +52,20 @@ public:
       add_ports< PORTS... >( inputs, outputs );
    }
 
+   lambdak( const lambdak &other ) : raft::kernel( other ),
+                                     run_func( other.run_func )
+   {
+      //TODO finish me   
+   }
 
-   IMPL_CLONE();
+   
+   /** 
+    * NOTE: this has to be a copy clone() since we've 
+    * gotta have the ports + function pointer copied
+    * TODO, check on deep copy for anonymous class that
+    * is our lambda function pointer.
+    */
+   IMPL_CPY_CLONE();
 
    /**
     * run - implement the run function for this kernel,

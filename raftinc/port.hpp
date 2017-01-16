@@ -126,6 +126,13 @@ public:
          void * const ptr,
          const std::size_t nbytes );
 
+   
+   Port( const Port &other );
+
+   void afterCopyKernelUpdate( raft::kernel * const k ); 
+
+   Port& operator = ( const Port &other );
+   
    /**
     * ~Port - destructor, deletes the FIFO that was given
     * when the object was initalized.
@@ -229,7 +236,6 @@ public:
     */
    std::size_t count();
 
-//TODO, get this guy into the private area
    /**
     * add_port - adds and initializes a port for the name
     * given.  Function returns true if added, false if not.

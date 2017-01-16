@@ -23,7 +23,9 @@ PortInfo::PortInfo( const std::type_info &the_type,
 PortInfo::PortInfo( const PortInfo &other ) : type( other.type )
 {
    fifo_a         = other.fifo_a;
+#ifdef JVEC_MACHINE   
    fifo_b         = other.fifo_b;
+#endif   
    const_map      = other.const_map;
    my_kernel      = other.my_kernel;
    my_name        = other.my_name;
@@ -48,6 +50,7 @@ PortInfo::~PortInfo()
 FIFO* 
 PortInfo::getFIFO()
 {
+#ifdef JVEC_MACHINE   
    struct{
       FIFO *a;
       FIFO *b;
@@ -61,14 +64,21 @@ PortInfo::getFIFO()
    {
       copy.a = fifo_a;
       copy.b = fifo_b;
-   }
-   return( copy.a );
+   }   
+   return( copy.a );   
+#else
+   return( fifo_a );
+#endif
 }
 
 void 
 PortInfo::setFIFO( FIFO * const in )
 {
    assert( in != nullptr );
+#ifdef JVEC_MACHINE   
    fifo_a = in;
    fifo_b = in;
+#else
+   fifo_a = in;
+#endif
 }

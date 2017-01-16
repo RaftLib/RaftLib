@@ -44,6 +44,47 @@ Port::Port( raft::kernel *k,
 {
 }
 
+Port::Port( const Port &other )
+{
+   /** 
+    * we shouldn't be copying another port if it is
+    * an in-place allocation.
+    */
+   assert( other.alloc_ptr == nullptr );
+   /** copy **/
+   (this)->portmap = other.portmap;
+   /** 
+    * copy requires update to my_kernel field in 
+    * the PortInfo struct, call afterCopyKernelUpdate()
+    * to clean up.
+    */
+}
+void 
+Port::afterCopyKernelUpdate( raft::kernel * const k )
+{
+    for( auto &pair : portmap )
+    {
+        pair.second.my_kernel = k;
+    }
+}
+
+Port&
+Port::operator = ( const Port &other )
+{
+   /** 
+    * we shouldn't be copying another port if it is
+    * an in-place allocation.
+    */
+    assert( other.alloc_ptr == nullptr );
+   /** copy **/
+   (this)->portmap = other.portmap;
+   /** 
+    * copy requires update to my_kernel field in 
+    * the PortInfo struct, call afterCopyKernelUpdate()
+    * to clean up.
+    */
+    return( *this );
+}
 
 const std::type_index&
 Port::getPortType( const portmap_t::key_type &&port_name )

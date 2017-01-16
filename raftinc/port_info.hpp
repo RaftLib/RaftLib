@@ -71,7 +71,10 @@ struct PortInfo
    void setFIFO( FIFO * const in );
    
    FIFO            *fifo_a  = nullptr;
+#ifdef JVEC_MACHINE   
    FIFO            *fifo_b  = nullptr;
+#endif
+
    /** 
     * the type of the port.  regardless of if the buffer itself
     * is impplemented or not. 
