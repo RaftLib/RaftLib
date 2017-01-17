@@ -25,11 +25,13 @@
 #include <stack>
 #include <vector>
 
+
 /** pre-declarations for below **/
 struct PortInfo;
 namespace raft
 {
    class kernel;
+   class submap;
 }
 
 /**
@@ -104,10 +106,10 @@ public:
          void                        *data );
 
 
-    static raft::kernel*
+    static raft::submap*
     DuplicateFromVertexToSource( raft::kernel * const start );
     
-    static raft::kernel*
+    static raft::submap*
     DuplicateFromVertexToSink( raft::kernel * const start );
 
 private:

@@ -33,7 +33,7 @@
 #include "graphtools.hpp"
 #include "port_info.hpp"
 #include "kernel.hpp"
-
+#include "submap.hpp"
 
 void
 GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
