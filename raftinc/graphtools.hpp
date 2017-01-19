@@ -31,7 +31,7 @@ struct PortInfo;
 namespace raft
 {
    class kernel;
-   class submap;
+   class temp_map;
 }
 
 /**
@@ -106,11 +106,36 @@ public:
          void                        *data );
 
 
-    static raft::submap*
-    DuplicateFromVertexToSource( raft::kernel * const start );
-    
-    static raft::submap*
-    DuplicateFromVertexToSink( raft::kernel * const start );
+    /**
+     * duplicateFromVertexToSource - take the kernel start
+     * as a parameter, an duplicate from its input ports
+     * through the conected extent of the graph as far as
+     * possible (likely through source but doesn't have
+     * to be, this is intended for graph fragments. The
+     * return type is a raft::temp_map object which holds
+     * pointers to all the kernels, start and source with 
+     * respect to this start and the copied sources. This
+     * object is not intended to live long (hence the name)
+     * @param start - raft::kernel * const, where to start
+     *                the duplication from.
+     */
+    static raft::temp_map*
+    duplicateFromVertexToSource( raft::kernel * const start );
+    /**
+     * duplicateFromVertexToSink - take the kernel start
+     * as a parameter, an duplicate from its output ports
+     * through the conected extent of the graph as far as
+     * possible (likely through terminal destination  but 
+     * doesn't have to be, this is intended for graph fragments. 
+     * The return type is a raft::temp_map object which holds
+     * pointers to all the kernels, start and destination with 
+     * respect to this start and the copied destinations. This
+     * object is not intended to live long (hence the name)
+     * @param start - raft::kernel * const, where to start
+     *                the duplication from.
+     */
+    static raft::temp_map*
+    duplicateFromVertexToSink( raft::kernel * const start );
 
 private:
    /**

@@ -37,7 +37,7 @@
 class MapBase;
 class Schedule;
 class kernel_container;
-class Map;
+class submap;
 class basic_parallel;
 class kpair;
 class interface_partition;
@@ -194,6 +194,7 @@ protected:
    
    /** in namespace raft **/
    friend class map;
+   friend class submap;
    /** in global namespace **/
    friend class ::MapBase;
    friend class ::Schedule;

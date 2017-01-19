@@ -33,7 +33,7 @@
 #include "graphtools.hpp"
 #include "port_info.hpp"
 #include "kernel.hpp"
-#include "submap.hpp"
+#include "tempmap.hpp"
 
 void
 GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
@@ -91,27 +91,53 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
    return;
 }
 
-raft::submap*
-DuplicateFromVertexToSource( raft::kernel * const start )
+raft::temp_map*
+duplicateFromVertexToSource( raft::kernel * const start )
 {
-    /** 
-     * add structure to hold newly cloned head, since
-     * function should return the clone of "start"
-     */
-    //auto 
-    ///** make structure to hold previously cloned kernel **/
-    //vertex_func f( []( raft::kernel *k,
-    //                   void         *data )
-    //{
-    //    /** call clone **/
-    //    
-    //};
-    return( nullptr );
+    assert( start != nullptr );
+    struct Data
+    {
+        Data() : temp_map( new raft::temp_map() )
+        {
+        }
+        /**
+         * NOTE: this map contains a reference from the pointers
+         * cast to uintptr_t (set as the key) that are the original 
+         * (to be duplicated kernels) to the new one which is the 
+         * value. 
+         */
+        std::map< std::uintptr_t, raft::kernel * > kernel_map;
+        raft::temp_map                             *temp_map     = nullptr;
+    }   d;
+    /** make structure to hold previously cloned kernel **/
+    vertex_func f( []( raft::kernel *current,
+                       void         *data ) -> void
+    {
+        Data *d( reinterpret_cast< Data* >( data ) );
+        auto *cloned_kernel( current->clone() );
+        if( cloned_kernel == nullptr )
+        {
+            //TODO throw an exception
+            std::cerr << "attempting to clone a kernel that wasn't meant to be cloned()\n";
+            exit( EXIT_FAILURE );
+        }
+        UNUSED( d ) ;
+        /** else lets get this going **/
+        /** 
+         * NOTE: need condition if sub_map is empty
+         * this will be a momentary condition since
+         * the source to this duplication is required
+         * to have only a single exit point
+         */
+    } );
+    assert( d.temp_map != nullptr );
+    return( d.temp_map );
 }
 
-raft::submap*
-DuplicateFromVertexToSink( raft::kernel * const start )
+raft::temp_map*
+duplicateFromVertexToSink( raft::kernel * const start )
 {
+    UNUSED( start );
     /** 
      * add structure to hold newly cloned head, since
      * function should return the clone of "start"
@@ -231,10 +257,10 @@ GraphTools::__DFS( std::stack< raft::kernel* > &stack,
                    edge_func                   func,
                    void                        *data )
 {
-   (void) stack;
-   (void) visited_set;
-   (void) func;
-   (void) data;
+   UNUSED( stack );
+   UNUSED( visited_set );
+   UNUSED( func );
+   UNUSED( data );
 
    /** TODO, implement me **/
    assert( false );
@@ -246,10 +272,10 @@ GraphTools::__DFS( std::stack< raft::kernel* > &stack,
                    vertex_func                 func,
                    void                        *data )
 {
-   (void) stack;
-   (void) visited_set;
-   (void) func;
-   (void) data;
+   UNUSED( stack );
+   UNUSED( visited_set );
+   UNUSED( func );
+   UNUSED( data );
 
    /** TODO, implement me **/
    assert( false );
