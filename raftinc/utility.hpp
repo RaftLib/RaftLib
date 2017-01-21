@@ -34,6 +34,9 @@
 namespace raft
 {
 
+namespace utility
+{
+
 template < typename A, 
            typename B > using common_t = typename std::common_type< A, B >::type;
 
@@ -141,6 +144,7 @@ intersect_map( const std::map<KeyType, LeftValue>  &a,
     return( result );
 }
 
+} /** end namespace utility **/
 
 
 } /** end namespace raft **/

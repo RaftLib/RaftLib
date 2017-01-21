@@ -34,6 +34,7 @@
 #include "port_info.hpp"
 #include "kernel.hpp"
 #include "tempmap.hpp"
+#include "utility.hpp"
 
 void
 GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
@@ -214,8 +215,11 @@ GraphTools::duplicateFromVertexToSource( raft::kernel * const start )
             }
             /** UNLOCK **/
             /** go through unmatched and see if we can match some up **/
-            //TODO
-
+            auto intersect( raft::utility::intersect_map(
+                d->unmatched,
+                d->kernel_map
+            ) );
+            
             /** if any unmatched kernels...somethings wrong throw exception **/
 
 
