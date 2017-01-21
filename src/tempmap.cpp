@@ -61,3 +61,12 @@ raft::temp_map::addSinkKernels( raft::kernel * const k )
     dst_kernels += k;
     all_kernels += k;
 }
+    
+void 
+raft::temp_map::updateKernels( raft::kernel * const a, 
+                               raft::kernel * const b )
+{
+    UNUSED( a );
+    UNUSED( b );
+    return;
+}

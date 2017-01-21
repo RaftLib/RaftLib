@@ -71,6 +71,14 @@ public:
     void addSinkKernels( raft::kernel * const k );
 
 
+    /** 
+     * updateKernels - override base class version so
+     * that we can avoid duplicate adding of these 
+     * kernels to the source and sink..since the 
+     * temp map's source and sink are well..special.
+     */
+    virtual void updateKernels( raft::kernel * const a, 
+                                raft::kernel * const b );
 
 protected:
     friend class map;

@@ -173,7 +173,7 @@ protected:
                           const raft::order::spec t ) noexcept;
    
 
-   void updateKernels( raft::kernel * const a, raft::kernel * const b );
+   virtual void updateKernels( raft::kernel * const a, raft::kernel * const b );
 
    static void portNotFound( bool src, 
                              PortNotFoundException &ex, 

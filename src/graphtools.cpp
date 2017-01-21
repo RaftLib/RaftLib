@@ -92,7 +92,7 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
 }
 
 raft::temp_map*
-duplicateFromVertexToSource( raft::kernel * const start )
+GraphTools::duplicateFromVertexToSource( raft::kernel * const start )
 {
     assert( start != nullptr );
     struct Data
@@ -158,21 +158,69 @@ duplicateFromVertexToSource( raft::kernel * const start )
              * ports on the cloned output kernels in the map (inside data 
              * struct).
              */
-            while( ! k->input.portmap.mutex_map.try_lock() )
+            while( ! current->output.portmap.mutex_map.try_lock() )
             {
                std::this_thread::yield();
             }
             //we have lock, continue
             /** 2) get map **/
-            auto &map_of_ports( k->input.portmap.map );
+            auto &map_of_ports( current->output.portmap.map );
             for( auto &port : map_of_ports )
             {   
                 /** port.first is the name **/
-                auto &source( port.second );
-                //TODO COME BACK HERE
-            }         
+                auto &port_info( port.second );
+                /**
+                 * we want to link clone.out to the 
+                 * output kernel clone saved in the 
+                 * map that corresponds to the memory
+                 * location then link it to the new 
+                 * kernels port.
+                 */
+                const auto dst_kern_hash( 
+                    reinterpret_cast< std::uintptr_t >( 
+                        port_info.other_kernel
+                    )
+                );
+                /** 
+                 * look up this destination kernel in our
+                 * clone map.
+                 */
+                auto found( d->kernel_map.find( dst_kern_hash ) );
+                if( found == d->kernel_map.end() )
+                {
+                    /** destination not yet reached, likely back edge **/
+                    d->unmatched.insert( 
+                        std::make_pair( 
+                            reinterpret_cast< std::uintptr_t >( current ), &port_info
+                        )
+                    );
+                }
+                else
+                {
+                    /** 
+                     * we found a match, lets link up the new 
+                     * kernel.
+                     */
+                    d->temp_map->link(
+                        cloned_kernel       /** which kernel **/,
+                        port_info.my_name   /** port name    **/,
+                        found->second        /** cloned destination **/,
+                        port_info.other_name /** destination **/,
+                        ( port_info.out_of_order ? raft::order::out : raft::order::in )
+                    );
+
+                }
+                /** go through unmatched and see if we can match some up **/
+                //TODO
+            }
             /** UNLOCK **/
-            k->input.portmap.mutex_map.unlock();
+            /** go through unmatched and see if we can match some up **/
+            //TODO
+
+            /** if any unmatched kernels...somethings wrong throw exception **/
+
+
+            current->output.portmap.mutex_map.unlock();
         }
         
         /** else lets get this going **/
@@ -188,7 +236,7 @@ duplicateFromVertexToSource( raft::kernel * const start )
 }
 
 raft::temp_map*
-duplicateFromVertexToSink( raft::kernel * const start )
+GraphTools::duplicateFromVertexToSink( raft::kernel * const start )
 {
     UNUSED( start );
     /** 
