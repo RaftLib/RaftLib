@@ -189,10 +189,17 @@ GraphTools::duplicateFromVertexToSource( raft::kernel * const start )
                 auto found( d->kernel_map.find( dst_kern_hash ) );
                 if( found == d->kernel_map.end() )
                 {
+                    /** 
+                     * get port info for the current named port, what we want is the cloned kernel's 
+                     * port info then index it on the destination that we're waiting on, when the
+                     * destination appears in the kernel_map then we can complete the link 
+                     */
+                    auto &cloned_port_info( cloned_kernel->output.getPortInfoFor( port_info.my_name ) );
                     /** destination not yet reached, likely back edge **/
                     d->unmatched.insert( 
                         std::make_pair( 
-                            reinterpret_cast< std::uintptr_t >( current ), &port_info
+                            reinterpret_cast< std::uintptr_t >( dst_kern_hash ) /** kern we're waiting to be added **/,
+                            &cloned_port_info                                   /** ptr to port info for cloned kernel **/
                         )
                     );
                 }
@@ -219,10 +226,30 @@ GraphTools::duplicateFromVertexToSource( raft::kernel * const start )
                 d->unmatched,
                 d->kernel_map
             ) );
-            
+            for( auto &match: (*intersect ) )
+            {
+                /** 
+                 * second will be unmatched portinfo then the kernel map
+                 * we need to take the portinfo object that now has an 
+                 * initialized source and set up its destination. The name
+                 * thats given is already correct, just not pointing to the
+                 * correct (cloned) kernel.
+                 */
+                auto *portinfo( match.second.first );
+                /** double check to make sure that source kernel hasn't been deallocated **/
+                assert( portinfo->my_kernel != nullptr );
+                /** sanity check on key type, make sure somebody didn't accidentally update destination kernel **/
+                assert( reinterpret_cast< std::uintptr_t >( portinfo->other_kernel ) == match.first );
+                d->temp_map->link(
+                    portinfo->my_kernel     /** cloned source **/,
+                    portinfo->my_name       /** output port name inherited from clone parent **/,
+                    match.second.second         /** newly found cloned destination kernel        **/,
+                    portinfo->other_name,
+                    ( portinfo->out_of_order ? raft::order::out : raft::order::in ) );
+
+            }
+
             /** if any unmatched kernels...somethings wrong throw exception **/
-
-
             current->output.portmap.mutex_map.unlock();
         }
         
