@@ -1,14 +1,18 @@
 /**
- * tempmap.hpp - Defines an interface to create temp-mappings
- * which are basically maps that are allowed to have unconnected
- * inputs and/or outputs that will be connected within a main
- * mapping. The only real rule to these "temp-maps" is that the 
- * names of the output ports must be unique.
- *
- * @author: Jonathan Beard
- * @version: Sun Nov 30 06:12:23 2014
+ * tempmap.hpp - The primary purpose of this class 
+ * is to provide a temporary container that can be 
+ * returned by various utility functions that will 
+ * be recognized by the raft::map container. This is 
+ * for both linquistic recognition withinthe template 
+ * grammar and for convenience when house-keeping 
+ * kernel allocations. This class is an extension of
+ * the mapbase class that adds some public functions
+ * to add kernels to the base class containers. 
  * 
- * Copyright 2014 Jonathan Beard
+ * @author: Jonathan Beard
+ * @version: Sat Jan 21 03:12:23 2017
+ * 
+ * Copyright 2017 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,10 +43,38 @@ public:
     temp_map();
     virtual ~temp_map();
 
+    /**
+     * viewing the graph as directed graph, we have
+     * the following nomenclature of source and sink
+     * if laid out from left to right the source kernels
+     * would be on the left and the sink kernels would be 
+     * on the right, therefore if we get this from a 
+     * duplicate to source function call the kernel
+     * that we called the duplcate on will have the sink
+     * as the calling kernel, and the source as the
+     * leftmost point in the graph. The same logic
+     * applies to the duplicate to sink.
+     */
+
+    /** 
+     * addSourceKernel - add the source kernel to this
+     * temp_map object.
+     * @param raft::kernel * k, should not be null.
+     */
+    void addSourceKernel( raft::kernel * const k );
+
+    /** 
+     * addSinkKernel - add the sink kernel to this
+     * temp_map object.
+     * @param raft::kernel * k, should not be null.
+     */
+    void addSinkKernels( raft::kernel * const k );
+
+
 
 protected:
-   friend class map;
-   /** all needed data structures in mapbase **/
+    friend class map;
+    /** all needed data structures in mapbase **/
 };
 
 } /** end namespace raft **/

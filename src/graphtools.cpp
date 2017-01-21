@@ -107,6 +107,12 @@ duplicateFromVertexToSource( raft::kernel * const start )
          * value. 
          */
         std::map< std::uintptr_t, raft::kernel * > kernel_map;
+        /** 
+         * for graphs with a feedback loop, back-edges, we could
+         * in fact have an edge that appears in the BFS whose
+         * other terminal end has yet to be reached.
+         */
+        std::map< std::uintptr_t, PortInfo* >       unmatched;
         raft::temp_map                             *temp_map     = nullptr;
     }   d;
     /** make structure to hold previously cloned kernel **/
@@ -118,10 +124,57 @@ duplicateFromVertexToSource( raft::kernel * const start )
         if( cloned_kernel == nullptr )
         {
             //TODO throw an exception
-            std::cerr << "attempting to clone a kernel that wasn't meant to be cloned()\n";
+            std::cerr << 
+                "attempting to clone a kernel that wasn't meant to be cloned()\n";
             exit( EXIT_FAILURE );
         }
-        UNUSED( d ) ;
+        /** first kernel **/
+        if( d->kernel_map.size() == 0 )
+        {
+            const auto d_ret_val( d->kernel_map.insert( std::make_pair( 
+                reinterpret_cast< std::uintptr_t >( current ),
+                cloned_kernel ) ) );
+#if NDEBUG
+            UNUSED( d_ret_val );
+#else
+            assert( d_ret_val.second == true );
+#endif
+            return;
+        }
+        else
+        {
+            
+            const auto d_ret_val( d->kernel_map.insert( std::make_pair( 
+                reinterpret_cast< std::uintptr_t >( current ),
+                cloned_kernel ) ) );
+#if NDEBUG
+            UNUSED( d_ret_val );
+#else
+            assert( d_ret_val.second == true );
+#endif
+            /** 
+             * loop over output ports of "current" kernel and hook the
+             * corresponding ports of the cloned kernel to the corresponding
+             * ports on the cloned output kernels in the map (inside data 
+             * struct).
+             */
+            while( ! k->input.portmap.mutex_map.try_lock() )
+            {
+               std::this_thread::yield();
+            }
+            //we have lock, continue
+            /** 2) get map **/
+            auto &map_of_ports( k->input.portmap.map );
+            for( auto &port : map_of_ports )
+            {   
+                /** port.first is the name **/
+                auto &source( port.second );
+                //TODO COME BACK HERE
+            }         
+            /** UNLOCK **/
+            k->input.portmap.mutex_map.unlock();
+        }
+        
         /** else lets get this going **/
         /** 
          * NOTE: need condition if sub_map is empty

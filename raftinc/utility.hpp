@@ -27,6 +27,9 @@
 #include <utility>
 #include <type_traits>
 #include <cmath>
+#include <map>
+#include <memory>
+
 
 namespace raft
 {
@@ -86,5 +89,59 @@ range( const A a,
      return( std::move( out ) );
   }
 }
+
+
+/**
+ * intersect_map - Take in two maps of the same key type,
+ * and return a std::unique_ptr< map > with the intersection
+ * of the two maps. The iterators to these maps are sorted
+ * so that we can make this a linear operation with the
+ * length of N. The value can be different, keys must be 
+ * the same type.
+ *
+ * @param   a  - const std::map<KeyType, LeftValue>
+ * @param   b - const std::map<KeyType, RightValue>
+ * @return  std::unique_ptr< std::map<KeyType, std::pair< LeftValue, RightValue> > >
+ */
+template< typename KeyType, 
+          typename LeftValue, 
+          typename RightValue >
+static 
+std::unique_ptr< std::map<KeyType, std::pair< LeftValue, RightValue> > >
+intersect_map( const std::map<KeyType, LeftValue>  &a, 
+               const std::map<KeyType, RightValue> &b )
+{
+    using map_t = std::map< KeyType, std::pair< LeftValue, RightValue > >;
+    std::unique_ptr< map_t > result( new map_t() );
+
+    auto it_a( a.cbegin() );
+    auto it_b( b.begin() );
+
+    while( it_a != a.cend() && it_b != b.cend() )
+    {
+        if( it_a->first < it_b->first )
+        {
+            ++it_a;
+        }
+        else if (it_b->first < it_a->first)
+        {
+            ++it_b;
+        }
+        else
+        {
+            result->insert( std::make_pair( it_a->first, 
+                                            std::make_pair( it_a->second, 
+                                                            it_b->second )
+                                           )
+                          );
+            ++it_a;
+            ++it_b;
+        }
+    }
+    return( result );
 }
+
+
+
+} /** end namespace raft **/
 #endif /* END _UTILITY_HPP_ */
