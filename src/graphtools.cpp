@@ -211,7 +211,6 @@ GraphTools::duplicateFromVertexToSource( raft::kernel * const start )
 
                 }
                 /** go through unmatched and see if we can match some up **/
-                //TODO
             }
             /** UNLOCK **/
             /** go through unmatched and see if we can match some up **/
