@@ -37,7 +37,7 @@
 #include "utility.hpp"
 
 void
-GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
+GraphTools::BFT( std::set< raft::kernel* > &source_kernels,
                  edge_func func,
                  void      *data,
                  bool      connected_error )
@@ -55,7 +55,7 @@ GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
 }
 
 void
-GraphTools::BFS( std::vector< raft::kernel* > &source_kernels,
+GraphTools::BFT( std::vector< raft::kernel* > &source_kernels,
                  edge_func func,
                  void      *data,
                  bool      connected_error )
@@ -74,7 +74,7 @@ GraphTools::BFS( std::vector< raft::kernel* > &source_kernels,
 
 
 void
-GraphTools::BFS( std::set< raft::kernel* > &source_kernels,
+GraphTools::BFT( std::set< raft::kernel* > &source_kernels,
                  vertex_func                 func,
                  void                        *data )
 {
@@ -286,7 +286,7 @@ GraphTools::duplicateFromVertexToSink( raft::kernel * const start )
 }
 
 void
-GraphTools::__BFS( std::queue< raft::kernel* > &queue,
+GraphTools::__BFT( std::queue< raft::kernel* > &queue,
                    std::set<   raft::kernel* > &visited_set,
                    edge_func                   func,
                    void                        *data,
@@ -340,7 +340,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
 }
 
 void
-GraphTools::__BFS( std::queue< raft::kernel* > &queue,
+GraphTools::__BFT( std::queue< raft::kernel* > &queue,
                    std::set< raft::kernel*   > &visited_set,
                    vertex_func                 func,
                    void                        *data )
@@ -384,7 +384,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
 }
 
 void
-GraphTools::__DFS( std::stack< raft::kernel* > &stack,
+GraphTools::__DFT( std::stack< raft::kernel* > &stack,
                    std::set<   raft::kernel* > &visited_set,
                    edge_func                   func,
                    void                        *data )
@@ -399,7 +399,7 @@ GraphTools::__DFS( std::stack< raft::kernel* > &stack,
 }
 
 void
-GraphTools::__DFS( std::stack< raft::kernel* > &stack,
+GraphTools::__DFT( std::stack< raft::kernel* > &stack,
                    std::set<   raft::kernel* > &visited_set,
                    vertex_func                 func,
                    void                        *data )
