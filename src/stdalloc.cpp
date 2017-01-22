@@ -70,7 +70,7 @@ stdalloc::run()
       (this)->initialize( &a, &b, fifo );
    };
    auto &container( (this)->source_kernels.acquire() );
-   GraphTools::BFS( container, alloc_func );
+   GraphTools::BFT( container, alloc_func );
    (this)->source_kernels.release();
    (this)->setReady();
    return;

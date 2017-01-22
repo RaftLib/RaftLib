@@ -52,7 +52,7 @@ raft::map::checkEdges( kernelkeeper &source_k )
     * a user will have to fix.  Otherwise will return with no
     * errors.
     */
-   GraphTools::BFS( container,
+   GraphTools::BFT( container,
                     []( PortInfo &  a, 
                         PortInfo &  b, 
                         void *  const data )
@@ -85,7 +85,7 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
     /** need to grab impl of Lengauer and Tarjan dominators, use for SESE **/
     /** in the interim, restrict to kernels that are simple to duplicate **/
     /** NOTE: there's a better linear SESE algorithm jcb17May16 **/
-    GraphTools::BFS( source_k,
+    GraphTools::BFT( source_k,
                      []( PortInfo &a, PortInfo &b, void *data )
                      {
                         auto * const all_k( reinterpret_cast< kernel_ptr_t* >( data ) );

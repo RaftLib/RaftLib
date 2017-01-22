@@ -70,7 +70,7 @@ dynalloc::run()
 
    /** acquire source kernels **/
    auto &container( (this)->source_kernels.acquire() );
-   GraphTools::BFS( container, alloc_func );
+   GraphTools::BFT( container, alloc_func );
    (this)->source_kernels.release();
    (this)->setReady();
    std::map< std::size_t, int > size_map;
@@ -117,7 +117,7 @@ dynalloc::run()
       std::this_thread::sleep_for( dura );
 
       auto &container( (this)->source_kernels.acquire() );
-      GraphTools::BFS( container, mon_func );
+      GraphTools::BFT( container, mon_func );
       (this)->source_kernels.release();
 
    }

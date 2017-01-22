@@ -82,7 +82,7 @@ partition_scotch::get_graph_info( container_type    &c,
       local_data->graph.addEdge( num_src, num_dst, weight ); 
       return;
    };
-   GraphTools::BFS( c, 
+   GraphTools::BFT( c, 
                     graph_function,
                     (void*) &d, 
                     false );

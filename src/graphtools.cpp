@@ -51,7 +51,7 @@ GraphTools::BFT( std::set< raft::kernel* > &source_kernels,
                      queue.push( k );
                      visited_set.insert( k );
                   } );
-   GraphTools::__BFS( queue, visited_set, func, data, connected_error );
+   GraphTools::__BFT( queue, visited_set, func, data, connected_error );
 }
 
 void
@@ -69,7 +69,7 @@ GraphTools::BFT( std::vector< raft::kernel* > &source_kernels,
                      queue.push( k );
                      visited_set.insert( k );
                   } );
-   GraphTools::__BFS( queue, visited_set, func, data, connected_error );
+   GraphTools::__BFT( queue, visited_set, func, data, connected_error );
 }
 
 
@@ -88,7 +88,7 @@ GraphTools::BFT( std::set< raft::kernel* > &source_kernels,
                      visited_set.insert( k );
                   });
 
-   GraphTools::__BFS( queue, visited_set, func, data );
+   GraphTools::__BFT( queue, visited_set, func, data );
    return;
 }
 
@@ -110,7 +110,7 @@ GraphTools::duplicateFromVertexToSource( raft::kernel * const start )
         std::map< std::uintptr_t, raft::kernel * > kernel_map;
         /** 
          * for graphs with a feedback loop, back-edges, we could
-         * in fact have an edge that appears in the BFS whose
+         * in fact have an edge that appears in the BFT whose
          * other terminal end has yet to be reached.
          */
         std::map< std::uintptr_t, PortInfo* >       unmatched;
@@ -254,10 +254,10 @@ GraphTools::duplicateFromVertexToSource( raft::kernel * const start )
         /** go through unmatched and see if we can match some up **/
         updateUnmatched( d );
     } );
-    /** set up container to use BFS function **/
+    /** set up container to use BFT function **/
     std::set< raft::kernel* > source_kernels_container;
     source_kernels_container.insert( start );
-    GraphTools::BFS( source_kernels_container, 
+    GraphTools::BFT( source_kernels_container, 
                      f,
                      reinterpret_cast< void* >( &d ) );
 
