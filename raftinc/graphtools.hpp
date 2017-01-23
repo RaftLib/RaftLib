@@ -59,6 +59,8 @@ using vertex_func = std::function< void( raft::kernel*,
 class GraphTools
 {
 public:
+    enum graph_direction : std::uint8_t {   input = 0,
+                                            output };
     GraphTools() = delete;
     
     /**
@@ -71,13 +73,15 @@ public:
      * which is passed to the func.
      * @param source_kernels - set of source kernels.
      * @param func - edge_func, funciton to be called
+     * @param direction - direction for the traversal 
      * @param data - void*, data struct for persistent state
      * @param connected_error, throw an error if not connected
      */
     static void BFT( std::set< raft::kernel* > &source_kernels,  
-                     edge_func func,
-                     void *data = nullptr,
-                     bool connected_error = false );
+                     edge_func                  func,
+                     const graph_direction      direction,
+                     void                      *data = nullptr,
+                     bool                       connected_error = false );
     
     
     /**
@@ -90,11 +94,13 @@ public:
      * which is passed to the func.
      * @param source_kernels - set of source kernels.
      * @param func - edge_func, funciton to be called
+     * @param direction - direction for the traversal 
      * @param data - void*, data struct for persistent state
      * @param connected_error, throw an error if not connected
      */
     static void BFT( std::vector< raft::kernel* > &source_kernels,  
                      edge_func func,
+                     const graph_direction      direction,
                      void *data = nullptr,
                      bool connected_error = false );
      
@@ -103,6 +109,7 @@ public:
     static void
     BFT( std::set< raft::kernel* > &source_kernels,
          vertex_func                 func,
+         const graph_direction       direction,
          void                        *data );
 
 
@@ -154,11 +161,13 @@ private:
    static void __BFT( std::queue< raft::kernel* > &q,
                       std::set<   raft::kernel* > &s,
                       edge_func                   func,
+                     const graph_direction      direction,
                       void                        *data,
                       bool                        connected_error );
    static void __BFT( std::queue< raft::kernel* > &q,
                       std::set<   raft::kernel* > &s,
                       vertex_func                 func,
+                     const graph_direction      direction,
                       void                        *data );
    static void __DFT( std::stack< raft::kernel* > &stack,
                       std::set<   raft::kernel* > &visited_set,

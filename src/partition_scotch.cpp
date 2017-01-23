@@ -84,6 +84,7 @@ partition_scotch::get_graph_info( container_type    &c,
    };
    GraphTools::BFT( c, 
                     graph_function,
+                    GraphTools::input,
                     (void*) &d, 
                     false );
 

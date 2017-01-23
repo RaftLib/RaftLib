@@ -102,6 +102,7 @@ basic_parallel::start()
                               }
                            }
                         },
+                        GraphTools::output,
                         nullptr );
       source_kernels.release();
 

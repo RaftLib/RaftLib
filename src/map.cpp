@@ -62,6 +62,7 @@ raft::map::checkEdges( kernelkeeper &source_k )
                        UNUSED( data );
                        return;
                     },
+                    GraphTools::output,
                     nullptr,
                     true );
    source_k.release();
@@ -171,6 +172,7 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
 
                         }
                      },
+                     GraphTools::output,
                      kernel_ptr,
                      false );
    source.release();

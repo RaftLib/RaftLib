@@ -39,6 +39,7 @@
 void
 GraphTools::BFT( std::set< raft::kernel* > &source_kernels,
                  edge_func func,
+                 const graph_direction direction,
                  void      *data,
                  bool      connected_error )
 {
@@ -51,12 +52,18 @@ GraphTools::BFT( std::set< raft::kernel* > &source_kernels,
                      queue.push( k );
                      visited_set.insert( k );
                   } );
-   GraphTools::__BFT( queue, visited_set, func, data, connected_error );
+   GraphTools::__BFT(   queue, 
+                        visited_set, 
+                        func, 
+                        direction, 
+                        data, 
+                        connected_error );
 }
 
 void
 GraphTools::BFT( std::vector< raft::kernel* > &source_kernels,
                  edge_func func,
+                 const graph_direction direction,
                  void      *data,
                  bool      connected_error )
 {
@@ -69,13 +76,19 @@ GraphTools::BFT( std::vector< raft::kernel* > &source_kernels,
                      queue.push( k );
                      visited_set.insert( k );
                   } );
-   GraphTools::__BFT( queue, visited_set, func, data, connected_error );
+   GraphTools::__BFT(   queue, 
+                        visited_set, 
+                        func, 
+                        direction, 
+                        data, 
+                        connected_error );
 }
 
 
 void
 GraphTools::BFT( std::set< raft::kernel* > &source_kernels,
                  vertex_func                 func,
+                 const graph_direction       direction,
                  void                        *data )
 {
    std::queue< raft::kernel* >   queue;
@@ -88,7 +101,11 @@ GraphTools::BFT( std::set< raft::kernel* > &source_kernels,
                      visited_set.insert( k );
                   });
 
-   GraphTools::__BFT( queue, visited_set, func, data );
+   GraphTools::__BFT(   queue, 
+                        visited_set, 
+                        func, 
+                        direction, 
+                        data );
    return;
 }
 
@@ -259,6 +276,7 @@ GraphTools::duplicateFromVertexToSource( raft::kernel * const start )
     source_kernels_container.insert( start );
     GraphTools::BFT( source_kernels_container, 
                      f,
+                     GraphTools::input,
                      reinterpret_cast< void* >( &d ) );
 
     assert( d.unmatched.size() == 0 );
@@ -289,6 +307,7 @@ void
 GraphTools::__BFT( std::queue< raft::kernel* > &queue,
                    std::set<   raft::kernel* > &visited_set,
                    edge_func                   func,
+                   const graph_direction       direction,
                    void                        *data,
                    bool                        connected_error )
 {
@@ -296,16 +315,22 @@ GraphTools::__BFT( std::queue< raft::kernel* > &queue,
    {
       auto *k( queue.front() );
       queue.pop();
-      if( k == nullptr ) break;
+      if( k == nullptr )
+      {
+        break;
+      }
+      auto &port_container( ( direction == GraphTools::output ? 
+                        k->output :
+                        k->input ) );
       /** iterate over all out-edges **/
       /** 1) get lock **/
-      while( ! k->output.portmap.mutex_map.try_lock() )
+      while( ! port_container.portmap.mutex_map.try_lock() )
       {
          std::this_thread::yield();
       }
       //we have lock, continue
       /** 2) get map **/
-      auto &map_of_ports( k->output.portmap.map );
+      auto &map_of_ports( port_container.portmap.map );
       for( auto &port : map_of_ports )
       {
          PortInfo &source( port.second );
@@ -324,7 +349,7 @@ GraphTools::__BFT( std::queue< raft::kernel* > &queue,
                common::printClassName( *k ) <<
                   "[ \"" <<
                   source.my_name << " \"], please fix and recompile.";
-            k->output.portmap.mutex_map.unlock();
+            port_container.portmap.mutex_map.unlock();
             throw PortException( ss.str() );
          }
          /** if the dst kernel hasn't been visited, visit it **/
@@ -334,7 +359,7 @@ GraphTools::__BFT( std::queue< raft::kernel* > &queue,
             visited_set.insert( source.other_kernel );
          }
       }
-      k->output.portmap.mutex_map.unlock();
+      port_container.portmap.mutex_map.unlock();
    }
    return;
 }
@@ -343,6 +368,7 @@ void
 GraphTools::__BFT( std::queue< raft::kernel* > &queue,
                    std::set< raft::kernel*   > &visited_set,
                    vertex_func                 func,
+                   const graph_direction       direction,
                    void                        *data )
 {
    while( queue.size() > 0 )
@@ -355,12 +381,16 @@ GraphTools::__BFT( std::queue< raft::kernel* > &queue,
       queue.pop();
       /** iterate over all out-edges **/
       /** 1) get lock **/
-      while( ! source->output.portmap.mutex_map.try_lock() )
+      auto &port_container( ( direction == GraphTools::output ? 
+                        source->output :
+                        source->input ) );
+        
+      while( ! port_container.portmap.mutex_map.try_lock() )
       {
          std::this_thread::yield();
       }
       /** 2) get map **/
-      auto &map_of_ports( source->output.portmap.map );
+      auto &map_of_ports( port_container.portmap.map );
       /** 3) visit kernel **/
       func( source, data );
       /** 4) add children to queue **/
@@ -378,7 +408,7 @@ GraphTools::__BFT( std::queue< raft::kernel* > &queue,
             }
          }
       }
-      source->output.portmap.mutex_map.unlock();
+      port_container.portmap.mutex_map.unlock();
    }
    return;
 }
