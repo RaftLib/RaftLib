@@ -144,6 +144,11 @@ public:
     static raft::temp_map*
     duplicateFromVertexToSink( raft::kernel * const start );
 
+
+    static raft::temp_map*
+    duplicateBetweenVertices( raft::kernel * const start,
+                              raft::kernel * const end );
+
 private:
    /**
     * BFT - breadth first search helper function, performs

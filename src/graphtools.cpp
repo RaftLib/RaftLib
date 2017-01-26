@@ -124,14 +124,14 @@ GraphTools::duplicateFromVertexToSource( raft::kernel * const start )
          * (to be duplicated kernels) to the new one which is the 
          * value. 
          */
-        std::map< std::uintptr_t, raft::kernel * > kernel_map;
+        std::map< std::uintptr_t, raft::kernel * >      kernel_map;
         /** 
          * for graphs with a feedback loop, back-edges, we could
          * in fact have an edge that appears in the BFT whose
          * other terminal end has yet to be reached.
          */
-        std::map< std::uintptr_t, PortInfo* >       unmatched;
-        raft::temp_map                             *temp_map     = nullptr;
+        std::map< std::uintptr_t, PortInfo* >           unmatched;
+        raft::temp_map                                 *temp_map     = nullptr;
     }   d;
 
     auto updateUnmatched( []( Data * const d ) -> void 
@@ -287,20 +287,176 @@ GraphTools::duplicateFromVertexToSource( raft::kernel * const start )
 raft::temp_map*
 GraphTools::duplicateFromVertexToSink( raft::kernel * const start )
 {
-    UNUSED( start );
-    /** 
-     * add structure to hold newly cloned head, since
-     * function should return the clone of "start"
-     */
-    //auto 
-    ///** make structure to hold previously cloned kernel **/
-    //vertex_func f( []( raft::kernel *k,
-    //                   void         *data )
-    //{
-    //    /** call clone **/
-    //    
-    //};
-    return( nullptr );
+    assert( start != nullptr );
+    struct Data
+    {
+        Data() : temp_map( new raft::temp_map() )
+        {
+        }
+        /**
+         * NOTE: this map contains a reference from the pointers
+         * cast to uintptr_t (set as the key) that are the original 
+         * (to be duplicated kernels) to the new one which is the 
+         * value. 
+         */
+        std::map< std::uintptr_t, raft::kernel * >      kernel_map;
+        /** 
+         * for graphs with a feedback loop, back-edges, we could
+         * in fact have an edge that appears in the BFT whose
+         * other terminal end has yet to be reached.
+         */
+        std::map< std::uintptr_t, PortInfo* >           unmatched;
+        raft::temp_map                                 *temp_map     = nullptr;
+    }   d;
+
+    auto updateUnmatched( []( Data * const d ) -> void 
+    {
+            auto intersect( raft::utility::intersect_map(
+                d->unmatched,
+                d->kernel_map
+            ) );
+            for( auto &match: (*intersect ) )
+            {
+                /** 
+                 * second will be unmatched portinfo then the kernel map
+                 * we need to take the portinfo object that now has an 
+                 * initialized source and set up its destination. The name
+                 * thats given is already correct, just not pointing to the
+                 * correct (cloned) kernel.
+                 */
+                auto *portinfo( match.second.first );
+                /** double check to make sure that source kernel hasn't been deallocated **/
+                assert( portinfo->my_kernel != nullptr );
+                /** sanity check on key type, make sure somebody didn't accidentally update destination kernel **/
+                assert( reinterpret_cast< std::uintptr_t >( portinfo->other_kernel ) == match.first );
+                d->temp_map->link(
+                    portinfo->my_kernel     /** cloned source **/,
+                    portinfo->my_name       /** output port name inherited from clone parent **/,
+                    match.second.second         /** newly found cloned destination kernel        **/,
+                    portinfo->other_name,
+                    ( portinfo->out_of_order ? raft::order::out : raft::order::in ) );
+                //TODO, add overkill asserts for each of these
+                d->kernel_map.erase( match.first );
+                d->unmatched.erase( match.first );
+            }
+    } );
+
+    /** make structure to hold previously cloned kernel **/
+    vertex_func f( [&updateUnmatched]( raft::kernel *current,
+                       void         *data ) -> void
+    {
+        Data *d( reinterpret_cast< Data* >( data ) );
+        auto *cloned_kernel( current->clone() );
+        if( cloned_kernel == nullptr )
+        {
+            //TODO throw an exception
+            std::cerr << 
+                "attempting to clone a kernel that wasn't meant to be cloned()\n";
+            exit( EXIT_FAILURE );
+        }
+        /** first kernel **/
+        if( d->kernel_map.size() == 0 )
+        {
+            const auto d_ret_val( d->kernel_map.insert( std::make_pair( 
+                reinterpret_cast< std::uintptr_t >( current ),
+                cloned_kernel ) ) );
+#if NDEBUG
+            UNUSED( d_ret_val );
+#else
+            assert( d_ret_val.second == true );
+#endif
+            return;
+        }
+        else
+        {
+            
+            const auto d_ret_val( d->kernel_map.insert( std::make_pair( 
+                reinterpret_cast< std::uintptr_t >( current ),
+                cloned_kernel ) ) );
+#if NDEBUG
+            UNUSED( d_ret_val );
+#else
+            assert( d_ret_val.second == true );
+#endif
+            /** 
+             * loop over output ports of "current" kernel and hook the
+             * corresponding ports of the cloned kernel to the corresponding
+             * ports on the cloned output kernels in the map (inside data 
+             * struct).
+             */
+            auto &map_of_ports( current->input.portmap.map );
+            for( auto &port : map_of_ports )
+            {   
+                /** port.first is the name **/
+                auto &port_info( port.second );
+                /**
+                 * we want to link clone.out to the 
+                 * output kernel clone saved in the 
+                 * map that corresponds to the memory
+                 * location then link it to the new 
+                 * kernels port.
+                 */
+                const auto src_kern_hash( 
+                    reinterpret_cast< std::uintptr_t >( 
+                        port_info.other_kernel
+                    )
+                );
+                /** 
+                 * look up this source kernel in our
+                 * clone map.
+                 */
+                auto found( d->kernel_map.find( src_kern_hash ) );
+                if( found == d->kernel_map.end() )
+                {
+                    /** 
+                     * get port info for the current named port, what we want is the cloned kernel's 
+                     * port info then index it on the destination that we're waiting on, when the
+                     * destination appears in the kernel_map then we can complete the link 
+                     */
+                    auto &cloned_port_info( cloned_kernel->input.getPortInfoFor( port_info.my_name ) );
+                    /** destination not yet reached, likely back edge **/
+                    d->unmatched.insert( 
+                        std::make_pair( 
+                            reinterpret_cast< std::uintptr_t >( src_kern_hash ) /** kern we're waiting to be added **/,
+                            &cloned_port_info                                   /** ptr to port info for cloned kernel **/
+                        )
+                    );
+                }
+                else
+                {
+                    /** 
+                     * we found a match, lets link up the new 
+                     * kernel.
+                     */
+                    d->temp_map->link(
+                        cloned_kernel       /** which kernel **/,
+                        port_info.my_name   /** port name    **/,
+                        found->second        /** cloned destination **/,
+                        port_info.other_name /** destination **/,
+                        ( port_info.out_of_order ? raft::order::out : raft::order::in )
+                    );
+
+                }
+                /** go through unmatched and see if we can match some up **/
+            }
+            /** go through unmatched and see if we can match some up **/
+            updateUnmatched( d );
+        }   /** end loop over current vertex output edges **/
+
+        /** go through unmatched and see if we can match some up **/
+        updateUnmatched( d );
+    } );
+    /** set up container to use BFT function **/
+    std::set< raft::kernel* > source_kernels_container;
+    source_kernels_container.insert( start );
+    GraphTools::BFT( source_kernels_container, 
+                     f,
+                     GraphTools::output,
+                     reinterpret_cast< void* >( &d ) );
+
+    assert( d.unmatched.size() == 0 );
+    assert( d.temp_map != nullptr );
+    return( d.temp_map );
 }
 
 void
@@ -411,6 +567,89 @@ GraphTools::__BFT( std::queue< raft::kernel* > &queue,
       port_container.portmap.mutex_map.unlock();
    }
    return;
+}
+
+raft::temp_map*
+GraphTools::duplicateBetweenVertices( raft::kernel * const start,
+                                      raft::kernel * const end )
+{
+    assert( start != nullptr );
+    assert( end   != nullptr );
+    struct Data
+    {
+        Data() : temp_map( new raft::temp_map() )
+        {
+        }
+        /**
+         * NOTE: this map contains a reference from the pointers
+         * cast to uintptr_t (set as the key) that are the original 
+         * (to be duplicated kernels) to the new one which is the 
+         * value. 
+         */
+        std::map< std::uintptr_t, raft::kernel * >      kernel_map;
+        /** 
+         * for graphs with a feedback loop, back-edges, we could
+         * in fact have an edge that appears in the BFT whose
+         * other terminal end has yet to be reached.
+         */
+        std::map< std::uintptr_t, PortInfo* >           unmatched;
+        raft::temp_map                                 *temp_map     = nullptr;
+    }   d;
+
+    auto updateUnmatched( []( Data * const d ) -> void 
+    {
+            auto intersect( raft::utility::intersect_map(
+                d->unmatched,
+                d->kernel_map
+            ) );
+            for( auto &match: (*intersect ) )
+            {
+                /** 
+                 * second will be unmatched portinfo then the kernel map
+                 * we need to take the portinfo object that now has an 
+                 * initialized source and set up its destination. The name
+                 * thats given is already correct, just not pointing to the
+                 * correct (cloned) kernel.
+                 */
+                auto *portinfo( match.second.first );
+                /** double check to make sure that source kernel hasn't been deallocated **/
+                assert( portinfo->my_kernel != nullptr );
+                /** sanity check on key type, make sure somebody didn't accidentally update destination kernel **/
+                assert( reinterpret_cast< std::uintptr_t >( portinfo->other_kernel ) == match.first );
+                d->temp_map->link(
+                    portinfo->my_kernel     /** cloned source **/,
+                    portinfo->my_name       /** output port name inherited from clone parent **/,
+                    match.second.second         /** newly found cloned destination kernel        **/,
+                    portinfo->other_name,
+                    ( portinfo->out_of_order ? raft::order::out : raft::order::in ) );
+                //TODO, add overkill asserts for each of these
+                d->kernel_map.erase( match.first );
+                d->unmatched.erase( match.first );
+            }
+    } );
+    
+    //TODO finish up here, complete BFS from start to ensure
+    //we get all paths from the start to end in the graph
+    //back edges require that we be a bit careful here
+    std::queue< raft::kernel * > queue;
+    queue.emplace( start );
+    while( queue.size() > 0 )
+    {
+        auto *curr_ptr( queue.front() );
+        
+        queue.pop();
+        assert( curr_ptr != nullptr );
+        const auto k_hash( reinterpret_cast< std::uintptr_t >( 
+            curr_ptr        
+        ) );
+        auto *cloned_ptr( curr_ptr->clone() );
+        d.kernel_map.insert( std::make_pair( k_hash, cloned_ptr ) );
+
+
+        
+    } /** keep going **/
+    
+    return( d.temp_map );
 }
 
 void
