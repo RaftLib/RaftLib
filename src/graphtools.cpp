@@ -628,12 +628,32 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
             }
     } );
     
-    //TODO finish up here, complete BFS from start to ensure
-    //we get all paths from the start to end in the graph
-    //back edges require that we be a bit careful here
+    /** 
+     * so this is going to be a special case of the BFS
+     * where the entry has a single in-edge and the exit
+     * has a single out-edge. The termination conditions
+     * regardless of internal connectivity is when the 
+     * ending vertex has been inserted into the queue a
+     * number of times that is equal to the in-edge count
+     * of that last vertex (i.e., all expected in-edges
+     * have been found though all paths within the graph
+     * which gets us out of the horrid end-case of all paths
+     * if we had back edges from the last vertex...so 
+     * restriction == faster, and our templated language
+     * restricts us to that condition.
+     */
     std::queue< raft::kernel * > queue;
+    std::uint8_t terminate( 0 );
     queue.emplace( start );
-    while( queue.size() > 0 )
+    auto stop( [ &end ]( raft::kernel * const test ) noexcept -> bool
+    {
+        static_assert( std::is_pointer< decltype( end ) >::value, "end must be a pointer" ); 
+        const auto hash_end( reinterpret_cast< std::uintptr_t >(
+            end
+        ) );
+        
+    } );
+    while( queue.size() > 0 && terminate < 3 )
     {
         auto *curr_ptr( queue.front() );
         
