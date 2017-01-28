@@ -43,7 +43,7 @@ GraphTools::BFT( std::set< raft::kernel* > &source_kernels,
                  void      *data,
                  bool      connected_error )
 {
-   std::set< raft::kernel* > visited_set;
+   std::set< raft::kernel* >       visited_set;
    std::queue< raft::kernel* >     queue;
    std::for_each( source_kernels.begin(),
                   source_kernels.end(),
@@ -643,17 +643,24 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
      * restricts us to that condition.
      */
     std::queue< raft::kernel * > queue;
-    std::uint8_t terminate( 0 );
+    const auto                      term_cond( end->input.count() );
+    decltype( end->input.count() )  terminate( 0 );
     queue.emplace( start );
-    auto stop( [ &end ]( raft::kernel * const test ) noexcept -> bool
+    static_assert( 
+        std::is_pointer< decltype( end ) >::value, 
+            "runtime error: end must be a pointer" ); 
+    const auto hash_end( reinterpret_cast< std::uintptr_t >(
+        end
+    ) );
+    auto update_term_cond( 
+        [ hash_end, &terminate ]( raft::kernel * const test ) noexcept -> 
+            raft::kernel * const 
     {
-        static_assert( std::is_pointer< decltype( end ) >::value, "end must be a pointer" ); 
-        const auto hash_end( reinterpret_cast< std::uintptr_t >(
-            end
-        ) );
-        
+        const auto hash_curr( reinterpret_cast< std::uintptr_t >( test ) );
+        terminate += ! ( hash_end ^ hash_curr );
+        return( test );   
     } );
-    while( queue.size() > 0 && terminate < 3 )
+    while( queue.size() > 0 && terminate < term_cond )
     {
         auto *curr_ptr( queue.front() );
         
@@ -664,11 +671,95 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
         ) );
         auto *cloned_ptr( curr_ptr->clone() );
         d.kernel_map.insert( std::make_pair( k_hash, cloned_ptr ) );
+        //FIXME need to add in the "visited std::set from above
+        /**
+         * reason we're using std::set vs. a visited bit on the 
+         * kernel data structure is b/c we could have (and do)
+         * multiple threads traversing this graph at any one
+         * time each having the need for unique non-aliasable
+         * "visited info." Having a single one would force
+         * sequentializing the grapht raversals to a single
+         * thread. Secondly a set, while being more computationally
+         * taxing than a giant bit-vector array with a bit for
+         * each vertex, this is far more compact since the 
+         * sub-graph traversed in this case should be less
+         * than the size of the total graph. Likely I'll change
+         * the above representations to dynamic bit vectors
+         * using either boost or custom since those in fact
+         * (BFT and DFT) most often do in fact traverse the 
+         * entire graph and the speed of a bitvector would 
+         * outweight the space of having a bit per kernel.
+         */
+        if( curr_ptr != end )
+        {
+            auto &map_of_ports( curr_ptr->output.portmap.map );
+            for( auto &port : map_of_ports )
+            {   
+                /** port.first is the name **/
+                auto &port_info( port.second );
+                /**
+                 * we want to link clone.out to the 
+                 * output kernel clone saved in the 
+                 * map that corresponds to the memory
+                 * location then link it to the new 
+                 * kernels port.
+                 */
+                const auto dst_kern_hash( 
+                    reinterpret_cast< std::uintptr_t >( 
+                        port_info.other_kernel
+                    )
+                );
+                /** 
+                 * look up this source kernel in our
+                 * clone map.
+                 */
+                auto found( d->kernel_map.find( dst_kern_hash ) );
+                if( found == d->kernel_map.end() )
+                {
+                    /** 
+                     * get port info for the current named port, 
+                     * what we want is the cloned kernel's 
+                     * port info then index it on the destination 
+                     * that we're waiting on, when the
+                     * destination appears in the kernel_map 
+                     * then we can complete the link 
+                     */
+                    auto &cloned_port_info( 
+                        cloned_kernel->input.getPortInfoFor( port_info.my_name ) );
+                    /** destination not yet reached, likely back edge **/
+                    d->unmatched.insert( 
+                        std::make_pair( 
+                            reinterpret_cast< std::uintptr_t >( dst_kern_hash ) /** kern we're waiting to be added **/,
+                            &cloned_port_info                                   /** ptr to port info for cloned kernel **/
+                        )
+                    );
+                }
+                else
+                {
+                    /** 
+                     * we found a match, lets link up the new 
+                     * kernel.
+                     */
+                    d->temp_map->link(
+                        cloned_kernel       /** which kernel **/,
+                        port_info.my_name   /** port name    **/,
+                        found->second        /** cloned destination **/,
+                        port_info.other_name /** destination **/,
+                        ( port_info.out_of_order ? raft::order::out : raft::order::in )
+                    );
 
+                }
+                /** go through unmatched and see if we can match some up **/
+            }
+            /** go through unmatched and see if we can match some up **/
+            updateUnmatched( d );
+        }   /** end loop over current vertex output edges **/
 
-        
+        /** go through unmatched and see if we can match some up **/
+        updateUnmatched( d );
     } /** keep going **/
-    
+    } /** end **/
+
     return( d.temp_map );
 }
 
