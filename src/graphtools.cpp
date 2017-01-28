@@ -596,11 +596,11 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
         raft::temp_map                                 *temp_map     = nullptr;
     }   d;
 
-    auto updateUnmatched( []( Data * const d ) -> void 
+    auto updateUnmatched( []( Data &d ) -> void 
     {
             auto intersect( raft::utility::intersect_map(
-                d->unmatched,
-                d->kernel_map
+                d.unmatched,
+                d.kernel_map
             ) );
             for( auto &match: (*intersect ) )
             {
@@ -616,15 +616,15 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
                 assert( portinfo->my_kernel != nullptr );
                 /** sanity check on key type, make sure somebody didn't accidentally update destination kernel **/
                 assert( reinterpret_cast< std::uintptr_t >( portinfo->other_kernel ) == match.first );
-                d->temp_map->link(
-                    portinfo->my_kernel     /** cloned source **/,
-                    portinfo->my_name       /** output port name inherited from clone parent **/,
-                    match.second.second         /** newly found cloned destination kernel        **/,
-                    portinfo->other_name,
-                    ( portinfo->out_of_order ? raft::order::out : raft::order::in ) );
+                d.temp_map->link(
+                  portinfo->my_kernel     /** cloned source **/,
+                  portinfo->my_name       /** output port name inherited from clone parent **/,
+                  match.second.second         /** newly found cloned destination kernel        **/,
+                  portinfo->other_name,
+                  ( portinfo->out_of_order ? raft::order::out : raft::order::in ) );
                 //TODO, add overkill asserts for each of these
-                d->kernel_map.erase( match.first );
-                d->unmatched.erase( match.first );
+                d.kernel_map.erase( match.first );
+                d.unmatched.erase( match.first );
             }
     } );
     
@@ -654,24 +654,38 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
     ) );
     auto update_term_cond( 
         [ hash_end, &terminate ]( raft::kernel * const test ) noexcept -> 
-            raft::kernel * const 
+            raft::kernel* 
     {
         const auto hash_curr( reinterpret_cast< std::uintptr_t >( test ) );
         terminate += ! ( hash_end ^ hash_curr );
         return( test );   
     } );
+    std::set< std::uintptr_t > visited;
     while( queue.size() > 0 && terminate < term_cond )
     {
         auto *curr_ptr( queue.front() );
-        
         queue.pop();
         assert( curr_ptr != nullptr );
         const auto k_hash( reinterpret_cast< std::uintptr_t >( 
             curr_ptr        
         ) );
+        const auto ret_insert( visited.insert( k_hash ) );
+        if( ! ret_insert.second  )
+        {
+            /** 
+             * given back edges we could have added some things 
+             * we need to match up. we already know the connectivity
+             * so all we need is the other kernel to add to. Its
+             * easy to construct an example on a dry erase board 
+             * that results in new kernels being added from back 
+             * edge and resulting in the one we need to connect
+             * being available now 
+             */
+            updateUnmatched( d );
+            continue;
+        }
         auto *cloned_ptr( curr_ptr->clone() );
         d.kernel_map.insert( std::make_pair( k_hash, cloned_ptr ) );
-        //FIXME need to add in the "visited std::set from above
         /**
          * reason we're using std::set vs. a visited bit on the 
          * kernel data structure is b/c we could have (and do)
@@ -713,8 +727,8 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
                  * look up this source kernel in our
                  * clone map.
                  */
-                auto found( d->kernel_map.find( dst_kern_hash ) );
-                if( found == d->kernel_map.end() )
+                auto found( d.kernel_map.find( dst_kern_hash ) );
+                if( found == d.kernel_map.end() )
                 {
                     /** 
                      * get port info for the current named port, 
@@ -725,9 +739,9 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
                      * then we can complete the link 
                      */
                     auto &cloned_port_info( 
-                        cloned_kernel->input.getPortInfoFor( port_info.my_name ) );
+                        cloned_ptr->input.getPortInfoFor( port_info.my_name ) );
                     /** destination not yet reached, likely back edge **/
-                    d->unmatched.insert( 
+                    d.unmatched.insert( 
                         std::make_pair( 
                             reinterpret_cast< std::uintptr_t >( dst_kern_hash ) /** kern we're waiting to be added **/,
                             &cloned_port_info                                   /** ptr to port info for cloned kernel **/
@@ -740,25 +754,22 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
                      * we found a match, lets link up the new 
                      * kernel.
                      */
-                    d->temp_map->link(
-                        cloned_kernel       /** which kernel **/,
-                        port_info.my_name   /** port name    **/,
+                    d.temp_map->link(
+                        cloned_ptr           /** which kernel       **/,
+                        port_info.my_name    /** port name          **/,
                         found->second        /** cloned destination **/,
-                        port_info.other_name /** destination **/,
+                        port_info.other_name /** destination        **/,
                         ( port_info.out_of_order ? raft::order::out : raft::order::in )
                     );
 
                 }
                 /** go through unmatched and see if we can match some up **/
             }
-            /** go through unmatched and see if we can match some up **/
-            updateUnmatched( d );
-        }   /** end loop over current vertex output edges **/
-
+        }  /** end if curr_ptr != end **/ 
         /** go through unmatched and see if we can match some up **/
         updateUnmatched( d );
-    } /** keep going **/
-    } /** end **/
+    } /** keep going  while not term condition**/
+    updateUnmatched( d );
 
     return( d.temp_map );
 }
