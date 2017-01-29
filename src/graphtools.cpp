@@ -665,7 +665,6 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
         terminate += ! ( hash_end ^ hash_curr );
         return( test );   
     } );
-    std::set< std::uintptr_t > visited;
     while( queue.size() > 0 && terminate < term_cond )
     {
         auto *curr_ptr( update_term_cond( queue ) );
@@ -673,41 +672,8 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
         const auto k_hash( reinterpret_cast< std::uintptr_t >( 
             curr_ptr        
         ) );
-        const auto ret_insert( visited.insert( k_hash ) );
-        if( ! ret_insert.second  )
-        {
-            /** 
-             * given back edges we could have added some things 
-             * we need to match up. we already know the connectivity
-             * so all we need is the other kernel to add to. Its
-             * easy to construct an example on a dry erase board 
-             * that results in new kernels being added from back 
-             * edge and resulting in the one we need to connect
-             * being available now 
-             */
-            updateUnmatched( d );
-            continue;
-        }
         auto *cloned_ptr( curr_ptr->clone() );
         d.kernel_map.insert( std::make_pair( k_hash, cloned_ptr ) );
-        /**
-         * reason we're using std::set vs. a visited bit on the 
-         * kernel data structure is b/c we could have (and do)
-         * multiple threads traversing this graph at any one
-         * time each having the need for unique non-aliasable
-         * "visited info." Having a single one would force
-         * sequentializing the grapht raversals to a single
-         * thread. Secondly a set, while being more computationally
-         * taxing than a giant bit-vector array with a bit for
-         * each vertex, this is far more compact since the 
-         * sub-graph traversed in this case should be less
-         * than the size of the total graph. Likely I'll change
-         * the above representations to dynamic bit vectors
-         * using either boost or custom since those in fact
-         * (BFT and DFT) most often do in fact traverse the 
-         * entire graph and the speed of a bitvector would 
-         * outweight the space of having a bit per kernel.
-         */
         if( curr_ptr != end )
         {
             auto &map_of_ports( curr_ptr->output.portmap.map );
