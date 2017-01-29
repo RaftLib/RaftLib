@@ -596,6 +596,9 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
         raft::temp_map                                 *temp_map     = nullptr;
     }   d;
 
+    d.temp_map->addSourceKernel( start );
+    d.temp_map->addSinkKernel( end );
+
     auto updateUnmatched( []( Data &d ) -> void 
     {
             auto intersect( raft::utility::intersect_map(
@@ -653,9 +656,11 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
         end
     ) );
     auto update_term_cond( 
-        [ hash_end, &terminate ]( raft::kernel * const test ) noexcept -> 
+        [ hash_end, &terminate ]( std::queue< raft::kernel* > &queue ) noexcept -> 
             raft::kernel* 
     {
+        auto *test( queue.front() );
+        queue.pop();
         const auto hash_curr( reinterpret_cast< std::uintptr_t >( test ) );
         terminate += ! ( hash_end ^ hash_curr );
         return( test );   
@@ -663,8 +668,7 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
     std::set< std::uintptr_t > visited;
     while( queue.size() > 0 && terminate < term_cond )
     {
-        auto *curr_ptr( queue.front() );
-        queue.pop();
+        auto *curr_ptr( update_term_cond( queue ) );
         assert( curr_ptr != nullptr );
         const auto k_hash( reinterpret_cast< std::uintptr_t >( 
             curr_ptr        
@@ -725,11 +729,22 @@ GraphTools::duplicateBetweenVertices( raft::kernel * const start,
                 );
                 /** 
                  * look up this source kernel in our
-                 * clone map.
+                 * clone map. this also acts as an 
+                 * implicit "visited" state maintainer
+                 * so we don't have to have a sep. store
+                 * for that. Now we just need to insert
+                 * the destination kernel "other_kernel"
+                 * into the queue if we haven't already 
+                 * visited it.
                  */
                 auto found( d.kernel_map.find( dst_kern_hash ) );
                 if( found == d.kernel_map.end() )
                 {
+                    /** 
+                     * haven't visited this destination port,
+                     * lets schedule a visit.
+                     */
+                    queue.push( port_info.other_kernel );
                     /** 
                      * get port info for the current named port, 
                      * what we want is the cloned kernel's 

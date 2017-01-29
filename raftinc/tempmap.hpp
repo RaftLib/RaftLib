@@ -68,7 +68,7 @@ public:
      * temp_map object.
      * @param raft::kernel * k, should not be null.
      */
-    void addSinkKernels( raft::kernel * const k );
+    void addSinkKernel( raft::kernel * const k );
 
 
     /** 

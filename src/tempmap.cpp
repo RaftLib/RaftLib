@@ -51,7 +51,7 @@ raft::temp_map::addSourceKernel( raft::kernel * const k )
 }
 
 void 
-raft::temp_map::addSinkKernels( raft::kernel * const k )
+raft::temp_map::addSinkKernel( raft::kernel * const k )
 {
     assert( k != nullptr );
     /** 
