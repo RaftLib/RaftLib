@@ -78,7 +78,7 @@
 <h3>
 <a id="what-is-it" class="anchor" href="#what-is-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is it?</h3>
 <p>
-In short: RaftLib is a way to write short sequential blocks of code that can be executed in a distributed parallel manner without all the fuss, boilerplate, and hassle of standard parallel code. Take this short example: 
+In short: RaftLib is a way to write sequential blocks of code that can be executed in a distributed parallel manner without all the fuss, boilerplate, and hassle of standard parallel code. Take this short example: 
 <script src="https://gist.github.com/jonathan-beard/755120bb5e3b11b530cb42787e60fa96.js"></script>
 Kernels "a" and "b" are written as sequential code. Using iostream-like operators the programmer tells the run-time the data dependencies. Once <tt>exe()</tt> is called, the map is executed in parallel as the run-time chooses (it attempts to optimize). This form of application is known as streaming or data-flow.
 </p>
