@@ -14,7 +14,9 @@ find_package( Scotch )
 
 
 
-set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
+set( TESTAPPS allocate 
+    fixedAllocate
+    portTypeException dynallocate stdlibsupport split 
      join lambdatest allocate_s foreach peekrange  
      partitionTest parallel peek 
      bracketsTest uniform chain 

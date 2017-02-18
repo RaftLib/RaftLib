@@ -98,7 +98,11 @@ Allocate::allocate( PortInfo &a, PortInfo &b, void *data )
    }
    else
    {
-      fifo = test_func( INITIAL_ALLOC_SIZE    /* items */,
+      /** if fixed buffer size, use that, else use INITIAL_ALLOC_SIZE **/
+      const auto alloc_size( 
+         a.fixed_buffer_size != 0 ? a.fixed_buffer_size : INITIAL_ALLOC_SIZE 
+      );
+      fifo = test_func( alloc_size            /* items */,
                         ALLOC_ALIGN_WIDTH     /* align */,
                         nullptr );
    }

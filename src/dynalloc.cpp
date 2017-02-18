@@ -85,6 +85,16 @@ dynalloc::run()
    auto mon_func = [&]( PortInfo &a, PortInfo &b, void *data ) -> void
    {
       (void) data;
+      /** 
+       * return if fixed buffer specified for this link
+       * fixed buffer is always taken from the source port
+       * info struct or "a" in this case.
+       */
+      if( a.fixed_buffer_size != 0 )
+      {
+         /** skip this one **/
+         return;
+      }
 
       const auto hash_val( dynalloc::hash( a, b ) );
       /** TODO, the values might wrap if no monitoring on **/

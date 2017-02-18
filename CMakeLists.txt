@@ -82,6 +82,7 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      doesntFitInCacheLine
      isInlineClass
      isExtArray
+    fixedAllocate
      isExtAlloc 
      isInlineNonClass 
      allocateSendPush 
