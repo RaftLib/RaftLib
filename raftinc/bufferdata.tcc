@@ -96,8 +96,7 @@ template < class T > struct Data< T,
       }
 #elif (defined _WIN64 ) || (defined _WIN32) 
 //FIXME, we need to test this on Win sys before making live    
-      (this)->store = reinterpret_cast< T* >(  _aligned_malloc( align, 
-                                                                (this)->length_store ) );
+      (this)->store = reinterpret_cast< T* >(  _aligned_malloc( (this)->length_store,align) );
 #else
       /** 
        * would use the array allocate, but well...we'd have to 
@@ -171,7 +170,11 @@ template < class T > struct Data< T,
       //FREE USED HERE
       if( ! (this)->external_alloc )
       {
+#if (defined _WIN64 ) || (defined _WIN32) 
+		 _aligned_free( (this)->store );
+#else
          free( (this)->store );
+#endif
       }
       free( (this)->signal );
    }
@@ -227,8 +230,7 @@ template < class T >
       }
 #elif (defined _WIN64 ) || (defined _WIN32) 
 //FIXME, we need to test this on Win sys before making live    
-      (this)->store = reinterpret_cast< type_t* >(  _aligned_malloc( align, 
-                                                                    (this)->length_store ) );
+      (this)->store = reinterpret_cast< type_t* >(  _aligned_malloc((this)->length_store, align));
 #else
       /** 
        * would use the array allocate, but well...we'd have to 
@@ -295,7 +297,11 @@ template < class T >
       //FREE USED HERE
       if( ! (this)->external_alloc )
       {
+#if (defined _WIN64 ) || (defined _WIN32) 
+		  _aligned_free( (this)->store );
+#else
          free( (this)->store );
+#endif
       }
       free( (this)->signal );
    }

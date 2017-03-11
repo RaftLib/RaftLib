@@ -22,11 +22,50 @@
 #include <cstdint>
 #include <cassert>
 
+#ifdef _MSC_VER
+#    if (_MSC_VER >= 1800)
+#        define __alignas_is_defined 1
+#    endif
+#    if (_MSC_VER >= 1900)
+#        define __alignof_is_defined 1
+#    endif
+#else
+#    include <cstdalign>   // __alignas/of_is_defined directly from the implementation
+#endif
+
+
+#ifdef __alignas_is_defined
+#    define ALIGN(X) alignas(X)
+#else
+#    pragma message("C++11 alignas unsupported :( Falling back to compiler attributes")
+#    ifdef __GNUG__
+#        define ALIGN(X) __attribute__ ((aligned(X)))
+#    elif defined(_MSC_VER)
+#        define ALIGN(X) __declspec(align(X))
+#    else
+#        error Unknown compiler, unknown alignment attribute!
+#    endif
+#endif
+
+#ifdef __alignof_is_defined
+#    define ALIGNOF(X) alignof(x)
+#else
+#    pragma message("C++11 alignof unsupported :( Falling back to compiler attributes")
+#    ifdef __GNUG__
+#        define ALIGNOF(X) __alignof__ (X)
+#    elif defined(_MSC_VER)
+#        define ALIGNOF(X) __alignof(X)
+#    else
+#        error Unknown compiler, unknown alignment attribute!
+#    endif
+#endif
+
+
 /**
  * FIXME...should probably align these to cache line then 
  * zero extend pad for producer/consumer.
  */
-struct Blocked
+struct ALIGN(64) Blocked
 {
     using value_type = std::uint32_t;
     using whole_type = std::uint64_t;
@@ -59,9 +98,7 @@ struct Blocked
 
     char pad[ L1D_CACHE_LINE_SIZE - sizeof( whole_type ) ]; 
 }
-#if __APPLE__ || __linux
-__attribute__ (( aligned( 64 )))
-#endif
+
 ;
 
 #endif /* END _BLOCKED_HPP_ */

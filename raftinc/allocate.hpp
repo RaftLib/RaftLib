@@ -40,7 +40,7 @@
  * that reference the alignments.
  */
 
-#if defined __AVX__ || __AVX2__
+#if defined __AVX__ || __AVX2__ || _WIN64
 #define ALLOC_ALIGN_WIDTH 32
 #else
 #define ALLOC_ALIGN_WIDTH 16
