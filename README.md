@@ -14,13 +14,13 @@ Offline testing:
 
 ### Pre-requisites
 
-####OS X & Linux
+#### OS X & Linux
 Compiler: c++14 capable -> Clang, GNU GCC 5.0+, or Intel icc
 Libraries: 
 * Boost, if not installed, needed headers automatically downloaded with cmake
 
-####Windows
-In progress
+#### Windows
+* Latest merge from pull request to main should enable compilation on VS on Win10.
 
 ### Install
 Make a build directory (for the instructions below, we'll 
@@ -58,7 +58,7 @@ PREFIX ?= /usr/local
 ```
 Feel free to substitute your favorite build tool. I use Ninja and make depending on which machine I'm on. To change out, use cmake to generate the appropriate build files with the -Gxxx flag.
 
-###Citation
+### Citation
 If you use this framework for something that gets published, please cite it as:
 ```bibtex
 @article{blc16,
@@ -70,7 +70,7 @@ If you use this framework for something that gets published, please cite it as:
   journal = {International Journal of High Performance Computing Applications}
 }
 ```
-###Other Info Sources
+### Other Info Sources
 * [Project web page](http://raftlib.io)
 * [Project wiki page](https://github.com/jonathan-beard/RaftLib/wiki)
 * [Blog post intro](https://goo.gl/4VDlbr)
@@ -78,7 +78,7 @@ If you use this framework for something that gets published, please cite it as:
 * [Views on parallel computing, general philosphy](https://goo.gl/R5fQAl)
 * Feel free to e-mail one of the authors of the repo
 
-###Random Notes
+### Random Notes
 The old Makefile had an uninstall script, I need to add an object to the 
 cmake file so that we can have similar functionality. Theres also a bit
 of cleanup to do as I transition fully from Make to CMake.
@@ -92,3 +92,5 @@ in a few weeks. ( 5 Jan 2016, jcb )
 Added in prefetch for object types larger than a single cache line. Profiling
 shows that it's really not beneficial on most platforms with good prefetch
 algorithms. (25 March 2016, jcb )
+
+#### Will release beta prior to May 2017 CPPNow2017 tutorial (17 March 2017, jcb)
