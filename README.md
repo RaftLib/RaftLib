@@ -10,7 +10,7 @@ CI Test environment:
 
 Offline testing:
 * OS X - El Capitan, Apple LLVM version 7.0.2, CMake 3.6
-* Linux - kenrel v. 4.4, gcc-6.1/clang 3.8
+* Linux - kernel v. 4.4, gcc-6.1/clang 3.8
 
 ### Pre-requisites
 
@@ -61,16 +61,13 @@ Feel free to substitute your favorite build tool. I use Ninja and make depending
 ###Citation
 If you use this framework for something that gets published, please cite it as:
 ```bibtex
-@inproceedings{blc15,
-  author = {Beard, Jonathan C. and Li, Peng and Chamberlain, Roger D.},
-  title = {RaftLib: A {C++} Template Library for High Performance Stream Parallel Processing},
-  publisher = {ACM},
-  address = {New York, NY, USA},
-  year = {2015},
-  month = feb,
-  series = {PMAM 2015},
-  booktitle = {Proceedings of Programming Models and Applications on Multicores and Manycores},
-  pages = {96-105},
+@article{blc16,
+  author = {Beard, Jonathan C and Li, Peng and Chamberlain, Roger D},
+  title = {RaftLib: A C++ Template Library for High Performance Stream Parallel Processing},
+  year = {2016},
+  doi = {http://dx.doi.org/10.1177/1094342016672542},
+  eprint = {http://hpc.sagepub.com/content/early/2016/10/18/1094342016672542.full.pdf+html},
+  journal = {International Journal of High Performance Computing Applications}
 }
 ```
 ###Other Info Sources
