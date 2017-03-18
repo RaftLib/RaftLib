@@ -119,6 +119,13 @@ template < manip_vec_t... VECLIST > struct manip
     }
 };
 
+
+/**
+ * start buffer manip section
+ */
+
+//TODO come back here - 18 March 2017 jcb
+
 } /** end namespace raft **/
 
 #endif /* END _RAFTMANIP_HPP_ */

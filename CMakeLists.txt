@@ -158,6 +158,7 @@ set( TESTAPPS
      streamManipZeroE
      streamManipZeroF
      streamManipZeroG
+     fixedAllocate
         ) 
 
 
