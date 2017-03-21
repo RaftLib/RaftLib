@@ -152,11 +152,10 @@ kpair& operator >> ( const ManipVecKern &&a, raft::kernel &b );
 /** see manipVectorZeroB.cpp for test case **/
 kpair& operator >> ( const ManipVecPair &&a, raft::kernel &b );
 
+#if 0
 /**
  * BEGIN ERROR STATES FOR PARSE 
  **/
-
-
 /**
  * error state: #4 (for test cases)
  * manip_vec_t >=  raft::kernel 
@@ -208,5 +207,5 @@ kpair& operator >> ( const ManipVecPair &&a, const raft::manip_vec_t &&b );
  * raft::manip_vec_tl => raft::manip_vec_t
  */
 //TODO, make exception
-
+#endif
 #endif /* END _STREAMPARSE_HPP_ */
