@@ -15,7 +15,6 @@ find_package( Scotch )
 
 
 set( TESTAPPS allocate 
-    fixedAllocate
     portTypeException dynallocate stdlibsupport split 
      join lambdatest allocate_s foreach peekrange  
      partitionTest parallel peek 
@@ -46,7 +45,8 @@ set( TESTAPPS allocate
      staticLongSplitChainRetStruct
      staticSplitChainJoinRetStruct
      staticSplitJoinRetStruct 
-     chainMultiplePorts )
+     chainMultiplePorts
+     fixedAllocate )
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 
