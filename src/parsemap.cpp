@@ -37,14 +37,14 @@ parsemap::~parsemap()
      * safely. Right now just assume we need
      * to clean up and get on with things.
      */
-    while( ! state.empty() )
+    while( ! state_stack.empty() )
     {
         /** 
          * techically reference to pointer
          */
-        auto *ptr( state.top() );
+        auto *ptr( state_stack.top() );
         delete( ptr );
-        state.pop();
+        state_stack.pop();
     }
     /** 
      * nothing else to clean up, rest...other virtual 
@@ -58,7 +58,7 @@ parsemap::push_state( raft::parse::state * const state )
     assert( state != nullptr ); 
 #ifdef PARANOIA
     /** check to see if the state location has already been pushed **/
-    assert( state != &state.top() );
+    assert( state != &state_stack.top() );
 #endif
-    state.push( state );
+    state_stack.push( state );
 }

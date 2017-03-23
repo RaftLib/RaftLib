@@ -20,6 +20,7 @@
 #ifndef _PARSEMAP_HPP_
 #define _PARSEMAP_HPP_  1
 #include <stack>
+#include "parsedefs.hpp"
 #include "submap.hpp"
 
 namespace raft
@@ -43,7 +44,7 @@ private:
      */
     raft::parse::state* pop_state();
 
-    std::stack< raft::parse::state* > state;
+    std::stack< raft::parse::state* > state_stack;
 };
 
 }

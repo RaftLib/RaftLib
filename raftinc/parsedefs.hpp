@@ -21,7 +21,9 @@
 #ifndef _PARSEDEFS_HPP_
 #define _PARSEDEFS_HPP_  1
 #include <cstdint>
+#include <array>
 #include "defs.hpp"
+#include "raftmanip.hpp"
 
 namespace raft
 {
