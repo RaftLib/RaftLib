@@ -53,6 +53,7 @@ namespace raft
    class parallel_k;
    template < class T, class method > class join;
    template < class T, class method > class split;
+   class parsemap;
 }
 
 
@@ -383,6 +384,7 @@ protected:
    /** we need some friends **/
    friend class MapBase;
    friend class raft::map;
+   friend class raft::parsemap;
    friend class GraphTools;
    friend class basic_parallel;
    friend class raft::parallel_k;

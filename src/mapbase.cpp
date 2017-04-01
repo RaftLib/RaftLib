@@ -28,7 +28,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "kpair.hpp"
 #include "common.hpp"
 #include "mapbase.hpp"
 #include "graphtools.hpp"
@@ -168,8 +167,8 @@ MapBase::link( raft::kernel *a,
 
 
 void
-MapBase::join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
-               raft::kernel &b, const std::string name_b, PortInfo &b_info )
+MapBase::join( raft::kernel &a, const std::string &name_a, PortInfo &a_info, 
+               raft::kernel &b, const std::string &name_b, PortInfo &b_info )
 {
    //b's port info isn't allocated
    if( a_info.type != b_info.type )
@@ -198,6 +197,7 @@ MapBase::insert( raft::kernel *a,  PortInfo &a_out,
             &i_out( i->output.getPortInfoFor( "0" ) );
    join( *a, a_out.my_name, a_out,
          *i, i_in.my_name, i_in );
+   
    join( *i, i_out.my_name, i_out,
          *b, b_in.my_name, b_in );
 }

@@ -31,10 +31,13 @@
 /** for port order enum **/
 #include "portorder.hpp"
 
-/** predeclare raft::kernel for kernel_list_t below **/
 namespace raft
 {
+    /** predeclare raft::kernel for kernel_list_t below **/
     class kernel;
+    /** also parsemap_ptr smart ptr obj used in map and streamparse **/
+    class parsemap;
+    using parsemap_ptr = std::unique_ptr< raft::parsemap >;
 } /** end namespace raft **/
 
 template < typename T > 
@@ -97,6 +100,7 @@ enum type : manip_vec_t {
 /** raft::vm **/
 namespace vm
 {
+
 enum type : manip_vec_t { 
     flat = parallel::NPARALLEL        /** not yet implemented, likely using segment  **/, 
     standard                          /** threads share VM space, processes have sep **/, 
@@ -104,6 +108,7 @@ enum type : manip_vec_t {
                                         * new VM space, platform dependent **/,
     NVM
 }; 
+
 }
 
 }

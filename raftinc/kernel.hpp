@@ -117,9 +117,9 @@ public:
                class ... Args >
       static kernel_wrapper make( Args&&... params )
       {
-         auto *output( new T( std::forward< Args >( params )... ) );
+         kernel_wrapper output( new T( std::forward< Args >( params )... ) );
          output->internal_alloc = true;
-         return( kernel_wrapper( output ) );
+         return( output );
       }
    
    /** 
@@ -195,6 +195,7 @@ protected:
    /** in namespace raft **/
    friend class map;
    friend class submap;
+   friend class parsemap;
    /** in global namespace **/
    friend class ::MapBase;
    friend class ::Schedule;

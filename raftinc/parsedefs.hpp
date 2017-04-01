@@ -51,6 +51,6 @@ struct state
                         manip_options;
 };
 
-}
+} /** end namespace parse **/
 } /** end namespace raft **/
 #endif /* END _PARSEDEFS_HPP_ */

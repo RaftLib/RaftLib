@@ -55,54 +55,73 @@ public:
 
    virtual ~keeper() = default;
 
-   //FIXME: this will only work for sets, add specializations for others
-   //based on insert function
-   void  operator += ( CONTAINERTYPE * const ele )
-   {
-      acquire();
-      container.emplace( ele );
-      release();
-      return;
-   }
+    //FIXME: this will only work for sets, add specializations for others
+    //based on insert function
+    void  operator += ( CONTAINERTYPE * const ele )
+    {
+       acquire();
+       container.emplace( ele );
+       release();
+       return;
+    }
 
-   void unsafeAdd( CONTAINERTYPE * const ele )
-   {
-      container.emplace( ele );
-      return;
-   }
+    /**
+     * unsafeAdd - add elements to the container without a lock
+     * ignoring potential side effects.
+     * @param ele - element of CONTAINERTYPE to add
+     */
+    inline void unsafeAdd( CONTAINERTYPE * const ele )
+    {
+       container.emplace( ele );
+       return;
+    }
 
-   CONTAINER& acquire()
-   {
-      //spin until we can get a lock
-      while( ! mutex.try_lock() )
-      {
-         //it's polite to yield
-         raft::yield();
-      }
-      //we have a lock, get id
+   
+    CONTAINER& acquire()
+    {
+        //spin until we can get a lock
+        while( ! mutex.try_lock() )
+        {
+            //it's polite to yield
+            raft::yield();
+        }
+        //we have a lock, get id
 #if 0      
-      owner_id = std::this_thread::get_id();
+        owner_id = std::this_thread::get_id();
 #endif      
-      return( container );
-   }
+        return( container );
+    }
 
-   void release()
-   {
+    /**
+     * unsafeAcquire - assume that we know what we're doing
+     * and access container directly, ignoring the potential
+     * for another actor to have a lock on this container.
+     */
+    CONTAINER& unsafeAcquire()
+    {
+        return( container );
+    }
+
+    /**
+     * release - release the lock.
+     */
+    void release()
+    {
 #if 0
 #ifndef NDEBUG      
-      const auto caller_id( std::this_thread::get_id() );
+        const auto caller_id( std::this_thread::get_id() );
 #endif      
-      assert( caller_id == owner_id );
+        assert( caller_id == owner_id );
 #endif      
-      mutex.unlock();
-      return;
-   }
+        mutex.unlock();
+        return;
+    }
    
-   auto size() -> decltype( container.size() )
-   {
-      const auto size( container.size() );
-      return( size );
-   }
+    auto size() -> decltype( container.size() )
+    {
+       const auto size( container.size() );
+       return( size );
+    }
 
 
 };

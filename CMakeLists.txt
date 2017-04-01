@@ -57,8 +57,8 @@ include( CheckGitDep )
 
 add_subdirectory( src )
 add_subdirectory( raftinc )
-add_subdirectory( examples )
-add_subdirectory( benchmarks )
+#add_subdirectory( examples )
+#add_subdirectory( benchmarks )
 
 mark_as_advanced( BUILD_WOPENCV false )
 if( BUILD_WOPENCV )
@@ -89,76 +89,78 @@ add_subdirectory( testsuite )
 enable_testing()
 set( TESTAPPS 
         allocate 
-        portTypeException 
-        dynallocate 
-        stdlibsupport 
-        split 
-        join 
-        lambdatest 
-        allocate_s 
-        foreach 
-        peekrange 
-        partitionTest 
-        parallel 
-        peek
-        bracketsTest 
-        uniform 
-        gamma 
-        gaussian 
-        exponential 
-        sequential 
-        splitchain
-        staticLongSplitChain 
-        staticSplitJoin 
-        staticSplitChainJoin 
-        staticJoin 
-        staticContJoin
-        fitInCacheLine
-        isExtClass
-        doesntFitInCacheLine
-        isInlineClass
-        isExtArray
-        isExtAlloc 
-        isInlineNonClass 
-        allocateSendPush 
-        allocateSendRandomPush 
-        allocatePopPush 
-        allocatePopInternal
-        allocatePopInternalObject
-        allocatePopExternal
-        prefetchEffective 
-        parallelchain 
-        ksettest
-        splitKsetCont
-        KsetJoin
-        ksetContContJoin
-        splitKsetJoin 
-        fixedMatchTest
-        poolThreadRaftManip 
-        forceProcess 
-        splitchainRetStruct
-        staticContJoinRetStruct
-        staticJoinRetStruct 
-        staticLongSplitChainRetStruct
-        staticSplitChainJoinRetStruct
-        staticSplitJoinRetStruct 
-        chainMultiplePorts 
-     streamManipOne
-     streamManipTwo
-     streamManipThree
-     streamManipThreeA
-     streamManipFour
-     streamManipFourA
-     streamManipFourB
-     streamManipFourC
-     streamManipZeroA
-     streamManipZeroB
-     streamManipZeroC
-     streamManipZeroD
-     streamManipZeroE
-     streamManipZeroF
-     streamManipZeroG
-     fixedAllocate
+        allocateRefWrapperOneRHS
+        allocateRefWrapperOneLHS
+#        portTypeException 
+#        dynallocate 
+#        stdlibsupport 
+#        split 
+#        join 
+#        lambdatest 
+#        allocate_s 
+#        foreach 
+#        peekrange 
+#        partitionTest 
+#        parallel 
+#        peek
+#        bracketsTest 
+#        uniform 
+#        gamma 
+#        gaussian 
+#        exponential 
+#        sequential 
+#        splitchain
+#        staticLongSplitChain 
+#        staticSplitJoin 
+#        staticSplitChainJoin 
+#        staticJoin 
+#        staticContJoin
+#        fitInCacheLine
+#        isExtClass
+#        doesntFitInCacheLine
+#        isInlineClass
+#        isExtArray
+#        isExtAlloc 
+#        isInlineNonClass 
+#        allocateSendPush 
+#        allocateSendRandomPush 
+#        allocatePopPush 
+#        allocatePopInternal
+#        allocatePopInternalObject
+#        allocatePopExternal
+#        prefetchEffective 
+#        parallelchain 
+#        ksettest
+#        splitKsetCont
+#        KsetJoin
+#        ksetContContJoin
+#        splitKsetJoin 
+#        fixedMatchTest
+#        poolThreadRaftManip 
+#        forceProcess 
+#        splitchainRetStruct
+#        staticContJoinRetStruct
+#        staticJoinRetStruct 
+#        staticLongSplitChainRetStruct
+#        staticSplitChainJoinRetStruct
+#        staticSplitJoinRetStruct 
+#        chainMultiplePorts 
+#     streamManipOne
+#     streamManipTwo
+#     streamManipThree
+#     streamManipThreeA
+#     streamManipFour
+#     streamManipFourA
+#     streamManipFourB
+#     streamManipFourC
+#     streamManipZeroA
+#     streamManipZeroB
+#     streamManipZeroC
+#     streamManipZeroD
+#     streamManipZeroE
+#     streamManipZeroF
+#     streamManipZeroG
+#     fixedAllocate
         ) 
 
 

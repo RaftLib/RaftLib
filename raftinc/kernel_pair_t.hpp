@@ -25,6 +25,8 @@
 #include <functional>
 #include <vector>
 #include <utility>
+#include <algorithm>
+#include <iterator>
 
 /** pre-declare some stuff **/
 namespace raft
@@ -107,6 +109,29 @@ public:
      */
     kernel_pair_t( raft::kernel &src,
                    raft::kernel &dst );
+
+    template < class ITA, class ITB,
+               class ITC, class ITD >
+    kernel_pair_t(  ITA &&src_beg, const ITB &&src_end,
+                    ITC &&dst_beg, const ITD &&dst_end )
+    {
+        const auto distA( std::distance( src_beg, src_end ) );
+        const auto distB( std::distance( dst_beg, dst_end ) );
+        source.reserve( distA );
+        /** 
+         * gotta go from a pointer to reference here, so 
+         * none of the standard stuff will really fit
+         */
+        for(;src_beg != src_end;++src_beg)
+        {
+            source.emplace_back( *(*src_beg) );
+        }
+        destination.reserve( distB );
+        for(;dst_beg != dst_end;++dst_beg)
+        {
+            destination.emplace_back( *(*dst_beg) );
+        }
+    }
 
     /**
      * getSrc - return a std::pair object with iterators

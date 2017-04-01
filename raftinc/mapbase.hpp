@@ -161,8 +161,8 @@ protected:
     * @param b_info - PortInfo struct for kernel b
     * @throws PortTypeMismatchException
     */
-   static void join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
-                     raft::kernel &b, const std::string name_b, PortInfo &b_info );
+   static void join( raft::kernel &a, const std::string &name_a, PortInfo &a_info, 
+                     raft::kernel &b, const std::string &name_b, PortInfo &b_info );
    
    static void insert( raft::kernel *a,  PortInfo &a_out, 
                        raft::kernel *b,  PortInfo &b_in,

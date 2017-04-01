@@ -20,372 +20,64 @@
 #include "streamparse.hpp"
 #include "streamparseexception.tcc"
 
-kpair& 
-operator >> ( raft::kernel &a, raft::kernel &b )
+/**
+ * Section #1, these are all the "starter
+ * kernels where the parsemap is first constructed
+ * and dereferenced.
+ */
+raft::parsemap_ptr operator >> ( raft::kernel &src, raft::kernel &dst )
 {
-    auto *ptr( new kpair( a, b ) );
-    return( *ptr );
+    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    parsemap_ptr->parse_link( &src, &dst, nullptr );
+    return( parsemap_ptr );
 }
 
-kpair&
-operator >> ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b )
+raft::parsemap_ptr operator >> ( raft::kernel_wrapper src, raft::kernel &dst )
 {
-    auto *ptr( new kpair( a, b ) );
-    return( *ptr );
+    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto *src_ptr( src.get() );
+    src.release();
+    auto *dst_ptr( &dst );
+    parsemap_ptr->parse_link( src_ptr, dst_ptr, nullptr );
+    return( parsemap_ptr );
 }
 
-kpair&
-operator >> ( raft::kernel &a, raft::kernel_wrapper &&w )
+raft::parsemap_ptr operator >> ( raft::kernel &src, raft::kernel_wrapper dst )
 {
-    auto *ptr( new kpair( a, w) );
-    return( *ptr );
+    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto *src_ptr( &src );
+    auto *dst_ptr( dst.get() );
+    dst.release();
+    parsemap_ptr->parse_link( src_ptr, dst_ptr, nullptr );
+    return( parsemap_ptr );
 }
 
-
-
-kpair&  
-operator >> ( kpair &a, raft::kernel &b )
+raft::parsemap_ptr operator >> ( raft::kernel_wrapper src, raft::kernel_wrapper dst )
 {
-    auto *ptr( new kpair( a, b, false, false ) );
-    return( *ptr );
-}
-
-kpair&
-operator >> ( kpair &a, raft::kernel_wrapper &&w )
-{
-    auto *ptr( new kpair( a, w, false, false ) );
-    return( *ptr );
+    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto *src_ptr( src.get() );
+    auto *dst_ptr( dst.get() );
+    src.release();
+    dst.release();
+    parsemap_ptr->parse_link( src_ptr, dst_ptr, nullptr );
+    return( parsemap_ptr );
 }
 
 /**
- * >>, we're using the raft::order::spec as a linquistic tool
- * at this point. It's only used for disambiguating functions.
+ * for the continuation with a LHS as a parsemap, there are some
+ * things we have to be careful with. If:
+ * LHS = multiple groups, we have to duplicate dst for each.
+ * LHS = just a kernel, then no duplication, just a continue.
  */
-LOoOkpair
-operator >> ( raft::kernel &a, const raft::order::spec &&order )
+raft::parsemap_ptr operator >> ( raft::parsemap_ptr src ,   raft::kernel &dst           )
 {
-    UNUSED( order );
-    LOoOkpair out( a );
-    return( out );
+    auto *dst_ptr( &dst );
+    UNUSED( dst_ptr );
+    return( src );
 }
 
-kpair&
-operator >> ( const LOoOkpair &&a, raft::kernel &b )
+raft::parsemap_ptr operator >> ( raft::parsemap_ptr src ,   raft::kernel_wrapper dst    )
 {
-    auto *ptr( 
-        new kpair( a.value, 
-                   b, 
-                   false, 
-                   false ) 
-    );
-    ptr->setOoO();
-    return( *ptr );
+    UNUSED( dst );
+    return( src );
 }
-
-
-kpair&
-operator >> ( const LOoOkpair &&a, raft::kernel_wrapper &&w )
-{
-    auto *ptr( 
-        new kpair( a.value, w, false, false ) 
-    );
-    ptr->setOoO();
-    return( *ptr );
-}
-
-/**
- * >>, we're using the raft::order::spec as a linquistic tool
- * at this point. It's only used for disambiguating functions.
- */
-ROoOkpair
-operator >> ( kpair &a, const raft::order::spec &&order )
-{
-    ROoOkpair out( a );
-    UNUSED( order );
-    return( out );
-}
-
-kpair&
-operator >> ( const ROoOkpair &&a, raft::kernel &b )
-{
-    auto * ptr(
-        new kpair( a.value, b, false, false )
-    );
-    ptr->setOoO();
-    return( *ptr );
-}
-
-kpair&
-operator >> ( const ROoOkpair &&a, raft::kernel_wrapper &&w )
-{
-    auto * ptr(
-        new kpair( a.value, w, false, false )
-    );
-    ptr->setOoO();
-    return( *ptr );
-}
-
-kpair&
-operator <= ( raft::kernel &a, raft::kernel &b )
-{
-    auto *ptr( new kpair( a, b, true, false ) );
-    return( *ptr );
-}
-
-kpair&
-operator <= ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b )
-{
-    auto *ptr( new kpair( a, b, true, false ) );
-    return( *ptr );
-}
-
-kpair&
-operator <= ( raft::kernel &a, kpair &b )
-{
-    auto *ptr( new kpair( a, b, true, false ) );
-    return( *ptr );
-}
-
-kpair&
-operator <= ( raft::kernel_wrapper &&w, kpair &b )
-{
-    auto *ptr( new kpair( w, b, true, false ) );
-    return( *ptr );
-}
-
-kpair& 
-operator <= ( kpair &a, raft::kernel &b )
-{
-    auto *ptr( new kpair( a, b, true, false ) );
-    return( *ptr );
-}
-
-kpair& operator <= ( const ManipVecPair &&a, kpair &b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-kpair& operator <= ( const ManipVecKern &&a, kpair &b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-
-
-kpair&
-operator >= ( kpair &a, raft::kernel_wrapper &&w )
-{
-    auto *ptr( new kpair( a, w, false, true ) );
-    return( *ptr );
-}
-
-kpair&
-operator >= ( kpair &a, raft::kernel &b )
-{
-    auto *ptr( new kpair( a, b, false, true ) );
-    return( *ptr );
-}
-
-kpair&
-operator >= ( kpair &a, kpair &b )
-{
-    auto *ptr( new kpair( a, b, false, true ) );
-    return(*ptr);
-}
-
-kpair& 
-operator >= ( raft::kernel &a, kpair &b )
-{
-    auto *ptr( new kpair( a, b, false, true ) );
-    return(*ptr);
-}
-
-kpair& 
-operator >= ( raft::kernel_wrapper &&w, kpair &b )
-{
-    auto *ptr( new kpair( w, b, false, true ) );
-    return(*ptr);
-}
-
-kpair& operator <= ( raft::kernel &a, raft::basekset &&b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return(*out );
-}
-
-kpair& operator >> ( raft::basekset &&a, raft::kernel &b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return(*out);
-}
-
-kpair& operator >> ( raft::basekset &&a, raft::basekset &&b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-kpair& operator >= ( raft::basekset &&a, raft::kernel &b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-
-kpair& operator >= ( raft::basekset &&a, kpair &b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-
-ManipVecKern operator >> ( raft::kernel &a, const raft::manip_vec_t b )
-{
-    return( ManipVecKern( a, b ) );
-}
-
-RHSManipVecKern operator >> ( const raft::manip_vec_t a, raft::kernel &b )
-{
-    return( RHSManipVecKern( b, a ) );    
-}
-
-kpair& operator >> ( const RHSManipVecKern &&a, raft::kernel &b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-
-ManipVecPair operator >> ( kpair &a, const raft::manip_vec_t b )
-{    
-    return( ManipVecPair( a, b ) );
-}
-
-kpair& operator >> ( const ManipVecKern &&a, raft::kernel &b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-
-kpair& operator >> ( const ManipVecPair &&a, raft::kernel &b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-
-
-/**
- * TODO, for both of the below, we can add more specific exceptions
- * that will tell the user if they're doing something really stupid
- */
-kpair& operator >> ( const ManipVecKern &&a, const raft::manip_vec_t &&b )
-{
-    throw NonsenseChainRaftManipException( 
-        "multiple stream parse manipulators should be combined as in (raft::manip< [manip 1], [manip 2] >::value" );
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-kpair& operator >> ( const ManipVecPair &&a, const raft::manip_vec_t &&b )
-{
-    throw NonsenseChainRaftManipException( 
-        "multiple stream parse manipulators should be combined as in (raft::manip< [manip 1], [manip 2] >::value" );
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-
-kpair& operator <= ( const raft::kernel &a, const raft::manip_vec_t &&b )
-{
-    throw RaftManipException( 
-        "raft::manip_vec_t should be before the \"<=\" operator, not after" );
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-
-kpair& operator <= ( kpair &a, const raft::manip_vec_t &&b )
-{
-    throw RaftManipException( 
-        "raft::manip_vec_t should be before the \"<=\" operator, not after" );
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-
- kpair& operator >= ( const ManipVecKern &&a, const raft::kernel &b  )
- {
-    throw RaftManipException( 
-        "raft::manip_vec_t should be after the \"=>\" operator, not before" );
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
- }
-
- kpair& operator >= ( const ManipVecKern  &&a, kpair &b  )
- {
-    throw RaftManipException( 
-        "raft::manip_vec_t should be after the \"=>\" operator, not before" );
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
- }
-
-  kpair& operator >= ( const raft::manip_vec_t &&a, kpair &b  )
-  {
-    throw RaftManipException( 
-        "raft::manip_vec_t shouldn't be bare before the \"=>\" operator, please check code" );
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-  }
-  
-  kpair& operator >= ( const raft::manip_vec_t &&a, const raft::kernel &b  )
-  {
-    throw RaftManipException( 
-        "raft::manip_vec_t shouldn't be bare before the \"=>\" operator, please check code" );
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-  }
-
-kpair& operator >= ( raft::kernel &a, const ManipVecPair &&b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-
-kpair& operator >= ( raft::kernel &a, const RHSManipVecKern &&b )
-{
-    UNUSED( a );
-    UNUSED( b );
-    kpair *out( nullptr );
-    return( *out );
-}
-

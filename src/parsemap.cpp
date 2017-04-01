@@ -46,6 +46,14 @@ parsemap::~parsemap()
         delete( ptr );
         state_stack.pop();
     }
+    auto &container( all_kernels.acquire() );
+    /** 
+     * we have to get rid of the kernels now that they've been 
+     * added so that the base destructor doesn't delete the 
+     * internally allocated kernels 
+     */
+    container.clear();
+    all_kernels.release();
     /** 
      * nothing else to clean up, rest...other virtual 
      * destructors.
@@ -61,4 +69,121 @@ parsemap::push_state( raft::parse::state * const state )
     assert( state != &state_stack.top() );
 #endif
     state_stack.push( state );
+}
+
+void
+parsemap::parse_link( raft::kernel *src, 
+                      raft::kernel *dst,
+                      const raft::parse::state * const s )
+{
+    assert( src != nullptr );
+    assert( dst != nullptr );
+    updateKernels( src, dst );
+    PortInfo *src_port_info( nullptr ), 
+             *dst_port_info( nullptr );
+    /** 
+     * check for enabled ports
+     * a[ "x" ], x is enabled, 
+     * each should have one enabled port
+     */
+    const auto src_name( src->getEnabledPort() );
+    if( src_name.length() > 0 )
+    {
+        try
+        {
+            src_port_info = &( src->output.getPortInfoFor( src_name ) );
+        }
+        catch( PortNotFoundException &ex )
+        {
+            /** impl in mapbase **/
+            portNotFound( false, ex, src );
+        }
+    }
+    /** else assume single port **/
+    else
+    {
+        try
+        {
+            src_port_info = &( src->output.getPortInfo() );
+        }
+        catch( PortNotFoundException &ex )
+        {
+            portNotFound( true, ex, src );
+        }
+    }
+    /** let exception catch first, then check null **/
+    assert( src_port_info != nullptr );
+
+    /**
+     * DST side 
+     */
+    const auto dst_name( dst->getEnabledPort() );
+    if( dst_name.length() > 0 )
+    {
+        try
+        {
+            dst_port_info = &( dst->input.getPortInfoFor( dst_name ) );
+        }
+        catch( PortNotFoundException &ex )
+        {
+            /** impl in mapbase **/
+            portNotFound( false, ex, dst );
+        }
+    }
+    /** else assume single port **/
+    else
+    {
+        try
+        {
+            dst_port_info = &( dst->input.getPortInfo() );
+        }
+        catch( PortNotFoundException &ex )
+        {
+            portNotFound( true, ex, dst );
+        }
+    }
+    /** let exception catch first, then check null **/
+    assert( dst_port_info != nullptr );
+    /** assume we have good ports at this point **/
+    join( *src, src_port_info->my_name, *src_port_info,
+          *dst, dst_port_info->my_name, *dst_port_info );
+    /**
+     * run function pointers for settings
+     */
+    return;
+}
+
+void 
+raft::parsemap::start_group()
+{
+    parse_head.emplace_back( std::make_unique< group_t >() );
+    return;
+}
+
+void 
+raft::parsemap::add_to_group( raft::kernel * const k )
+{
+    assert( k != nullptr );
+    assert( get_group_size() > 0 );
+    parse_head.back()->emplace_back( k );
+    return;
+}
+
+std::size_t
+raft::parsemap::get_group_size()
+{
+    return( parse_head.size() );
+}
+
+parsemap::group_ptr_t
+raft::parsemap::pop_group()
+{
+    if( parse_head.size() == 0 )
+    {
+        /** TODO throw exception **/
+        assert( false );
+    }
+    auto temp( std::move( parse_head.back() ) );
+    parse_head.pop_back();
+    return( temp );
 }
