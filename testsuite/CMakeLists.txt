@@ -18,6 +18,11 @@ set( TESTAPPS
     allocate 
     allocateRefWrapperOneRHS
     allocateRefWrapperOneLHS
+    chain 
+    chainMultiplePorts 
+    chainDynamic
+    chainMultiplePortsDynamic 
+    
 #    portTypeException 
 #    dynallocate 
 #    stdlibsupport 
@@ -31,7 +36,6 @@ set( TESTAPPS
 #     parallel 
 #     peek 
 #     bracketsTest 
-#     chain 
 #     splitchain 
 #     staticLongSplitChain 
 #     staticSplitJoin 
@@ -66,7 +70,6 @@ set( TESTAPPS
 #     staticLongSplitChainRetStruct
 #     staticSplitChainJoinRetStruct
 #     staticSplitJoinRetStruct 
-#     chainMultiplePorts 
 #     streamManipOne
 #     streamManipTwo
 #     streamManipThree

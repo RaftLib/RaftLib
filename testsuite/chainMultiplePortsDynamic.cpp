@@ -34,33 +34,31 @@
    using gen = random_variate< std::default_random_engine,
                                std::uniform_int_distribution,
                                type_t >;
-   using p_out = raft::print< std::string , '\n' >;
-   using sub = raft::lambdak< type_t, std::string >;
+   using p_out = raft::print< type_t, '\n' >;
+   using add = raft::lambdak< type_t >;
    
    std::vector< type_t > output;
    
    const static auto min( 0 );
    const static auto max( 100 );
-   gen g( send_size, min, max );
    
    p_out print;
 
-   auto  l_sub( [&]( Port &input,
-                     Port &output )
+   auto  l_add( []( Port &input,
+                    Port &output )
       {
-         std::uint32_t a;
+         std::uint32_t a,b;
          input[ "0" ].pop( a );
-         std::stringstream ss;
-         ss << a << " - 10 = " << ( a - 10 );
-         output[ "0" ].push( ss.str() );
+         input[ "1" ].pop( b );
+         output[ "0" ].push( a + b );
          return( raft::proceed );
       } );
 
-   sub s( 1, 1, l_sub );
+   add add_kernel( 2, 1, l_add );
 
    raft::map m;
-   m += g >> s >> print;
-   
+   m += raft::kernel::make< gen >( send_size, min, max ) >> add_kernel[ "0" ][ "0" ] >> print;
+   m += raft::kernel::make< gen >( send_size, min, max ) >> add_kernel[ "1" ];
    m.exe();
 
    return( EXIT_SUCCESS );

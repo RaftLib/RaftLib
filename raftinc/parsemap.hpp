@@ -50,23 +50,68 @@ public:
     *
     * @param   a - raft::kernel*, src kernel
     * @param   b - raft::kernel*, dst kernel
-    * @param   s - make null if no state, else pass a state struct
     */
     void parse_link( raft::kernel *src, 
-                     raft::kernel *dst,
-                     const raft::parse::state * const s );
+                     raft::kernel *dst );
+    
+    
+    /**
+     * parse_link_continue - designed for map >> x situations
+     * where we want to link all the kernels in the parse head
+     * to dst. if needed this method will duplicate dst the
+     * number of times so that the number of kernels in the 
+     * parse head before calling this function is equal to
+     * the number after.
+     * @param dst - raft::kernel, to be added
+     */
+    void parse_link_continue(   /** source is the parse head **/
+                                raft::kernel *dst );
 
+    
+    /** 
+     * start_ group - start a new parse head group, this 
+     * is typically the destination side, the head groups
+     * from LHS -> RHS.
+     */
     void start_group();
 
+    /**
+     * add_to_group - add a new kernel to the head. This
+     * is typically the RHS as the LHS is popped off from
+     * the previous reduction. Will add head to the most
+     * recent group added. Call start_group if a fresh 
+     * group is desired.
+     *
+     * @param k - raft::kernel*, kernel to add to current 
+     *            group. 
+     */
     void add_to_group( raft::kernel * const k );
    
-    std::size_t  get_group_size();
     /**
-     * pop_group
+     * get_group_size - returns the total number of groups
+     * not the number of kernels (this could vary by group).
+     * @return std::size_t - total number of groups
+     */
+    std::size_t  get_group_size();
+
+    /**
+     * pop_group - pops the head group (last one to be 
+     * added. If we're visualizing the graph as a DAG
+     * LHS to RHS and top to bottom. This is the furthest
+     * RHS that has been parsed, all the way to the 
+     * bottom. As the callee pops, it will move up the 
+     * RHS and pop to the top.
+     * @return - group_ptr_t, aka, std::unique_ptr< std::vector< kernel > >
      */
     group_ptr_t pop_group();
 
+    
+
 private:
+
+    void parse_link_helper( raft::kernel *src, 
+                            raft::kernel *dst );
+
     /**
      * pop_state - returns the current state from the
      * top of the stack. If no state is available, then 

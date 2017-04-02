@@ -91,6 +91,10 @@ set( TESTAPPS
         allocate 
         allocateRefWrapperOneRHS
         allocateRefWrapperOneLHS
+        chain 
+        chainMultiplePorts 
+        chainDynamic
+        chainMultiplePortsDynamic 
 #        portTypeException 
 #        dynallocate 
 #        stdlibsupport 
@@ -144,7 +148,6 @@ set( TESTAPPS
 #        staticLongSplitChainRetStruct
 #        staticSplitChainJoinRetStruct
 #        staticSplitJoinRetStruct 
-#        chainMultiplePorts 
 #     streamManipOne
 #     streamManipTwo
 #     streamManipThree

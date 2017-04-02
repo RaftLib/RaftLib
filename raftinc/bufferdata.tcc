@@ -97,11 +97,6 @@ template < class T > struct Data< T,
 
 #if (defined __linux ) || (defined __APPLE__ )
       int ret_val( 0 );
-      const auto alignment( alignof( decltype( (this)->store ) ) );
-      if( alignment != align )
-      {
-         std::cout << alignment << "\n";
-      }
       ret_val = posix_memalign( (void**)&((this)->store), 
                                  align, 
                                 (this)->length_store );

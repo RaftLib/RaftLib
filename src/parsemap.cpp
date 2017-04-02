@@ -73,8 +73,76 @@ parsemap::push_state( raft::parse::state * const state )
 
 void
 parsemap::parse_link( raft::kernel *src, 
-                      raft::kernel *dst,
-                      const raft::parse::state * const s )
+                      raft::kernel *dst )
+{
+    parse_link_helper( src, dst );
+    if( get_group_size() == 0 )
+    {
+        start_group();
+    }
+    add_to_group( dst );
+    /**
+     * TODO: 
+     * run function pointers for settings
+     * pop state
+     */
+    return;
+}
+
+
+void
+raft::parsemap::parse_link_continue(    /** source is implicit **/ 
+                                        raft::kernel   *dst )
+{
+    /** 
+     * we're assuming that if we're calling this that it's with 
+     * a LHS that is a parsemap, lets check that assumption
+     */
+    assert( get_group_size() > 0 );
+    std::vector< group_ptr_t  > temp_groups;
+    std::stack< raft::kernel* > kernel_construction_stack;
+    assert( dst != nullptr );
+    kernel_construction_stack.push( dst );
+    /** do we have any groups **/
+    while( get_group_size() != 0 )
+    {
+        /** do for each group **/
+        auto group( pop_group() );
+        /** make new temp group **/
+        temp_groups.push_back( std::make_unique< group_t >() );
+        
+        /** front load kernel construction for all in group **/
+        auto curr_avail_kernels( kernel_construction_stack.size() );
+        const auto needed_kernels( group->size() );
+        for( ; curr_avail_kernels != needed_kernels; curr_avail_kernels++ )
+        {
+            kernel_construction_stack.push( dst->clone() );
+        }
+        for( auto *src_ptr : (*group) )
+        {
+            auto *dst_ptr( kernel_construction_stack.top() );
+            kernel_construction_stack.pop();
+            parse_link_helper( src_ptr, dst_ptr );
+            /**
+             * TODO: run function pointers for settings
+             */
+            temp_groups.back()->emplace_back( dst_ptr );
+        }
+    }
+    /**
+     * TODO: empty state container 
+     */
+    /** this should be empty here **/
+    assert( get_group_size() == 0 );
+    /** move smart pointers from temp_groups to main parse head **/
+    parse_head = std::move( temp_groups );
+    return;
+}
+
+
+void 
+raft::parsemap::parse_link_helper( raft::kernel *src,
+                                   raft::kernel *dst )
 {
     assert( src != nullptr );
     assert( dst != nullptr );
@@ -147,9 +215,6 @@ parsemap::parse_link( raft::kernel *src,
     /** assume we have good ports at this point **/
     join( *src, src_port_info->my_name, *src_port_info,
           *dst, dst_port_info->my_name, *dst_port_info );
-    /**
-     * run function pointers for settings
-     */
     return;
 }
 
@@ -187,3 +252,4 @@ raft::parsemap::pop_group()
     parse_head.pop_back();
     return( temp );
 }
+
