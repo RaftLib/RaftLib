@@ -136,6 +136,9 @@ private:
      * the terminus of the directed graph.
      */
     std::vector< group_ptr_t >       parse_head;    
+   
+    /** override default **/
+    virtual void updateKernels( raft::kernel * const a, raft::kernel * const b );
 };
 
 }

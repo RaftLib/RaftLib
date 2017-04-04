@@ -22,9 +22,8 @@ set( TESTAPPS
     chainMultiplePorts 
     chainDynamic
     chainMultiplePortsDynamic 
-    
-#    portTypeException 
-#    dynallocate 
+    portTypeException 
+    dynallocate 
 #    stdlibsupport 
 #    split 
 #     join 

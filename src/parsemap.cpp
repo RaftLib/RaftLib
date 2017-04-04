@@ -253,3 +253,44 @@ raft::parsemap::pop_group()
     return( temp );
 }
 
+void
+raft::parsemap::updateKernels( raft::kernel * const a,
+                               raft::kernel * const b )
+{
+    /** TODO, need to return true src-dst **/ 
+    /** 
+     * if b is ever entered as a source, remove
+     * from being destination. This does prevent
+     * a user from building in feedback loops
+     * in the ssame invocation, but not overall
+     */
+    if( source_kernels.size() == 0 )
+    {
+        source_kernels += a;
+    }
+    all_kernels += a;
+    /**
+     * FIXME, need a method to do this more simply
+     */
+#if 0
+    else if( a cloned from real source )
+    {
+        enter
+    }
+#endif
+    /** 
+     * don't need thread safety here, TODO, build 
+     * test case to try to break 
+     */
+    auto &dst_container( dst_kernels.unsafeAcquire() );
+    //check to see if a is entered as a dst
+    auto ret_value( dst_container.find( a ) );   
+    if( ret_value != dst_container.cend() )
+    {
+        /** a appears as former destination, remove **/
+        dst_container.erase( ret_value );
+    }
+    dst_kernels += b;
+    all_kernels += b;
+    return;
+}

@@ -22,12 +22,9 @@
 #include <cstdint>
 #include <cassert>
 #include "defs.hpp"
+#include "internaldefs.hpp"
 
-/**
- * FIXME...should probably align these to cache line then 
- * zero extend pad for producer/consumer.
- */
-struct alignas( L1D_CACHE_LINE_SIZE ) Blocked
+struct ALIGN( L1D_CACHE_LINE_SIZE ) Blocked
 {
     using value_type = std::uint32_t;
     using whole_type = std::uint64_t;
@@ -36,14 +33,8 @@ struct alignas( L1D_CACHE_LINE_SIZE ) Blocked
 
     Blocked( const Blocked &other ) : all( other.all ){}
 
-    Blocked& operator += ( const Blocked &rhs )
-    {
-       if( ! rhs.bec.blocked )
-       {
-          (this)->bec.count += rhs.bec.count;
-       }
-       return( *this );
-    }
+    Blocked& operator += ( const Blocked &rhs ) noexcept;
+
     struct blocked_and_counter
     {
        value_type    blocked = 0;
