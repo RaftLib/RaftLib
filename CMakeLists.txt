@@ -97,6 +97,29 @@ set( TESTAPPS
     chainMultiplePortsDynamic 
     portTypeException 
     dynallocate 
+    stdlibsupport 
+    lambdatest 
+    allocate_s 
+    peek 
+    bracketsTest 
+    peekrange  
+    partitionTest 
+    foreach 
+    fitInCacheLine
+    isExtClass
+    doesntFitInCacheLine
+    isInlineClass
+    isExtArray
+    isExtAlloc 
+    isInlineNonClass 
+    allocateSendPush 
+    allocateSendRandomPush 
+    allocatePopPush 
+    allocatePopInternal 
+    allocatePopInternalObject
+    allocatePopExternal 
+    prefetchEffective 
+    streamManipZeroA
         ) 
 
 

@@ -126,10 +126,13 @@ public:
     * clone - used for parallelization of kernels, if necessary 
     * sub-kernels should include an appropriate copy 
     * constructor so all class member variables can be
-    * set.
-    * @param   other, T& - reference to object to be cloned
+    * set. To implement this in a sub-class see the
+    * macros IMPL_CLONE, IMPL_CPY_CLONE, or IMPL_NO_CLONE
+    * to simply not implement this function (i.e. return
+    * null).
     * @return  kernel*   - takes base type, however is same as 
-    * allocated by copy constructor for T.
+    * allocated by copy constructor for T. Returns nullptr
+    * in the case of IMPL_NO_CLONE
     */
    virtual raft::kernel* clone() = 0;
    

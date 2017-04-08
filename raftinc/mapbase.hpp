@@ -44,9 +44,9 @@
 #include "allocate.hpp"
 #include "dynalloc.hpp"
 #include "stdalloc.hpp"
-#include "portorder.hpp"
 #include "kernel_pair_t.hpp"
 
+#include "defs.hpp"
 
 class MapBase
 {

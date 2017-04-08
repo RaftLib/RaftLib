@@ -41,11 +41,11 @@ struct manip_option
 struct state
 {
     split_state         s               = raft::parse::cont;
-    raft::order::spec   order           = raft::order::in;
     /** valid bits for array below **/
     raft::manip_vec_t   manip_vec       = raft::manip< 
                                             raft::parallel::system, 
-                                            raft::vm::standard >::value;
+                                            raft::vm::standard,
+                                            raft::order::in >::value;
     /** programmer should know based on vector above the type needed **/
     std::array< manip_option, sizeof( raft::manip_vec_t ) * raft::bits_per_byte >   
                         manip_options;

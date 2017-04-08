@@ -27,9 +27,7 @@
 #include <vector>
 #include <utility>
 #include <climits>
-
-/** for port order enum **/
-#include "portorder.hpp"
+#include <bitset>
 
 namespace raft
 {
@@ -80,10 +78,21 @@ namespace raft
 /** 
  * type for stream manipulation, currently
  * this means that there are 64 available
- * modifiers.
+ * modifiers. we can always make this a 
+ * longer array at a later point if we 
+ * for some reason need more.
  */
+using manip_vec_t = std::bitset< 128 >;
 
-using manip_vec_t = std::uint64_t;
+/**
+ * NOTE: in addition to registering the int type here
+ * for parsing, if a developer wants to add another
+ * state, there must a corresponding static function
+ * defined in the mapbase file so that the 
+ * parse function pointers can be called for the 
+ * appropriate int below and perform the correct
+ * setting actions for each kernel
+ */
 
 /** raft::parallel **/
 namespace parallel
@@ -94,22 +103,30 @@ enum type : manip_vec_t {
     thread      /** specify a thread for each kernel **/, 
     pool        /** thread pool, one kernel thread per core, many kernels in each **/, 
     process     /** open a new process from this point **/,
-    NPARALLEL };
-    
-}
+    PARALLEL_N };    
+} /** end namespace parallel **/ 
+
 /** raft::vm **/
 namespace vm
 {
 
 enum type : manip_vec_t { 
-    flat = parallel::NPARALLEL        /** not yet implemented, likely using segment  **/, 
+    flat = parallel::PARALLEL_N       /** not yet implemented, likely using segment  **/, 
     standard                          /** threads share VM space, processes have sep **/, 
     partition                         /** partition graph at this point into a 
                                         * new VM space, platform dependent **/,
-    NVM
+    VM_N
 }; 
+} /** end namespace vm **/
 
-}
+namespace order
+{
+enum spec : std::uint8_t { 
+    in = vm::VM_N, 
+    out, 
+    ORDER_N 
+};
+} /** end namespace order **/
 
 }
 

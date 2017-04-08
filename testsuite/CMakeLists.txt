@@ -24,37 +24,38 @@ set( TESTAPPS
     chainMultiplePortsDynamic 
     portTypeException 
     dynallocate 
-#    stdlibsupport 
+    stdlibsupport 
+    lambdatest 
+    allocate_s 
+    peek 
+    bracketsTest 
+    peekrange  
+    partitionTest 
+    foreach 
+    fitInCacheLine
+    isExtClass
+    doesntFitInCacheLine
+    isInlineClass
+    isExtArray
+    isExtAlloc 
+    isInlineNonClass 
+    allocateSendPush 
+    allocateSendRandomPush 
+    allocatePopPush 
+    allocatePopInternal 
+    allocatePopInternalObject
+    allocatePopExternal 
+    prefetchEffective 
+    streamManipZeroA
 #    split 
 #     join 
-#     lambdatest 
-#     allocate_s 
-#     foreach 
-#     peekrange  
-#     partitionTest 
 #     parallel 
-#     peek 
-#     bracketsTest 
 #     splitchain 
 #     staticLongSplitChain 
 #     staticSplitJoin 
 #     staticSplitChainJoin 
 #     staticJoin 
 #     staticContJoin 
-#     fitInCacheLine
-#     isExtClass
-#     doesntFitInCacheLine
-#     isInlineClass
-#     isExtArray
-#     isExtAlloc 
-#     isInlineNonClass 
-#     allocateSendPush 
-#     allocateSendRandomPush 
-#     allocatePopPush 
-#     allocatePopInternal 
-#     allocatePopInternalObject
-#     allocatePopExternal 
-#     prefetchEffective 
 #     parallelchain 
 #     splitKsetCont
 #     ksetContContJoin
@@ -69,22 +70,6 @@ set( TESTAPPS
 #     staticLongSplitChainRetStruct
 #     staticSplitChainJoinRetStruct
 #     staticSplitJoinRetStruct 
-#     streamManipOne
-#     streamManipTwo
-#     streamManipThree
-#     streamManipThreeA
-#     streamManipFour
-#     streamManipFourA
-#     streamManipFourB
-#     streamManipFourC
-#     streamManipZeroA
-#     streamManipZeroB
-#     streamManipZeroC
-#     streamManipZeroD
-#     streamManipZeroE
-#     streamManipZeroF
-#     streamManipZeroG
-#     fixedAllocate
      )
 
 
