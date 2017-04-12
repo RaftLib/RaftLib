@@ -82,7 +82,7 @@ namespace raft
  * longer array at a later point if we 
  * for some reason need more.
  */
-using manip_vec_t = std::bitset< 128 >;
+using manip_vec_t = std::uint64_t;
 
 /**
  * NOTE: in addition to registering the int type here

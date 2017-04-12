@@ -82,3 +82,57 @@ raft::parsemap_ptr operator >> ( raft::parsemap_ptr src ,   raft::kernel_wrapper
     src->parse_link_continue( dst_ptr );    
     return( src );
 }
+
+
+/**
+ * we need to start adding in the manip_vec_t types. there will be an
+ * all combinations of the above and the parsemap on lhs in addition
+ * to all the other combinations.w
+ */
+raft::parsemap_ptr operator >> ( raft::parsemap_ptr         src ,   
+                                 const raft::manip_vec_t    vec    )
+{
+    /** need to make a state structure **/
+    auto *s( new raft::parse::state() );
+    /** will be or'd inside the parser **/
+    s->manip_vec = vec;
+    src->push_state( s );
+    return( src );
+}
+
+/**
+ * raft::kernel::make< type >( params ) >> b
+ */
+raft::parsemap_ptr operator >> ( raft::kernel               &src,
+                                 const raft::manip_vec_t     vec    )
+{
+    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    parsemap_ptr->start_group();
+    parsemap_ptr->add_to_group( &src );
+    /** need to make a state structure **/
+    auto *s( new raft::parse::state() );
+    /** will be or'd inside the parser **/
+    s->manip_vec = vec;
+    parsemap_ptr->push_state( s );
+    return( parsemap_ptr );
+}
+
+/**
+ * a >> raft::kernel::make< type >( params )
+ */
+raft::parsemap_ptr operator >> (    raft::kernel_wrapper    src,
+                                    const raft::manip_vec_t vec     )
+{
+    auto *src_ptr( src.get() );
+    src.release();
+    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    parsemap_ptr->start_group();
+    parsemap_ptr->add_to_group( src_ptr );
+    /** need to make a state structure **/
+    auto *s( new raft::parse::state() );
+    /** will be or'd inside the parser **/
+    s->manip_vec = vec;
+    parsemap_ptr->push_state( s );
+    return( parsemap_ptr );
+}
+

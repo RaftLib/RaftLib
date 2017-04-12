@@ -46,11 +46,15 @@ template < manip_vec_t N, manip_vec_t... VECLIST > struct manip_helper< N, VECLI
 {
     constexpr static manip_vec_t get_value( )
     {
+        /** basic sanity check **/		
+        static_assert( N <= ( sizeof( manip_vec_t ) * raft::bits_per_byte ), 		
+             "Stream manipulator can only have 64 states [0:63], please check code" );
         return( 
             ( static_cast< manip_vec_t >( 1 ) << N ) | 
             manip_helper< VECLIST... >::get_value() ); 
     }
 };
+
 /** END MANIP SETTERS FOR VALUE **/
 /** BEGIN HELPERS FOR BIND **/
 template < manip_vec_t value, class... KERNELS > struct bind_helper{};
