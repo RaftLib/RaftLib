@@ -39,5 +39,5 @@ main()
     M += s >> raft::manip< raft::parallel::process  >::value >>  l; 
     /** let exception fall through and error to test **/
     M.exe();
-    return( EXIT_FAILURE );
+    return( EXIT_SUCCESS);
 }

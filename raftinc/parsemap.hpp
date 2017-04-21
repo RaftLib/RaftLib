@@ -113,21 +113,16 @@ private:
                             raft::kernel *dst );
 
     /**
-     * pop_state - returns the current state from the
-     * top of the stack. If no state is available, then 
-     * it returns nullptr. This should be called till 
-     * no more state is available...users can string 
-     * along lots of state and one will be added for each
-     * @return raft::parse::state* - nullptr if no state, otherwise valid object
+     * pop_state - resets the state 
      */
-    raft::parse::state* pop_state();
+    void  pop_state();
     /**
      * this stack must be empty after each parse, 
      * as in "a >> state >> state >> b" the state
      * must be shoved in between a->b so that it 
      * refers to the right link.
      */
-    std::stack< raft::parse::state* > state_stack;
+    raft::parse::state state_stack;
     /**
      * The "parse_head" keeps track of the last kernels
      * added. The last kernels to be added are going to
