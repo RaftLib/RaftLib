@@ -30,7 +30,7 @@ namespace raft
 namespace parse
 {
 
-enum split_state : std::int8_t { split = 0, join, cont };
+enum split_state : std::int8_t { split = 0, join, cont, notset };
     
 struct manip_option
 {    
@@ -49,6 +49,9 @@ struct state
     /** programmer should know based on vector above the type needed **/
     std::array< manip_option, sizeof( raft::manip_vec_t ) * raft::bits_per_byte >   
                         manip_options;
+                        
+    /** add constexpr join func here **/
+
 };
 
 } /** end namespace parse **/

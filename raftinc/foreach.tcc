@@ -20,6 +20,7 @@
 #ifndef _FOREACH_TCC_
 #define _FOREACH_TCC_  1
 #include <raft>
+
 namespace raft
 {
 template < class T > class for_each : public kernel

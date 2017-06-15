@@ -29,23 +29,6 @@ parsemap::parsemap() : submap()
 
 parsemap::~parsemap()
 {
-    /** 
-     * note: we could have arrived here in 
-     * error state. TODO add var to indicate
-     * if this destructor was called after an
-     * error occured. Then we can clean up 
-     * safely. Right now just assume we need
-     * to clean up and get on with things.
-     */
-    while( ! state_stack.empty() )
-    {
-        /** 
-         * techically reference to pointer
-         */
-        auto *ptr( state_stack.top() );
-        delete( ptr );
-        state_stack.pop();
-    }
     auto &container( all_kernels.acquire() );
     /** 
      * we have to get rid of the kernels now that they've been 
@@ -64,11 +47,7 @@ void
 parsemap::push_state( raft::parse::state * const state )
 {
     assert( state != nullptr ); 
-#ifdef PARANOIA
-    /** check to see if the state location has already been pushed **/
-    assert( state != &state_stack.top() );
-#endif
-    state_stack.push( state );
+    
 }
 
 void
