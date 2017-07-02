@@ -26,14 +26,21 @@ public:
          {
             std::cout << " " << range[ i ].ele;
          }
-      } 
-      catch( NoMoreDataException &ex )
+      }
+      /**
+       * NOTE: preferably this would be a constant ref
+       * however, with qthreads the stack frames can behave
+       * oddly when unwinding so..keep as copy for now, the
+       * /dev branch has a totally different code base backing
+       * exceptions which  fixes the issue. -jcb 1 July 2017
+       */
+      catch( NoMoreDataException ex )
       {
          std::cerr << ex.what() << "\n";
          /** nothing bad, just no more data **/
          return( raft::stop );
       }
-      catch( ClosedPortAccessException &ex )
+      catch( ClosedPortAccessException ex )
       {
          UNUSED( ex );
          /** nothing bad, just no more data **/

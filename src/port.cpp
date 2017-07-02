@@ -45,6 +45,7 @@ Port::Port( raft::kernel *k,
 }
 
 
+
 const std::type_index&
 Port::getPortType( const std::string &&port_name )
 {

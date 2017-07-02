@@ -279,7 +279,7 @@ protected:
    template < class T > void initializeConstMap( PortInfo &pi )
    {
       pi.const_map.insert(
-         std::make_pair( Type::Heap , new instr_map_t() ) );
+         std::make_pair( Type::Heap , std::make_shared< instr_map_t >() ) );
 
       pi.const_map[ Type::Heap ]->insert(
          std::make_pair( false /** no instrumentation **/,

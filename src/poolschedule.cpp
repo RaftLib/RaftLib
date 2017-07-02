@@ -52,11 +52,6 @@ pool_schedule::~pool_schedule()
 {
     /** kill off the qthread structures **/
     qthread_finalize();
-    /** delete thread data structs **/
-    for( auto *td : thread_data_pool )
-    {
-        delete( td );
-    }
 }
 
 void

@@ -51,7 +51,7 @@ struct PortInfo
    PortInfo( const PortInfo &other );
    
 
-   virtual ~PortInfo();
+   virtual ~PortInfo() = default;
 
    /**
     * getFIFO - call this function to get a FIFO, lock free but
@@ -78,15 +78,16 @@ struct PortInfo
     */
    std::type_index type;
 
-   /**
-    * const_map - stores "builder" objects for each of the 
-    * currenty implemented ring buffer types so that when 
-    * the mapper is allocating ring buffers it may allocate
-    * one with the proper type.  The first key is self explanatory
-    * for the most part, storing the ring buffer type.  The 
-    * second internal map key is "instrumented" vs. not.
-    */
-   std::map< Type::RingBufferType , instr_map_t* > const_map;
+    /**
+     * const_map - stores "builder" objects for each of the 
+     * currenty implemented ring buffer types so that when 
+     * the mapper is allocating ring buffers it may allocate
+     * one with the proper type.  The first key is self explanatory
+     * for the most part, storing the ring buffer type.  The 
+     * second internal map key is "instrumented" vs. not.
+     */
+    std::map< Type::RingBufferType , 
+        std::shared_ptr< instr_map_t > > const_map;
 
 
    /**

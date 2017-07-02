@@ -24,7 +24,6 @@ PortInfo::PortInfo( const PortInfo &other ) : type( other.type )
 {
    fifo_a         = other.fifo_a;
    fifo_b         = other.fifo_b;
-   const_map      = other.const_map;
    my_kernel      = other.my_kernel;
    my_name        = other.my_name;
    other_kernel   = other.other_kernel;
@@ -36,13 +35,10 @@ PortInfo::PortInfo( const PortInfo &other ) : type( other.type )
    split_func      = other.split_func;
    join_func       = other.join_func;
    fixed_buffer_size = other.fixed_buffer_size;
+   const_map      = other.const_map;
 }
 
 
-PortInfo::~PortInfo()
-{
-   /** alloc delete fifo object **/
-}
 
 
 FIFO* 

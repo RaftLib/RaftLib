@@ -45,7 +45,7 @@ enum access_key : key_t { allocate       = 0,
                           pop            = 5, 
                           peek           = 6, 
                           size           = 7,
-                          N };
+                          NKEY };
 }
 
 template < class T, 

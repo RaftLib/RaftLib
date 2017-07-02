@@ -37,7 +37,7 @@ main( int argc, char **argv )
 #ifdef USEQTHREADS
     1000
 #else
-    10
+    5
 #endif
     ; i++ )
     {

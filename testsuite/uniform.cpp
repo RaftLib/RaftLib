@@ -36,7 +36,7 @@
                                type_t >;
    std::vector< type_t > output;
    auto we( raft::write_each< type_t >( std::back_inserter( output ) ) );
-   const static auto min( 0 );
+   const static auto min( 1 );
    const static auto max( 100 );
    gen g( send_size, min, max );
    raft::map m;
@@ -45,15 +45,15 @@
 
    if( output.size() == send_size )
    {
-       std::cerr << "test failed\n";
+       std::cerr << "test succeeded\n";
    }
    for( const auto val : output )
    {
-       if( val <= min )
+       if( val < min )
        {
            std::cerr << "test failed\n";
        }
-       if( val >= max )
+       if( val > max )
        {
            std::cerr << "test failed\n";
        }
