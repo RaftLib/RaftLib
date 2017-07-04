@@ -142,6 +142,8 @@ public:
     */
    virtual void deallocate() = 0;
 
+    /** FIXME, these need to match the allocate function calls **/
+
    /**
     * allocate_s - "auto-release" version of allocate,
     * where the action of pushing the memory allocated
@@ -168,7 +170,9 @@ public:
     * to the consumer is handled by the returned object
     * exiting the calling stack frame. There are two functions
     * here, one that uses the objec constructor type. This
-    * one is for object types.
+    * one is for object types for inline. The next is for 
+    * external objects, all of which can have the constructor
+    * called with zero arguments.
     * @return autorelease< T, allocatetype >
     */
    template < class T,
@@ -184,6 +188,20 @@ public:
          new (ptr) T( std::forward< Args >( params )... ) );
       return( autorelease< T, allocatetype >( 
          reinterpret_cast< T* >( ptr ), (*this) ) );
+   }
+   
+   
+   template < class T,
+              class ... Args,
+              typename std::enable_if< ext_alloc< T >::value >::type* = nullptr > 
+   auto allocate_s( Args&&... params ) -> autorelease< T, allocatetype >
+   {
+      T **ptr( nullptr );
+      /** call blocks till an element is available **/
+      local_allocate( (void**) &ptr );
+      *ptr = new T( std::forward< Args >( params )... );
+      return( autorelease< T, allocatetype >( 
+         reinterpret_cast< T* >( *ptr ), (*this) ) );
    }
 
 
