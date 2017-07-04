@@ -84,7 +84,7 @@ Allocate::allocate( PortInfo &a, PortInfo &b, void *data )
 {
    UNUSED( data );
    FIFO *fifo( nullptr );
-   instr_map_t * const func_map( a.const_map[ Type::Heap ] );
+   auto &func_map( a.const_map[ Type::Heap ] );
    auto test_func( (*func_map)[ false ] );
 
    if( a.existing_buffer != nullptr )

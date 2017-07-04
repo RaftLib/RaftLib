@@ -28,6 +28,7 @@
 #include <typeindex>
 #include <functional>
 #include <utility>
+#include <memory>
 
 #include "portbase.hpp"
 #include "graphtools.hpp"
@@ -284,7 +285,7 @@ protected:
    template < class T > void initializeConstMap( PortInfo &pi )
    {
       pi.const_map.insert(
-         std::make_pair( Type::Heap , new instr_map_t() ) );
+         std::make_pair( Type::Heap , std::make_shared< instr_map_t >() ) );
 
       pi.const_map[ Type::Heap ]->insert(
          std::make_pair( false /** no instrumentation **/,
@@ -293,7 +294,8 @@ protected:
          std::make_pair( true /** yes instrumentation **/,
                          RingBuffer< T, Type::Heap, true >::make_new_fifo ) );
       
-      pi.const_map.insert( std::make_pair( Type::SharedMemory, new instr_map_t() ) );
+      pi.const_map.insert( 
+        std::make_pair( Type::SharedMemory, std::make_shared< instr_map_t >() ) );
      
       pi.const_map[ Type::SharedMemory ]->insert(
          std::make_pair( false /** no instrumentation **/,

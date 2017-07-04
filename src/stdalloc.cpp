@@ -48,7 +48,7 @@ stdalloc::run()
 
       assert( a.type == b.type );
       /** assume everyone needs a heap for the moment to get working **/
-      instr_map_t *func_map( a.const_map[ Type::Heap ] );
+      auto &func_map( a.const_map[ Type::Heap ] );
       FIFO *fifo( nullptr );
       auto test_func( (*func_map)[ false ] );
       /** check and see if a has a defined allocation **/

@@ -23,7 +23,7 @@
 #include "raftexception.hpp"
 
 RaftException::RaftException( const std::string &message ) : 
-    message( std::move( message ) )
+    message( message )
 {
 }
 
@@ -35,5 +35,5 @@ RaftException::RaftException( const std::string &&message ) :
 const char*
 RaftException::what() const noexcept
 {
-   return( strdup( message.c_str() ) );
+    return( message.c_str() );
 }

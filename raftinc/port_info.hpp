@@ -89,7 +89,7 @@ struct PortInfo
     * for the most part, storing the ring buffer type.  The 
     * second internal map key is "instrumented" vs. not.
     */
-   std::map< Type::RingBufferType , instr_map_t* > const_map;
+   std::map< Type::RingBufferType , std::shared_ptr< instr_map_t > > const_map;
 
 
    /**
