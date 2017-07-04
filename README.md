@@ -29,11 +29,6 @@ you'll need to add to your cmake invocation:
 ```bash
 -DBUILD_WOPENCV=true 
 ```
-If you want to use the Scotch partitioning library (Unix/Linux) for partitioning kernel threads amongst physical resources, add
-the following config line to your cmake invocation:
-```bash
--DUSESCOTCH=1
-```
 
 To use the [QThreads User space HPC threading library](http://www.cs.sandia.gov/qthreads/) 
 you will need to add the following (NOTE: The qthread library currently uses its own partitioner
@@ -92,5 +87,3 @@ in a few weeks. ( 5 Jan 2016, jcb )
 Added in prefetch for object types larger than a single cache line. Profiling
 shows that it's really not beneficial on most platforms with good prefetch
 algorithms. (25 March 2016, jcb )
-
-#### Will release beta prior to May 2017 CPPNow2017 tutorial (17 March 2017, jcb)
