@@ -90,6 +90,27 @@ raft::parsemap_ptr operator >> (    raft::kernel_wrapper    src,
                                     const raft::manip_vec_t vec     );
 
 
+/**
+ * raft::kernel <= raft;:kernel
+ */
+raft::parsemap_ptr operator <= ( raft::kernel &src,
+                                 raft::kernel &dst );
+
+/**
+ * parsemap := raft::kernel <= raft::kernel >> raft::kernel
+ * parsemap := raft::kernel <= parsemap 
+ * parsemap
+ */
+raft::parsemap_ptr operator <= ( raft::kernel &src,
+                                 raft::parsemap_ptr dst );
+
+                                 
+/**
+ * raft::parsemap_ptr <= raft::parsemap_ptr
+ */
+raft::parsemap_ptr operator <= ( raft::parsemap_ptr src,
+                                 raft::parsemap_ptr dst );
+
 
 
 #endif /* END _STREAMPARSE_HPP_ */

@@ -149,6 +149,7 @@ public:
     * @return raft::kernel&&
     */
    raft::kernel& operator []( const std::string &&portname );
+   raft::kernel& operator []( const std::string &portname );
 
    /**
     * getCoreAssignent - returns the core that this kernel

@@ -120,6 +120,9 @@ set( TESTAPPS
     allocatePopExternal 
     prefetchEffective 
     streamManipZeroA
+    split
+    join
+    splitchain
         ) 
 
 

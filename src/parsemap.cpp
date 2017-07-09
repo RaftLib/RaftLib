@@ -19,6 +19,7 @@
  */
 #include <cassert>
 #include "parsemap.hpp"
+#include "graphtools.hpp"
 
 using namespace raft;
 
@@ -47,7 +48,9 @@ void
 parsemap::push_state( raft::parse::state * const state )
 {
     assert( state != nullptr ); 
-    
+    /**
+     * TODO: finish me
+     */
 }
 
 void
@@ -59,6 +62,7 @@ parsemap::parse_link( raft::kernel *src,
     {
         start_group();
     }
+    updateKernels( src, dst );
     add_to_group( dst );
     /**
      * TODO: 
@@ -68,6 +72,64 @@ parsemap::parse_link( raft::kernel *src,
     return;
 }
 
+
+
+void 
+raft::parsemap::parse_link_split( raft::kernel *src,
+                                  raft::kernel *dst )
+{
+    /** a few sanity checks **/
+    assert( src != nullptr );
+    assert( dst != nullptr );
+    assert( get_group_size() == 0 );
+    const std::string enabled_port( dst->getEnabledPort() );
+    (*dst)[ enabled_port ];
+    
+    updateKernels( src, dst );
+    parse_link_helper( src, dst );
+    if( get_group_size() == 0 )
+    {
+        start_group();
+    }
+    add_to_group( dst );
+    /**
+     * NOTE: following conditions should be met, src must 
+     * have more than one output port, and multiple ports 
+     * of the same type. The Destination must have at least
+     * one active/enabled port. The destinations will be
+     * added to a group. 
+     */
+     /** step 1, loop over ports **/
+    auto &port( src->output );
+    for( auto it( ++port.begin() /** inc past first **/ ); it != port.end(); ++it )
+    {
+        auto &kernel( (*src)[ it.name() ] );
+        auto *cloned_kernel( dst->clone() );
+        (*cloned_kernel)[ enabled_port /** dst enabled port **/ ];
+        updateKernels( &kernel, cloned_kernel );
+        parse_link_helper( &kernel, cloned_kernel );
+        add_to_group( cloned_kernel );
+    }
+    return;
+}
+
+
+void 
+raft::parsemap::parse_link_split( raft::kernel   *src 
+    /** this map is the implicit destination **/)
+{
+    return;
+}
+
+
+
+
+void 
+raft::parsemap::parse_link_join(  raft::kernel *src,
+                                  raft::kernel *dst )
+{
+    return;
+}
 
 void
 raft::parsemap::parse_link_continue(    /** source is implicit **/ 
@@ -101,6 +163,7 @@ raft::parsemap::parse_link_continue(    /** source is implicit **/
         {
             auto *dst_ptr( kernel_construction_stack.top() );
             kernel_construction_stack.pop();
+             updateKernels( src_ptr, dst_ptr );
             parse_link_helper( src_ptr, dst_ptr );
             /**
              * TODO: run function pointers for settings
@@ -125,7 +188,6 @@ raft::parsemap::parse_link_helper( raft::kernel *src,
 {
     assert( src != nullptr );
     assert( dst != nullptr );
-    updateKernels( src, dst );
     PortInfo *src_port_info( nullptr ), 
              *dst_port_info( nullptr );
     /** 
@@ -213,6 +275,8 @@ raft::parsemap::add_to_group( raft::kernel * const k )
     return;
 }
 
+
+
 std::size_t
 raft::parsemap::get_group_size()
 {
@@ -247,6 +311,13 @@ raft::parsemap::updateKernels( raft::kernel * const a,
     {
         source_kernels += a;
     }
+    /** else if destination was used as a source, remove **/
+    auto &src_container( source_kernels.unsafeAcquire() );
+    auto src_ret_value( src_container.find( b ) );
+    if( src_ret_value != src_container.cend() )
+    {
+        src_container.erase( src_ret_value );       
+    }
     all_kernels += a;
     /**
      * FIXME, need a method to do this more simply
@@ -263,11 +334,11 @@ raft::parsemap::updateKernels( raft::kernel * const a,
      */
     auto &dst_container( dst_kernels.unsafeAcquire() );
     //check to see if a is entered as a dst
-    auto ret_value( dst_container.find( a ) );   
-    if( ret_value != dst_container.cend() )
+    auto dst_ret_value( dst_container.find( a ) );   
+    if( dst_ret_value != dst_container.cend() )
     {
         /** a appears as former destination, remove **/
-        dst_container.erase( ret_value );
+        dst_container.erase( dst_ret_value );
     }
     dst_kernels += b;
     all_kernels += b;

@@ -53,7 +53,34 @@ public:
     */
     void parse_link( raft::kernel *src, 
                      raft::kernel *dst );
+  
+    /**
+     * parse_link_split - for situations like
+     * kernel <= kernel. For parsemap <= kernel
+     * use the other overload of split, similar
+     * for kernel <= parsemap and parsemap <= parsemap.
+     * NOTE: we could have built this into the 
+     * simpler parse_link, however the logic
+     * gets a bit convoluted and we might as well
+     * do it this way since the information is 
+     * there statically..produces slightly better
+     * code.
+     * @param src - raft::kernel*
+     * @param dst - raft::kernel*
+     */
+    void parse_link_split( raft::kernel *src,
+                           raft::kernel *dst );
     
+    
+    void parse_link_split( raft::kernel   *src );
+
+
+    /**
+     * parse_link_join - very similar to the
+     * above, however this is for joins.
+     */
+    void parse_link_join( raft::kernel *src,
+                          raft::kernel *dst );
     
     /**
      * parse_link_continue - designed for map >> x situations
@@ -125,13 +152,10 @@ private:
     raft::parse::state state_stack;
     /**
      * The "parse_head" keeps track of the last kernels
-     * added. The last kernels to be added are going to
-     * be the ones we want to operate on. The observation
-     * that there's no way to create a chain growing towards
-     * the terminus of the directed graph.
+     * added. 
      */
     std::vector< group_ptr_t >       parse_head;    
-   
+
     /** override default **/
     virtual void updateKernels( raft::kernel * const a, raft::kernel * const b );
 };

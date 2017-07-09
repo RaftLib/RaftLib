@@ -211,6 +211,7 @@ public:
     * if it exists.
     */
    virtual FIFO& operator[]( const portmap_t::key_type  &&port_name );
+   virtual FIFO& operator[]( const portmap_t::key_type  &port_name );
 
 
    /**

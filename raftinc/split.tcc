@@ -43,19 +43,13 @@ public:
 
    virtual raft::kstatus run()
    {
-      auto &output_port( input[ "0" ] );
-      const auto avail( output_port.size() );
-      auto range( output_port.template peek_range< T >( avail ) );
+      auto &input_port( input[ "0" ] );
+      const auto avail( input_port.size() );
+      auto range( input_port.template peek_range< T >( avail ) );
       /** split funtion selects a fifo using the appropriate split method **/
-      if( split_func.send( range, output ) )
-      {
-         /* recycle item */
-         output_port.recycle( avail );
-      }
-      else
-      {
-         output_port.unpeek();
-      }
+      auto items_sent( split_func.send( range, output ) );
+      input_port.recycle( items_sent );
+      input_port.unpeek();
       return( raft::proceed );
    }
 

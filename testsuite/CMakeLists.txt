@@ -10,7 +10,6 @@ find_package( LIBRT )
 ##
 # check for Scotch, use if there
 ##
-find_package( Scotch )
 find_package( NUMA )
 
 
@@ -47,15 +46,15 @@ set( TESTAPPS
     allocatePopExternal 
     prefetchEffective 
     streamManipZeroA
-#    split 
-#     join 
-#     parallel 
-#     splitchain 
+    split 
+    join 
+    splitchain 
 #     staticLongSplitChain 
 #     staticSplitJoin 
 #     staticSplitChainJoin 
 #     staticJoin 
 #     staticContJoin 
+#     parallel 
 #     parallelchain 
 #     splitKsetCont
 #     ksetContContJoin

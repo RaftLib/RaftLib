@@ -136,3 +136,39 @@ raft::parsemap_ptr operator >> (    raft::kernel_wrapper    src,
     return( parsemap_ptr );
 }
 
+/**
+ * raft::kernel <= raft;:kernel
+ */
+raft::parsemap_ptr operator <= ( raft::kernel &src,
+                                 raft::kernel &dst )
+{
+    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    parsemap_ptr->parse_link_split( &src, &dst ); 
+    return( parsemap_ptr );
+}
+/**
+ * parsemap := raft::kernel <= raft::kernel >> raft::kernel
+ * parsemap := raft::kernel <= parsemap 
+ * parsemap
+ */
+raft::parsemap_ptr operator <= ( raft::kernel &src,
+                                 raft::parsemap_ptr dst )
+{
+    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    return( parsemap_ptr );
+}
+
+                                 
+/**
+ * raft::parsemap_ptr <= raft::parsemap_ptr
+ */
+raft::parsemap_ptr operator <= ( raft::parsemap_ptr src,
+                                 raft::parsemap_ptr dst )
+{
+    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+
+
+    return( parsemap_ptr );
+
+}
+
