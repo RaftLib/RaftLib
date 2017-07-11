@@ -28,6 +28,7 @@
 #include <utility>
 #include <climits>
 #include <bitset>
+#include <memory>
 
 namespace raft
 {
