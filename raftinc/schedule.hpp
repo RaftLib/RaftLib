@@ -76,9 +76,8 @@ public:
     * the scheduler needs to run again with the kernel_state
     */
    static bool kernelRun( raft::kernel * const kernel,
-                          volatile bool       &finished,
-                          jmp_buf             *gotostate    = nullptr,
-                          jmp_buf             *kernel_state = nullptr  );
+                          volatile bool       &finished );
+
    //TODO, get rid of jmp_buf, no longer needed 
    /**
     * scheduleKernel - adds the kernel "kernel" to the

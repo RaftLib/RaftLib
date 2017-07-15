@@ -141,9 +141,7 @@ public:
     * by a previous allocate call.
     */
    virtual void deallocate() = 0;
-
-    /** FIXME, these need to match the allocate function calls **/
-
+   
    /**
     * allocate_s - "auto-release" version of allocate,
     * where the action of pushing the memory allocated

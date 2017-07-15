@@ -156,12 +156,8 @@ Schedule::kernelHasNoInputPorts( raft::kernel *kernel )
 
 bool
 Schedule::kernelRun( raft::kernel * const kernel,
-                     volatile bool       &finished,
-                     jmp_buf             *gotostate,
-                     jmp_buf             *kernel_state )
+                     volatile bool       &finished )
 {
-   UNUSED( gotostate );
-   UNUSED( kernel_state );
    if( kernelHasInputData( kernel ) )
    {
       const auto sig_status( kernel->run() );
