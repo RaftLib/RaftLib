@@ -928,7 +928,7 @@ public:
         reinterpret_cast< T* >( buff_ptr->store[ write_index ] )
       );
       /** call local delete on obj **/
-      ptr->~T();
+      delete( ptr );
       (this)->producer_data.allocate_called = false;
       (this)->datamanager.exitBuffer( dm::allocate );
    }
@@ -1028,7 +1028,7 @@ protected:
                                 auto *actual_ptr(
                                     reinterpret_cast< T* >( ptr )
                                 );
-                                actual_ptr->~T();
+                                delete( actual_ptr );
                             } ) );
          Pointer::inc( buff_ptr->read_pt );
          (this)->datamanager.exitBuffer( dm::recycle );
