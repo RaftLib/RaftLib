@@ -990,7 +990,11 @@ public:
         reinterpret_cast< T* >( buff_ptr->store[ write_index ] )
       );
       /** call local delete on obj **/
-      //ptr->~T();
+      /** 
+       * bugfix for issue #37, memory leak, copy paste
+       * error resulted in destructor being called, but
+       * no deallocate. - jcb 15 July 2017
+       */
       delete( ptr );
       (this)->allocate_called = false;
       (this)->datamanager.exitBuffer( dm::allocate );
@@ -1111,6 +1115,11 @@ protected:
                                 auto *actual_ptr(
                                     reinterpret_cast< T* >( ptr )
                                 );
+                                /** 
+                                 * bugfix for issue #37, memory leak, copy paste
+                                 * error resulted in destructor being called, but
+                                 * no deallocate. - jcb 15 July 2017
+                                 */
                                 delete( actual_ptr );
                             } ) );
          Pointer::inc( buff_ptr->read_pt );
