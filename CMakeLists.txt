@@ -101,7 +101,9 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      staticSplitChainJoinRetStruct
      staticSplitJoinRetStruct 
      chainMultiplePorts
-     fixedAllocate ) 
+     fixedAllocate 
+     #disconnectedGraph 
+     ) 
 
 if( BUILDRANDOM )
     list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 

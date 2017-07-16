@@ -46,7 +46,9 @@ set( TESTAPPS allocate
      staticSplitChainJoinRetStruct
      staticSplitJoinRetStruct 
      chainMultiplePorts
-     fixedAllocate )
+     fixedAllocate
+     #disconnectedGraph 
+     )
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 

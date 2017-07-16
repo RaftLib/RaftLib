@@ -102,7 +102,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
    {
       auto *k( queue.front() );
       queue.pop();
-      if( k == nullptr ) break;
+      if( k == nullptr ){ break; };
       /** iterate over all out-edges **/
       /** 1) get lock **/
       while( ! k->output.portmap.mutex_map.try_lock() )
@@ -125,6 +125,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
          else
          if( connected_error )
          {
+            assert( false );
             std::stringstream ss;
             ss << "Unconnected port detected at " <<
                common::printClassName( *k ) <<
