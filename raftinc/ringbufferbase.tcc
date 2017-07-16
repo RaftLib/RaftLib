@@ -35,7 +35,6 @@
 #include "fifoabstract.tcc"
 #include "datamanager.tcc"
 
-#include "kernelpreempt.hpp"
 #include "alloc_traits.tcc"
 
 namespace raft
