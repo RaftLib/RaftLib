@@ -102,6 +102,7 @@ set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split
      staticSplitJoinRetStruct 
      chainMultiplePorts
      fixedAllocate 
+     noPortException
      #disconnectedGraph 
      ) 
 

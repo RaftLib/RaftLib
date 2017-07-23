@@ -1,9 +1,9 @@
 /**
  * port.cpp - 
  * @author: Jonathan Beard
- * @version: Thu Aug 28 09:55:47 2014
+ * @version: Sun July 23 06:22 2017
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2017 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@
 #include <typeindex>
 #include <sstream>
 #include <iostream>
+/** for exception below **/
+#include <boost/core/demangle.hpp> 
 
 #include "fifo.hpp"
 #include "kernel.hpp"
@@ -113,10 +115,20 @@ Port::getPortInfoFor( const std::string port_name )
 PortInfo&
 Port::getPortInfo()
 {
-   if( portmap.map.size() > 1 )
+   const auto number_of_ports( portmap.map.size() );
+   if( number_of_ports > 1 )
    {
-      /** TODO: extract kernel name to go here too **/
-      throw PortNotFoundException( "One port expected, more than one found!" );
+      /** 
+       * NOTE: This is cought and re-thrown within the 
+       * runtime within mapbase.hpp so that we can push
+       * out the name of the kernel and a bit more info
+       */
+      throw AmbiguousPortAssignmentException( "One port expected, more than one found!" );
+   }
+   else if( number_of_ports == 0 )
+   {
+      const auto name( boost::core::demangle( typeid( (*this->kernel) ).name() ) );
+      throw PortNotFoundException( "At least one port must be defined, none were for kernel class \"" + name + "\"" );
    }
    auto pair( portmap.map.begin() );
    return( (*pair).second );

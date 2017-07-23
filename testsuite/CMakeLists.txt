@@ -47,6 +47,7 @@ set( TESTAPPS allocate
      staticSplitJoinRetStruct 
      chainMultiplePorts
      fixedAllocate
+     noPortException
      #disconnectedGraph 
      )
 

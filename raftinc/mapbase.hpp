@@ -10,9 +10,9 @@
  * within it.  
  *
  * @author: Jonathan Beard
- * @version: Fri Sep 12 10:28:33 2014
+ * @version: Sun July 23 06:22 2017
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2017 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ public:
       try{ 
          port_info_a =  &(a->output.getPortInfo());
       }
-      catch( PortNotFoundException &ex )
+      catch( AmbiguousPortAssignmentException &ex )
       {
          portNotFound( true,
                        ex,
@@ -99,7 +99,7 @@ public:
       try{
          port_info_b = &(b->input.getPortInfo());
       }
-      catch( PortNotFoundException &ex )
+      catch( AmbiguousPortAssignmentException &ex )
       {
             portNotFound( false, 
                           ex,
@@ -140,7 +140,7 @@ public:
       try{
          port_info_b = &(b->input.getPortInfo());
       }
-      catch( PortNotFoundException &ex ) 
+      catch( AmbiguousPortAssignmentException &ex ) 
       {
             portNotFound( false,
                           ex,
@@ -179,7 +179,7 @@ public:
       try{
          port_info_a = &(a->output.getPortInfo() );
       }
-      catch( PortNotFoundException &ex ) 
+      catch( AmbiguousPortAssignmentException &ex ) 
       {
             portNotFound( true,
                           ex,
@@ -302,8 +302,8 @@ protected:
       all_kernels += b;
    }
 
-   static void inline portNotFound( bool src, 
-                                    PortNotFoundException &ex, 
+   static void inline portNotFound( const bool src, 
+                                    const AmbiguousPortAssignmentException &ex, 
                                     raft::kernel * const k )
    {
          std::stringstream ss;

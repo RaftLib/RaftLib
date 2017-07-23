@@ -3,7 +3,7 @@
  * @author: Jonathan Beard
  * @version: Fri Sep 12 10:28:33 2014
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2017 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
