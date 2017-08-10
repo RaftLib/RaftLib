@@ -149,7 +149,7 @@ public:
             auto &chunk( port.template allocate< chunktype  >() );
             if( init )
             {
-               fseek( fp, -( chunk_offset - 1) , SEEK_CUR );
+               fseek( fp, - chunk_offset , SEEK_CUR );
             }
             else
             {
