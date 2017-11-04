@@ -15,7 +15,7 @@ is subject to updates if needed (although we're taking pains to support needed o
 To checkout the library and build RaftLib (along with all examples) do the following:
 ```
 $ cd location_for_the_repo
-$ git clone git@github.com:jonathan-beard/RaftLib.git
+$ git clone git@github.com:RaftLib/RaftLib.git
 $ mkdir build
 $ cd build
 $ cmake ../RaftLib
@@ -64,16 +64,13 @@ notable is my co-author (@pl53), for a full current contribution list see the Gi
 ### Citing the Raft Library
 Please cite as:
 ```bibtex
-@inproceedings{blc15,
-  author = {Beard, Jonathan C. and Li, Peng and Chamberlain, Roger D.},
-  title = {RaftLib: A {C++} Template Library for High Performance Stream Parallel Processing},
-  publisher = {ACM},
-  address = {New York, NY, USA},
-  year = {2015},
-  month = feb,
-  series = {PMAM 2015},
-  booktitle = {Proceedings of Programming Models and Applications on Multicores and Manycores},
-  pages = {96-105}
+@article{blc16,
+  author = {Beard, Jonathan C and Li, Peng and Chamberlain, Roger D},
+  title = {RaftLib: A C++ Template Library for High Performance Stream Parallel Processing},
+  year = {2016},
+  doi = {http://dx.doi.org/10.1177/1094342016672542},
+  eprint = {http://hpc.sagepub.com/content/early/2016/10/18/1094342016672542.full.pdf+html},
+  journal = {International Journal of High Performance Computing Applications}
 }
 ```
 
