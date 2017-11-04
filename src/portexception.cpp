@@ -69,3 +69,9 @@ PortAlreadyExists::PortAlreadyExists(
    const std::string message ) : PortException( message )
 {
 }
+
+
+PortUnconnectedException::PortUnconnectedException( 
+    const std::string message ) : PortException( message )
+{
+}

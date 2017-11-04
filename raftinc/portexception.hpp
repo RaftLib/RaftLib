@@ -76,4 +76,10 @@ class PortAlreadyExists : public PortException
 public:
    PortAlreadyExists( const std::string message );
 };
+
+class PortUnconnectedException : public PortException
+{
+public:
+   PortUnconnectedException( const std::string message );
+};
 #endif /* END _PORTEXCEPTION_HPP_ */

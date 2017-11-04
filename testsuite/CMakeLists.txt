@@ -48,7 +48,8 @@ set( TESTAPPS allocate
      chainMultiplePorts
      fixedAllocate
      noPortException
-     #disconnectedGraph 
+     twiceAdd
+     disconnectedGraph 
      )
 
 if( BUILDRANDOM )

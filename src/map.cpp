@@ -42,29 +42,29 @@ raft::map::map() : MapBase()
 }
 
 void
-raft::map::checkEdges( kernelkeeper &source_k )
+raft::map::checkEdges()
 {
-   auto &container( source_k.acquire() );
-   /**
-    * NOTE: will throw an error that we're not catching here
-    * if there are unconnected edges...this is something that
-    * a user will have to fix.  Otherwise will return with no
-    * errors.
-    */
-   GraphTools::BFS( container,
-                    []( PortInfo &  a, 
-                        PortInfo &  b, 
-                        void *  const data )
-                    {
-                       UNUSED( a );
-                       UNUSED( b );
-                       UNUSED( data );
-                       return;
-                    },
-                    nullptr,
-                    true );
-   source_k.release();
-   return;
+    auto &container( all_kernels.acquire() );
+    /**
+     * NOTE: will throw an error that we're not catching here
+     * if there are unconnected edges...this is something that
+     * a user will have to fix.  Otherwise will return with no
+     * errors.
+     */
+    /** 
+     * the old version used a BFT, this one uses a much 
+     * more efficient linear search through the graph
+     */
+    for( auto &k : container )
+    {
+        /** 
+         * NOTE: This will throw an exception
+         * of type PortUnconnectedException
+         */
+        k->allConnected();
+    }
+    all_kernels.release();
+    return;
 }
 
 /**

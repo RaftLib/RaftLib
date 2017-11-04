@@ -377,6 +377,7 @@ protected:
 
    /** we need some friends **/
    friend class MapBase;
+   friend class raft::kernel;
    friend class raft::map;
    friend class GraphTools;
    friend class basic_parallel;

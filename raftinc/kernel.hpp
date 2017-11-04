@@ -130,6 +130,8 @@ protected:
     */
    virtual std::size_t addPort();
    
+   void allConnected();
+   
    virtual void lock();
    virtual void unlock();
 

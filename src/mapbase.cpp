@@ -69,7 +69,14 @@ MapBase::join( raft::kernel &a, const std::string name_a, PortInfo &a_info,
          " and " << common::printClassNameFromStr( b_info.type.name() ) << "\n"; 
       throw PortTypeMismatchException( ss.str() );
    }
-
+   if( a_info.other_kernel != nullptr )
+   {
+      throw PortDoubleInitializeException( "port double initialized with: " + name_b );
+   }
+   if( b_info.other_kernel != nullptr )
+   {
+      throw PortDoubleInitializeException( "port double initialized with: " + name_a );
+   }
    a_info.other_kernel = &b;
    a_info.other_name   = name_b;
    b_info.other_kernel = &a;

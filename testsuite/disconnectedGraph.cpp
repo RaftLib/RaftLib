@@ -22,6 +22,7 @@ public:
       output.addPort< C  >( "sum" );
    }
    
+
    virtual raft::kstatus run()
    {
       A a;
@@ -62,7 +63,15 @@ main( int argc, char **argv )
    m += a >> s[ "input_a" ];
    m += b >> s[ "input_b" ];
    m += s >> print;
-   m.exe();
+   try
+   {
+       m.exe();
+   }
+   catch( PortUnconnectedException &ex )
+   {
+       std::cerr << ex.what() << "\n";
+       exit( EXIT_SUCCESS );
+   }
    
-   return( EXIT_SUCCESS );
+   return( EXIT_FAILURE );
 }

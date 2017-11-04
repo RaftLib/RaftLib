@@ -103,7 +103,7 @@ public:
          all_kernels.release();
       }
       /** check types, ensure all are linked **/
-      checkEdges( source_kernels );
+      checkEdges();
       partition pt;
       pt.partition( all_kernels );
       
@@ -115,9 +115,15 @@ public:
       std::thread mem_thread( [&](){
          alloc.run();
       });
-     
-      alloc.waitTillReady();
-
+      
+      try
+      {
+        alloc.waitTillReady();
+      }
+      catch( std::exception &ex )
+      {
+        std::cerr << "caught here\n"; 
+      }
       scheduler sched( (*this) );
       sched.init();
       
@@ -168,10 +174,9 @@ protected:
    /**
     * checkEdges - runs a breadth first search through the graph
     * to look for disconnected edges.
-    * @param   source_k - std::set< raft::kernel* >
     * @throws PortException - thrown if an unconnected edge is found.
     */
-   void checkEdges( kernelkeeper &source_k );
+   void checkEdges();
 
    /**
     * enableDuplication - add split / join kernels where needed, 
