@@ -17,7 +17,7 @@ cache:
 
 env:
     global:
-        - GCC_VERSION=5
+        - GCC_VERSION=7
         - CXXFLAGS=-std=c++14
         - CFLAGS=-std=c99
 
@@ -39,8 +39,8 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
 # ensure these match GCC_VERSION
-      - gcc-5
-      - g++-5
+      - gcc-7
+      - g++-7
       - binutils
       - gawk
       - build-essential
@@ -50,12 +50,12 @@ addons:
       - libnuma-dev
 
 before_script:
-    - wget --no-check-certificate https://cmake.org/files/v3.5/cmake-3.5.0-Linux-x86_64.tar.gz
-    - tar -zxf cmake-3.5.0-Linux-x86_64.tar.gz
-    - export PATH=$PWD/cmake-3.5.0-Linux-x86_64/bin/:$PATH
-    - wget --no-check-certificate http://llvm.org/releases/3.7.1/clang+llvm-3.7.1-x86_64-linux-gnu-ubuntu-14.04.tar.xz;
-    - tar -xf clang+llvm-3.7.1-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-    - export PATH=$PWD/clang+llvm-3.7.1-x86_64-linux-gnu-ubuntu-14.04/bin:$PATH
+    - wget --no-check-certificate https://cmake.org/files/v3.10/cmake-3.10.0-rc2-Linux-x86_64.tar.gz
+    - tar -zxf cmake-3.10.0-rc2-Linux-x86_64.tar.gz
+    - export PATH=$PWD/cmake-3.10.0-rc2-Linux-x86_64/bin/:$PATH
+    - wget --no-check-certificate http://releases.llvm.org/5.0.0/clang+llvm-5.0.0-linux-x86_64-ubuntu16.04.tar.xz;  
+    - tar -xf clang+llvm-5.0.0-linux-x86_64-ubuntu16.04.tar.xz
+    - export PATH=$PWD/clang+llvm-5.0.0-linux-x86_64-ubuntu16.04/bin:$PATH
     - echo $LANG
     - echo $LC_ALL
     - mkdir build
