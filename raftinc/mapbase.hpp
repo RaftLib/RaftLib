@@ -98,7 +98,7 @@ public:
     * @return  kernel_pair_t - references to src, dst kernels.
     */
    kernel_pair_t link( raft::kernel *a, 
-                       const std::string  a_port, 
+                       const raft::port_key_type  a_port, 
                        raft::kernel *b,
                        const raft::order::spec t,
                        const std::size_t buffer = 0 );
@@ -111,7 +111,7 @@ public:
     * matching the port b_port.
     * @param   a - raft::kernel*, with more a single output port
     * @param   b - raft::kernel*, with input port named b_port
-    * @param   b_port - const std::string, input port name.
+    * @param   b_port - const raft::port_key_type, input port name.
     * @throws  AmbiguousPortAssignmentException - exception thrown 
     *          if raft::kernel a has more than a single output port
     * @throws  PortNotFoundException - exception thrown if raft::kernel b
@@ -120,7 +120,7 @@ public:
     */
    kernel_pair_t link( raft::kernel *a, 
                        raft::kernel *b, 
-                       const std::string b_port,
+                       const raft::port_key_type  b_port,
                        const raft::order::spec t,
                        const std::size_t buffer = 0 );
    
@@ -137,9 +137,9 @@ public:
     * @return  kernel_pair_t - references to src, dst kernels.
     */
     kernel_pair_t link( raft::kernel *a, 
-                        const std::string a_port, 
+                        const raft::port_key_type  a_port, 
                         raft::kernel *b, 
-                        const std::string b_port,
+                        const raft::port_key_type  b_port,
                         const raft::order::spec t,
                         const std::size_t buffer = 0 );
    
@@ -161,8 +161,8 @@ protected:
     * @param b_info - PortInfo struct for kernel b
     * @throws PortTypeMismatchException
     */
-   static void join( raft::kernel &a, const std::string &name_a, PortInfo &a_info, 
-                     raft::kernel &b, const std::string &name_b, PortInfo &b_info );
+   static void join( raft::kernel &a, const raft::port_key_type &name_a, PortInfo &a_info, 
+                     raft::kernel &b, const raft::port_key_type &name_b, PortInfo &b_info );
    
    static void insert( raft::kernel *a,  PortInfo &a_out, 
                        raft::kernel *b,  PortInfo &b_in,
@@ -175,8 +175,8 @@ protected:
 
    virtual void updateKernels( raft::kernel * const a, raft::kernel * const b );
 
-   static void portNotFound( bool src, 
-                             PortNotFoundException &ex, 
+   static void portNotFound( const bool src, 
+                             const AmbiguousPortAssignmentException &ex, 
                              raft::kernel * const k );
 
    /** need to keep source kernels **/

@@ -98,5 +98,12 @@ using NoMoreDataException
 using PortAlreadyExists                 
     = PortExceptionBase< 6 >;
 
+/**
+ * PortUnconnectedException - the port at the throwing kernel is not connected,
+ * and therefore at execution time bad things will happen. Lets throw
+ * an exception at runtime to catch this. 
+ */
+using PortUnconnectedException
+    = PortExceptionBase< 7 >;
 
 #endif

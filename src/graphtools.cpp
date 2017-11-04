@@ -1,4 +1,4 @@
-/**
+/*
  * graphtools.cpp -
  * @author: Jonathan Beard
  * @version: Sat Sep 20 13:15:09 2014
@@ -25,6 +25,7 @@
 #include <string>
 #include <sstream>
 #include <mutex>
+#include <cstdint>
 
 #include "portmap_t.hpp"
 #include "common.hpp"
@@ -473,8 +474,13 @@ GraphTools::__BFT( std::queue< raft::kernel* > &queue,
       queue.pop();
       if( k == nullptr )
       {
+        assert( false );
         break;
       }
+#define REALLYDEBUG 1      
+#if REALLYDEBUG
+      std::cout << reinterpret_cast< std::uintptr_t >( k ) << "\n";
+#endif
       auto &port_container( ( direction == GraphTools::output ? 
                         k->output :
                         k->input ) );
@@ -491,7 +497,7 @@ GraphTools::__BFT( std::queue< raft::kernel* > &queue,
       {
          PortInfo &source( port.second );
          /** get dst edge to call function on **/
-         if( source.other_kernel != nullptr  )
+         if(  source.other_kernel != nullptr  )
          {
             PortInfo &dst(
                source.other_kernel->input.getPortInfoFor( source.other_name ) );
@@ -517,6 +523,9 @@ GraphTools::__BFT( std::queue< raft::kernel* > &queue,
       }
       port_container.portmap.mutex_map.unlock();
    }
+#if REALLYDEBUG
+      std::cout << "DONE\n\n";
+#endif
    return;
 }
 

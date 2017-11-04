@@ -25,11 +25,11 @@
 #include <mutex>
 #include "port_info.hpp"
 #include <cstddef>
+#include "defs.hpp"
 
 struct portmap_t
 {
-    using key_type = std::string;
-    using map_type = std::map< key_type, PortInfo >;
+    using map_type = std::map< raft::port_key_type, PortInfo >;
     
     portmap_t()  = default;
     ~portmap_t() = default;

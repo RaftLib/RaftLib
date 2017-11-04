@@ -145,11 +145,11 @@ public:
    /**
     * operator[] - returns the current kernel with the 
     * specified port name enabled for linking.
-    * @param portname - const std::string&&
+    * @param portname - const raft::port_key_type&&
     * @return raft::kernel&&
     */
-   raft::kernel& operator []( const std::string &&portname );
-   raft::kernel& operator []( const std::string &portname );
+   raft::kernel& operator []( const raft::port_key_type &&portname );
+   raft::kernel& operator []( const raft::port_key_type &portname );
 
    /**
     * getCoreAssignent - returns the core that this kernel
@@ -159,13 +159,26 @@ public:
    core_id_t getCoreAssignment() noexcept;
 
 protected:
-   /**
-    * 
-    */
-   virtual std::size_t addPort();
+    /**
+     * addPort - to be called only when the 
+     * runtime itself wants to add ports. This
+     * particular function is to add only to
+     * one side with a numerical port key (cast
+     * as a string). The base (virtual) function
+     * does nothing, however, they are implemented
+     * by the various parallel_x sub-classes.
+     *
+     * @return - current numerical index
+     * of port added.
+     */
+    virtual std::size_t addPort();
+  
+    void allConnected();
    
-   virtual void lock();
-   virtual void unlock();
+    virtual void lock();
+    virtual void unlock();
+
+    
 
    /**
     * PORTS - input and output, use these to interact with the
@@ -186,9 +199,9 @@ protected:
     * This doesn't mean that you are getting rid of the port, it 
     * means that the port name is not going to be returned as "enabled"
     * twice. 
-    * @return   std::string - currently active port name
+    * @return   raft::port_key_type- currently active port name
     */
-   std::string getEnabledPort();
+   raft::port_key_type  getEnabledPort();
 
    /**
     * getEnabledPortCount - returns the number of enabled ports
@@ -251,7 +264,7 @@ private:
    bool             execution_done    = false;
 
    /** for operator syntax **/
-   std::queue< std::string > enabled_port;
+   std::queue< raft::port_key_type > enabled_port;
 };
 
 

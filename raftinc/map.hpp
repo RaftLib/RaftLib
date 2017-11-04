@@ -94,7 +94,7 @@ public:
              , 
              class allocator           = dynalloc,
              class parallelism_monitor = basic_parallel > 
-      void exe()
+   void exe()
    {
       {
          auto &container( all_kernels.acquire() );
@@ -108,7 +108,7 @@ public:
          all_kernels.release();
       }
       /** check types, ensure all are linked **/
-      checkEdges( source_kernels );
+      checkEdges();
       partition pt;
       pt.partition( all_kernels );
       
@@ -171,12 +171,11 @@ protected:
     void joink( kpair * const next );
 
    /**
-    * checkEdges - runs a breadth first search through the graph
+    * checkEdges - runs a linear search through the vertices
     * to look for disconnected edges.
-    * @param   source_k - std::set< raft::kernel* >
-    * @throws PortException - thrown if an unconnected edge is found.
+    * @throws PortUnconnectedException
     */
-   void checkEdges( kernelkeeper &source_k );
+   void checkEdges();
 
    /**
     * enableDuplication - add split / join kernels where needed, 

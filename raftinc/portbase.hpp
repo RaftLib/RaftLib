@@ -25,6 +25,8 @@
 
 #include "portiterator.hpp"
 #include "portmap_t.hpp"
+#include "defs.hpp"
+
 
 class PortBase
 {
@@ -39,7 +41,7 @@ public:
     * @throws - should throw a PortNotFoundException if port_name
     * doesn't exist.
     */
-   virtual FIFO& operator[]( const portmap_t::key_type &&port_name ) = 0;
+   virtual FIFO& operator[]( const raft::port_key_type &&port_name ) = 0;
 
    /**
     * hasPorts - should return false if this port object is

@@ -123,6 +123,8 @@ set( TESTAPPS
     split
     join
     splitchain
+    noPortException
+    disconnectedGraph
         ) 
 
 

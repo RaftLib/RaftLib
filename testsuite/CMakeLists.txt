@@ -69,6 +69,8 @@ set( TESTAPPS
 #     staticLongSplitChainRetStruct
 #     staticSplitChainJoinRetStruct
 #     staticSplitJoinRetStruct 
+      noPortException
+      disconnectedGraph
      )
 
 

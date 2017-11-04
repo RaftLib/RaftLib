@@ -29,6 +29,7 @@
 #include <climits>
 #include <bitset>
 #include <memory>
+#include <string>
 
 namespace raft
 {
@@ -36,6 +37,7 @@ namespace raft
     class kernel;
     /** also parsemap_ptr smart ptr obj used in map and streamparse **/
     class parsemap;
+    using port_key_type = std::string;
     using parsemap_ptr = std::unique_ptr< raft::parsemap >;
 } /** end namespace raft **/
 

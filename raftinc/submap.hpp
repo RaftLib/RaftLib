@@ -27,6 +27,7 @@
 #include <map>
 #include <string>
 
+#include "defs.hpp"
 #include "mapbase.hpp"
 
 namespace raft
@@ -66,10 +67,10 @@ public:
 protected:
    friend class map;
    /** essentially source kernels **/
-   std::map< std::string, 
+   std::map< raft::port_key_type, 
              raft::kernel* > input;
    /** essentially dest   kernels **/
-   std::map< std::string,
+   std::map< raft::port_key_type,
              raft::kernel* > output;
 };
 

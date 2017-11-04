@@ -118,6 +118,7 @@ void
 raft::parsemap::parse_link_split( raft::kernel   *src 
     /** this map is the implicit destination **/)
 {
+    UNUSED( src );
     return;
 }
 
@@ -128,6 +129,8 @@ void
 raft::parsemap::parse_link_join(  raft::kernel *src,
                                   raft::kernel *dst )
 {
+    UNUSED( src );
+    UNUSED( dst );
     return;
 }
 
@@ -202,7 +205,7 @@ raft::parsemap::parse_link_helper( raft::kernel *src,
         {
             src_port_info = &( src->output.getPortInfoFor( src_name ) );
         }
-        catch( PortNotFoundException &ex )
+        catch( AmbiguousPortAssignmentException &ex )
         {
             /** impl in mapbase **/
             portNotFound( false, ex, src );
@@ -215,7 +218,7 @@ raft::parsemap::parse_link_helper( raft::kernel *src,
         {
             src_port_info = &( src->output.getPortInfo() );
         }
-        catch( PortNotFoundException &ex )
+        catch( AmbiguousPortAssignmentException &ex )
         {
             portNotFound( true, ex, src );
         }
@@ -232,8 +235,9 @@ raft::parsemap::parse_link_helper( raft::kernel *src,
         try
         {
             dst_port_info = &( dst->input.getPortInfoFor( dst_name ) );
+            /** FIXME: This needs to be a port not found exception **/
         }
-        catch( PortNotFoundException &ex )
+        catch( AmbiguousPortAssignmentException &ex )
         {
             /** impl in mapbase **/
             portNotFound( false, ex, dst );
@@ -246,7 +250,7 @@ raft::parsemap::parse_link_helper( raft::kernel *src,
         {
             dst_port_info = &( dst->input.getPortInfo() );
         }
-        catch( PortNotFoundException &ex )
+        catch( AmbiguousPortAssignmentException &ex )
         {
             portNotFound( true, ex, dst );
         }

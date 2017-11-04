@@ -28,6 +28,7 @@
 #include <memory>
 #include <cassert>
 
+#include "defs.hpp"
 #include "alloc_defs.hpp"
 #include "ringbuffertypes.hpp"
 #include "port_info_types.hpp"
@@ -97,14 +98,14 @@ struct PortInfo
     * destroyed unless they're used...they'll of course
     * be destroyed upon program termination.
     */
-   split_factory_t   split_func      = nullptr;
-   join_factory_t    join_func       = nullptr;
+   split_factory_t          split_func      = nullptr;
+   join_factory_t           join_func       = nullptr;
 
-   raft::kernel     *my_kernel       = nullptr;
-   std::string       my_name         = "";
+   raft::kernel             *my_kernel       = nullptr;
+   raft::port_key_type       my_name         = "";
    
-   raft::kernel     *other_kernel    = nullptr;
-   std::string       other_name      = "";
+   raft::kernel             *other_kernel    = nullptr;
+   raft::port_key_type       other_name      = "";
    
    /** runtime settings **/
    bool              use_my_allocator= false;

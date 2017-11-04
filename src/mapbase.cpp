@@ -64,7 +64,7 @@ MapBase::link( raft::kernel *a,
    try{ 
       port_info_a =  &(a->output.getPortInfo());
    }
-   catch( PortNotFoundException &ex )
+   catch( AmbiguousPortAssignmentException &ex )
    {
       portNotFound( true,
                     ex,
@@ -75,7 +75,7 @@ MapBase::link( raft::kernel *a,
    try{
       port_info_b = &(b->input.getPortInfo());
    }
-   catch( PortNotFoundException &ex )
+   catch( AmbiguousPortAssignmentException &ex )
    {
          portNotFound( false, 
                        ex,
@@ -91,7 +91,7 @@ MapBase::link( raft::kernel *a,
 
 kernel_pair_t 
 MapBase::link( raft::kernel *a, 
-               const std::string  a_port, 
+               const raft::port_key_type  a_port, 
                raft::kernel *b,
                const raft::order::spec t,
                const std::size_t buffer )
@@ -103,7 +103,7 @@ MapBase::link( raft::kernel *a,
    try{
       port_info_b = &(b->input.getPortInfo());
    }
-   catch( PortNotFoundException &ex ) 
+   catch( AmbiguousPortAssignmentException &ex )
    {
          portNotFound( false,
                        ex,
@@ -119,7 +119,7 @@ MapBase::link( raft::kernel *a,
 kernel_pair_t 
 MapBase::link( raft::kernel *a, 
                raft::kernel *b, 
-               const std::string b_port,
+               const raft::port_key_type b_port,
                const raft::order::spec t,
                const std::size_t buffer )
 {
@@ -128,7 +128,7 @@ MapBase::link( raft::kernel *a,
    try{
       port_info_a = &(a->output.getPortInfo() );
    }
-   catch( PortNotFoundException &ex ) 
+   catch( AmbiguousPortAssignmentException &ex )
    {
          portNotFound( true,
                        ex,
@@ -147,9 +147,9 @@ MapBase::link( raft::kernel *a,
  
 kernel_pair_t
 MapBase::link( raft::kernel *a, 
-               const std::string a_port, 
+               const raft::port_key_type a_port, 
                raft::kernel *b, 
-               const std::string b_port,
+               const raft::port_key_type b_port,
                const raft::order::spec t,
                const std::size_t buffer )
 {
@@ -167,8 +167,8 @@ MapBase::link( raft::kernel *a,
 
 
 void
-MapBase::join( raft::kernel &a, const std::string &name_a, PortInfo &a_info, 
-               raft::kernel &b, const std::string &name_b, PortInfo &b_info )
+MapBase::join( raft::kernel &a, const raft::port_key_type &name_a, PortInfo &a_info, 
+               raft::kernel &b, const raft::port_key_type &name_b, PortInfo &b_info )
 {
    //b's port info isn't allocated
    if( a_info.type != b_info.type )
@@ -232,7 +232,7 @@ MapBase::updateKernels( raft::kernel * const a, raft::kernel * const b )
    
 void 
 MapBase::portNotFound( const bool src, 
-                       PortNotFoundException &ex, 
+                       const AmbiguousPortAssignmentException &ex,
                        raft::kernel * const k )
 {
     std::stringstream ss;

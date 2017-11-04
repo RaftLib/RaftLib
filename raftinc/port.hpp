@@ -147,7 +147,7 @@ public:
     * given.  Function returns true if added, false if not.
     * Main reason for returning false would be that the
     * port already exists.
-    * @param   port_name - const std::string
+    * @param   port_name - const raft::port_key_type
     * @return  bool
     */
    template < class T,
@@ -203,15 +203,15 @@ public:
     * @return  const type_index&
     * @throws PortNotFoundException
     */
-   const std::type_index& getPortType( const portmap_t::key_type &&port_name );
+   const std::type_index& getPortType( const raft::port_key_type &&port_name );
 
 
    /**
     * operator[] - input the port name and get a port
     * if it exists.
     */
-   virtual FIFO& operator[]( const portmap_t::key_type  &&port_name );
-   virtual FIFO& operator[]( const portmap_t::key_type  &port_name );
+   virtual FIFO& operator[]( const raft::port_key_type  &&port_name );
+   virtual FIFO& operator[]( const raft::port_key_type  &port_name );
 
 
    /**
@@ -275,6 +275,7 @@ public:
 
 
 protected:
+
    /**
     * initializeConstMap - hack to get around the inability to otherwise
     * initialize a template function where later we don't have the
@@ -355,10 +356,12 @@ protected:
    /**
     * getPortInfoFor - gets port information for the param port
     * throws an exception if the port doesn't exist.
-    * @param   port_name - const std::string
+    * @param   port_name - const raft::port_key_type
     * @return  PortInfo&
     */
-   PortInfo& getPortInfoFor( const std::string port_name );
+   PortInfo& getPortInfoFor( const raft::port_key_type  port_name );
+
+   
 
    /**
     * portmap - container struct with all ports.  The
@@ -386,6 +389,7 @@ protected:
 
    /** we need some friends **/
    friend class MapBase;
+   friend class raft::kernel;
    friend class raft::map;
    friend class raft::parsemap;
    friend class GraphTools;

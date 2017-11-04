@@ -24,10 +24,13 @@
 #include <sstream>
 #include <iostream>
 
+/** for exception below **/
+#include <boost/core/demangle.hpp> 
 #include "fifo.hpp"
 #include "kernel.hpp"
 #include "port.hpp"
 #include "portexception.hpp"
+#include "defs.hpp"
 
 Port::Port( raft::kernel * const k ) : PortBase(),
                                        kernel( k )
@@ -89,7 +92,7 @@ Port::operator = ( const Port &other )
 }
 
 const std::type_index&
-Port::getPortType( const portmap_t::key_type &&port_name )
+Port::getPortType( const raft::port_key_type  &&port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
@@ -100,7 +103,7 @@ Port::getPortType( const portmap_t::key_type &&port_name )
 }
 
 FIFO&
-Port::operator[]( const portmap_t::key_type &&port_name )
+Port::operator[]( const raft::port_key_type &&port_name )
 {
    //NOTE: We'll need to add a lock here if later
    //we intend to remove ports dynamically as well
@@ -116,7 +119,7 @@ Port::operator[]( const portmap_t::key_type &&port_name )
 }
 
 FIFO&
-Port::operator[]( const portmap_t::key_type &port_name )
+Port::operator[]( const raft::port_key_type &port_name )
 {
    //NOTE: We'll need to add a lock here if later
    //we intend to remove ports dynamically as well
@@ -156,7 +159,7 @@ Port::count()
 }
 
 PortInfo&
-Port::getPortInfoFor( const portmap_t::key_type port_name )
+Port::getPortInfoFor( const raft::port_key_type port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
@@ -171,10 +174,20 @@ Port::getPortInfoFor( const portmap_t::key_type port_name )
 PortInfo&
 Port::getPortInfo()
 {
-   if( portmap.map.size() > 1 )
+   const auto number_of_ports( portmap.map.size() );
+   if( number_of_ports > 1 )
    {
-      /** TODO: extract kernel name to go here too **/
-      throw PortNotFoundException( "One port expected, more than one found!" );
+      /** 
+       * NOTE: This is cought and re-thrown within the 
+       * runtime within mapbase.hpp so that we can push
+       * out the name of the kernel and a bit more info
+       */
+      throw AmbiguousPortAssignmentException( "One port expected, more than one found!" );
+   }
+   else if( number_of_ports == 0 )
+   {
+      const auto name( boost::core::demangle( typeid( (*this->kernel) ).name() ) );
+      throw PortNotFoundException( "At least one port must be defined, none were for kernel class \"" + name + "\"" );
    }
    auto pair( portmap.map.begin() );
    return( (*pair).second );

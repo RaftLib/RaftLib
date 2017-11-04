@@ -24,7 +24,7 @@
 #include <thread>
 #include <mutex>
 #include <cstddef>
-
+#include "defs.hpp"
 #include "portmap_t.hpp"
 
 class FIFO;
@@ -47,17 +47,17 @@ public:
    FIFO& operator*() ;
 
 
-   const std::string& name();
+   const raft::port_key_type& name();
 
 private:
    static inline
    void initKeyMap( portmap_t * const port_map, 
-                    std::vector< std::string > &key_map ) ;
+                    std::vector< raft::port_key_type > &key_map ) ;
    
-   portmap_t * const               port_map;
-   std::vector< std::string >      key_map;
-   std::size_t                     map_index = 0;
-   bool                            is_end       = false;
+   portmap_t * const                    port_map;
+   std::vector< raft::port_key_type >   key_map;
+   std::size_t                          map_index = 0;
+   bool                                 is_end       = false;
 };
 
 #endif /* END _PORTITERATOR_HPP_ */

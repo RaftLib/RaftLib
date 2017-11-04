@@ -29,7 +29,6 @@
 #ifndef _TEMPMAP_HPP_
 #define _TEMPMAP_HPP_  1
 #include <map>
-#include <string>
 
 #include "mapbase.hpp"
 
