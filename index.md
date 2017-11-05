@@ -4,8 +4,7 @@
 [Stream processing](http://www.jonathanbeard.io/blog/2015/09/19/streaming-and-dataflow.html) is a method for extracting data, task, and pipeline parallelism from an application. Ever wash dishes with more than one person, one washer, one dryer, and perhaps one person to put them away? That's pipeline parallelism. Raft lets you do that for your application. How about add two washers, three? You can do this as well. That's data parallelism, you're operating on differing (independent) dishes at the same time. Going further, the Raft library enables task parallelism. That is, if you have four people on the dishes, you can add somebody on the side, taking inventory of the dishes as the pass by, at the same time the dishes are being washed. The inventory task is independent of the other two (which is slightly more nuanced since we've to spot the dishes as they go by). The Raft library uses templates, and a compiled library, to make the otherwise perilous task of creating parallel programs far easier. Please check it out, and if you have any questions, please feel free to send the project developers an email.
 
 ### Project Status
-The Raft library is currently an alpha release, nearing its first beta.  The API itself is relatively stable, however the back end
-is subject to updates if needed (although we're taking pains to support needed old features). This software is subject to the Apache Version 2.0 license. The main-line branch is also the development branch. As new code is checked in, it is processed through two continuous integration services, the build status icon reflects the current Linux build and testsuite success. You can add applications to the main line through subsequent pull requests. There are also several releases, at this stage of the project, snapshots for releases are taken before any major changes. We plan on moving to a full beta release once the multi-node support is pulled from the research code and re-integrated with the mainline branch (at the current rate of development, that should be mid-March 2016). 
+The Raft library is currently an alpha release, nearing its first beta. This software is subject to the Apache Version 2.0 license.
 
 ### Build Status
 
@@ -52,16 +51,9 @@ When building an application using the library the only header file needed is th
 ### Documentation
 The main source of documentation is available on the [RaftLib wiki page](https://github.com/jonathan-beard/RaftLib/wiki)
 
-If you see errors, or want to contribute please feel free to do so. 
+If you see errors, or want to contribute please feel free to do so.  
 
-### Authors and Contributors
-In 2013 Jonathan Beard (@jonathan-beard, also <a href="https://twitter.com/jonathan_beard" class="twitter-follow-button" data-show-count="false">Follow @jonathan_beard</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script> ) started work on the Raft language.  In the interim,
-and realizing the ubiquity of the C++ language, he started work on a template library that 
-uses the same framework as the full Raft language and run-time system.  This C++ library is 
-the result. Since then many have contributed to the theory and code base behind RaftLib (most
-notable is my co-author (@pl53), for a full current contribution list see the GitHub stats page. 
-
-### Citing the Raft Library
+### Citing RaftLib
 Please cite as:
 ```bibtex
 @article{blc16,
@@ -73,10 +65,6 @@ Please cite as:
   journal = {International Journal of High Performance Computing Applications}
 }
 ```
-
-### Genealogy
-There have been several dozen streaming languages.  Most notable of which is probably StreaMIT.  I've worked on the Auto-Pipe streaming runtime system (both versions 1 and 2) developed at Washington University.  This particular streaming library was developed as a faster way to get started with stream processing by enabling users to stick to a language with which they are already familiar (C++).
-
 
 ### Issues
 Issues can be opened by filing a report on our [issues page](https://github.com/jonathan-beard/RaftLib/issues)
