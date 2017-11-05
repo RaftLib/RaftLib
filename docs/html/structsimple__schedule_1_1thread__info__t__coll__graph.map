@@ -1,7 +1,0 @@
-<map id="simple_schedule::thread_info_t" name="simple_schedule::thread_info_t">
-<area shape="rect" id="node2" href="$structsimple__schedule_1_1thread__data.html" title="simple_schedule::thread_data" alt="" coords="32,192,231,217"/>
-<area shape="rect" id="node4" href="$classraft_1_1kernel.html" title="raft::kernel" alt="" coords="226,92,311,117"/>
-<area shape="rect" id="node7" href="$class_port.html" title="Port" alt="" coords="424,192,470,217"/>
-<area shape="rect" id="node8" href="$class_port_base.html" title="PortBase" alt="" coords="606,92,683,117"/>
-<area shape="rect" id="node10" href="$structportmap__t.html" title="portmap_t" alt="" coords="707,92,788,117"/>
-</map>

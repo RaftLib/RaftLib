@@ -1,8 +1,0 @@
-<map id="raft::map::joink" name="raft::map::joink">
-<area shape="rect" id="node2" href="$class_map_base.html#ad98ef02c1651130ad6b565ad156b97c1" title="MapBase::link" alt="" coords="162,31,267,56"/>
-<area shape="rect" id="node3" href="$class_port.html#a4af1cb062940ca3b83c569f024b9a8d1" title="Port::getPortInfo" alt="" coords="315,5,434,31"/>
-<area shape="rect" id="node4" href="$class_map_base.html#a2624d7b81f0078dcc78e524045403e28" title="MapBase::join" alt="" coords="321,55,427,80"/>
-<area shape="rect" id="node5" href="$class_port.html#afb426a015195fa9b4b5b1d1200daf8ed" title="Port::getPortInfoFor" alt="" coords="500,29,638,55"/>
-<area shape="rect" id="node6" href="$classcommon.html#aec4b942352abd180c71fca2c0dbd70b7" title="common::printClassName" alt="" coords="482,79,656,104"/>
-<area shape="rect" id="node7" href="$classcommon.html#a7ca2338596041e14a38de0f63d1c1e31" title="common::__printClassName" alt="" coords="704,79,894,104"/>
-</map>

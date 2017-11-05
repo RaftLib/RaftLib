@@ -1,8 +1,0 @@
-title: RaftLib
-description: Simple, easy to use stream computation library for C++.
-google_analytics: UA-55176313-1
-show_downloads: true
-theme: jekyll-theme-architect
-
-gems:
-  - jekyll-mentions

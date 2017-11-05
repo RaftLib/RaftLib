@@ -1,5 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_allocate.html" title="Allocate" alt="" coords="5,31,74,56"/>
-<area shape="rect" id="node2" href="$classdynalloc.html" title="dynalloc" alt="" coords="122,5,192,31"/>
-<area shape="rect" id="node3" href="$classstdalloc.html" title="stdalloc" alt="" coords="124,55,190,80"/>
-</map>

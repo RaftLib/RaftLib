@@ -1,6 +1,0 @@
-<map id="GraphTools::BFS" name="GraphTools::BFS">
-<area shape="rect" id="node2" href="$class_graph_tools.html#ade51007699cbd681c1a37946609c46ee" title="GraphTools::BFS" alt="" coords="202,5,325,31"/>
-<area shape="rect" id="node3" href="$class_port.html#afb426a015195fa9b4b5b1d1200daf8ed" title="Port::getPortInfoFor" alt="" coords="194,55,333,80"/>
-<area shape="rect" id="node4" href="$classcommon.html#aec4b942352abd180c71fca2c0dbd70b7" title="common::printClassName" alt="" coords="176,104,351,129"/>
-<area shape="rect" id="node5" href="$classcommon.html#a7ca2338596041e14a38de0f63d1c1e31" title="common::__printClassName" alt="" coords="399,104,588,129"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="basic_parallel" name="basic_parallel">
-<area shape="rect" id="node2" href="$class_schedule.html" title="Schedule" alt="" coords="127,119,204,145"/>
-<area shape="rect" id="node6" href="$class_allocate.html" title="Allocate" alt="" coords="407,119,476,145"/>
-<area shape="rect" id="node4" href="$class_system_signal_handler.html" title="SystemSignalHandler" alt="" coords="5,5,155,31"/>
-</map>
