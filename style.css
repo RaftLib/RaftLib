@@ -133,9 +133,14 @@ a:focus {
     background-color: rgba(255,255,255,.3);
 }
 
+i {
+    color:#5780a5;
+}
+
 @media(min-width:767px) {
     .navbar {
         font-size:3em;
+        color: #000000;
         padding: 0px 0;
         border-bottom: 1;
         letter-spacing: 1px;
