@@ -139,6 +139,7 @@ public:
                 {
                     std::cerr << "if the size of the compressed data exceeds *destLen\n";
                 }
+                break;
                 default:
                 {
                     std::cerr << "undefined error\n";
