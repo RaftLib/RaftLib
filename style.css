@@ -135,7 +135,7 @@ a:focus {
 
 @media(min-width:767px) {
     .navbar {
-        font-size:2em;
+        font-size:3em;
         padding: 0px 0;
         border-bottom: 1;
         letter-spacing: 1px;
@@ -174,7 +174,7 @@ a:focus {
 }
 @media(max-width:766px) {
     .navbar{
-        font-size:1em;
+        font-size:2em;
         padding: 0px 0;
         border-bottom: 0;
         letter-spacing: 0px;
@@ -192,7 +192,7 @@ a:focus {
     display: table;
     width: 100%;
     height: auto;
-    padding: 100px 0;
+    padding: 0px 0;
     text-align: center;
     color: #000000;
     background-color: #ffffff;
@@ -208,9 +208,6 @@ a:focus {
 }
 
 
-.intro .intro-body .intro-text {
-    font-size: 18px;
-}
 
 @media(min-width:767px) {
     .intro {
@@ -318,35 +315,19 @@ table.center-table{
 }
 
 .btn {
+    color: #5780a5;
     text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight: 400;
+    font-weight: 700;
     -webkit-transition: all .3s ease-in-out;
     -moz-transition: all .3s ease-in-out;
     transition: all .3s ease-in-out;
-}
-
-.btn-default {gg
-    border: 1px solid #5780a5;
-    color: #5780a5;
     background-color: transparent}
-
-.btn-publications{
-   margin-top: 1em;
-   margin-bottom: 2px;
 }
 
-.btn-dark{
-   border: 2px solid #000000;
-   color : #000000;
-   background-color: transparent;
-}
 
 .btn-default:hover,
 .btn-default:focus {
-    border: 1px solid #5780a5;
-    outline: 0;
-    color: #ffffff;
     background-color: #5780a5;
 }
 
