@@ -5,7 +5,6 @@ language: cpp
 
 compiler: 
     - gcc 
-    - clang
 
 os:
     - linux
