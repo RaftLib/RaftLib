@@ -3,7 +3,8 @@ project(RaftLib)
 set( version 0.7a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -mtune=native")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -faligned-new")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -faligned-new")
 ##
 # check for Scotch, use if there
 ##
@@ -125,6 +126,7 @@ set( TESTAPPS
     splitchain
     noPortException
     disconnectedGraph
+    staticSplitChainJoin 
         ) 
 
 

@@ -32,6 +32,8 @@ template < class T > class sub : public raft::kernel
 public:
     sub() : raft::kernel() 
     {
+        static int count = 0;
+        std::cout << count++ << "\n";
         input.addPort< T >( "0" );
         output.addPort< T >( "0" );
     }
@@ -52,6 +54,7 @@ public:
         output[ "0" ].push( a - 10);
         return( raft::proceed );
     }
+private:
 };
 
 

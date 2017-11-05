@@ -49,9 +49,9 @@ set( TESTAPPS
     split 
     join 
     splitchain 
+    staticSplitChainJoin 
 #     staticLongSplitChain 
 #     staticSplitJoin 
-#     staticSplitChainJoin 
 #     staticJoin 
 #     staticContJoin 
 #     parallel 
