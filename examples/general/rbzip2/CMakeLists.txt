@@ -14,6 +14,7 @@ include( CheckSTD )
 ##
 include( CheckBoostDep )
 find_package( LIBRT )
+find_package( BZip2 REQUIRED)
 
 set( GITDEP "${CMAKE_SOURCE_DIR}/git-dep" )
 ##
@@ -43,7 +44,7 @@ include_directories( ${CMAKE_SCOTCH_INCS} )
 target_link_libraries( ${APP} 
                        raft
                        cmdargs
-                       bz2
+                       ${BZIP2_LIBRARIES}
                        ${CMAKE_SCOTCH_LIBS}
                        ${CMAKE_THREAD_LIBS_INIT} 
                        ${CMAKE_RT_LIBS} )
