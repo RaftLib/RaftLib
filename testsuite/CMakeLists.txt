@@ -50,13 +50,12 @@ set( TESTAPPS allocate
      noPortException
      twiceAdd
      disconnectedGraph 
+     demangle
      )
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 
 endif( BUILDRANDOM )
-
-include_directories( ${CMAKE_SCOTCH_INCS} )
 
 foreach( APP ${TESTAPPS} )
  add_executable( ${APP} "${APP}.cpp" )
@@ -65,6 +64,7 @@ foreach( APP ${TESTAPPS} )
                                      ${CMAKE_RT_LIBS} 
                                      ${CMAKE_QTHREAD_LIBS}
                                      )
+ add_test( NAME "${APP}_test" COMMAND ${APP} )
 endforeach( APP ${TESTAPPS} )
 
 file( COPY alice.txt

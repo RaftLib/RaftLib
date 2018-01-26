@@ -1,29 +1,60 @@
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
-
-add_definitions( -DLIBCOMPILE=1 -DRDTSCP=1 )
-
-include_directories( ${CMAKE_SOURCE_DIR}/raftinc 
-                     ${CMAKE_SCOTCH_INCS}
-                     ${CMAKE_QTHREAD_INCS})
-##
-# we need boost to demangle names, might use
-# for random numbers too
-##
-include( CheckBoostDep )
 ##
 # c std
 ##
 include( CheckSTD )
 
+set(CPP_SRC_FILES 
+    affinity.cpp
+    allocate.cpp
+    basicparallel.cpp
+    common.cpp
+    demangle.cpp
+    dynalloc.cpp
+    fifo.cpp
+    graphtools.cpp
+    kernelcontainer.cpp
+    kernel.cpp
+    kernelexception.cpp
+    kernel_pair_t.cpp
+    kernel_wrapper.cpp
+    kpair.cpp
+    leastusedfirst.cpp
+    mapbase.cpp
+    map.cpp
+    mapexception.cpp
+    noparallel.cpp
+    parallelk.cpp
+    partition_basic.cpp
+    partition_dummy.cpp
+    partition_scotch.cpp
+    pointer.cpp
+    poolschedule.cpp
+    port.cpp
+    portexception.cpp
+    port_info.cpp
+    portiterator.cpp
+    porttemplate.cpp
+    roundrobin.cpp
+    schedule.cpp
+    signal.cpp
+    signaldata.cpp
+    simpleschedule.cpp
+    stdalloc.cpp
+    submap.cpp
+    systemsignalhandler.cpp
+)
 
-file( GLOB_RECURSE CPP_SRC_FILES *.cpp )
-file( GLOB_RECURSE C_SRC_FILES   *.c   )
-
-add_library( raft 
-             ${CPP_SRC_FILES} 
-             ${C_SRC_FILES}   )
+add_library( raft ${CPP_SRC_FILES} )
+target_compile_definitions(raft PRIVATE -DLIBCOMPILE=1 -DRDTSCP=1 )
+target_include_directories(raft 
+    PUBLIC 
+    ${CMAKE_SOURCE_DIR}/raftinc 
+    ${CMAKE_SCOTCH_INCS}
+    ${CMAKE_QTHREAD_INCS}
+)
 
 target_link_libraries( 
                        raft 

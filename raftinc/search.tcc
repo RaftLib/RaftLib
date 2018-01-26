@@ -1,9 +1,4 @@
 /**
- * search.tcc - thin wrapper around boost's search
- * algorithms for the moment.  I might add my own
- * rabin-karp as well, however boyer-moore and b-m-h
- * are much more efficient in general usage.
- *
  * @author: Jonathan Beard
  * @version: Sat Aug 15 21:00:44 2015
  * 

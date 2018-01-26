@@ -1,13 +1,11 @@
-#include <boost/core/demangle.hpp>
 #include "common.hpp"
-
+#include "demangle.hpp"
 
 
 std::string 
 common::__printClassName( const std::string &&obj_name )
 {
-   /** user must delete this, make string then delete **/
-   return( boost::core::demangle( obj_name.c_str() ) );
+   return raft::demangle(obj_name.c_str());
 }
 
 

@@ -9,10 +9,6 @@ find_package( Scotch )
 # c/c++ std
 ##
 include( CheckSTD )
-##
-# for demangle, perhaps others
-##
-include( CheckBoostDep )
 find_package( LIBRT )
 
 set( GITDEP "${CMAKE_SOURCE_DIR}/git-dep" )
