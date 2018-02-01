@@ -23,13 +23,12 @@
 #include <typeindex>
 #include <sstream>
 #include <iostream>
-/** for exception below **/
-#include <boost/core/demangle.hpp> 
 
 #include "fifo.hpp"
 #include "kernel.hpp"
 #include "port.hpp"
 #include "portexception.hpp"
+#include "demangle.hpp"
 
 Port::Port( raft::kernel * const k ) : PortBase(),
                                        kernel( k )
@@ -127,7 +126,7 @@ Port::getPortInfo()
    }
    else if( number_of_ports == 0 )
    {
-      const auto name( boost::core::demangle( typeid( (*this->kernel) ).name() ) );
+      const auto name( raft::demangle( typeid( (*this->kernel) ).name() ) );
       throw PortNotFoundException( "At least one port must be defined, none were for kernel class \"" + name + "\"" );
    }
    auto pair( portmap.map.begin() );

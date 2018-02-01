@@ -33,7 +33,6 @@
 #include <vector>
 #include <thread>
 #include <sstream>
-#include <boost/core/demangle.hpp>
 
 #include "kernelkeeper.tcc"
 #include "portexception.hpp"
@@ -47,6 +46,7 @@
 #include "kpair.hpp"
 #include "portorder.hpp"
 #include "kernel_pair_t.hpp"
+#include "demangle.hpp"
 
 class MapBase
 {
@@ -307,7 +307,7 @@ protected:
                                     raft::kernel * const k )
    {
          std::stringstream ss;
-         const auto name( boost::core::demangle( typeid( *k ).name() ) );
+         const auto name( raft::demangle( typeid( *k ).name() ) );
          if( src )
          {
             ss << ex.what() << "\n";

@@ -61,56 +61,12 @@ if( BUILD_WOPENCV )
     add_subdirectory( examples/opencv )
 endif( BUILD_WOPENCV )
 
-##
-# we need boost to demangle names, might use
-# for random numbers too
-##
-include( CheckBoostDep )
 
 ##
 # Set up unit tests
 ##
-add_subdirectory( testsuite )
 enable_testing()
-set( TESTAPPS allocate portTypeException dynallocate stdlibsupport split 
-     join lambdatest allocate_s foreach peekrange 
-     partitionTest parallel peek
-     bracketsTest uniform splitchain
-     staticLongSplitChain staticSplitJoin 
-     staticSplitChainJoin staticJoin staticContJoin
-     fitInCacheLine
-     isExtClass
-     doesntFitInCacheLine
-     isInlineClass
-     isExtArray
-     isExtAlloc 
-     isInlineNonClass 
-     allocateSendPush 
-     allocateSendRandomPush 
-     allocatePopPush 
-     allocatePopInternal
-     allocatePopInternalObject
-     allocatePopExternal
-     prefetchEffective 
-     parallelchain 
-     ksettest 
-     fixedMatchTest
-     splitchainRetStruct
-     staticContJoinRetStruct
-     staticJoinRetStruct 
-     staticLongSplitChainRetStruct
-     staticSplitChainJoinRetStruct
-     staticSplitJoinRetStruct 
-     chainMultiplePorts
-     fixedAllocate 
-     noPortException
-     twiceAdd
-     disconnectedGraph 
-     ) 
-
-if( BUILDRANDOM )
-    list( APPEND TESTAPPS gamma uniform gaussian exponential sequential ) 
-endif( BUILDRANDOM )
+add_subdirectory( testsuite )
 
 foreach( TEST ${TESTAPPS} )
     add_test( NAME "${TEST}_test" COMMAND ${TEST} )
