@@ -1,10 +1,3 @@
-set( CMAKE_INCLUDE_CURRENT_DIR ON )
-list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
-
-##
-# c std
-##
-include( CheckSTD )
 
 set(CPP_SRC_FILES 
     affinity.cpp
@@ -51,7 +44,8 @@ add_library( raft ${CPP_SRC_FILES} )
 target_compile_definitions(raft PRIVATE -DLIBCOMPILE=1 -DRDTSCP=1 )
 target_include_directories(raft 
     PUBLIC 
-    ${CMAKE_SOURCE_DIR}/raftinc 
+    ${PROJECT_SOURCE_DIR}/raftinc 
+    ${PROJECT_SOURCE_DIR}
     ${CMAKE_SCOTCH_INCS}
     ${CMAKE_QTHREAD_INCS}
 )
