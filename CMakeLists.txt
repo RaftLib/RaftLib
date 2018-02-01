@@ -3,6 +3,14 @@ project(RaftLib)
 set( version 0.7a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
+
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-faligned-new" HAS_ALIGNED_NEW)
+if (HAS_ALIGNED_NEW)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -faligned-new")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} -faligned-new")
+endif()
+
 ##
 # check for Scotch, use if there
 ##
