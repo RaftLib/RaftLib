@@ -2,9 +2,15 @@ cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
 project(RaftLib)
 set( version 0.7a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
-list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -faligned-new")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -faligned-new")
+list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
+
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-faligned-new" HAS_ALIGNED_NEW)
+if (HAS_ALIGNED_NEW)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -faligned-new")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} -faligned-new")
+endif()
+
 ##
 # check for Scotch, use if there
 ##
@@ -19,7 +25,7 @@ find_package( QThreads )
 ##
 include( CheckSTD )
 
-set( HELPER_DIR ${CMAKE_SOURCE_DIR}/helpers )
+set( HELPER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/helpers )
 
 ##
 # helper exec to get the L1 cache size from Linux/OS X/Win
@@ -41,13 +47,6 @@ endif( NOT L1D_LINE_SIZE )
 # for cache line size
 ##
 add_definitions( "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" ) 
-##
-# for tcmalloc
-##
-#add_definitions( "-fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free" )
-
-include_directories ( ${CMAKE_SOURCE_DIR}/raftinc )
-include_directories ( ${CMAKE_SOURCE_DIR} )
 
 include( CheckGitDep )
 
@@ -61,16 +60,11 @@ if( BUILD_WOPENCV )
     add_subdirectory( examples/opencv )
 endif( BUILD_WOPENCV )
 
-
 ##
 # Set up unit tests
 ##
 enable_testing()
 add_subdirectory( testsuite )
-
-foreach( TEST ${TESTAPPS} )
-    add_test( NAME "${TEST}_test" COMMAND ${TEST} )
-endforeach( TEST ${TESTAPPS} )
 
 ##
 # install main headers in ${prefix}/include dir
@@ -82,6 +76,6 @@ set( MAINHEADERS
      raftrandom
      raftstat )
 foreach( HFILE ${MAINHEADERS} )
- install( FILES ${CMAKE_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
+ install( FILES ${CMAKE_CURRENT_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 endforeach( HFILE ${MAINHEADERS} )
 
