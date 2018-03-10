@@ -7,19 +7,18 @@
  *
  */
 #include <raft>
-#include <raftio>
-
+#include <iostream>
 
 
 /**
  * Producer: sends down the stream numbers from 1 to 10
  */
-class A : public raft::kernel
+class producer : public raft::kernel
 {
 private:
     int i = 0;
 public:
-    A() : raft::kernel()
+    producer() : raft::kernel()
     {
         output.addPort< int >( "out" );
     }
@@ -55,15 +54,19 @@ public:
 };
 
 /**
- * Processor: It simmulates a process with the input numbers
+ * processor - simply takes data in and passes it 
+ * through to the next pipeline.
  */
-class B : public raft::kernel
+class processor : public raft::kernel
 {
 public:
-    B() : raft::kernel()
+    processor() : raft::kernel()
     {
-        input.addPort<int>("in");
-        output.addPort<int>("out");
+        /** 
+         * declare ports, both input and output 
+         */
+        input.addPort<  int >( "in"  );
+        output.addPort< int >( "out" );
     }
 
     virtual raft::kstatus run()
@@ -78,10 +81,10 @@ public:
 /**
  * Consumer: takes the number from input and dumps it to the console
  */
-class C : public raft::kernel
+class consumer : public raft::kernel
 {
 public:
-    C() : raft::kernel()
+    consumer() : raft::kernel()
     {
         input.addPort< int >( "in" );
     }
@@ -97,9 +100,9 @@ public:
 
 int  main()
 {
-    A a;
-    B b;
-    C c;
+    producer    a;
+    processor   b;
+    consumer    c;
 
     raft::map m;
     
