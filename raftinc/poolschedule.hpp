@@ -86,7 +86,7 @@ protected:
      * since we don't really need some of the info. this
      * is passed to each kernel within teh pool_run func
      */
-    struct thread_data
+    struct alignas( 64 ) thread_data
     {
        constexpr thread_data( raft::kernel * const k ) : k( k ){}
 
