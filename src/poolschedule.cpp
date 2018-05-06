@@ -43,7 +43,12 @@
 
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
-    assert( qthread_initialize() == QTHREAD_SUCCESS );
+    const auto ret_val( qthread_initialize() );
+    if( ret_val != 0 )
+    {
+        std::cerr << "failure to initialize qthreads runtime, exiting\n";
+        exit( EXIT_FAILURE );
+    }
     thread_data_pool.reserve( kernel_set.size() );
 }
 
@@ -82,31 +87,10 @@ pool_schedule::handleSchedule( raft::kernel * const kernel )
 void
 pool_schedule::start()
 {
-    /** 
-     * NOTE: this section is the same as the code in the "handleSchedule"
-     * function so that it doesn't call the lock for the thread map.
-     */
     auto &container( kernel_set.acquire() );
     for( auto * const k : container )
     {  
-        auto *td( new thread_data( k ) );
-        thread_data_mutex.lock();
-        thread_data_pool.emplace_back( td );
-        thread_data_mutex.unlock();
-        if( ! k->output.hasPorts() /** has no outputs, only 0 > inputs **/ )
-        {
-            std::lock_guard< std::mutex > tail_lock( tail_mutex );
-            /** destination kernel **/
-            tail.emplace_back( td );
-        }
-        qthread_spawn( pool_schedule::pool_run,
-                       (void*) td,
-                       0,
-                       0,
-                       0,
-                       nullptr,
-                       NO_SHEPHERD,
-                       0 );
+        (this)->handleSchedule( k );
     }
     /**
      * NOTE: can't quite get the sync object behavior to work 
