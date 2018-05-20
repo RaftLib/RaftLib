@@ -51,6 +51,7 @@ set( TESTAPPS allocate
      twiceAdd
      disconnectedGraph 
      demangle
+     allpush
      )
 
 if( BUILDRANDOM )

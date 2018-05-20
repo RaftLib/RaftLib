@@ -119,21 +119,50 @@ Schedule::scheduleKernel( raft::kernel * const kernel )
 bool
 Schedule::kernelHasInputData( raft::kernel *kernel )
 {
-   auto &port_list( kernel->input );
-   if( ! port_list.hasPorts() )
-   {
-      /** only output ports, keep calling till exits **/
-      return( true );
-   }
-   for( auto &port : port_list )
-   {
-      const auto size( port.size() );
-      if( size > 0 )
-      {
-         return( true );
-      }
-   }
-   return( false );
+    auto &port_list( kernel->input );
+    if( ! port_list.hasPorts() )
+    {
+       /** only output ports, keep calling till exits **/
+       return( true );
+    }
+    switch( kernel->sched_behav )
+    {
+        case( raft::any_port ):
+        {
+            for( auto &port : port_list )
+            {
+               const auto size( port.size() );
+               if( size > 0 )
+               {
+                  return( true );
+               }
+            }
+        }
+        break;
+        case( raft::all_port ):
+        {
+            for( auto &port : port_list )
+            {
+               const auto size( port.size() );
+               /** no data avail on this port, return false **/
+               if( size == 0 )
+               {
+                  return( false );
+               }
+            }
+            /** all ports have data, return true **/
+            return( true );
+        }
+        break;
+        default:
+        {
+            //TODO add exception class here
+            std::cerr << "invalid scheduling behavior set, exiting!\n";
+            exit( EXIT_FAILURE );
+        }
+    }
+    /** we should have returned before here, keep compiler happy **/
+    return( false );
 }
 
 
