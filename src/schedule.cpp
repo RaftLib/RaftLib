@@ -31,7 +31,7 @@ Schedule::quitHandler( FIFO              &fifo,
 {
    /**
     * NOTE: This should be the only action needed
-    * currently, however that may change in the futre
+    * currently, however that may change in the future
     * with more features and systems added.
     */
    UNUSED( kernel );
