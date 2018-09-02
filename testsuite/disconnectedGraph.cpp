@@ -46,6 +46,7 @@ public:
 int
 main( int argc, char **argv )
 {
+   bool success(false);
    int count( 1000 );
    if( argc == 2 )
    {
@@ -70,8 +71,8 @@ main( int argc, char **argv )
    catch( PortUnconnectedException &ex )
    {
        std::cerr << ex.what() << "\n";
-       exit( EXIT_SUCCESS );
+       success = true;
    }
    
-   return( EXIT_FAILURE );
+   return( success ? EXIT_SUCCESS : EXIT_FAILURE );
 }
