@@ -1,3 +1,10 @@
+/**
+ * simple test case to try out allocation of strings. This 
+ * appears to fail on some configurations with Windows 10,
+ * haven't quite figured out the cause yet but will update
+ * this note when we do.
+ */
+
 #include <cassert>
 #include <iostream>
 #include <cstdint>
@@ -24,7 +31,7 @@ public:
       auto c( output[ "sum" ].template allocate_s< std::string >() );
       std::stringstream ss;
       ss << a << " + " << b << " = " << (a + b);
-      (*c) = ss.str();
+      *c = ss.str();
       /** mem automatically freed upon scope exit **/
       return( raft::proceed );
    }
@@ -34,7 +41,7 @@ public:
 int
 main( int argc, char **argv )
 {
-   int count( 1000 );
+   int count( 10000 );
    if( argc == 2 )
    {
       count = atoi( argv[ 1 ] );
