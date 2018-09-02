@@ -119,21 +119,62 @@ Schedule::scheduleKernel( raft::kernel * const kernel )
 bool
 Schedule::kernelHasInputData( raft::kernel *kernel )
 {
-   auto &port_list( kernel->input );
-   if( ! port_list.hasPorts() )
-   {
-      /** only output ports, keep calling till exits **/
-      return( true );
-   }
-   for( auto &port : port_list )
-   {
-      const auto size( port.size() );
-      if( size > 0 )
-      {
-         return( true );
-      }
-   }
-   return( false );
+    auto &port_list( kernel->input );
+    if( ! port_list.hasPorts() )
+    {
+       /** only output ports, keep calling till exits **/
+       return( true );
+    }
+    /**
+     * NOTE: this was added as a reqeuest, need to update wiki,
+     * the first hit to this one will take an extra few cycles
+     * to process the jmp, however, after that, the branch
+     * taken is incredibly easy and we should be able to do 
+     * this as if the switch statement wasn't there at all. 
+     * - an alternative to using the kernel variable would
+     * be to implement a new subclass of kernel...that's doable
+     * too but we'd have to make dependent template functions
+     * that would use the type info to select the right behavior
+     * which we're doing dynamically below in the switch statement.
+     */
+    switch( kernel->sched_behav )
+    {
+        case( raft::any_port ):
+        {
+            for( auto &port : port_list )
+            {
+               const auto size( port.size() );
+               if( size > 0 )
+               {
+                  return( true );
+               }
+            }
+        }
+        break;
+        case( raft::all_port ):
+        {
+            for( auto &port : port_list )
+            {
+               const auto size( port.size() );
+               /** no data avail on this port, return false **/
+               if( size == 0 )
+               {
+                  return( false );
+               }
+            }
+            /** all ports have data, return true **/
+            return( true );
+        }
+        break;
+        default:
+        {
+            //TODO add exception class here
+            std::cerr << "invalid scheduling behavior set, exiting!\n";
+            exit( EXIT_FAILURE );
+        }
+    }
+    /** we should have returned before here, keep compiler happy **/
+    return( false );
 }
 
 

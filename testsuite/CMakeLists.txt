@@ -52,6 +52,7 @@ set( TESTAPPS allocate
      disconnectedGraph 
      demangle
      allocate_s_string
+     allpush
      )
 
 if( BUILDRANDOM )

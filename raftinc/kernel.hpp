@@ -125,66 +125,67 @@ public:
    }
 
 protected:
-   /**
-    * 
-    */
-   virtual std::size_t addPort();
-   
-   void allConnected();
-   
-   virtual void lock();
-   virtual void unlock();
-
-   /**
-    * PORTS - input and output, use these to interact with the
-    * outside world.
-    */
-   Port               input  = { this };
-   Port               output = { this };
-  
-   
-   std::string getEnabledPort();
-   
-   /** in namespace raft **/
-   friend class map;
-   /** in global namespace **/
-   friend class ::MapBase;
-   friend class ::Schedule;
-   friend class ::GraphTools;
-   friend class ::kernel_container;   
-   friend class ::basic_parallel;
-   friend class ::kpair;
-   friend class ::interface_partition;
-   friend class ::pool_schedule;
-
-   /**
-    * NOTE: doesn't need to be atomic since only one thread
-    * will have responsibility to to create new compute 
-    * kernels.
-    */
-   static std::size_t kernel_count;
+    /**
+     * 
+     */
+    virtual std::size_t addPort();
     
-   bool internal_alloc = false;
+    void allConnected();
+    
+    virtual void lock();
+    virtual void unlock();
 
-   
-   void  retire() noexcept
-   {
-       (this)->execution_done = true;
-   }
+    /**
+     * PORTS - input and output, use these to interact with the
+     * outside world.
+     */
+    Port               input  = { this };
+    Port               output = { this };
+  
+    
+    std::string getEnabledPort();
+    
+    /** in namespace raft **/
+    friend class map;
+    /** in global namespace **/
+    friend class ::MapBase;
+    friend class ::Schedule;
+    friend class ::GraphTools;
+    friend class ::kernel_container;   
+    friend class ::basic_parallel;
+    friend class ::kpair;
+    friend class ::interface_partition;
+    friend class ::pool_schedule;
 
-   bool isRetired() noexcept
-   {
-       return( (this)->execution_done );
-   }
-   
-   void setCore( const core_id_t id ) noexcept
-   {
-       core_assign = id;
-   }
+    /**
+     * NOTE: doesn't need to be atomic since only one thread
+     * will have responsibility to to create new compute 
+     * kernels.
+     */
+    static std::size_t kernel_count;
+     
+    bool internal_alloc = false;
+
+    
+    void  retire() noexcept
+    {
+        (this)->execution_done = true;
+    }
+
+    bool isRetired() noexcept
+    {
+        return( (this)->execution_done );
+    }
+    
+    void setCore( const core_id_t id ) noexcept
+    {
+        core_assign = id;
+    }
 
 
-   core_id_t core_assign    = -1;
+    core_id_t core_assign       = -1;
 
+    raft::schedule_behavior     sched_behav = raft::any_port;
 private:
    /** TODO, replace dup with bit vector **/
    bool             dup_enabled       = false;

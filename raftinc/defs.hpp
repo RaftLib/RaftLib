@@ -50,8 +50,8 @@ using weight_t  = std::int32_t;
 using edge_id_t = std::int32_t;
 
 #ifndef UNUSED 
-//#define UNUSED( x ) (void)(x)
-#define UNUSED( x )[&x]{}()
+#define UNUSED( x ) (void)(x)
+//#define UNUSED( x )[&x]{}()
 #endif
 
 /** type for return from += you'll get an iterator to one of these **/
@@ -76,5 +76,9 @@ using byte_t = std::uint8_t;
 
 #endif
 
-
+namespace raft
+{
+enum schedule_behavior : std::uint8_t { any_port = 0,
+                                        all_port = 1 };
+}
 #endif /* END _DEFS_HPP_ */
