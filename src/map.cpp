@@ -61,7 +61,13 @@ raft::map::checkEdges()
          * NOTE: This will throw an exception
          * of type PortUnconnectedException
          */
-        k->allConnected();
+        try {
+            k->allConnected();
+        } catch(...)
+        {
+            all_kernels.release();
+            throw;
+        }
     }
     all_kernels.release();
     return;
