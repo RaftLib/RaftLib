@@ -1,9 +1,9 @@
 /**
  * defs.hpp - 
  * @author: Jonathan Beard
- * @version: Sun Feb  7 05:46:48 2016
+ * @version: Mon Sep  3 16:20:48 2018
  * 
- * Copyright 2016 Jonathan Beard
+ * Copyright 2018 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,12 @@ using weight_t  = std::int32_t;
 using edge_id_t = std::int32_t;
 
 #ifndef UNUSED 
-//#define UNUSED( x ) (void)(x)
+#ifdef __clang__
+#define UNUSED( x ) (void)(x)
+#else
 #define UNUSED( x )[&x]{}()
+#endif
+//FIXME need to double check to see IF THIS WORKS ON MSVC
 #endif
 
 /** type for return from += you'll get an iterator to one of these **/
