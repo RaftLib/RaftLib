@@ -184,6 +184,7 @@ public:
       local_allocate( &ptr );
       T * __attribute__((__unused__)) temp( 
          new (ptr) T( std::forward< Args >( params )... ) );
+      UNUSED( temp );
       return( autorelease< T, allocatetype >( 
          reinterpret_cast< T* >( ptr ), (*this) ) );
    }

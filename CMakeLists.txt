@@ -8,14 +8,10 @@ include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-faligned-new" HAS_ALIGNED_NEW)
 if (HAS_ALIGNED_NEW)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -faligned-new")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} -faligned-new")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -faligned-new")
 endif()
-
-##
-# check for Scotch, use if there
-##
-find_package( Scotch )
-option( USESCOTCH "Use Scotch partitioning library" )
+    
+    
 
 option( USEQTHREAD "Use QThread threading library" false )
 find_package( QThreads )

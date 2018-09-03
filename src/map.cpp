@@ -644,9 +644,10 @@ raft::map::inline_dup_join( kernels_t &groups,
     
     /** should currently have only one kernel here **/
     assert( gp->size() == 1 );  
+#ifndef NDEBUG
     /** get count to satisfy postcondition at end **/
     const auto dst_inport_count( next->dst->input.count() );
-    
+#endif    
     /** 
      * this is a bit confusing so here's the overall scheme:
      * - for each input port in next's dst, create a souce.
