@@ -19,24 +19,35 @@
  */
 #ifndef _KERNELEXCEPTION_HPP_
 #define _KERNELEXCEPTION_HPP_  1
-#include <exception>
 #include <string>
-class KernelException : public std::exception
+
+#include "raftexception.hpp"
+
+
+class KernelException : public RaftException
 {
 public:
-   KernelException( const std::string message ) : message( message ){};
+    KernelException(  const std::string &message );
 
-   virtual const char* what() const noexcept;
-private:
-   const std::string message;
+    
+    KernelException(  const std::string &&message ); 
+
 };
 
-class CloneNotImplementedException : public KernelException
+
+template < int N > class KernelExceptionBase : public KernelException 
 {
 public:
-    CloneNotImplementedException( const std::string message ) : 
+    KernelExceptionBase(  const std::string &message ) : 
         KernelException( message ){};
+    
+    KernelExceptionBase(  const std::string &&message ) : 
+        KernelException( std::move( message ) ){};
+    
 };
+
+
+using CloneNotImplementedException = KernelExceptionBase< 0 >;
 
 
 #endif /* END _KERNELEXCEPTION_HPP_ */

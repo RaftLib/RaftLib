@@ -1,7 +1,7 @@
 /**
- * kernelexception.cpp - 
+ * raftexception.cpp - 
  * @author: Jonathan Beard
- * @version: Wed Sep  3 14:52:27 2014
+ * @version: Fri Dec 23 13:59:44 2016
  * 
  * Copyright 2016 Jonathan Beard
  * 
@@ -17,13 +17,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "kernelexception.hpp"
 
-const char*
-KernelException::what() const noexcept
+#include <utility>
+#include <cstring>
+#include "raftexception.hpp"
+
+RaftException::RaftException( const std::string &message ) : 
+    message( message )
 {
-   return( message.c_str() );
 }
 
+RaftException::RaftException( const std::string &&message ) : 
+    message( message  )
+{
+}
 
-
+const char*
+RaftException::what() const noexcept
+{
+    return( message.c_str() );
+}

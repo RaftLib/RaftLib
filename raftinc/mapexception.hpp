@@ -19,25 +19,36 @@
  */
 #ifndef _MAPEXCEPTION_HPP_
 #define _MAPEXCEPTION_HPP_  1
-#include <exception>
 #include <string>
+#include <utility>
+
+#include "raftexception.hpp"
 
 
-class MapException : public std::exception
+
+class MapException : public RaftException 
 {
 public:
-   MapException( const std::string message ) : message( message ){};
-
-   virtual const char* what() const noexcept;
-private:
-   const std::string message;
+    MapException(  const std::string &message ) : 
+        RaftException( message ){};
+    
+    MapException(  const std::string &&message ) : 
+        RaftException( std::move( message ) ){};
 };
 
-class InvalidTopologyOperationException : public MapException
+
+template < int N > class MapExceptionBase : public MapException 
 {
 public:
-    InvalidTopologyOperationException( const std::string message ) 
-        : MapException( message ){};
+    MapExceptionBase(  const std::string &message ) : 
+        MapException( message ){};
+    
+    MapExceptionBase(  const std::string &&message ) : 
+        MapException( std::move( message ) ){};
 };
+
+
+using InvalidTopologyOperationException
+    = MapExceptionBase< 0 >;
 
 #endif /* END _MAPEXCEPTION_HPP_ */
