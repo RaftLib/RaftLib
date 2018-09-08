@@ -11,12 +11,14 @@ set(CPP_SRC_FILES
     kernelcontainer.cpp
     kernel.cpp
     kernel_all.cpp
+    kernelexception.cpp
     kernel_pair_t.cpp
     kernel_wrapper.cpp
     kpair.cpp
     leastusedfirst.cpp
     mapbase.cpp
     map.cpp
+    mapexception.cpp
     noparallel.cpp
     parallelk.cpp
     partition_basic.cpp
@@ -26,6 +28,7 @@ set(CPP_SRC_FILES
     poolschedule.cpp
     port.cpp
     port_info.cpp
+    portexception.cpp
     portiterator.cpp
     porttemplate.cpp
     raftexception.cpp

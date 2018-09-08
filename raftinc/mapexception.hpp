@@ -29,11 +29,9 @@
 class MapException : public RaftException 
 {
 public:
-    MapException(  const std::string &message ) : 
-        RaftException( message ){};
+    MapException(  const std::string &message ); 
     
-    MapException(  const std::string &&message ) : 
-        RaftException( std::move( message ) ){};
+    MapException(  const std::string &&message ); 
 };
 
 

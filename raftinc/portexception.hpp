@@ -27,11 +27,8 @@
 class PortException : public RaftException
 {
 public:
-    PortException(  const std::string &message ) : 
-        RaftException( message ){};
-    PortException(  const std::string &&message ) : 
-        RaftException(  std::move( message ) ){};
-
+    PortException(  const std::string &message ); 
+    PortException(  const std::string &&message );
 };
 
 template < int N > class PortExceptionBase : public PortException 
