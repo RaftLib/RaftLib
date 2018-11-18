@@ -29,20 +29,15 @@
 class MapException : public RaftException 
 {
 public:
-    MapException(  const std::string &message ); 
-    
-    MapException(  const std::string &&message ); 
+    MapException(  const std::string message ); 
 };
 
 
 template < int N > class MapExceptionBase : public MapException 
 {
 public:
-    MapExceptionBase(  const std::string &message ) : 
-        MapException( message ){};
-    
-    MapExceptionBase(  const std::string &&message ) : 
-        MapException( std::move( message ) ){};
+    MapExceptionBase(  const std::string message ) : 
+        MapException(  message ){};
 };
 
 

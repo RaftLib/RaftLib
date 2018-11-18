@@ -27,10 +27,7 @@
 class KernelException : public RaftException
 {
 public:
-    KernelException(  const std::string &message );
-
-    
-    KernelException(  const std::string &&message ); 
+    KernelException(  const std::string message ); 
 
 };
 
@@ -38,11 +35,8 @@ public:
 template < int N > class KernelExceptionBase : public KernelException 
 {
 public:
-    KernelExceptionBase(  const std::string &message ) : 
+    KernelExceptionBase(  const std::string message ) : 
         KernelException( message ){};
-    
-    KernelExceptionBase(  const std::string &&message ) : 
-        KernelException( std::move( message ) ){};
     
 };
 

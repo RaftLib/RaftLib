@@ -25,13 +25,12 @@
 class RaftException : public std::exception
 {
 public:
-   RaftException( const std::string &message );
    
-   RaftException( const std::string &&message );
+    RaftException( const std::string message );
    
-   virtual const char* what() const noexcept;
+    virtual const char* what() const noexcept;
 private:
-   const std::string message;
+    const char *message = nullptr;
 };
 
 /** 

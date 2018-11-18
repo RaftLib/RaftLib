@@ -21,8 +21,5 @@
 #include "portexception.hpp"
     
     
-PortException::PortException(  const std::string &message ) : 
-       RaftException( message ){}
-
-PortException::PortException(  const std::string &&message ) : 
-        RaftException(  std::move( message ) ){}
+PortException::PortException(  const std::string message ) : 
+        RaftException(  message ){}

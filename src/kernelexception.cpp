@@ -3,12 +3,7 @@
 
 
 
-KernelException::KernelException(  const std::string &message ) : RaftException( message ) 
-{
-
-}
-
-KernelException::KernelException(  const std::string &&message ) : RaftException( message )
+KernelException::KernelException(  const std::string message ) : RaftException( message )
 {
 
 }

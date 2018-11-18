@@ -19,21 +19,18 @@
  */
 
 #include <utility>
+#include <cassert>
 #include <cstring>
 #include "raftexception.hpp"
 
-RaftException::RaftException( const std::string &message ) : 
-    message( message )
-{
-}
-
-RaftException::RaftException( const std::string &&message ) : 
-    message( message  )
+RaftException::RaftException( const std::string message ) : 
+    message( strdup( message.c_str() ) )
 {
 }
 
 const char*
 RaftException::what() const noexcept
 {
-    return( message.c_str() );
+    assert( message != nullptr );
+    return( message );
 }

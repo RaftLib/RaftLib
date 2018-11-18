@@ -27,18 +27,14 @@
 class PortException : public RaftException
 {
 public:
-    PortException(  const std::string &message ); 
-    PortException(  const std::string &&message );
+    PortException(  const std::string message );
 };
 
 template < int N > class PortExceptionBase : public PortException 
 {
 public:
-    PortExceptionBase(  const std::string &message ) : 
+    PortExceptionBase(  const std::string message ) : 
         PortException( message ){};
-    
-    PortExceptionBase(  const std::string &&message ) : 
-        PortException( std::move( message ) ){};
 };
 
 /**

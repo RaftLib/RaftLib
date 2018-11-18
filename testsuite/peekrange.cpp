@@ -34,13 +34,13 @@ public:
        * /dev branch has a totally different code base backing
        * exceptions which  fixes the issue. -jcb 1 July 2017
        */
-      catch( NoMoreDataException ex )
+      catch( NoMoreDataException &ex )
       {
          std::cerr << ex.what() << "\n";
          /** nothing bad, just no more data **/
          return( raft::stop );
       }
-      catch( ClosedPortAccessException ex )
+      catch( ClosedPortAccessException &ex )
       {
          UNUSED( ex );
          /** nothing bad, just no more data **/

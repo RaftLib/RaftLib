@@ -20,8 +20,5 @@
 #include "mapexception.hpp"
     
     
- MapException::MapException(  const std::string &message ) : 
+ MapException::MapException(  const std::string message ) : 
         RaftException( message ){}
-    
- MapException::MapException(  const std::string &&message ) : 
-        RaftException( std::move( message ) ){}

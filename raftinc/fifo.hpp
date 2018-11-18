@@ -392,7 +392,7 @@ public:
    template< class T,
              typename std::enable_if< inline_alloc< T >::value >::type* = nullptr >
    auto  peek_range( const std::size_t n ) -> 
-      autorelease< T, peekrange >
+      autorelease< T, peekrange > 
    {
       void *ptr = nullptr;
       void *sig = nullptr;
