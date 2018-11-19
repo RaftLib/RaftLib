@@ -286,21 +286,34 @@ protected:
         return;
    }
 
-   template < class A, 
-              class B >
+    template < class A, 
+               class B >
     void updateKernels( A &a, B &b )
-   {
-      if( ! a->input.hasPorts() )
-      {
-         source_kernels += a;
-      }
-      if( ! b->output.hasPorts() )
-      {
-         dst_kernels += b;
-      }
-      all_kernels += a;
-      all_kernels += b;
-   }
+    {
+        if( ! a->input.hasPorts() )
+        {
+           source_kernels += a;
+        }
+        if( ! b->output.hasPorts() )
+        {
+           dst_kernels += b;
+        }
+        all_kernels += a;
+        all_kernels += b;
+        /**
+         * fix for issue #77, this should be safe to use
+         * here given it's issued before any destructors
+         * should have been called.
+         */
+        if( a->internal_alloc )
+        {
+            internally_created_kernels.emplace( a ); 
+        }
+        if( b->internal_alloc )
+        {
+            internally_created_kernels.emplace( b );
+        }
+    }
 
    static void inline portNotFound( const bool src, 
                                     const AmbiguousPortAssignmentException &ex, 
@@ -330,6 +343,18 @@ protected:
    kernelkeeper              dst_kernels;
    /** and keep a list of all kernels **/
    kernelkeeper              all_kernels;
+   
+
+   /**
+    * bug fix for issue #77, keeping list of 
+    * internally created compute kernels, this
+    * doesn't need to be thread safe, so using 
+    * just a simple std::set will do, set vs. 
+    * vector to prevent duplicates & double free
+    * from being triggered
+    */
+    std::set< raft::kernel* >    internally_created_kernels;
+   
    /** 
     * FIXME: come up with better solution for enabling online
     * duplication of submaps as a unit.

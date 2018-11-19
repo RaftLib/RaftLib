@@ -39,18 +39,14 @@ MapBase::MapBase()
 
 MapBase::~MapBase()
 {
-   auto &container( all_kernels.acquire() );
-   for( raft::kernel *kern : container )
-   {
-      if( kern != nullptr && kern->internal_alloc ) 
-      {   
-         if( kern->internal_alloc )
-         {
-            delete( kern );
-         }
-      }
-   }
-   all_kernels.release();
+    for( auto *kernel : internally_created_kernels )
+    {
+        if( kernel != nullptr )
+        {   
+            delete( kernel );
+            kernel = nullptr;
+        }   
+    }
 }
 
 
