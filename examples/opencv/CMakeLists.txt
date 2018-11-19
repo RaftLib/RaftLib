@@ -10,11 +10,10 @@ include( CheckSTD )
 ##
 include( CheckBoostDep )
 
-find_package( OpenCV 2 REQUIRED )
+find_package( OpenCV 3 REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 find_package( LIBRT )
-find_package( Scotch )
 find_package( NUMA )
 
 set( APP contours )

@@ -1,20 +1,37 @@
-NonTerminals : {OBJ,A,T,S,U,M}
+## Notes
+Reworked the original a bit. This should be more flexible 
+and also allow generation of strings. 
+
+
+## Grammar 
+```c
+S   := A
+    |
+    ;
+
+MODIFIER   :=  raft::order::out
+           |   raft::manip_vec_t
+           ;
+
+SIMPLECONNECTOR     := '>>'
+                    |  '<='
+                    |  '>='
+                    ;
+
+JOIN    := SIMPLECONNECTOR
+        |  SIMPLECONNECTOR B SIMPLECONNECTOR
+        ;
+
 
 OBJ :=  raft::kernel
     |   raft::kset
-
-A   :=  T
-    |   S
-    |   U
-
-T   :=  A '>>' OBJ
-    |   OBJ
-
-S   :=  T M '<=' T 
-
-U   :=  T '>=' M T
-
-M   :=  raft::order::out
-    |   raft::manip_vec_t
-    |   
     ;
+
+A   := OBJ JOIN A
+    |  OBJ
+    ;
+
+B   :=  MODIFIER '>>' B
+    |   MODIFIER
+    ;
+```
