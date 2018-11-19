@@ -852,7 +852,7 @@ protected:
        * #76 -jcb 18Nov2018
        * - applying same fix to out-of-band objects
        */
-      delete( &buff_ptr->store[ read_index ] );
+      ( &buff_ptr->store[ read_index ] )->~T();
       /** only increment here b/c we're actually reading an item **/
       (this)->read_stats.bec.count++;
       Pointer::inc( buff_ptr->read_pt );
