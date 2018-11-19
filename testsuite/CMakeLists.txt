@@ -53,6 +53,8 @@ set( TESTAPPS allocate
      demangle
      allocate_s_string
      allpush
+     nonTrivialAllocatorPop
+     nonTrivialAllocatorPopExternal
      )
 
 if( BUILDRANDOM )

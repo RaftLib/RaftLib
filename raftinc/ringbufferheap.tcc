@@ -846,6 +846,13 @@ protected:
       /** gotta dereference pointer and copy **/
       T *item( reinterpret_cast< T* >( ptr ) );
       *item = buff_ptr->store[ read_index ];
+      /** 
+       * we know the object is inline constructed, 
+       * we should inline destruct it to fix bug
+       * #76 -jcb 18Nov2018
+       * - applying same fix to out-of-band objects
+       */
+      delete( &buff_ptr->store[ read_index ] );
       /** only increment here b/c we're actually reading an item **/
       (this)->read_stats.bec.count++;
       Pointer::inc( buff_ptr->read_pt );
@@ -1355,6 +1362,9 @@ protected:
       /** only increment here b/c we're actually reading an item **/
       (this)->read_stats.bec.count++;
       Pointer::inc( buff_ptr->read_pt );
+      /** 
+       * fix for bug #76 - jcb 18Nov2018 
+       */
       head->~T();
       (this)->datamanager.exitBuffer( dm::pop );
    }
