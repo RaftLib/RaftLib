@@ -1,20 +1,12 @@
-[RaftLib](http://raftlib.io) is a C++ Library for enabling stream/data-flow parallel computation. Using simple right shift operators (just like the C++ streams that you would use for string manipulation), you can link parallel compute kernels together. With RaftLib, we do away with explicit use of pthreads, std::thread, OpenMP, or any other parallel "threading" library. These are often mis-used, creating non-deterministic behavior. RaftLib's model allows lock-free FIFO-like access to the communications channels connecting each compute kernel. The full system has many auto-parallelization, optimization, and convenience features that enable relatively simple authoring of performant applications. This project is currently in the alpha stage (recently emerging from a PhD thesis). The beta release will bring back multi-node support, along with (planned) container support for the remote machines. Feel free to give it a shot, if you have any issues, also feel free to send the authors an e-mail.
+[RaftLib](http://raftlib.io) is a C++ Library for enabling stream/data-flow parallel computation. Using simple right shift operators (just like the C++ streams that you would use for string manipulation), you can link parallel compute kernels together. With RaftLib, we do away with explicit use of pthreads, std::thread, OpenMP, or any other parallel "threading" library. These are often mis-used, creating non-deterministic behavior. RaftLib's model allows lock-free FIFO-like access to the communications channels connecting each compute kernel. The full system has many auto-parallelization, optimization, and convenience features that enable relatively simple authoring of performant applications. This project is currently in the alpha stage. The beta release will bring back multi-node support, along with (planned) container support for the remote machines. Feel free to give it a shot, if you have any issues, also feel free to send the authors an e-mail.
 
-User Group / Mailing List: [Google Group](https://goo.gl/MPCFBV)
-
-Direct message to authors: [mail](mailto:jonathan@raftlib.io)
+User Group / Mailing List: [slack channel](https://join.slack.com/t/raftlib/shared_invite/enQtMjk3MjYyODYxODYzLWM5YmMxZTE1YmY0NDIwZTFkNmE1OThhMTUxOGZlYWI5MmE4ZjViZWI1OWI5ZGRmNTdmYWMwNWJjN2VkOWEwOTM)
 
 =============
 
 ### Build status
 [![Build Status](https://travis-ci.org/RaftLib/RaftLib.svg?branch=master)](https://travis-ci.org/RaftLib/RaftLib)
 
-CI Test environment:
-* Linux - kernel v. 3.13, Ubuntu 5.2.1-23ubuntu1~12.04, (gcc-5.2.1/Clang 3.7.1), CMake 3.5
-
-Offline testing:
-* OS X - El Capitan, Apple LLVM version 7.0.2, CMake 3.6
-* Linux - kernel v. 4.4, gcc-6.1/clang 3.8
 
 ### Pre-requisites
 
@@ -76,18 +68,3 @@ If you use this framework for something that gets published, please cite it as:
 * [Jonathan Beard's thesis](http://goo.gl/obkWUh)
 * [Views on parallel computing, general philosphy](https://goo.gl/R5fQAl)
 * Feel free to e-mail one of the authors of the repo
-
-### Random Notes
-The old Makefile had an uninstall script, I need to add an object to the 
-cmake file so that we can have similar functionality. Theres also a bit
-of cleanup to do as I transition fully from Make to CMake.
-
-A lot of the auto-optimization stuff has been pulled out temporarily while
-I'm working on cross-platform compatibility. A lot of the low level API
-calls are well, low level and Linux/Unix/OS X specific so I'm working on
-building in Windows versions of those specific calls. Should be done
-in a few weeks. ( 5 Jan 2016, jcb )
-
-Added in prefetch for object types larger than a single cache line. Profiling
-shows that it's really not beneficial on most platforms with good prefetch
-algorithms. (25 March 2016, jcb )
