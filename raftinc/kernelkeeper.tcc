@@ -60,8 +60,8 @@ public:
    //based on insert function
    void  operator += ( CONTAINERTYPE * const ele )
    {
-      acquire();
-      container.emplace( ele );
+      auto &the_container( acquire() );
+      the_container.emplace( ele );
       release();
       return;
    }

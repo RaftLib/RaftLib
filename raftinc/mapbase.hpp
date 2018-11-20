@@ -307,11 +307,11 @@ protected:
          */
         if( a->internal_alloc )
         {
-            internally_created_kernels.emplace( a ); 
+            internally_created_kernels += a;
         }
         if( b->internal_alloc )
         {
-            internally_created_kernels.emplace( b );
+            internally_created_kernels += b;
         }
     }
 
@@ -348,12 +348,11 @@ protected:
    /**
     * bug fix for issue #77, keeping list of 
     * internally created compute kernels, this
-    * doesn't need to be thread safe, so using 
-    * just a simple std::set will do, set vs. 
-    * vector to prevent duplicates & double free
-    * from being triggered
+    * after a second thought and looking at the 
+    * dev branch, this will need to be thread safe
+    * so moving to a kernelkeeper object. - jcb 20Nov2018
     */
-    std::set< raft::kernel* >    internally_created_kernels;
+    kernelkeeper            internally_created_kernels;
    
    /** 
     * FIXME: come up with better solution for enabling online

@@ -39,7 +39,8 @@ MapBase::MapBase()
 
 MapBase::~MapBase()
 {
-    for( auto *kernel : internally_created_kernels )
+    auto &the_container( internally_created_kernels.acquire() );
+    for( auto *kernel : the_container )
     {
         if( kernel != nullptr )
         {   
@@ -47,6 +48,12 @@ MapBase::~MapBase()
             kernel = nullptr;
         }   
     }
+    /** 
+     * as long as this derives from something that meets the "sequence container" def
+     * we should be good to use clear.
+     */
+    the_container.clear();
+    internally_created_kernels.release();
 }
 
 

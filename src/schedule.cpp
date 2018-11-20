@@ -7,9 +7,10 @@
 #include "defs.hpp"
 
 
-Schedule::Schedule( raft::map &map ) : kernel_set( map.all_kernels ),
-                                 source_kernels( map.source_kernels ),
-                                 dst_kernels( map.dst_kernels )
+Schedule::Schedule( raft::map &map ) :  kernel_set( map.all_kernels ),
+                                        source_kernels( map.source_kernels ),
+                                        dst_kernels( map.dst_kernels ),
+                                        internally_created_kernels( map.internally_created_kernels )
 {
    //TODO, see if we want to keep this
    handlers.addHandler( raft::quit, Schedule::quitHandler );
@@ -89,6 +90,15 @@ Schedule::checkSystemSignal( raft::kernel * const kernel,
    return( ret_signal );
 }
 
+
+/**
+ * NOTE: if you add code here, make sure you go back to the
+ * "updateKernels" function in the mapbase.hpp file to update
+ * that code as well, much is similar to the code there, it's
+ * basically what is called at setup, this function below
+ * is used dynamically. Both share the same kernelkeeper
+ * objects which are thread safe to add to and remove from.
+ */
 void
 Schedule::scheduleKernel( raft::kernel * const kernel )
 {
@@ -111,6 +121,10 @@ Schedule::scheduleKernel( raft::kernel * const kernel )
       dst_kernels += kernel;
    }
    kernel_set += kernel;
+   if( kernel->internal_alloc )
+   {
+      internally_created_kernels += kernel;
+   }
    handleSchedule( kernel );
    return;
 }

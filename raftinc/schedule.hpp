@@ -181,5 +181,6 @@ protected:
    kernelkeeper &kernel_set;
    kernelkeeper &source_kernels;      
    kernelkeeper &dst_kernels;
+   kernelkeeper &internally_created_kernels;
 };
 #endif /* END _SCHEDULE_HPP_ */
