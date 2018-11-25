@@ -1,5 +1,7 @@
 /**
- * parallelk.hpp - 
+ * parallelk.hpp - designed as a base class for 
+ * split/join kernels to enabler the runtime
+ * to add/remove ports.
  * @author: Jonathan Beard
  * @version: Mon Oct 20 13:18:21 2014
  * 

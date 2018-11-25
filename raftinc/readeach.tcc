@@ -51,6 +51,7 @@ public:
     
     virtual ~readeach() = default;
 
+    IMPL_NO_CLONE();
 
     virtual raft::kstatus run()
     {

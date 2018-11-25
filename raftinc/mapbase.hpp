@@ -10,9 +10,9 @@
  * within it.  
  *
  * @author: Jonathan Beard
- * @version: Sun July 23 06:22 2017
+ * @version: Fri Sep 12 10:28:33 2014
  * 
- * Copyright 2017 Jonathan Beard
+ * Copyright 2014 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +43,9 @@
 #include "allocate.hpp"
 #include "dynalloc.hpp"
 #include "stdalloc.hpp"
-#include "kpair.hpp"
-#include "portorder.hpp"
 #include "kernel_pair_t.hpp"
-#include "demangle.hpp"
+
+#include "defs.hpp"
 
 class MapBase
 {
@@ -78,40 +77,10 @@ public:
     *          a single port to link.
     * @return  kernel_pair_t - references to src, dst kernels.
     */
-   template < raft::order::spec t = raft::order::in >
-      kernel_pair_t link( raft::kernel *a, 
-                          raft::kernel *b,
-                          const std::size_t buffer = 0 )
-   {
-      updateKernels( a, b );
-      PortInfo *port_info_a;
-      try{ 
-         port_info_a =  &(a->output.getPortInfo());
-      }
-      catch( AmbiguousPortAssignmentException &ex )
-      {
-         portNotFound( true,
-                       ex,
-                       a );
-      }
-      port_info_a->fixed_buffer_size = buffer;
-      PortInfo *port_info_b;
-      try{
-         port_info_b = &(b->input.getPortInfo());
-      }
-      catch( AmbiguousPortAssignmentException &ex )
-      {
-            portNotFound( false, 
-                          ex,
-                          b );
-      }
-      port_info_b->fixed_buffer_size = buffer;
-
-      join( *a, port_info_a->my_name, *port_info_a, 
-            *b, port_info_b->my_name, *port_info_b );
-      set_order< t >( *port_info_a, *port_info_b ); 
-      return( kernel_pair_t( a, b ) );
-   }
+    kernel_pair_t link( raft::kernel *a, 
+                        raft::kernel *b,
+                        const raft::order::spec t,
+                        const std::size_t buffer = 0 );
    
    /** 
     * link - same as function above save for the following differences:
@@ -127,31 +96,11 @@ public:
     *          a_port.
     * @return  kernel_pair_t - references to src, dst kernels.
     */
-   template < raft::order::spec t = raft::order::in > 
-      kernel_pair_t link( raft::kernel *a, 
-                          const std::string  a_port, 
-                          raft::kernel *b,
-                          const std::size_t buffer = 0 )
-   {
-      updateKernels( a, b );
-      PortInfo &port_info_a( a->output.getPortInfoFor( a_port ) );
-      port_info_a.fixed_buffer_size = buffer;
-      PortInfo *port_info_b;
-      try{
-         port_info_b = &(b->input.getPortInfo());
-      }
-      catch( AmbiguousPortAssignmentException &ex ) 
-      {
-            portNotFound( false,
-                          ex,
-                          b );
-      }
-      port_info_b->fixed_buffer_size = buffer;
-      join( *a, a_port , port_info_a, 
-            *b, port_info_b->my_name, *port_info_b );
-      set_order< t >( port_info_a, *port_info_b ); 
-      return( kernel_pair_t( a, b ) );
-   }
+   kernel_pair_t link( raft::kernel *a, 
+                       const raft::port_key_type  a_port, 
+                       raft::kernel *b,
+                       const raft::order::spec t,
+                       const std::size_t buffer = 0 );
 
 
    /**
@@ -161,40 +110,18 @@ public:
     * matching the port b_port.
     * @param   a - raft::kernel*, with more a single output port
     * @param   b - raft::kernel*, with input port named b_port
-    * @param   b_port - const std::string, input port name.
+    * @param   b_port - const raft::port_key_type, input port name.
     * @throws  AmbiguousPortAssignmentException - exception thrown 
     *          if raft::kernel a has more than a single output port
     * @throws  PortNotFoundException - exception thrown if raft::kernel b
     *          has no input port named b_port
     * @return  kernel_pair_t - references to src, dst kernels.
     */
-   template < raft::order::spec t = raft::order::in >
-      kernel_pair_t link( raft::kernel *a, 
-                          raft::kernel *b, 
-                          const std::string b_port,
-                          const std::size_t buffer = 0 )
-   {
-      updateKernels( a, b );
-      PortInfo *port_info_a;
-      try{
-         port_info_a = &(a->output.getPortInfo() );
-      }
-      catch( AmbiguousPortAssignmentException &ex ) 
-      {
-            portNotFound( true,
-                          ex,
-                          a );
-      }
-      port_info_a->fixed_buffer_size = buffer;
-      
-      PortInfo &port_info_b( b->input.getPortInfoFor( b_port) );
-      port_info_b.fixed_buffer_size = buffer;
-      
-      join( *a, port_info_a->my_name, *port_info_a, 
-            *b, b_port, port_info_b );
-      set_order< t >( *port_info_a, port_info_b ); 
-      return( kernel_pair_t( a, b ) );
-   }
+   kernel_pair_t link( raft::kernel *a, 
+                       raft::kernel *b, 
+                       const raft::port_key_type  b_port,
+                       const raft::order::spec t,
+                       const std::size_t buffer = 0 );
    
    /**
     * link - same as above save for the following differences:
@@ -208,24 +135,12 @@ public:
     *          is missing port a_port or b_port.
     * @return  kernel_pair_t - references to src, dst kernels.
     */
-   template < raft::order::spec t = raft::order::in >
-      kernel_pair_t link( raft::kernel *a, 
-                          const std::string a_port, 
-                          raft::kernel *b, 
-                          const std::string b_port,
-                          const std::size_t buffer = 0 )
-   {
-      updateKernels( a, b );
-      auto &port_info_a( a->output.getPortInfoFor( a_port ) );
-      port_info_a.fixed_buffer_size = buffer;
-      auto &port_info_b( b->input.getPortInfoFor( b_port) );
-      port_info_b.fixed_buffer_size = buffer;
-      
-      join( *a, a_port, port_info_a, 
-            *b, b_port, port_info_b );
-      set_order< t >( port_info_a, port_info_b ); 
-      return( kernel_pair_t( a, b ) );
-   }
+    kernel_pair_t link( raft::kernel *a, 
+                        const raft::port_key_type  a_port, 
+                        raft::kernel *b, 
+                        const raft::port_key_type  b_port,
+                        const raft::order::spec t,
+                        const std::size_t buffer = 0 );
    
 
 
@@ -245,97 +160,23 @@ protected:
     * @param b_info - PortInfo struct for kernel b
     * @throws PortTypeMismatchException
     */
-   static void join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
-                     raft::kernel &b, const std::string name_b, PortInfo &b_info );
+   static void join( raft::kernel &a, const raft::port_key_type &name_a, PortInfo &a_info, 
+                     raft::kernel &b, const raft::port_key_type &name_b, PortInfo &b_info );
    
    static void insert( raft::kernel *a,  PortInfo &a_out, 
                        raft::kernel *b,  PortInfo &b_in,
                        raft::kernel *i );
 
-   /** 
-    * set_order - keep redundant code, well, less redundant. 
-    * This version handles the in-order settings.
-    * @param    port_info_a, PortInfo&
-    * @param    port_info_b, PortInfo&
-    */
-   template < raft::order::spec t,
-              typename std::enable_if< t == raft::order::in >::type* = nullptr > 
-   static
-   void set_order( PortInfo &port_info_a, 
-                   PortInfo &port_info_b ) noexcept
-   {
-        port_info_a.out_of_order = false; 
-        port_info_b.out_of_order = false;
-        return;           
-   }
+   static void set_order( PortInfo &port_info_a, 
+                          PortInfo &port_info_b,
+                          const raft::order::spec t ) noexcept;
    
-   /** 
-    * set_order - keep redundant code, well, less redundant. 
-    * This version handles the out-of-order settings.
-    * @param    port_info_a, PortInfo&
-    * @param    port_info_b, PortInfo&
-    */
-   template < raft::order::spec t,
-              typename std::enable_if< t == raft::order::out >::type* = nullptr > 
-   static 
-   void set_order( PortInfo &port_info_a, 
-                   PortInfo &port_info_b ) noexcept
-   {
-        port_info_a.out_of_order = true; 
-        port_info_b.out_of_order = true; 
-        return;
-   }
 
-    template < class A, 
-               class B >
-    void updateKernels( A &a, B &b )
-    {
-        if( ! a->input.hasPorts() )
-        {
-           source_kernels += a;
-        }
-        if( ! b->output.hasPorts() )
-        {
-           dst_kernels += b;
-        }
-        all_kernels += a;
-        all_kernels += b;
-        /**
-         * fix for issue #77, this should be safe to use
-         * here given it's issued before any destructors
-         * should have been called.
-         */
-        if( a->internal_alloc )
-        {
-            internally_created_kernels.emplace( a ); 
-        }
-        if( b->internal_alloc )
-        {
-            internally_created_kernels.emplace( b );
-        }
-    }
+   virtual void updateKernels( raft::kernel * const a, raft::kernel * const b );
 
-   static void inline portNotFound( const bool src, 
-                                    const AmbiguousPortAssignmentException &ex, 
-                                    raft::kernel * const k )
-   {
-         std::stringstream ss;
-         const auto name( raft::demangle( typeid( *k ).name() ) );
-         if( src )
-         {
-            ss << ex.what() << "\n";
-            ss << "Output port from source kernel (" << name << ") " <<
-                   "has more than a single port.";
-
-         }
-         else
-         {
-            ss << ex.what() << "\n";
-            ss << "Input port from destination kernel (" << name << ") " <<
-                   "has more than a single port.";
-         }
-         throw AmbiguousPortAssignmentException( ss.str() );
-   }
+   static void portNotFound( const bool src, 
+                             const AmbiguousPortAssignmentException &ex, 
+                             raft::kernel * const k );
 
    /** need to keep source kernels **/
    kernelkeeper              source_kernels;
@@ -343,18 +184,6 @@ protected:
    kernelkeeper              dst_kernels;
    /** and keep a list of all kernels **/
    kernelkeeper              all_kernels;
-   
-
-   /**
-    * bug fix for issue #77, keeping list of 
-    * internally created compute kernels, this
-    * doesn't need to be thread safe, so using 
-    * just a simple std::set will do, set vs. 
-    * vector to prevent duplicates & double free
-    * from being triggered
-    */
-    std::set< raft::kernel* >    internally_created_kernels;
-   
    /** 
     * FIXME: come up with better solution for enabling online
     * duplication of submaps as a unit.

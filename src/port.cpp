@@ -1,9 +1,9 @@
 /**
  * port.cpp - 
  * @author: Jonathan Beard
- * @version: Sun July 23 06:22 2017
+ * @version: Thu Aug 28 09:55:47 2014
  * 
- * Copyright 2017 Jonathan Beard
+ * Copyright 2014 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,13 @@
 #include <sstream>
 #include <iostream>
 
+/** for exception below **/
+#include <boost/core/demangle.hpp> 
 #include "fifo.hpp"
 #include "kernel.hpp"
 #include "port.hpp"
 #include "portexception.hpp"
-#include "demangle.hpp"
+#include "defs.hpp"
 
 Port::Port( raft::kernel * const k ) : PortBase(),
                                        kernel( k )
@@ -45,10 +47,52 @@ Port::Port( raft::kernel *k,
 {
 }
 
+Port::Port( const Port &other )
+{
+   /** 
+    * we shouldn't be copying another port if it is
+    * an in-place allocation.
+    */
+   assert( other.alloc_ptr == nullptr );
+   /** copy **/
+   (this)->portmap = other.portmap;
+   /** 
+    * copy requires update to my_kernel field in 
+    * the PortInfo struct, call afterCopyKernelUpdate()
+    * to clean up.
+    */
+}
 
+void 
+Port::afterCopyKernelUpdate( raft::kernel * const k )
+{
+    assert( k != nullptr );
+    for( auto &pair : portmap.map )
+    {
+        pair.second.my_kernel = k;
+    }
+}
+
+Port&
+Port::operator = ( const Port &other )
+{
+   /** 
+    * we shouldn't be copying another port if it is
+    * an in-place allocation.
+    */
+    assert( other.alloc_ptr == nullptr );
+   /** copy **/
+   (this)->portmap = other.portmap;
+   /** 
+    * copy requires update to my_kernel field in 
+    * the PortInfo struct, call afterCopyKernelUpdate()
+    * to clean up.
+    */
+    return( *this );
+}
 
 const std::type_index&
-Port::getPortType( const std::string &&port_name )
+Port::getPortType( const raft::port_key_type  &&port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
@@ -59,7 +103,23 @@ Port::getPortType( const std::string &&port_name )
 }
 
 FIFO&
-Port::operator[]( const std::string &&port_name )
+Port::operator[]( const raft::port_key_type &&port_name )
+{
+   //NOTE: We'll need to add a lock here if later
+   //we intend to remove ports dynamically as well
+   //for the moment however lets just assume we're
+   //only adding them
+   const auto ret_val( portmap.map.find( port_name ) );
+   if( ret_val == portmap.map.cend() )
+   {
+      throw PortNotFoundException( 
+         "Port not found for name \"" + port_name + "\"" );
+   }
+   return( *((*ret_val).second.getFIFO())  );
+}
+
+FIFO&
+Port::operator[]( const raft::port_key_type &port_name )
 {
    //NOTE: We'll need to add a lock here if later
    //we intend to remove ports dynamically as well
@@ -77,7 +137,7 @@ Port::operator[]( const std::string &&port_name )
 bool
 Port::hasPorts()
 {
-   return( portmap.map.size() > 0 ? true : false );
+   return( portmap.map.size() > 0 );
 }
 
 PortIterator
@@ -99,7 +159,7 @@ Port::count()
 }
 
 PortInfo&
-Port::getPortInfoFor( const std::string port_name )
+Port::getPortInfoFor( const raft::port_key_type port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
@@ -126,7 +186,7 @@ Port::getPortInfo()
    }
    else if( number_of_ports == 0 )
    {
-      const auto name( raft::demangle( typeid( (*this->kernel) ).name() ) );
+      const auto name( boost::core::demangle( typeid( (*this->kernel) ).name() ) );
       throw PortNotFoundException( "At least one port must be defined, none were for kernel class \"" + name + "\"" );
    }
    auto pair( portmap.map.begin() );

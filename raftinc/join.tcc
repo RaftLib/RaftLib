@@ -40,6 +40,8 @@ public:
 
    virtual ~join() = default;
 
+   IMPL_CLONE();
+
    virtual raft::kstatus run()
    {
       /** 

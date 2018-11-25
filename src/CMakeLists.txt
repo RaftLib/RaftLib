@@ -20,7 +20,9 @@ set(CPP_SRC_FILES
     map.cpp
     mapexception.cpp
     noparallel.cpp
+    raftmanip.cpp
     parallelk.cpp
+    parsemap.cpp
     partition_basic.cpp
     partition_dummy.cpp
     partition_scotch.cpp
@@ -30,6 +32,7 @@ set(CPP_SRC_FILES
     port_info.cpp
     portexception.cpp
     portiterator.cpp
+    portmap_t.cpp
     porttemplate.cpp
     raftexception.cpp
     roundrobin.cpp
@@ -40,6 +43,7 @@ set(CPP_SRC_FILES
     stdalloc.cpp
     submap.cpp
     systemsignalhandler.cpp
+    blocked.cpp
 )
 
 add_library( raft ${CPP_SRC_FILES} )

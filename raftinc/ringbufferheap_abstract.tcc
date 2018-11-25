@@ -24,6 +24,8 @@
 #include "optdef.hpp"
 #include "scheduleconst.hpp"
 #include "defs.hpp"
+#include "internaldefs.hpp"
+
 #ifdef USEQTHREADS
 #include <qthread/qthread.hpp>
 #endif

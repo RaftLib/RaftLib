@@ -82,7 +82,7 @@ public:
     * get the actual value (by reference).
     * @return T&
     */
-   const T& operator *() const noexcept
+   T& operator *() noexcept
    {
       return( item );
    }
@@ -91,7 +91,7 @@ public:
     * sig - get the current signal
     * @return raft::signal
     */
-   const raft::signal& sig() const noexcept
+   const raft::signal& sig() noexcept
    {
       return( (this)->signal );
    }

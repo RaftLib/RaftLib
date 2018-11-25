@@ -182,9 +182,7 @@ public:
       void *ptr( nullptr );
       /** call blocks till an element is available **/
       local_allocate( &ptr );
-      T * __attribute__((__unused__)) temp( 
-         new (ptr) T( std::forward< Args >( params )... ) );
-      UNUSED( temp );
+      new (ptr) T( std::forward< Args >( params )... );
       return( autorelease< T, allocatetype >( 
          reinterpret_cast< T* >( ptr ), (*this) ) );
    }
@@ -506,6 +504,17 @@ public:
     * @return float
     */
    virtual float get_frac_write_blocked() = 0;
+    
+    /**
+     * get_suggested_count - returns the suggested count
+     * for the dynamic allocator if the user has ever
+     * asked for more than is currently available 
+     * space in the FIFO. This could also serve as a 
+     * minimum size for future allocations (implementation
+     * dependent.
+     * @return  std::size_t suggested count
+     */
+     virtual std::size_t get_suggested_count() = 0;
 
    /**
     * invalidate - used by producer thread to label this
@@ -542,20 +551,6 @@ protected:
     * setOutPeekSet -
     */
    virtual void setOutPeekSet( ptr_set_t * const peekset );
-   /**
-    * set_src_kernel - sets teh protected source
-    * kernel for this fifo, necessary for preemption,
-    * see comments on variables below.
-    * @param   k - raft::kernel*
-    */
-   virtual void set_src_kernel( raft::kernel * const k ) = 0;
-   /**
-    * set_dst_kernel - sets the protected destination
-    * kernel for this fifo, necessary for preemption,
-    * see comments on variables below.
-    * @param   k - raft::kernel*
-    */
-   virtual void set_dst_kernel( raft::kernel * const k ) = 0;
    /**
     * signal_peek - special function for the scheduler
     * to peek at a signal on the head of the queue.

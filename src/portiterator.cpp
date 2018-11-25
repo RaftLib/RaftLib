@@ -61,7 +61,7 @@ PortIterator::operator++()
    return( (*this) );
 }
 
-const std::string&
+const raft::port_key_type&
 PortIterator::name()
 {
     return( key_map[ map_index ] );
@@ -70,11 +70,6 @@ PortIterator::name()
 bool
 PortIterator::operator==( const PortIterator &rhs ) 
 {
-   /** 
-    * TODO, on a more philosophical note, should this
-    * be a ptr comparison for the FIFO's but then the 
-    * end function would be harder to implement
-    */
    return( map_index == rhs.map_index );
 }
 
@@ -93,9 +88,9 @@ PortIterator::operator*()
 
 void
 PortIterator::initKeyMap( portmap_t * const port_map, 
-                          std::vector< std::string > &key_map ) 
+                          std::vector< raft::port_key_type > &key_map ) 
 {
-   std::map< std::string, PortInfo > &map_ref( port_map->map );
+   std::map< raft::port_key_type, PortInfo > &map_ref( port_map->map );
    for( const auto &pair : map_ref )
    {
       key_map.emplace_back( pair.first );

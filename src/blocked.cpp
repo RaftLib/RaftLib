@@ -1,9 +1,9 @@
 /**
- * rafttypes.hpp - 
+ * blocked.cpp - 
  * @author: Jonathan Beard
- * @version: Fri Sep 26 12:26:53 2014
+ * @version: Mon Apr  3 12:06:50 2017
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2017 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RAFTTYPES_HPP_
-#define _RAFTTYPES_HPP_  1
-namespace raft{
-enum kstatus {
-   stop,
-   proceed,
-   error
-};
+#include "blocked.hpp"
+
+Blocked::Blocked()
+{
+    /** nothing to do here **/
 }
-#endif /* END _RAFTTYPES_HPP_ */
+
+Blocked::Blocked( const Blocked &other ) : all( other.all )
+{
+    /** nothing to do here either **/
+}
+
+Blocked&
+Blocked::operator += ( const Blocked &rhs ) noexcept
+{
+    if( ! rhs.bec.blocked )
+    {
+        (this)->bec.count += rhs.bec.count;
+    }
+    return( (*this) );
+}

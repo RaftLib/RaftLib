@@ -1,7 +1,9 @@
-#include <stdio.h>
+#include <cstdio>
+#include <sstream>
 #include "portexception.hpp"
 #include "kernel.hpp"
 #include "common.hpp"
+#include "defs.hpp"
 
 using namespace raft;
 
@@ -13,6 +15,20 @@ kernel::kernel() : kernel_id( kernel::kernel_count )
    kernel::kernel_count++;
 }
 
+kernel::kernel( const kernel &other ) : 
+                                        input( other.input ),
+                                        output( other.output ),
+                                        core_assign( other.core_assign ),
+                                        dup_enabled( other.dup_enabled ),
+                                        dup_candidate( other.dup_candidate ),
+                                        kernel_id( kernel::kernel_count )
+{
+    kernel::kernel_count++;
+    input.afterCopyKernelUpdate( this );
+    output.afterCopyKernelUpdate( this );
+}
+
+
 /** existing memory **/
 kernel::kernel( void * const ptr,
                 const std::size_t nbytes ) :
@@ -20,17 +36,33 @@ kernel::kernel( void * const ptr,
    output( this, ptr, nbytes ),
    kernel_id( kernel::kernel_count )
 {
+   kernel::kernel_count++;
 }
 
-
 std::size_t
-kernel::get_id()
+kernel::get_id() const noexcept
 {
    return( kernel_id );
 }
 
 raft::kernel&
-kernel::operator []( const std::string &&portname )
+kernel::operator []( const raft::port_key_type  &&portname )
+{
+   if( enabled_port.size() < 2 )
+   {
+        enabled_port.push( portname );
+   }
+   else
+   {
+        throw AmbiguousPortAssignmentException(
+            "too many ports added with: " + portname
+        );
+   }
+   return( (*this) );
+}
+
+raft::kernel&
+kernel::operator []( const raft::port_key_type  &portname )
 {
    if( enabled_port.size() < 2 )
    {
@@ -102,6 +134,12 @@ kernel::allConnected()
         }
     }
 }
+   
+core_id_t 
+kernel::getCoreAssignment() noexcept
+{
+    return( core_assign );
+}
 
 void
 kernel::lock()
@@ -117,16 +155,34 @@ kernel::unlock()
    return;
 }
 
-std::string
+raft::port_key_type
 kernel::getEnabledPort()
 {
     if( enabled_port.size() == 0 )
     {
         return( "" );
     }
-    const std::string head( enabled_port.front() );
+    const auto head( enabled_port.front() );
     enabled_port.pop();
     return( head );
+}
+
+std::size_t 
+kernel::getEnabledPortCount()
+{
+    return( enabled_port.size() );
+}
+   
+void 
+kernel::setCore( const core_id_t id ) noexcept
+{
+    core_assign = id;
+}
+   
+void 
+kernel::apply( const raft::manip_vec_t settings ) noexcept
+{
+    system_configs = settings;
 }
 
 //std::string

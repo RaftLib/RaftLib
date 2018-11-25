@@ -1,9 +1,9 @@
 /**
- * rafttypes.hpp - 
+ * sysschedutil.hpp - 
  * @author: Jonathan Beard
- * @version: Fri Sep 26 12:26:53 2014
+ * @version: Sun Nov 27 09:11:32 2016
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2016 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RAFTTYPES_HPP_
-#define _RAFTTYPES_HPP_  1
-namespace raft{
-enum kstatus {
-   stop,
-   proceed,
-   error
-};
+#ifndef _SYSSCHEDUTIL_HPP_
+#define _SYSSCHEDUTIL_HPP_  1
+
+
+#ifdef USEQTHREADS
+#include <qthread/qthread.hpp>
+#else
+#include <sched.h>
+#endif
+
+namespace raft
+{
+
+static inline void yield()
+{
+#ifdef USEQTHREADS
+    qthread_yield();
+#else         
+    sched_yield();
+#endif
 }
-#endif /* END _RAFTTYPES_HPP_ */
+
+} /** end namespace raft **/
+
+#endif /* END _SYSSCHEDUTIL_HPP_ */

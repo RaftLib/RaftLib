@@ -25,19 +25,62 @@
 #include "bufferdata.tcc"
 #include "blocked.hpp"
 #include "fifo.hpp"
-
+#include "datamanager.tcc"
+#include "defs.hpp"
+#include "internaldefs.hpp"
 
 template < class T, Type::RingBufferType type > 
    class FIFOAbstract : public FIFO
 {
 public:
-   FIFOAbstract() : FIFO()
-   {
-   }
+   FIFOAbstract() : FIFO(){}
 
 protected:
-   /** TODO, package this as as struct **/
-   volatile bool            allocate_called = false;
-   Blocked::value_type      n_allocated     = 1;
+
+    inline void init() noexcept
+    {
+        auto * const buffer( datamanager.get() );
+        assert( buffer != nullptr );
+        producer_data.write_stats = &buffer->write_stats;
+        consumer_data.read_stats  = &buffer->read_stats;
+    }
+
+    struct{
+        volatile bool            allocate_called = false;
+        Blocked::value_type      n_allocated     = 1;
+        /**
+         * these pointers are set by the scheduler which 
+         * calls the garbage collection function. these
+         * two capture the addresses of output pointers
+         */
+        ptr_set_t                   *out         = nullptr;
+        ptr_set_t                   *out_peek    = nullptr;
+        /** 
+         * this is set via init callback on fifo construction
+         * this prevents the re-calculating of the address
+         * over and over....pointer chasing is very bad
+         * for cache performance.
+         */
+        Blocked                     *write_stats = nullptr;
+    } ALIGN( L1D_CACHE_LINE_SIZE ) producer_data;
+   
+   
+    struct{
+        /**
+         * these pointers are set by the scheduler which 
+         * calls the garbage collection function. these
+         * two capture the addresses of output pointers
+         */
+        ptr_map_t                   *in         = nullptr;
+        ptr_set_t                   *in_peek    = nullptr;
+        Blocked                     *read_stats = nullptr;
+    } ALIGN( L1D_CACHE_LINE_SIZE ) consumer_data;
+    
+    /** 
+     * upgraded the *data structure to be a DataManager
+     * object to enable easier and more intuitive dynamic
+     * lock free buffer resizing and re-alignment.
+     */
+    DataManager< T, type >       datamanager;
 };
 #endif /* END _FIFOABSTRACT_TCC_ */

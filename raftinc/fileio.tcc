@@ -140,6 +140,8 @@ public:
       }
    }
 
+   IMPL_NO_CLONE();
+
    virtual raft::kstatus run()
    {
       for( auto &port : output )

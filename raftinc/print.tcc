@@ -76,7 +76,7 @@ public:
    //design point
 
    /** enable cloning **/
-   CLONE();
+   IMPL_CLONE();
 
    /** 
     * run - implemented to take a single 
@@ -116,7 +116,7 @@ public:
    {
    }
 
-   CLONE();
+   IMPL_CLONE();
                                  
 
    /** 

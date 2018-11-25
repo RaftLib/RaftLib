@@ -25,17 +25,19 @@
 #include <cstdint>
 #include <queue>
 #include <string>
+#include "defs.hpp"
 #include "kernelexception.hpp"
 #include "port.hpp"
 #include "signalvars.hpp"
 #include "rafttypes.hpp"
 #include "kernel_wrapper.hpp"
+#include "raftmanip.hpp"
 
 /** pre-declare for friends **/ 
 class MapBase;
 class Schedule;
 class kernel_container;
-class Map;
+class submap;
 class basic_parallel;
 class kpair;
 class interface_partition;
@@ -47,7 +49,8 @@ namespace raft
 {
    class kernel;
 }
-#define CLONE() \
+
+#define IMPL_CPY_CLONE() \
 virtual raft::kernel* clone()\
 { \
    auto *ptr( \
@@ -58,15 +61,41 @@ virtual raft::kernel* clone()\
    ptr->internal_alloc = true;\
    return( ptr );\
 }
-#endif
+
+#define IMPL_CLONE() \
+virtual raft::kernel* clone()\
+{ \
+   auto *ptr( \
+      new typename std::remove_reference< decltype( *this ) >::type() );\
+   /** RL needs to dealloc this one **/\
+   ptr->internal_alloc = true;\
+   return( ptr );\
+}
+
+#define IMPL_NO_CLONE() \
+virtual raft::kernel* clone()\
+{ \
+    return( nullptr );\
+}
+#define CLONE 1
+#endif /** end CLONE impls **/
+
+
 
 namespace raft {
+/** predeclare template **/
+template < manip_vec_t... VECLIST > struct manip;
+
 class kernel
 {
+using clone_helper = std::function< raft::kernel* () >;
+
 public:
    /** default constructor **/
    kernel();
-   
+
+   kernel( const kernel &other );
+
    /** in-place allocation **/
    kernel( void * const ptr,
            const std::size_t nbytes );
@@ -88,104 +117,147 @@ public:
                class ... Args >
       static kernel_wrapper make( Args&&... params )
       {
-         auto *output( new T( std::forward< Args >( params )... ) );
+         kernel_wrapper output( new T( std::forward< Args >( params )... ) );
          output->internal_alloc = true;
-         return( kernel_wrapper( output ) );
+         return( output );
       }
    
    /** 
     * clone - used for parallelization of kernels, if necessary 
     * sub-kernels should include an appropriate copy 
     * constructor so all class member variables can be
-    * set.
-    * @param   other, T& - reference to object to be cloned
+    * set. To implement this in a sub-class see the
+    * macros IMPL_CLONE, IMPL_CPY_CLONE, or IMPL_NO_CLONE
+    * to simply not implement this function (i.e. return
+    * null).
     * @return  kernel*   - takes base type, however is same as 
-    * allocated by copy constructor for T.
+    * allocated by copy constructor for T. Returns nullptr
+    * in the case of IMPL_NO_CLONE
     */
-   virtual raft::kernel* clone()
-   {
-      throw CloneNotImplementedException( "Sub-class has failed to implement clone function, please use the CLONE() macro to add functionality" );
-      /** won't be reached **/
-      return( nullptr );
-   }
-
-   std::size_t get_id();
+   virtual raft::kernel* clone() = 0;
+   
+   /** 
+    * get_id - returns this kernels id, won't change for the
+    * lifetime of this kernel once set.
+    */
+   std::size_t get_id() const noexcept;
    
    /**
     * operator[] - returns the current kernel with the 
     * specified port name enabled for linking.
-    * @param portname - const std::string&&
+    * @param portname - const raft::port_key_type&&
     * @return raft::kernel&&
     */
-   raft::kernel& operator []( const std::string &&portname );
+   raft::kernel& operator []( const raft::port_key_type &&portname );
+   raft::kernel& operator []( const raft::port_key_type &portname );
 
-   core_id_t getCoreAssignment() noexcept
-   {
-       return( core_assign );
-   }
+   /**
+    * getCoreAssignent - returns the core that this kernel
+    * is assigned to. 
+    * @return core_id_t
+    */
+   core_id_t getCoreAssignment() noexcept;
 
 protected:
     /**
-     * 
+     * addPort - to be called only when the 
+     * runtime itself wants to add ports. This
+     * particular function is to add only to
+     * one side with a numerical port key (cast
+     * as a string). The base (virtual) function
+     * does nothing, however, they are implemented
+     * by the various parallel_x sub-classes.
+     *
+     * @return - current numerical index
+     * of port added.
      */
     virtual std::size_t addPort();
-    
+  
     void allConnected();
-    
+   
     virtual void lock();
     virtual void unlock();
 
-    /**
-     * PORTS - input and output, use these to interact with the
-     * outside world.
-     */
-    Port               input  = { this };
-    Port               output = { this };
+    
+
+   /**
+    * PORTS - input and output, use these to interact with the
+    * outside world.
+    */
+   Port               input  = { this };
+   Port               output = { this };
   
+   
+   /** 
+    * getEnabledPort - returns the currently enabled port
+    * so that the other pieces of the run-time can get the
+    * port that was included in the ["xyz"] brackets. Should
+    * return a copy, right now this is the behavior I want
+    * so that way if we copy compute kernels we won't have
+    * multiple kernels potentially pointing to the same reference.
+    * Each port name is only returned once, and then never again.
+    * This doesn't mean that you are getting rid of the port, it 
+    * means that the port name is not going to be returned as "enabled"
+    * twice. 
+    * @return   raft::port_key_type- currently active port name
+    */
+   raft::port_key_type  getEnabledPort();
+
+   /**
+    * getEnabledPortCount - returns the number of enabled ports
+    * withint this container.
+    */
+   std::size_t getEnabledPortCount();
+   
+   /** in namespace raft **/
+   friend class map;
+   friend class submap;
+   friend class parsemap;
+   /** in global namespace **/
+   friend class ::MapBase;
+   friend class ::Schedule;
+   friend class ::GraphTools;
+   friend class ::kernel_container;   
+   friend class ::basic_parallel;
+   friend class ::kpair;
+   friend class ::interface_partition;
+   friend class ::pool_schedule;
+   friend void raft::manip_local::apply_help( const manip_vec_t value, 
+                                         raft::kernel &k );
+
+   /**
+    * NOTE: doesn't need to be atomic since only one thread
+    * will have responsibility to to create new compute 
+    * kernels.
+    */
+   static std::size_t kernel_count;
     
-    std::string getEnabledPort();
-    
-    /** in namespace raft **/
-    friend class map;
-    /** in global namespace **/
-    friend class ::MapBase;
-    friend class ::Schedule;
-    friend class ::GraphTools;
-    friend class ::kernel_container;   
-    friend class ::basic_parallel;
-    friend class ::kpair;
-    friend class ::interface_partition;
-    friend class ::pool_schedule;
+   bool internal_alloc = false;
 
-    /**
-     * NOTE: doesn't need to be atomic since only one thread
-     * will have responsibility to to create new compute 
-     * kernels.
-     */
-    static std::size_t kernel_count;
-     
-    bool internal_alloc = false;
-
-    
-    void  retire() noexcept
-    {
-        (this)->execution_done = true;
-    }
-
-    bool isRetired() noexcept
-    {
-        return( (this)->execution_done );
-    }
-    
-    void setCore( const core_id_t id ) noexcept
-    {
-        core_assign = id;
-    }
+   void setCore( const core_id_t id ) noexcept;
+   
+   /** 
+    * apply - set system settings from stream manipulate
+    * or bind calls.
+    * @param settings - const raft::manip_vec_t
+    */
+   void apply( const raft::manip_vec_t settings ) noexcept;
 
 
-    core_id_t core_assign       = -1;
+   core_id_t core_assign    = -1;
+   
+   /** 
+    * set to parallel method to default 
+    * system and standard for vm 
+    */
+   manip_vec_t  system_configs  = 
+        raft::manip< 
+            raft::parallel::system, 
+            raft::vm::standard >::value;
 
-    raft::schedule_behavior     sched_behav = raft::any_port;
+   raft::schedule_behavior     sched_behav = raft::any_port;
+
+
 private:
    /** TODO, replace dup with bit vector **/
    bool             dup_enabled       = false;
@@ -195,7 +267,7 @@ private:
    bool             execution_done    = false;
 
    /** for operator syntax **/
-   std::queue< std::string > enabled_port;
+   std::queue< raft::port_key_type > enabled_port;
 };
 
 

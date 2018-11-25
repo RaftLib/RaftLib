@@ -24,12 +24,16 @@
 #define _PORTBASE_HPP_  1
 
 #include "portiterator.hpp"
+#include "portmap_t.hpp"
+#include "defs.hpp"
+
 
 class PortBase
 {
 public:
-   PortBase()          = default;
-   virtual ~PortBase() = default;
+   PortBase()           = default;
+   virtual ~PortBase()  = default;
+   
    /**
     * operator[] - enables lookup of ports by name,
     * which in turn enables the user to name each
@@ -40,7 +44,7 @@ public:
     * @throws - should throw a PortNotFoundException if port_name
     * doesn't exist.
     */
-   virtual FIFO& operator[]( const std::string &&port_name ) = 0;
+   virtual FIFO& operator[]( const raft::port_key_type &&port_name ) = 0;
 
    /**
     * hasPorts - should return false if this port object is

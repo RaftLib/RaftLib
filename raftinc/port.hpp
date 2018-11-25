@@ -28,6 +28,7 @@
 #include <typeindex>
 #include <functional>
 #include <utility>
+#include <memory>
 
 #include "portbase.hpp"
 #include "graphtools.hpp"
@@ -53,6 +54,7 @@ namespace raft
    class parallel_k;
    template < class T, class method > class join;
    template < class T, class method > class split;
+   class parsemap;
 }
 
 
@@ -126,6 +128,13 @@ public:
          void * const ptr,
          const std::size_t nbytes );
 
+   
+   Port( const Port &other );
+
+   void afterCopyKernelUpdate( raft::kernel * const k ); 
+
+   Port& operator = ( const Port &other );
+   
    /**
     * ~Port - destructor, deletes the FIFO that was given
     * when the object was initalized.
@@ -138,7 +147,7 @@ public:
     * given.  Function returns true if added, false if not.
     * Main reason for returning false would be that the
     * port already exists.
-    * @param   port_name - const std::string
+    * @param   port_name - const raft::port_key_type
     * @return  bool
     */
    template < class T,
@@ -161,21 +170,19 @@ public:
    template < class T >
    bool addInPlacePorts( const std::size_t n_ports )
    {
-      T *existing_buff_t( reinterpret_cast< T* >( alloc_ptr ) );
-      std::size_t length( alloc_ptr_length / sizeof( T ) );
+      T * const existing_buff( reinterpret_cast< T* >( alloc_ptr ) );
+      const std::size_t length( alloc_ptr_length / sizeof( T ) );
       const std::size_t inc( length / n_ports );
       const std::size_t adder( length % n_ports );
-
-      using index_type = std::remove_const_t<decltype(n_ports)>;
-      for( index_type index( 0 ); index < n_ports; index++ )
+      for( std::size_t  index( 0 ); index < n_ports; index++ )
       {
          const std::size_t start_index( index * inc );
          PortInfo pi( typeid( T ),
-                      (void*)&( existing_buff_t[ start_index ] ) /** pointer **/,
+                      (void*)&( existing_buff[ start_index ] ) /** pointer **/,
                       inc + ( index == (n_ports - 1) ? adder : 0 ),
                       start_index );
          pi.my_kernel = kernel;
-         const std::string name( std::to_string( index ) );
+         const auto name( std::to_string( index ) );
          pi.my_name   = name;
          /** gotta initialize the maps to copy stuff to/from **/
          (this)->initializeConstMap< T >( pi );
@@ -196,14 +203,15 @@ public:
     * @return  const type_index&
     * @throws PortNotFoundException
     */
-   const std::type_index& getPortType( const std::string &&port_name );
+   const std::type_index& getPortType( const raft::port_key_type &&port_name );
 
 
    /**
     * operator[] - input the port name and get a port
     * if it exists.
     */
-   virtual FIFO& operator[]( const std::string &&port_name );
+   virtual FIFO& operator[]( const raft::port_key_type  &&port_name );
+   virtual FIFO& operator[]( const raft::port_key_type  &port_name );
 
 
    /**
@@ -231,7 +239,6 @@ public:
     */
    std::size_t count();
 
-//TODO, get this guy into the private area
    /**
     * add_port - adds and initializes a port for the name
     * given.  Function returns true if added, false if not.
@@ -268,6 +275,7 @@ public:
 
 
 protected:
+
    /**
     * initializeConstMap - hack to get around the inability to otherwise
     * initialize a template function where later we don't have the
@@ -287,11 +295,13 @@ protected:
       pi.const_map[ Type::Heap ]->insert(
          std::make_pair( true /** yes instrumentation **/,
                          RingBuffer< T, Type::Heap, true >::make_new_fifo ) );
-
-      //pi.const_map.insert( std::make_pair( Type::SharedMemory, new instr_map_t() ) );
-      //pi.const_map[ Type::SharedMemory ]->insert(
-      //   std::make_pair( false /** no instrumentation **/,
-      //                   RingBuffer< T, Type::SharedMemory >::make_new_fifo ) );
+      
+      pi.const_map.insert( 
+        std::make_pair( Type::SharedMemory, std::make_shared< instr_map_t >() ) );
+     
+      pi.const_map[ Type::SharedMemory ]->insert(
+         std::make_pair( false /** no instrumentation **/,
+                         RingBuffer< T, Type::SharedMemory >::make_new_fifo ) );
       /**
        * NOTE: If you define more port resource types, they have
        * to be defined here...otherwise the allocator won't be
@@ -346,10 +356,12 @@ protected:
    /**
     * getPortInfoFor - gets port information for the param port
     * throws an exception if the port doesn't exist.
-    * @param   port_name - const std::string
+    * @param   port_name - const raft::port_key_type
     * @return  PortInfo&
     */
-   PortInfo& getPortInfoFor( const std::string port_name );
+   PortInfo& getPortInfoFor( const raft::port_key_type  port_name );
+
+   
 
    /**
     * portmap - container struct with all ports.  The
@@ -379,6 +391,7 @@ protected:
    friend class MapBase;
    friend class raft::kernel;
    friend class raft::map;
+   friend class raft::parsemap;
    friend class GraphTools;
    friend class basic_parallel;
    friend class raft::parallel_k;

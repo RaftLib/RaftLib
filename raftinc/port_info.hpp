@@ -28,6 +28,7 @@
 #include <memory>
 #include <cassert>
 
+#include "defs.hpp"
 #include "alloc_defs.hpp"
 #include "ringbuffertypes.hpp"
 #include "port_info_types.hpp"
@@ -51,7 +52,7 @@ struct PortInfo
    PortInfo( const PortInfo &other );
    
 
-   virtual ~PortInfo() = default;
+   virtual ~PortInfo();
 
    /**
     * getFIFO - call this function to get a FIFO, lock free but
@@ -71,23 +72,25 @@ struct PortInfo
    void setFIFO( FIFO * const in );
    
    FIFO            *fifo_a  = nullptr;
+#ifdef JVEC_MACHINE   
    FIFO            *fifo_b  = nullptr;
+#endif
+
    /** 
     * the type of the port.  regardless of if the buffer itself
     * is impplemented or not. 
     */
    std::type_index type;
 
-    /**
-     * const_map - stores "builder" objects for each of the 
-     * currenty implemented ring buffer types so that when 
-     * the mapper is allocating ring buffers it may allocate
-     * one with the proper type.  The first key is self explanatory
-     * for the most part, storing the ring buffer type.  The 
-     * second internal map key is "instrumented" vs. not.
-     */
-    std::map< Type::RingBufferType , 
-        std::shared_ptr< instr_map_t > > const_map;
+   /**
+    * const_map - stores "builder" objects for each of the 
+    * currenty implemented ring buffer types so that when 
+    * the mapper is allocating ring buffers it may allocate
+    * one with the proper type.  The first key is self explanatory
+    * for the most part, storing the ring buffer type.  The 
+    * second internal map key is "instrumented" vs. not.
+    */
+   std::map< Type::RingBufferType , std::shared_ptr< instr_map_t > > const_map;
 
 
    /**
@@ -95,14 +98,14 @@ struct PortInfo
     * destroyed unless they're used...they'll of course
     * be destroyed upon program termination.
     */
-   split_factory_t   split_func      = nullptr;
-   join_factory_t    join_func       = nullptr;
+   split_factory_t          split_func      = nullptr;
+   join_factory_t           join_func       = nullptr;
 
-   raft::kernel     *my_kernel       = nullptr;
-   std::string       my_name         = "";
+   raft::kernel             *my_kernel       = nullptr;
+   raft::port_key_type       my_name         = "";
    
-   raft::kernel     *other_kernel    = nullptr;
-   std::string       other_name      = "";
+   raft::kernel             *other_kernel    = nullptr;
+   raft::port_key_type       other_name      = "";
    
    /** runtime settings **/
    bool              use_my_allocator= false;

@@ -34,6 +34,8 @@ public:
       output.addInPlacePorts< T >( nports ); 
       /** no input ports since we're using the existing allocation **/
    }
+
+   IMPL_NO_CLONE();
    
    virtual raft::kstatus run(){ 
       return( raft::stop ); 
