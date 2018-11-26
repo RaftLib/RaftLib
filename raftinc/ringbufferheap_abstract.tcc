@@ -24,11 +24,7 @@
 #include "optdef.hpp"
 #include "scheduleconst.hpp"
 #include "defs.hpp"
-#include "internaldefs.hpp"
-
-#ifdef USEQTHREADS
-#include <qthread/qthread.hpp>
-#endif
+#include "sysschedutil.hpp"
 
 template < class T,  Type::RingBufferType type > 
 class RingBufferBaseHeap : public FIFOAbstract< T, type> 
@@ -52,10 +48,10 @@ public:
    {  
       for( ;; )
       {
-         datamanager.enterBuffer( dm::size );
-         if( datamanager.notResizing() )
+         (this)->datamanager.enterBuffer( dm::size );
+         if( (this)->datamanager.notResizing() )
          {
-            auto * const buff_ptr( datamanager.get() );
+            auto * const buff_ptr( (this)->datamanager.get() );
 TOP:      
             const auto   wrap_write( Pointer::wrapIndicator( buff_ptr->write_pt  ) ),
                          wrap_read(  Pointer::wrapIndicator( buff_ptr->read_pt   ) );
@@ -67,7 +63,7 @@ TOP:
                /** expect most of the time to be full **/
                if( R_LIKELY( wrap_read < wrap_write ) )
                {
-                  datamanager.exitBuffer( dm::size );
+                  (this)->datamanager.exitBuffer( dm::size );
                   return( buff_ptr->max_cap );
                }
                else if( wrap_read > wrap_write )
@@ -80,36 +76,30 @@ TOP:
                    * this is in fact the best of all possible returns (see 
                    * Leibniz or Candide for further info).
                    */
-#ifndef USEQTHREADS                   
-                  std::this_thread::yield();
-#else
-                  qthread_yield();
-#endif
+                  raft::yield();
                   goto TOP;
                }
                else
                {
-                  datamanager.exitBuffer( dm::size );
+                  (this)->datamanager.exitBuffer( dm::size );
                   return( 0 );
                }
             }
             else if( rpt < wpt )
             {
-               datamanager.exitBuffer( dm::size );
+               (this)->datamanager.exitBuffer( dm::size );
                return( wpt - rpt );
             }
             else if( rpt > wpt )
             {
-               datamanager.exitBuffer( dm::size );
+               (this)->datamanager.exitBuffer( dm::size );
                return( buff_ptr->max_cap - rpt + wpt ); 
             }
-            datamanager.exitBuffer( dm::size );
+            (this)->datamanager.exitBuffer( dm::size );
             return( 0 );
          }
-         datamanager.exitBuffer( dm::size );
-#ifdef USEQTHREADS                   
-                  qthread_yield();
-#endif
+         (this)->datamanager.exitBuffer( dm::size );
+         raft::yield();
       } /** end for **/
       return( 0 ); /** keep some compilers happy **/
    }
@@ -125,7 +115,7 @@ TOP:
     */
    virtual void invalidate()
    {
-      auto * const ptr( datamanager.get() );
+      auto * const ptr( (this)->datamanager.get() );
       ptr->is_valid = false;
       return;
    }
@@ -139,7 +129,7 @@ TOP:
     */
    virtual bool is_invalid()
    {
-      auto * const ptr( datamanager.get() );
+      auto * const ptr( (this)->datamanager.get() );
       return( ! ptr->is_valid );
    }
 
@@ -152,7 +142,7 @@ TOP:
     */
    virtual std::size_t   space_avail()
    {
-      return( datamanager.get()->max_cap - size() );
+      return( (this)->datamanager.get()->max_cap - size() );
    }
   
    /**
@@ -162,7 +152,7 @@ TOP:
     */
    virtual std::size_t   capacity() 
    {
-      return( datamanager.get()->max_cap );
+      return( (this)->datamanager.get()->max_cap );
    }
 
    
@@ -175,8 +165,11 @@ TOP:
     */
    virtual void get_zero_read_stats( Blocked &copy )
    {
-      copy.all       = read_stats.all;
-      read_stats.all = 0;
+      
+      auto &buff_ptr_stats( (this)->datamanager.get()->read_stats.all );
+      
+      copy.all          = buff_ptr_stats;;
+      buff_ptr_stats    = 0;
    }
 
    /**
@@ -187,22 +180,35 @@ TOP:
     */
    virtual void get_zero_write_stats( Blocked &copy )
    {
-      copy.all       = write_stats.all;
-      write_stats.all = 0;
+      auto &buff_ptr_stats( (this)->datamanager.get()->write_stats.all );
+      copy.all       = buff_ptr_stats;
+      buff_ptr_stats = 0;
    }
-
-   /**
-    * get_write_finished - does exactly what it says, 
-    * sets the param variable to true when all writes
-    * have been finished.  This particular funciton 
-    * might change in the future but for the moment
-    * its vital for instrumentation.
-    * @param   write_finished - bool&
-    */
-   virtual void get_write_finished( bool &write_finished )
-   {
-      write_finished = (this)->write_finished;
-   }
+    
+    virtual float get_frac_write_blocked()
+    {
+        auto &wr_stats( (this)->datamanager.get()->write_stats );
+        const auto copy( wr_stats );
+        wr_stats.all = 0;
+        if( copy.bec.blocked == 0 || copy.bec.count == 0 )
+        {
+            return( 0.0 );
+        }
+        /** else **/
+        return( (float) copy.bec.blocked / 
+                    (float) copy.bec.count );
+    }
+    
+    /**
+     * suggested size if the user asks for more than 
+     * is available. if that condition never occurs
+     * then this will always return zero. if it does
+     * then this value can serve as a minimum size
+     */
+    virtual std::size_t get_suggested_count()
+    {
+        return( (this)->datamanager.get()->force_resize );
+    }
    
 
 protected:
@@ -212,7 +218,7 @@ protected:
    virtual void setPtrMap( ptr_map_t * const in )
    {
        assert( in != nullptr );
-       (this)->in = in;
+       (this)->consumer_data.in = in;
    }
 
 
@@ -222,54 +228,19 @@ protected:
    virtual void setPtrSet( ptr_set_t * const out )
    {
        assert( out != nullptr );
-       (this)->out = out;
+       (this)->producer_data.out = out;
    }
 
    virtual void setInPeekSet( ptr_set_t * const peekset )
    {
        assert( peekset != nullptr );
-       (this)->in_peek = peekset;
+       (this)->consumer_data.in_peek = peekset;
    }
    
    virtual void setOutPeekSet( ptr_set_t * const peekset )
    {
        assert( peekset != nullptr );
-       (this)->out_peek = peekset;
-   }
-
-   /**
-    * set_src_kernel - sets teh protected source
-    * kernel for this fifo, necessary for preemption,
-    * see comments on variables below.
-    * @param   k - raft::kernel*
-    */
-   virtual void set_src_kernel( raft::kernel * const k )
-   {
-      assert( k != nullptr );
-      while( ! datamanager.notResizing() )
-      { 
-         /* spin */ 
-      }
-      auto * const buffer( datamanager.get() );
-      buffer->setSourceKernel( k );
-   }
-
-
-   /**
-    * set_dst_kernel - sets the protected destination
-    * kernel for this fifo, necessary for preemption,
-    * see comments on variables below.
-    * @param   k - raft::kernel*
-    */
-   virtual void set_dst_kernel( raft::kernel * const k )
-   {
-      assert( k != nullptr );
-      while( ! datamanager.notResizing() )
-      {
-         /* spin */
-      }
-      auto * const buffer( datamanager.get() );
-      buffer->setDestKernel( k );
+       (this)->producer_data.out_peek = peekset;
    }
 
    /**
@@ -289,7 +260,7 @@ protected:
        * this value since the elements all remain in their 
        * location relative to the start of the queue.
        */
-      auto * const buff_ptr( datamanager.get() );
+      auto * const buff_ptr( (this)->datamanager.get() );
       const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
       return( buff_ptr->signal[ read_index ] /* make copy */ ); 
    }
@@ -426,37 +397,6 @@ protected:
       }
       return;
    }
-   
-   
-   /** 
-    * upgraded the *data structure to be a DataManager
-    * object to enable easier and more intuitive dynamic
-    * lock free buffer resizing and re-alignment.
-    */
-   DataManager< T, type >       datamanager;
-   
-   
-   
-   /**
-    * these two should go inside the buffer, they'll
-    * be accessed via the monitoring system.
-    */
-   Blocked                     read_stats;
-   Blocked                     write_stats;
-   /** 
-    * This should be okay outside of the buffer, its local 
-    * to the writing thread.  Variable gets set "true" in
-    * the allocate function and false when the push with
-    * only the signal argument is called.
-    */
-   /** TODO, this needs to get moved into the buffer for SHM **/
-   volatile bool                write_finished = false;
-   ptr_map_t                   *in = nullptr;
-   ptr_set_t                   *out = nullptr;
-   /** these are named with reference to the kernel, in == kernel in **/
-   ptr_set_t                   *in_peek  = nullptr;
-   ptr_set_t                   *out_peek = nullptr;
-   
 };
 
 #endif /* END _RINGBUFFERHEAP_ABSTRACT_TCC_ */

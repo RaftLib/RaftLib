@@ -1,2 +1,2 @@
 ##  NOTES
-* Stopped after ringbufferbase.tcc, need to continue merging from there.
+* continue merging after ringbufferheap_abstract.tcc

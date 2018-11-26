@@ -28,10 +28,8 @@
 #include "alloc_traits.tcc"
 #include "prefetch.hpp"
 #include "defs.hpp"
-
-#ifdef USEQTHREADS
-#include <qthread/qthread.hpp>
-#endif
+/** for yield **/
+#include "sysschedutil.hpp"
 
 /** inline alloc **/
 template < class T >
@@ -50,7 +48,14 @@ public:
 
    virtual void deallocate()
    {
-      (this)->allocate_called = false;
+      /**
+       * at this point nothing has been allocated 
+       * externally, and the write pointer hasn't been
+       * incremented so just unset the allocate flag
+       * and then signal the data manager that we're
+       * exiting the buffer 
+       */
+      (this)->producer_data.allocate_called = false;
       (this)->datamanager.exitBuffer( dm::allocate );
    }
 
@@ -62,7 +67,7 @@ public:
     */
    virtual void send( const raft::signal signal = raft::none )
    {
-      if( R_UNLIKELY( ! (this)->allocate_called ) )
+      if( R_UNLIKELY( ! (this)->producer_data.allocate_called ) )
       {
          return;
       }
@@ -70,16 +75,8 @@ public:
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       buff_ptr->signal[ write_index ] = signal;
-      (this)->write_stats.bec.count++;
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
-      (this)->allocate_called = false;
+      (this)->producer_data.write_stats->bec.count++;
+      (this)->producer_data.allocate_called = false;
       Pointer::inc( buff_ptr->write_pt );
       (this)->datamanager.exitBuffer( dm::allocate );
    }
@@ -92,24 +89,20 @@ public:
     */
    virtual void send_range( const raft::signal signal = raft::none )
    {
-      if( ! (this)->allocate_called ) return;
+      if( ! (this)->producer_data.allocate_called )
+      {
+        return;
+      }
       /** should be the end of the write, regardless of which allocate called **/
       const size_t write_index( Pointer::val( (this)->datamanager.get()->write_pt ) );
       (this)->datamanager.get()->signal[ write_index ] = signal;
       /* only need to inc one more **/
+      auto &n_allocated( (this)->producer_data.n_allocated );
       Pointer::incBy( (this)->datamanager.get()->write_pt,
-                      (this)->n_allocated );
-      (this)->write_stats.bec.count += (this)->n_allocated;
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
-      (this)->allocate_called = false;
-      (this)->n_allocated     = 0;
+                      n_allocated );
+      (this)->producer_data.write_stats->bec.count += n_allocated;
+      (this)->producer_data.allocate_called = false;
+      n_allocated     = 0;
       (this)->datamanager.exitBuffer( dm::allocate_range );
    }
 
@@ -150,12 +143,7 @@ protected:
                }
             }
             (this)->datamanager.exitBuffer( dm::recycle );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+            raft::yield();
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          /**
@@ -187,13 +175,12 @@ protected:
             break;
          }
          (this)->datamanager.exitBuffer( dm::allocate );
-         /** else, spin **/
-         if( (this)->write_stats.bec.blocked == 0 )
+         /** else, set stats,  spin **/
+         auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
+         if( wr_stats == 0 )
          {
-            (this)->write_stats.bec.blocked = 1;
+            wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -201,15 +188,12 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       *ptr = (void*)&( buff_ptr->store[ write_index ] );
-      (this)->allocate_called = true;
+      (this)->producer_data.allocate_called = true;
       /** call exitBuffer during push call **/
    }
 
@@ -222,13 +206,23 @@ protected:
          {
             break;
          }
-         (this)->datamanager.exitBuffer( dm::allocate_range );
-         if( (this)->write_stats.bec.blocked == 0 )
+         /** 
+          * if capacity is in fact too little then:
+          * 1) signal exit buffer
+          * 2) spin
+          * 3) hope the resize thread hits soon
+          */
+         if( (this)->capacity() < n )
          {
-            (this)->write_stats.bec.blocked = 1;
+            ((this)->datamanager.get()->force_resize) = n;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
+         (this)->datamanager.exitBuffer( dm::allocate_range );
+         /** else, set stats,  spin **/
+         auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
+         if( wr_stats == 0 )
+         {
+            wr_stats = 1;
+         }
 #if __x86_64
        __asm__ volatile("\
          pause"
@@ -236,10 +230,7 @@ protected:
          :
          : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto *container(
          reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
@@ -260,8 +251,9 @@ protected:
          buff_ptr->signal[ write_index ] = raft::none;
          write_index = ( write_index + 1 ) % buff_ptr->max_cap;
       }
-      (this)->n_allocated = static_cast< decltype( (this)->n_allocated ) >( n );
-      (this)->allocate_called = true;
+      (this)->producer_data.n_allocated = 
+        static_cast< decltype( (this)->producer_data.n_allocated ) >( n );
+      (this)->producer_data.allocate_called = true;
       /** exitBuffer() called by push_range **/
    }
 
@@ -290,12 +282,12 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::push );
-         if( (this)->write_stats.bec.blocked == 0 )
+         /** else, set stats,  spin **/
+         auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
+         if( wr_stats == 0 )
          {
-            (this)->write_stats.bec.blocked = 1;
+            wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -303,10 +295,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
        const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
@@ -314,14 +303,16 @@ protected:
       {
          T *item( reinterpret_cast< T* >( ptr ) );
           buff_ptr->store[ write_index ]          = *item;
-          (this)->write_stats.bec.count++;
+          (this)->producer_data.write_stats->bec.count++;
        }
       buff_ptr->signal[ write_index ]         = signal;
        Pointer::inc( buff_ptr->write_pt );
+#if 0       
       if( signal == raft::quit )
       {
          (this)->write_finished = true;
       }
+#endif      
       (this)->datamanager.exitBuffer( dm::push );
    }
 
@@ -353,17 +344,14 @@ protected:
          else
          {
             (this)->datamanager.exitBuffer( dm::pop );
-            if( (this)->read_stats.bec.blocked == 0 )
+            /** handle stats **/
+            auto &rd_stats( (this)->consumer_data.read_stats->bec.blocked );
+            if( rd_stats == 0 )
             {
-               (this)->read_stats.bec.blocked  = 1;
+               rd_stats  = 1;
             }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
          }
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const std::size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -376,7 +364,7 @@ protected:
       T *item( reinterpret_cast< T* >( ptr ) );
       *item = buff_ptr->store[ read_index ];
       /** only increment here b/c we're actually reading an item **/
-      (this)->read_stats.bec.count++;
+      (this)->consumer_data.read_stats->bec.count++;
       Pointer::inc( buff_ptr->read_pt );
       (this)->datamanager.exitBuffer( dm::pop );
    }
@@ -408,8 +396,6 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if  __x86_64
          __asm__ volatile("\
            pause"
@@ -417,10 +403,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const auto read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -463,8 +446,6 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if  __x86_64
          __asm__ volatile("\
            pause"
@@ -472,10 +453,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+          raft::yield();
       }
 
       /**
@@ -518,39 +496,31 @@ public:
       auto * const ptr = reinterpret_cast< T* >( &( buff_ptr->store[ read_index ] ) );
       /** destruct **/
       ptr->~T();
-      (this)->allocate_called = false;
+      (this)->producer_data.allocate_called = false;
       (this)->datamanager.exitBuffer( dm::allocate );
    }
 
-   /**
-    * send- releases the last item allocated by allocate() to
-    * the queue.  Function will imply return if allocate wasn't
-    * called prior to calling this function.
-    * @param signal - const raft::signal signal, default: NONE
-    */
-   virtual void send( const raft::signal signal = raft::none )
-   {
-      if( R_UNLIKELY( ! (this)->allocate_called ) )
-      {
-         return;
-      }
-      /** should be the end of the write, regardless of which allocate called **/
-      auto * const buff_ptr( (this)->datamanager.get() );
-      const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
-      buff_ptr->signal[ write_index ] = signal;
-      (this)->write_stats.bec.count++;
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
-      (this)->allocate_called = false;
-      Pointer::inc( buff_ptr->write_pt );
-      (this)->datamanager.exitBuffer( dm::allocate );
-   }
+    /**
+     * send- releases the last item allocated by allocate() to
+     * the queue.  Function will imply return if allocate wasn't
+     * called prior to calling this function.
+     * @param signal - const raft::signal signal, default: NONE
+     */
+    virtual void send( const raft::signal signal = raft::none )
+    {
+        if( R_UNLIKELY( ! (this)->producer_data.allocate_called ) )
+        {
+           return;
+        }
+        /** should be the end of the write, regardless of which allocate called **/
+        auto * const buff_ptr( (this)->datamanager.get() );
+        const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
+        buff_ptr->signal[ write_index ] = signal;
+        (this)->producer_data.write_stats->bec.count++;
+        (this)->producer_data.allocate_called = false;
+        Pointer::inc( buff_ptr->write_pt );
+        (this)->datamanager.exitBuffer( dm::allocate );
+    }
 
    /**
     * send_range - releases the last item allocated by allocate_range() to
@@ -560,26 +530,24 @@ public:
     */
    virtual void send_range( const raft::signal signal = raft::none )
    {
-      if( ! (this)->allocate_called ) return;
-      /** should be the end of the write, regardless of which allocate called **/
-      const size_t write_index( Pointer::val( (this)->datamanager.get()->write_pt ) );
-      (this)->datamanager.get()->signal[ write_index ] = signal;
-      /* only need to inc one more, the rest have already**/
-      Pointer::incBy( (this)->datamanager.get()->write_pt,
-                      (this)->n_allocated );
-      (this)->write_stats.bec.count += (this)->n_allocated;
-      /** cleanup **/
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
-      (this)->allocate_called = false;
-      (this)->n_allocated     = 0;
-      (this)->datamanager.exitBuffer( dm::allocate_range );
+        if( ! (this)->producer_data.allocate_called )
+        {
+            return;
+        }
+        auto * const buff_ptr( (this)->datamanager.get() );
+        /** should be the end of the write, regardless of which allocate called **/
+        const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
+        buff_ptr->signal[ write_index ] = signal;
+        /* only need to inc one more, the rest have already**/
+        auto &n_allocated( (this)->producer_data.n_allocated );
+        Pointer::incBy( buff_ptr->write_pt,
+                        n_allocated );
+        
+        (this)->producer_data.write_stats->bec.count += n_allocated;
+        /** cleanup **/
+        (this)->producer_data.allocate_called = false;
+        n_allocated     = 0;
+        (this)->datamanager.exitBuffer( dm::allocate_range );
    }
 
 
@@ -618,12 +586,7 @@ protected:
                }
             }
             (this)->datamanager.exitBuffer( dm::recycle );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+            raft::yield();
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -656,12 +619,12 @@ protected:
             break;
          }
          (this)->datamanager.exitBuffer( dm::allocate );
-         if( (this)->write_stats.bec.blocked == 0 )
+         /** else, set stats,  spin **/
+         auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
+         if( wr_stats == 0 )
          {
-            (this)->write_stats.bec.blocked = 1;
+            wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -669,15 +632,12 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       *ptr = (void*)&( buff_ptr->store[ write_index ] );
-      (this)->allocate_called = true;
+      (this)->producer_data.allocate_called = true;
       /** call exitBuffer during push call **/
    }
 
@@ -691,12 +651,12 @@ protected:
             break;
          }
          (this)->datamanager.exitBuffer( dm::allocate_range );
-         if( (this)->write_stats.bec.blocked == 0 )
+         /** else, set stats,  spin **/
+         auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
+         if( wr_stats == 0 )
          {
-            (this)->write_stats.bec.blocked = 1;
+            wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
        __asm__ volatile("\
          pause"
@@ -704,10 +664,7 @@ protected:
          :
          : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto *container(
          reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
@@ -728,8 +685,9 @@ protected:
          buff_ptr->signal[ write_index ] = raft::none;
          write_index = ( write_index + 1 ) % buff_ptr->max_cap;
       }
-      (this)->n_allocated = static_cast< decltype( (this)->n_allocated ) >( n );
-      (this)->allocate_called = true;
+      (this)->producer_data.n_allocated = 
+        static_cast< decltype( (this)->producer_data.n_allocated ) >( n );
+      (this)->producer_data.allocate_called = true;
       /** exitBuffer() called by push_range **/
    }
 
@@ -758,12 +716,12 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::push );
-         if( (this)->write_stats.bec.blocked == 0 )
+         /** else, set stats,  spin **/
+         auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
+         if( wr_stats == 0 )
          {
-            (this)->write_stats.bec.blocked = 1;
+            wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -771,28 +729,20 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
        const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       if( ptr != nullptr )
       {
           T *item( reinterpret_cast< T* >( ptr ) );
-          T * temp( new (
+          new (
             &buff_ptr->store[ write_index ]
-          ) T( *item  ) );
-          UNUSED( temp );
-          (this)->write_stats.bec.count++;
+          ) T( *item  );
+          (this)->producer_data.write_stats->bec.count++;
        }
       buff_ptr->signal[ write_index ]         = signal;
        Pointer::inc( buff_ptr->write_pt );
-      if( signal == raft::quit )
-      {
-         (this)->write_finished = true;
-      }
       (this)->datamanager.exitBuffer( dm::push );
    }
 
@@ -824,16 +774,13 @@ protected:
          else
          {
             (this)->datamanager.exitBuffer( dm::pop );
-            if( (this)->read_stats.bec.blocked == 0 )
+            /** handle stats **/
+            auto &rd_stats( (this)->consumer_data.read_stats->bec.blocked );
+            if( rd_stats == 0 )
             {
-               (this)->read_stats.bec.blocked  = 1;
+               rd_stats  = 1;
             }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+            raft::yield();
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -854,7 +801,7 @@ protected:
        */
       ( &buff_ptr->store[ read_index ] )->~T();
       /** only increment here b/c we're actually reading an item **/
-      (this)->read_stats.bec.count++;
+      (this)->consumer_data.read_stats->bec.count++;
       Pointer::inc( buff_ptr->read_pt );
       (this)->datamanager.exitBuffer( dm::pop );
    }
@@ -886,8 +833,6 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if  __x86_64
          __asm__ volatile("\
            pause"
@@ -895,10 +840,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -941,8 +883,6 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if  __x86_64
          __asm__ volatile("\
            pause"
@@ -950,10 +890,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
 
       /**
@@ -1003,7 +940,7 @@ public:
        * no deallocate. - jcb 15 July 2017
        */
       delete( ptr );
-      (this)->allocate_called = false;
+      (this)->producer_data.allocate_called = false;
       (this)->datamanager.exitBuffer( dm::allocate );
    }
 
@@ -1015,7 +952,7 @@ public:
     */
    virtual void send( const raft::signal signal = raft::none )
    {
-      if( R_UNLIKELY( ! (this)->allocate_called ) )
+      if( R_UNLIKELY( ! (this)->producer_data.allocate_called ) )
       {
          return;
       }
@@ -1023,16 +960,8 @@ public:
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       buff_ptr->signal[ write_index ] = signal;
-      (this)->write_stats.bec.count++;
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
-      (this)->allocate_called = false;
+      (this)->producer_data.write_stats->bec.count++;
+      (this)->producer_data.allocate_called = false;
       Pointer::inc( buff_ptr->write_pt );
       (this)->datamanager.exitBuffer( dm::allocate );
    }
@@ -1045,24 +974,17 @@ public:
     */
    virtual void send_range( const raft::signal signal = raft::none )
    {
-      if( ! (this)->allocate_called ) return;
+      if( ! (this)->producer_data.allocate_called ) return;
       /** should be the end of the write, regardless of which allocate called **/
       const size_t write_index( Pointer::val( (this)->datamanager.get()->write_pt ) );
       (this)->datamanager.get()->signal[ write_index ] = signal;
+      auto &n_allocated( (this)->producer_data.n_allocated );
       Pointer::incBy( (this)->datamanager.get()->write_pt,
-                      (this)->n_allocated );
+                      n_allocated );
       /** cleanup **/
-      (this)->write_stats.bec.count += (this)->n_allocated;
-      if( signal == raft::eof )
-      {
-         /**
-          * TODO, this is a quick hack, rework when proper signalling
-          * is implemented.
-          */
-         (this)->write_finished = true;
-      }
-      (this)->allocate_called = false;
-      (this)->n_allocated     = 0;
+      (this)->producer_data.write_stats->bec.count += n_allocated;
+      (this)->producer_data.allocate_called = false;
+      n_allocated     = 0;
       (this)->datamanager.exitBuffer( dm::allocate_range );
    }
 
@@ -1102,12 +1024,7 @@ protected:
                }
             }
             (this)->datamanager.exitBuffer( dm::recycle );
-#if (defined NICE) && (! defined USEQTHREADS)
-            std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+            raft::yield();
          }
          auto * const buff_ptr( (this)->datamanager.get() );
          const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -1115,7 +1032,7 @@ protected:
          auto **ptr( reinterpret_cast< void** >( &( buff_ptr->store[ read_index ] ) )
          );
 
-         (this)->in->insert(
+         (this)->consumer_data.in->insert(
             std::make_pair( reinterpret_cast< std::uintptr_t >( *ptr ),
                             []( void * ptr )
                             {
@@ -1154,13 +1071,12 @@ protected:
             break;
          }
          (this)->datamanager.exitBuffer( dm::allocate );
-         /** else, spin **/
-         if( (this)->write_stats.bec.blocked == 0 )
+         /** else, set stats,  spin **/
+         auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
+         if( wr_stats == 0 )
          {
-            (this)->write_stats.bec.blocked = 1;
+            wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -1168,15 +1084,12 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
       *ptr = (void*)&( buff_ptr->store[ write_index ] );
-      (this)->allocate_called = true;
+      (this)->producer_data.allocate_called = true;
       /** call exitBuffer during push call **/
    }
 
@@ -1193,12 +1106,12 @@ protected:
          {
             (this)->datamanager.exitBuffer( dm::allocate_range );
          }
-         if( (this)->write_stats.bec.blocked == 0 )
+         /** else, set stats,  spin **/
+         auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
+         if( wr_stats == 0 )
          {
-            (this)->write_stats.bec.blocked = 1;
+            wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
        __asm__ volatile("\
          pause"
@@ -1206,10 +1119,7 @@ protected:
          :
          : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto *container(
          reinterpret_cast< std::vector< std::reference_wrapper< T > >* >( ptr ) );
@@ -1231,7 +1141,7 @@ protected:
          buff_ptr->signal[ write_index ] = raft::none;
          write_index = ( write_index + 1 ) % buff_ptr->max_cap;
       }
-      (this)->allocate_called = true;
+      (this)->producer_data.allocate_called = true;
       /** exitBuffer() called by push_range **/
    }
 
@@ -1260,12 +1170,11 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::push );
-         if( (this)->write_stats.bec.blocked == 0 )
+         auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
+         if( wr_stats == 0 )
          {
-            (this)->write_stats.bec.blocked = 1;
+            wr_stats = 1;
          }
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -1273,10 +1182,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
        const size_t write_index( Pointer::val( buff_ptr->write_pt ) );
@@ -1286,25 +1192,28 @@ protected:
          T *item( reinterpret_cast< T* >( ptr ) );
          auto **b_ptr( reinterpret_cast< T** >( &buff_ptr->store[ write_index ] ) );
 
-         if( (this)->out_peek->find(
-            reinterpret_cast< std::uintptr_t >( item ) ) != (this)->out_peek->cend() )
+         if( (this)->producer_data.out_peek->find(
+            reinterpret_cast< std::uintptr_t >( item ) ) != 
+                (this)->producer_data.out_peek->cend() )
          {
             //this was from a previous peek call
-            (this)->out->insert( reinterpret_cast< std::uintptr_t >( item ) );
+            (this)->producer_data.out->insert( reinterpret_cast< std::uintptr_t >( item ) );
             *b_ptr = item;
          }
          else /** hope we have a move/copy constructor **/
          {
             *b_ptr = new T( *item );
          }
-         (this)->write_stats.bec.count++;
+         (this)->producer_data.write_stats->bec.count++;
        }
       buff_ptr->signal[ write_index ]         = signal;
        Pointer::inc( buff_ptr->write_pt );
+#if 0       
       if( signal == raft::quit )
       {
          (this)->write_finished = true;
       }
+#endif      
       (this)->datamanager.exitBuffer( dm::push );
    }
 
@@ -1336,16 +1245,13 @@ protected:
          else
          {
             (this)->datamanager.exitBuffer( dm::pop );
-            if( (this)->read_stats.bec.blocked == 0 )
+            /** handle stats **/
+            auto &rd_stats( (this)->consumer_data.read_stats->bec.blocked );
+            if( rd_stats == 0 )
             {
-               (this)->read_stats.bec.blocked  = 1;
+               rd_stats  = 1;
             }
-#if (defined NICE) && (! defined USEQTHREADS)
-            std::this_thread::yield();
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+            raft::yield();
          }
       }
       auto * const buff_ptr( (this)->datamanager.get() );
@@ -1360,10 +1266,10 @@ protected:
       auto *head( reinterpret_cast< T* >( buff_ptr->store[ read_index ] ) );
       *item = *head;
       /** only increment here b/c we're actually reading an item **/
-      (this)->read_stats.bec.count++;
+      (this)->consumer_data.read_stats->bec.count++;
       Pointer::inc( buff_ptr->read_pt );
-      /** 
-       * fix for bug #76 - jcb 18Nov2018 
+      /**
+       * fix for bug #76 - jcb 18Nov2018
        */
       head->~T();
       (this)->datamanager.exitBuffer( dm::pop );
@@ -1396,8 +1302,6 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if  __x86_64
          __asm__ volatile("\
            pause"
@@ -1405,10 +1309,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -1427,7 +1328,7 @@ protected:
                       sizeof( T ) < sizeof( std::uintptr_t ) << 7 ?
                       sizeof( T ) : sizeof( std::uintptr_t ) << 7
                       >( **real_ptr );
-      (this)->in_peek->insert( reinterpret_cast< ptr_t >( **real_ptr ) );
+      (this)->consumer_data.in_peek->insert( reinterpret_cast< ptr_t >( **real_ptr ) );
       return;
       /**
        * exitBuffer() called when recycle is called, can't be sure the
@@ -1464,8 +1365,6 @@ protected:
             }
          }
          (this)->datamanager.exitBuffer( dm::peek );
-#if (defined NICE) && (! defined USEQTHREADS)
-         std::this_thread::yield();
 #if  __x86_64
          __asm__ volatile("\
            pause"
@@ -1473,10 +1372,7 @@ protected:
            :
            : );
 #endif
-#endif
-#ifdef USEQTHREADS
-         qthread_yield();
-#endif
+         raft::yield();
       }
 
       /**
