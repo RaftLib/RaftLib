@@ -6,10 +6,11 @@ and also allow generation of strings.
 ## Grammar 
 ```c
 S   := A
-    |
+    |  '\0' 
     ;
 
 MODIFIER   :=  raft::order::out
+           |   raft::order::in
            |   raft::manip_vec_t
            ;
 
