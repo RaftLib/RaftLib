@@ -24,11 +24,11 @@
 #include <array>
 
 /** unit enum used throughout **/
-enum Unit : std::size_t { Byte = 0, KB, MB, GB, TB, N_UNIT };
+enum Unit : std::size_t { Byte = 0, KB, MB, GB, TB, N };
 
 /** constants for use later **/
 static constexpr std::array< double, 
-                  Unit::N_UNIT > unit_conversion
+                  Unit::N > unit_conversion
                       = {{ 1              /** bytes **/,
                            0.000976562    /** kilobytes **/,
                            9.53674e-7     /** megabytes **/, 
@@ -36,7 +36,7 @@ static constexpr std::array< double,
                            9.09495e-13    /** terabytes **/ }};
 
 static constexpr std::array<  const char[3] , 
-                  Unit::N_UNIT > unit_prints
+                  Unit::N > unit_prints
                          = {{ "B", "KB", "MB", "GB", "TB" }};
 
 #endif /* END _UNITS_HPP_ */

@@ -48,6 +48,8 @@ public:
 
     virtual ~writeeach() = default;
 
+    IMPL_NO_CLONE();
+
     virtual raft::kstatus run()
     {
         for( auto &port : input )

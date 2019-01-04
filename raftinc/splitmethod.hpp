@@ -31,27 +31,34 @@
 
 class autoreleasebase;
 
-/** FIXME, it's relativly easy to do zero copy....so implement **/
 class splitmethod
 {
 public:
    splitmethod()          = default;
    virtual ~splitmethod() = default;
 
+   /**
+    * send - this version sends one item ever time to the selected
+    * output port (selected by the specific implementation.
+    * @param item - item to be send
+    * @param signal - sigal to be sent
+    * @param outputs - output ports to be multiplexed over
+    * @return std::size_t, for this one will either be one or zero items
+    */
    template < class T /* item */,
               typename std::enable_if<
                         std::is_fundamental< T >::value >::type* = nullptr >
-      bool send( T &item, const raft::signal signal, Port &outputs )
+      std::size_t send( T &item, const raft::signal signal, Port &outputs )
    {
       auto * const fifo( select_fifo( outputs, sendtype ) );
       if( fifo != nullptr )
       {
          fifo->push( item, signal );
-         return( true );
+         return( static_cast< std::size_t >( 1 ) );
       }
       else
       {
-         return( false );
+         return( static_cast< std::size_t >( 0 ) );
       }
    }
 
@@ -62,12 +69,13 @@ public:
     * get it working.
     * @param   range - T&, autorelease object
     * @param   outputs - output port list
+    * @return   number of items sent
     */
    template < class T   /* peek range obj,  */,
               typename std::enable_if<
                        ! std::is_base_of< autoreleasebase,
                                         T >::value >::type* = nullptr >
-      bool send( T &range, Port &outputs )
+      std::size_t send( T &range, Port &outputs )
    {
       auto * const fifo( select_fifo( outputs, sendtype ) );
       if( fifo != nullptr )
@@ -80,11 +88,11 @@ public:
          {
             fifo->push( range[ i ].ele, range[ i ].sig );
          }
-         return( true );
+         return( static_cast< std::size_t >( space_avail ) );
       }
       else
       {
-         return( false );
+         return( static_cast< std::size_t >( 0 ) );
       }
    }
 

@@ -52,8 +52,18 @@ public:
       input.addPort<  T >( "0" );
       output.addPort< match_t >( "0" );
    }
-
+   
+   search ( const search &other ) : raft::kernel(),
+                                    term_length( other.term_length ),
+                                    term( other.term )
+   {
+      input.addPort<  T >( "0" );
+      output.addPort< std::size_t >( "0" );
+   }
+   
    virtual ~search() = default;
+   
+   IMPL_CPY_CLONE();
 
    virtual raft::kstatus run()
    {

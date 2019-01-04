@@ -78,7 +78,6 @@ public:
    static bool kernelRun( raft::kernel * const kernel,
                           volatile bool       &finished );
 
-   //TODO, get rid of jmp_buf, no longer needed 
    /**
     * scheduleKernel - adds the kernel "kernel" to the
     * schedule, ensures that it is run.  Other than

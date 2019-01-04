@@ -30,7 +30,9 @@
 #include <thread>
 #include <utility>
 #include <vector>
+#include <shm>
 
+#include "fifoabstract.tcc"
 #include "ringbufferbase.tcc"
 #include "ringbuffertypes.hpp"
 //#include "sample.tcc"
@@ -57,7 +59,9 @@ public:
         : RingBufferBase<T, type>()
     {
         assert(n != 0);
-        (this)->datamanager.set(new Buffer::Data<T, type>(n, align));
+        (this)->datamanager.set( new Buffer::Data<T, type>(n, align) );
+        /** set call-backs to structures inside buffer **/
+        (this)->init();
     }
 
     /**
@@ -72,6 +76,8 @@ public:
         T* ptrcast = reinterpret_cast<T*>(ptr);
         (this)->datamanager.set(
             new Buffer::Data<T, type>(ptrcast, length, start_position));
+        /** set call-backs to structures inside buffer **/
+        (this)->init();
     }
 
     virtual ~RingBuffer()
@@ -122,16 +128,6 @@ public:
         return;
     }
 
-    virtual float get_frac_write_blocked()
-    {
-        const auto copy((this)->write_stats);
-        (this)->write_stats.all = 0;
-        if(copy.bec.blocked == 0 || copy.bec.count == 0)
-        {
-            return (0.0);
-        }
-        return ((float)copy.bec.blocked / (float)copy.bec.count);
-    }
 };
 
 
@@ -147,7 +143,7 @@ public:
         : RingBufferBase<T, type>(), term(false)
     {
         (this)->datamanager.set(new Buffer::Data<T, Type::Heap>(n, align));
-
+        (this)->init();
         /** add monitor types immediately after construction **/
         // sample_master.registerSample( new MeanSampleType< T, type >() );
         // sample_master.registerSample( new ArrivalRateSampleType< T, type >()
@@ -195,17 +191,6 @@ public:
         return;
     }
 
-    virtual float get_frac_write_blocked()
-    {
-        const auto copy((this)->write_stats);
-        (this)->write_stats.all = 0;
-        if(copy.bec.blocked == 0 || copy.bec.count == 0)
-        {
-            return (0.0);
-        }
-        return ((float)copy.bec.blocked / (float)copy.bec.count);
-    }
-
 protected:
     // std::thread       *monitor;
     volatile bool term;
@@ -235,7 +220,7 @@ public:
     {
         UNUSED( data );
         assert(data == nullptr);
-        return (new RingBuffer<T, Type::Heap, true>(n_items, align));
+        return( new RingBuffer<T, Type::Heap, true>(n_items, align) );
     }
 };
 
@@ -324,15 +309,10 @@ public:
         assert(false);
     }
 
-    virtual float get_frac_write_blocked()
-    {
-        /** TODO, implement me **/
-        assert(false);
-        return( static_cast< float >( 0.0 ) );
-    }
 };
 
-#if BUILDSHM
+
+
 /**
  * SharedMemory
  */
@@ -343,12 +323,16 @@ class RingBuffer< T, Type::SharedMemory, false >
 public:
     RingBuffer( const std::size_t nitems, 
                 const std::string key, 
-                Direction dir,
+                const Direction   dir,
                 const std::size_t alignment = 16 ) 
                     : RingBufferBase< T, 
                                       Type::SharedMemory >() ,
                       shm_key( key )
     {
+        //TODO this needs to be an shm::open
+        //TODO once open, needs to be an in-place allocate for
+        //the first object to get the open, otherwise..use cookie
+        //technique...all sub-keys will follow main key
         (this)->datamanager.set( 
             new Buffer::Data< T, Type::SharedMemory >( nitems, 
                                                        key, 
@@ -405,17 +389,13 @@ public:
         return;
     }
 
-    virtual float get_frac_write_blocked()
-    {
-        assert(false);
-        return( static_cast< float >( 0.0 ) );
-    }
 
 protected:
     const std::string shm_key;
 };
 
 
+#if 0
 /**
  * TCP w/ multiplexing
  */
@@ -424,10 +404,10 @@ class RingBuffer<T, Type::TCP, false /* no monitoring yet */>
     : public RingBufferBase<T, Type::Heap>
 {
 public:
-    RingBuffer( const std::size_t nitems, 
-                const std::string dns_name,
-                Direction dir, 
-                const std::size_t alignment = 16 ) 
+    RingBuffer( const std::size_t   nitems, 
+                const std::string   dns_name,
+                const Direction     dir, 
+                const std::size_t   alignment = 16 ) 
                     : RingBufferBase<T, Type::Heap>()
     {
         // TODO, fill in stuff here, perhaps from original....
@@ -469,13 +449,9 @@ public:
         return;
     }
 
-    virtual float get_frac_write_blocked()
-    {
-        assert(false);
-        return( static_cast< float >( 0.0 ) );
-    }
 
 protected:
 };
-#endif // end BUILDSHM
+#endif //TCP 
+
 #endif /* END _RINGBUFFER_TCC_ */
