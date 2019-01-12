@@ -203,8 +203,8 @@ public:
     * operator[] - input the port name and get a port
     * if it exists.
     */
-   virtual FIFO& operator[]( const std::string &&port_name );
-
+   virtual FIFO& operator[]( const std::string &&port_name  );
+   virtual FIFO& operator[]( const std::string &port_name ); 
 
    /**
     * hasPorts - returns true if any ports exists, false
