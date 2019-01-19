@@ -3,7 +3,6 @@
 #include "kernel.hpp"
 #include "map.hpp"
 #include "schedule.hpp"
-#include "optdef.hpp"
 #include "defs.hpp"
 
 
