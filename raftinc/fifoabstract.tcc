@@ -45,7 +45,7 @@ protected:
         consumer_data.read_stats  = &buffer->read_stats;
     }
 
-    struct{
+    struct ALIGN( L1D_CACHE_LINE_SIZE ) {
         volatile bool            allocate_called = false;
         Blocked::value_type      n_allocated     = 1;
         /**
@@ -62,10 +62,10 @@ protected:
          * for cache performance.
          */
         Blocked                     *write_stats = nullptr;
-    } ALIGN( L1D_CACHE_LINE_SIZE ) producer_data;
+    } producer_data;
    
    
-    struct{
+    struct  ALIGN( L1D_CACHE_LINE_SIZE ) {
         /**
          * these pointers are set by the scheduler which 
          * calls the garbage collection function. these
@@ -74,7 +74,7 @@ protected:
         ptr_map_t                   *in         = nullptr;
         ptr_set_t                   *in_peek    = nullptr;
         Blocked                     *read_stats = nullptr;
-    } ALIGN( L1D_CACHE_LINE_SIZE ) consumer_data;
+    } consumer_data;
     
     /** 
      * upgraded the *data structure to be a DataManager
