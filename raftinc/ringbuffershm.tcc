@@ -21,7 +21,6 @@
 #define _RINGBUFFERSHM_TCC_  1
 
 #include "portexception.hpp"
-#include "optdef.hpp"
 #include "ringbufferheap_abstract.tcc"
 #include "scheduleconst.hpp"
 #include "defs.hpp"

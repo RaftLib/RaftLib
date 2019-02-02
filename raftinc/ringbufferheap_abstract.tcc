@@ -21,7 +21,6 @@
 #define _RINGBUFFERHEAP_ABSTRACT_TCC_  1
 
 #include "portexception.hpp"
-#include "optdef.hpp"
 #include "scheduleconst.hpp"
 #include "defs.hpp"
 #include "sysschedutil.hpp"
