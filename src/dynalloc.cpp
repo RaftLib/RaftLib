@@ -84,7 +84,7 @@ dynalloc::run()
 
    auto mon_func = [&]( PortInfo &a, PortInfo &b, void *data ) -> void
    {
-      (void) data;
+      UNUSED(data);
       /** 
        * return if fixed buffer specified for this link
        * fixed buffer is always taken from the source port
@@ -98,16 +98,27 @@ dynalloc::run()
 
       const auto hash_val( dynalloc::hash( a, b ) );
       /** TODO, the values might wrap if no monitoring on **/
-      const auto realized_ratio( a.getFIFO()->get_frac_write_blocked() );
+      
+      auto * const buff_ptr( a.getFIFO() );
+
+      const auto realized_ratio( buff_ptr->get_frac_write_blocked() );
+      
+      
       const auto ratio( 0.8 );
-      if( realized_ratio >= ratio )
+      
+      const auto value( buff_ptr->get_suggested_count() );
+      const auto cap( buff_ptr->capacity() );
+      if( value > 0 && cap != value )
+      {
+         buff_ptr->resize( value, ALLOC_ALIGN_WIDTH, exit_alloc );
+         size_map[ hash_val ] = 0;
+      }
+      else if( realized_ratio >= ratio )
       {
          const auto curr_count( size_map[ hash_val ]++ );
          if( curr_count  > 2 )
          {
             /** get initializer function **/
-            auto * const buff_ptr( a.getFIFO() );
-            const auto cap( buff_ptr->capacity() );
             buff_ptr->resize( cap * 2, ALLOC_ALIGN_WIDTH, exit_alloc );
             size_map[ hash_val ] = 0;
          }
