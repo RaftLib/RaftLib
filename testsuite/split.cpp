@@ -18,8 +18,7 @@ main()
    print p;
    
    raft::map m;
-   m += a >> s;
-   m += s >> p;
+   m += a >> s >> p;
    m.exe();
 
    return( EXIT_SUCCESS );

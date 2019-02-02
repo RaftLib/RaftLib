@@ -39,9 +39,7 @@ dynalloc::dynalloc( raft::map &map,
 }
 
 
-dynalloc::~dynalloc()
-{
-}
+dynalloc::~dynalloc() = default;
 
 std::size_t
 dynalloc::hash( PortInfo &a, PortInfo &b )
@@ -72,7 +70,7 @@ dynalloc::run()
 
    /** acquire source kernels **/
    auto &container( (this)->source_kernels.acquire() );
-   GraphTools::BFS( container, alloc_func );
+   GraphTools::BFT( container, alloc_func, GraphTools::output );
    (this)->source_kernels.release();
    (this)->setReady();
    std::map< std::size_t, int > size_map;
@@ -84,7 +82,7 @@ dynalloc::run()
 
    auto mon_func = [&]( PortInfo &a, PortInfo &b, void *data ) -> void
    {
-      UNUSED(data);
+      UNUSED( data );
       /** 
        * return if fixed buffer specified for this link
        * fixed buffer is always taken from the source port
@@ -95,17 +93,12 @@ dynalloc::run()
          /** skip this one **/
          return;
       }
-
       const auto hash_val( dynalloc::hash( a, b ) );
       /** TODO, the values might wrap if no monitoring on **/
-      
       auto * const buff_ptr( a.getFIFO() );
 
       const auto realized_ratio( buff_ptr->get_frac_write_blocked() );
-      
-      
       const auto ratio( 0.8 );
-      
       const auto value( buff_ptr->get_suggested_count() );
       const auto cap( buff_ptr->capacity() );
       if( value > 0 && cap != value )
@@ -133,7 +126,7 @@ dynalloc::run()
       std::this_thread::sleep_for( dura );
 
       auto &container( (this)->source_kernels.acquire() );
-      GraphTools::BFS( container, mon_func );
+      GraphTools::BFT( container, mon_func, GraphTools::output );
       (this)->source_kernels.release();
 
    }

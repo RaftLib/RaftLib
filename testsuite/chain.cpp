@@ -34,8 +34,8 @@
    using gen = random_variate< std::default_random_engine,
                                std::uniform_int_distribution,
                                type_t >;
-   using p_out = raft::print< type_t, '\n' >;
-   using sub = raft::lambdak< type_t >;
+   using p_out = raft::print< std::string , '\n' >;
+   using sub = raft::lambdak< type_t, std::string >;
    
    std::vector< type_t > output;
    
@@ -50,7 +50,9 @@
       {
          std::uint32_t a;
          input[ "0" ].pop( a );
-         output[ "0" ].push( a - 10 );
+         std::stringstream ss;
+         ss << a << " - 10 = " << ( a - 10 );
+         output[ "0" ].push( ss.str() );
          return( raft::proceed );
       } );
 

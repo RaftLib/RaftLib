@@ -32,9 +32,9 @@ int main()
     int c( 3 );
     auto s( raft::kset( a, b, c ) );
     std::vector< int > output;
-    for( auto &val : s )
+    for( const auto *val : s )
     {
-       output.emplace_back( val ); 
+       output.emplace_back( *val ); 
     }
     assert( output.size() == 3 );
     int count( 1 );

@@ -33,6 +33,8 @@ public:
     {
         output.addPort< big_t >("out");
     }
+    
+    IMPL_CLONE();
 
     virtual raft::kstatus run()
     {
@@ -64,6 +66,8 @@ public:
     {
         //input.addPort< big_t >("in");
     }
+    
+    IMPL_CLONE();
 
     virtual raft::kstatus run()
     {
@@ -93,5 +97,5 @@ int main()
         exit( EXIT_SUCCESS );
     }
     m.exe();
-    return( EXIT_SUCCESS );
+    return( EXIT_FAILURE );
 }

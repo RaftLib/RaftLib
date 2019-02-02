@@ -18,7 +18,9 @@ public:
       input.addPort< B >( "input_b" );
       output.addPort< C  >( "sum" );
    }
-   
+
+   IMPL_CLONE();
+
    virtual raft::kstatus run()
    {
       A a;

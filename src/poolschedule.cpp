@@ -36,17 +36,15 @@
 #include <chrono>
 
 #include "affinity.hpp"
-#ifdef USE_PARTITION
-#include "partition_scotch.hpp"
-#endif
 #include "defs.hpp"
 
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
     const auto ret_val( qthread_initialize() );
-    if( ret_val != 0 )
+    if( ret_val != 0 /** per qthreads docs **/ )
     {
-        std::cerr << "failure to initialize qthreads runtime, exiting\n";
+        /** TODO: Fix witha  proper exception **/
+        std::cerr << "Failed to initialize qthreads library, exiting!!\n";
         exit( EXIT_FAILURE );
     }
     thread_data_pool.reserve( kernel_set.size() );
@@ -57,6 +55,11 @@ pool_schedule::~pool_schedule()
 {
     /** kill off the qthread structures **/
     qthread_finalize();
+    /** delete thread data structs **/
+    for( auto *td : thread_data_pool )
+    {
+        delete( td );
+    }
 }
 
 void
@@ -87,9 +90,14 @@ pool_schedule::handleSchedule( raft::kernel * const kernel )
 void
 pool_schedule::start()
 {
+    /** 
+     * NOTE: this section is the same as the code in the "handleSchedule"
+     * function so that it doesn't call the lock for the thread map.
+     */
     auto &container( kernel_set.acquire() );
     for( auto * const k : container )
     {  
+        assert( k != nullptr );
         (this)->handleSchedule( k );
     }
     /**
@@ -144,19 +152,11 @@ aligned_t pool_schedule::pool_run( void *data )
    }
 #endif   
    volatile bool done( false );
-   std::uint8_t run_count( 0 );
    while( ! done )
    {
       Schedule::kernelRun( thread_d->k, done );
-      //FIXME: add back in SystemClock user space timer
-      //set up one cache line per thread
-      if( run_count++ == 20 || done )
-      {
-        run_count = 0;
-        //takes care of peekset clearing too
-        Schedule::fifo_gc( &in, &out, &peekset );
-        qthread_yield();
-      }
+      Schedule::fifo_gc( &in, &out, &peekset );
+      qthread_yield();
    }
    thread_d->finished = true;
    return( 1 );

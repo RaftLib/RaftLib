@@ -20,6 +20,8 @@ public:
       output.addPort< T  >( "sum"     );
    }
    
+   IMPL_CLONE();
+
    virtual raft::kstatus run()
    {
       output[ "sum" ].push( raft::sum< T >( input[ "input_a" ], 

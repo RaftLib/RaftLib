@@ -16,6 +16,8 @@ public:
       input.addPort< T >( "in" );
    }
 
+   IMPL_NO_CLONE();
+
    virtual raft::kstatus run()
    {
       auto &port( input[ "in" ] );
@@ -24,30 +26,23 @@ public:
          auto range( port.template peek_range< T >( 5 ) );
          for( int i( 0 ); i < 5; i++ )
          {
-            std::cout << " " << range[ i ].ele;
+            std::fprintf( stdout, "%d ", range[ i ].ele );
          }
-      }
-      /**
-       * NOTE: preferably this would be a constant ref
-       * however, with qthreads the stack frames can behave
-       * oddly when unwinding so..keep as copy for now, the
-       * /dev branch has a totally different code base backing
-       * exceptions which  fixes the issue. -jcb 1 July 2017
-       */
+         std::fprintf( stdout, "\n" );
+         port.recycle( 2 );
+      } 
       catch( NoMoreDataException &ex )
       {
          std::cerr << ex.what() << "\n";
          /** nothing bad, just no more data **/
-         return( raft::stop );
+         return( raft::error );
       }
       catch( ClosedPortAccessException &ex )
       {
          UNUSED( ex );
          /** nothing bad, just no more data **/
-         return( raft::stop );
+         return( raft::error );
       }
-      std::cout << "\n";
-      port.recycle( 2 );
       return( raft::proceed );
    }
 };
@@ -71,5 +66,6 @@ main()
    print< int > pr;
    m += fe >> pr;
    m.exe();
+   std::free( arr );
    return( EXIT_SUCCESS );
 }

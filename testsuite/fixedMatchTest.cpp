@@ -16,7 +16,8 @@ main()
 
     const std::string term( "Alice" );
     raft::map m;
-    fr   read( "./alice.txt" /** ex file **/, 
+    /** pwd is root for cmake's test script **/
+    fr   read( "./testsuite/alice.txt" /** ex file **/, 
                (fr::offset_type) term.length(),
                1 );
 

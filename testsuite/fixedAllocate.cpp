@@ -17,6 +17,8 @@ public:
       output.addPort< C  >( "sum" );
    }
    
+   IMPL_CLONE();
+
    virtual raft::kstatus run()
    {
       A a;
@@ -56,8 +58,8 @@ main( int argc, char **argv )
    raft::map m;
    
    /** set a >> s[ "input_b" ] as a fixed size of 10 **/
-   m.link( &a, &s, "input_a", 10 );
-   
+   m += a >> s[ "input_a" ];
+   //raft::stream::fixed >> 10 >> s[ "input_a" ]; 
    m += b >> s[ "input_b" ];
    m += s >> print;
    m.exe();

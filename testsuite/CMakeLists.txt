@@ -7,59 +7,99 @@ find_package( Threads )
 include( CheckSTD )
 
 find_package( LIBRT )
-##
-# check for Scotch, use if there
-##
-find_package( Scotch )
+find_package( NUMA )
 
 
 
-set( TESTAPPS allocate 
-    portTypeException dynallocate stdlibsupport split 
-     join lambdatest allocate_s foreach peekrange  
-     partitionTest parallel peek 
-     bracketsTest uniform chain 
-     splitchain staticLongSplitChain 
-     staticSplitJoin staticSplitChainJoin 
-     staticJoin staticContJoin 
-     fitInCacheLine
-     isExtClass
-     doesntFitInCacheLine
-     isInlineClass
-     isExtArray
-     isExtAlloc 
-     isInlineNonClass 
-     allocateSendPush 
-     allocateSendRandomPush 
-     allocatePopPush 
-     allocatePopInternal 
-     allocatePopInternalObject
-     allocatePopExternal 
-     prefetchEffective 
-     parallelchain 
-     ksettest 
-     fixedMatchTest 
-     splitchainRetStruct 
-     staticContJoinRetStruct
-     staticJoinRetStruct
-     staticLongSplitChainRetStruct
-     staticSplitChainJoinRetStruct
-     staticSplitJoinRetStruct 
-     chainMultiplePorts
-     fixedAllocate
-     noPortException
-     twiceAdd
-     disconnectedGraph 
-     demangle
-     allocate_s_string
-     allpush
-     nonTrivialAllocatorPop
-     nonTrivialAllocatorPopExternal
+set( TESTAPPS 
+    allocate
+    allocatePopExternal
+    allocatePopInternal
+    allocatePopInternalObject
+    allocatePopPush
+    allocateRefWrapperOneLHS
+    allocateRefWrapperOneRHS
+    allocateRefWrapperTwo
+    allocate_s
+    allocateSendPush
+    allocateSendRandomPush
+    allocate_s_string
+    allpush
+    ap
+    bracketsTest
+    chain
+    chainDynamic
+    chainMultiplePorts
+    chainMultiplePortsDynamic
+    contSplitKsetJoin
+    demangle
+    disconnectedGraph
+    doesntFitInCacheLine
+    dynallocate
+    exponential
+    fitInCacheLine
+    fixedAllocate
+    fixedMatchTest
+    foreach
+    gamma
+    gaussian
+    isExtAlloc
+    isExtArray
+    isExtClass
+    isInlineClass
+    isInlineNonClass
+    join
+    ksetContContJoin
+    KsetJoin
+    ksettest
+    lambdatest
+    nonTrivialAllocatorPop
+    nonTrivialAllocatorPopExternal
+    noPortException
+    parallelchain
+    parallel
+    partitionTest
+    peek
+    peekrange
+    poolThreadRaftManip
+    portTypeException
+    prefetchEffective
+    sequential
+    splitchain
+    splitchainRetStruct
+    split
+    splitKsetCont
+    splitKsetJoin
+    staticContJoin
+    staticContJoinRetStruct
+    staticJoin
+    staticJoinRetStruct
+    staticLongSplitChain
+    staticLongSplitChainRetStruct
+    staticSplitChainJoin
+    staticSplitChainJoinRetStruct
+    staticSplitJoin
+    staticSplitJoinRetStruct
+    stdlibsupport
+    streamManipFourA
+    streamManipFourB
+    streamManipFourC
+    streamManipFour
+    streamManipOne
+    streamManipThreeA
+    streamManipThree
+    streamManipTwo
+    streamManipZeroA
+    streamManipZeroB
+    streamManipZeroC
+    streamManipZeroD
+    streamManipZeroE
+    streamManipZeroF
+    streamManipZeroG
+    testraft10
+    twiceAdd
+    uniform
      )
-
-if( BUILDRANDOM )
-list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 
-endif( BUILDRANDOM )
 
 foreach( APP ${TESTAPPS} )
  add_executable( ${APP} "${APP}.cpp" )
