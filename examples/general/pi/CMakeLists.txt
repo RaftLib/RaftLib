@@ -43,6 +43,7 @@ target_link_libraries( ${APP}
                        cmdargs
                        ${CMAKE_SCOTCH_LIBS}
                        ${CMAKE_THREAD_LIBS_INIT} 
+                       shm
                        ${CMAKE_RT_LIBS}
                        ${CMAKE_NUMA_LIBS} )
 

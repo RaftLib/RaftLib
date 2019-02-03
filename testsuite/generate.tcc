@@ -17,8 +17,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef _GENERATE_TCC_
 #define _GENERATE_TCC_  1
+
+#include <raft>
 namespace raft
 {
 
@@ -33,6 +36,9 @@ public:
    {
       output.addPort< T >( "number_stream" );
    }
+   
+   
+   IMPL_CLONE();
 
    virtual raft::kstatus run()
    {

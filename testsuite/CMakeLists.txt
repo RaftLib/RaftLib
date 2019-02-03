@@ -31,7 +31,7 @@ set( TESTAPPS
     chainDynamic
     chainMultiplePorts
     chainMultiplePortsDynamic
-    contSplitKsetJoin
+#    contSplitKsetJoin
     demangle
     disconnectedGraph
     doesntFitInCacheLine
@@ -50,7 +50,7 @@ set( TESTAPPS
     isInlineNonClass
     join
     ksetContContJoin
-    KsetJoin
+#    KsetJoin
     ksettest
     lambdatest
     nonTrivialAllocatorPop
@@ -68,9 +68,9 @@ set( TESTAPPS
     splitchain
     splitchainRetStruct
     split
-    splitKsetCont
-    splitKsetJoin
-    staticContJoin
+#    splitKsetCont
+#    splitKsetJoin
+#    staticContJoin
     staticContJoinRetStruct
     staticJoin
     staticJoinRetStruct
@@ -82,8 +82,8 @@ set( TESTAPPS
     staticSplitJoinRetStruct
     stdlibsupport
     streamManipFourA
-    streamManipFourB
-    streamManipFourC
+#    streamManipFourB
+#    streamManipFourC
     streamManipFour
     streamManipOne
     streamManipThreeA
@@ -95,7 +95,7 @@ set( TESTAPPS
     streamManipZeroD
     streamManipZeroE
     streamManipZeroF
-    streamManipZeroG
+#    streamManipZeroG
     testraft10
     twiceAdd
     uniform
@@ -105,8 +105,10 @@ foreach( APP ${TESTAPPS} )
  add_executable( ${APP} "${APP}.cpp" )
  target_link_libraries( ${APP} raft  ${CMAKE_THREAD_LIBS_INIT} 
                                      ${CMAKE_SCOTCH_LIBS}
+                                     shm
                                      ${CMAKE_RT_LIBS} 
                                      ${CMAKE_QTHREAD_LIBS}
+                                     ${CMAKE_NUMA_LIBS}
                                      )
  add_test( NAME "${APP}_test" COMMAND ${APP} )
 endforeach( APP ${TESTAPPS} )

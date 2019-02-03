@@ -21,6 +21,9 @@ public:
       input. template addPort< T >( "input_a", "input_b" );
       output.template addPort< T >( "sum" );
    }
+   
+   IMPL_CLONE(); 
+
    virtual raft::kstatus run()
    {
       T a,b; 

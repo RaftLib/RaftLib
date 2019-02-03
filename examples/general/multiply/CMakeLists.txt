@@ -42,7 +42,7 @@ target_link_libraries( ${APP}
                        raft
                        ${CMAKE_THREAD_LIBS_INIT} 
                        ${CMAKE_SCOTCH_LIBS}
-                       ${CMAKE_RT_LIBS}
                        shm
+                       ${CMAKE_RT_LIBS}
                        ${CMAKE_NUMA_LIBS})
 

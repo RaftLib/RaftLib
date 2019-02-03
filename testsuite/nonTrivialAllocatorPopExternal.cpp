@@ -77,6 +77,9 @@ public:
         output.addPort< SomeNonTrivialObject >( "out" );
     }
 
+    
+    IMPL_NO_CLONE();
+
     virtual raft::kstatus run()
     {
          /** 
@@ -97,6 +100,8 @@ public:
     {
         input.addPort< SomeNonTrivialObject >( "in" );
     }
+
+    IMPL_NO_CLONE();
 
     virtual raft::kstatus run()
     {
