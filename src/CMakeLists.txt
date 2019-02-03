@@ -24,7 +24,6 @@ set( CPP_SRC_FILES
         kernel.cpp
         kernelexception.cpp
         kernel_pair_t.cpp
-        kpair.cpp
         leastusedfirst.cpp
         mapbase.cpp
         map.cpp

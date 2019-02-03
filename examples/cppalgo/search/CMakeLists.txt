@@ -5,6 +5,7 @@ find_package( Threads )
 # check for Scotch, use if there
 ##
 find_package( Scotch )
+find_package( NUMA )
 ##
 # c/c++ std
 ##
@@ -20,10 +21,12 @@ add_executable( ${APP} "${APP}.cpp" )
 include_directories( ${CMAKE_SCOTCH_INCS} )
 
 target_link_libraries( ${APP} 
-                       raft                       
+                       raft
                        ${CMAKE_THREAD_LIBS_INIT} 
                        ${CMAKE_SCOTCH_LIBS}
+                       shm
                        ${CMAKE_RT_LIBS}
+                       ${CMAKE_NUMA_LIBS}
                        )
 
 file( COPY alice.txt

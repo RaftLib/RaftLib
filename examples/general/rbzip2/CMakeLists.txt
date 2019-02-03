@@ -5,12 +5,12 @@ find_package( Threads )
 # check for Scotch, use if there
 ##
 find_package( Scotch )
+find_package( NUMA )
 ##
 # c/c++ std
 ##
 include( CheckSTD )
 find_package( LIBRT )
-find_package( BZip2 REQUIRED)
 
 set( GITDEP "${CMAKE_SOURCE_DIR}/git-dep" )
 ##
@@ -40,10 +40,13 @@ include_directories( ${CMAKE_SCOTCH_INCS} )
 target_link_libraries( ${APP} 
                        raft
                        cmdargs
-                       ${BZIP2_LIBRARIES}
+                       bz2
                        ${CMAKE_SCOTCH_LIBS}
                        ${CMAKE_THREAD_LIBS_INIT} 
-                       ${CMAKE_RT_LIBS} )
+                       shm
+                       ${CMAKE_RT_LIBS}
+                       ${CMAKE_NUMA_LIBS}
+                       )
 
 file( COPY alice.txt
       DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )

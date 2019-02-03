@@ -39,6 +39,8 @@ public:
     }
 
     virtual ~pisim() = default;
+    
+    IMPL_CLONE();
 
     virtual raft::kstatus run()
     {

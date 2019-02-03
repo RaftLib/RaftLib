@@ -20,7 +20,9 @@ public:
       input.addPort<  T > ( "input_a", "input_b" );
       output.addPort< T  >( "sum"     );
    }
-   
+
+   IMPL_NO_CLONE();
+
    virtual raft::kstatus run()
    {
       T a,b; 

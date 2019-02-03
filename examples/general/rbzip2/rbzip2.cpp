@@ -40,6 +40,8 @@ public:
         std::fflush( out_fp );
         std::fclose( out_fp );
     }
+    
+    IMPL_NO_CLONE();
 
     virtual raft::kstatus run()
     {
@@ -139,7 +141,6 @@ public:
                 {
                     std::cerr << "if the size of the compressed data exceeds *destLen\n";
                 }
-                break;
                 default:
                 {
                     std::cerr << "undefined error\n";
@@ -154,7 +155,7 @@ public:
     }
 
     /** enable cloning **/
-    CLONE();
+    IMPL_CPY_CLONE();
 
 private:
     const int blocksize;
