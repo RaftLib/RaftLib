@@ -33,7 +33,7 @@
 namespace raft
 {
     class kernel;
-    using kernel_wrapper = std::unique_ptr< raft::kernel >;
+    using kernel_wrapper = std::shared_ptr< raft::kernel >;
 }
 
 #endif /* END _KERNEL_WRAPPER_HPP_ */
