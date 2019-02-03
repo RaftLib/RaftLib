@@ -71,6 +71,7 @@
 #include "./raftinc/portexception.hpp"
 #include "./raftinc/kernelexception.hpp"
 #include "./raftinc/mapexception.hpp"
+#include "./raftinc/streamparseexception.hpp"
 
 
 #endif /* END _RAFT_HPP_ */

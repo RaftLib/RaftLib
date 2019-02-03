@@ -1,11 +1,12 @@
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
+set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 find_package( Threads )
-##
-# c/c++ std
-##
+###
+## c/c++ std
+###
 include( CheckSTD )
-
+#
 find_package( LIBRT )
 find_package( NUMA )
 
@@ -36,20 +37,20 @@ set( TESTAPPS
     disconnectedGraph
     doesntFitInCacheLine
     dynallocate
-    exponential
+#    exponential
     fitInCacheLine
     fixedAllocate
     fixedMatchTest
     foreach
-    gamma
-    gaussian
+#    gamma
+#    gaussian
     isExtAlloc
     isExtArray
     isExtClass
     isInlineClass
     isInlineNonClass
     join
-    ksetContContJoin
+#    ksetContContJoin
 #    KsetJoin
     ksettest
     lambdatest
@@ -64,39 +65,39 @@ set( TESTAPPS
     poolThreadRaftManip
     portTypeException
     prefetchEffective
-    sequential
+#    sequential
     splitchain
     splitchainRetStruct
     split
 #    splitKsetCont
 #    splitKsetJoin
 #    staticContJoin
-    staticContJoinRetStruct
-    staticJoin
-    staticJoinRetStruct
+#    staticContJoinRetStruct
+#    staticJoin
+#    staticJoinRetStruct
     staticLongSplitChain
     staticLongSplitChainRetStruct
-    staticSplitChainJoin
-    staticSplitChainJoinRetStruct
-    staticSplitJoin
-    staticSplitJoinRetStruct
+#    staticSplitChainJoin
+#    staticSplitChainJoinRetStruct
+#    staticSplitJoin
+#    staticSplitJoinRetStruct
     stdlibsupport
-    streamManipFourA
+#    streamManipFourA
 #    streamManipFourB
 #    streamManipFourC
-    streamManipFour
+#    streamManipFour
     streamManipOne
-    streamManipThreeA
-    streamManipThree
+#    streamManipThreeA
+#    streamManipThree
     streamManipTwo
     streamManipZeroA
     streamManipZeroB
     streamManipZeroC
     streamManipZeroD
     streamManipZeroE
-    streamManipZeroF
+#    streamManipZeroF
 #    streamManipZeroG
-    testraft10
+#    testraft10
     twiceAdd
     uniform
      )

@@ -26,14 +26,15 @@
 
 
  int
- main( int argc, char **argv )
+ main( )
  {
    using namespace raft;
    auto rndgen( 
       kernel::make< 
-         random_variate< double, exponential > >( .5 , 10000 ) );
+         random_variate< std::mt19937, std::exponential_distribution, double > >( 10000, .5 ) );
    auto pr( kernel::make< print< double , '\n' > >() );
-   map.link( rndgen, pr );
-   map.exe();
+   raft::map m;
+   m += rndgen >> pr;
+   m.exe();
    return( EXIT_SUCCESS );
  }

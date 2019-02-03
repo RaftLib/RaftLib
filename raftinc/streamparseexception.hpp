@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _STREAMPARSEEXCEPTION_TCC_
-#define _STREAMPARSEEXCEPTION_TCC_  1
+#ifndef _STREAMPARSEEXCEPTION_HPP_
+#define _STREAMPARSEEXCEPTION_HPP_  1
 
 #include <string>
 #include <utility> 
@@ -76,4 +76,4 @@ using RaftManipException
 using NonsenseChainRaftManipException
     = TemplateStreamParseException< 2 >;
 
-#endif /* END _STREAMPARSEEXCEPTION_TCC_ */
+#endif /* END _STREAMPARSEEXCEPTION_HPP_ */

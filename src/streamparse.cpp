@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 #include "streamparse.hpp"
-#include "streamparseexception.tcc"
+#include "streamparseexception.hpp"
 
 /**
  * Section #1, these are all the "starter

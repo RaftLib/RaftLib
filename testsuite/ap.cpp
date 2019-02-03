@@ -18,26 +18,28 @@
  * limitations under the License.
  */
 
- #include <raft>
- #include <cstdint>
- #include <iostream>
- #include <raftio>
+#include <raft>
+#include <cstdint>
+#include <iostream>
+#include <raftio>
+
+#include "generate.tcc"
 
 
- int
- main( int argc, char **argv )
- {
-   int count( 1001 );
-   if( argc == 2 )
-   {
-      count = atoi( argv[ 1 ] );
-   }
-   using gen   = raft::test::generate< std::int32_t >;
-   using print = raft::print< std::int32_t  , '\n' >;
-   gen   a;
-   print p;
-   raft::map m;
-   m += gen >> print;
-   m.exe();
-   return( EXIT_SUCCESS );
- }
+int
+main( int argc, char **argv )
+{
+  int count( 1001 );
+  if( argc == 2 )
+  {
+     count = atoi( argv[ 1 ] );
+  }
+  using gen   = raft::test::generate< std::int32_t >;
+  using print = raft::print< std::int32_t  , '\n' >;
+  gen   a;
+  print p;
+  raft::map m;
+  m +=  a >> p;
+  m.exe();
+  return( EXIT_SUCCESS );
+}
