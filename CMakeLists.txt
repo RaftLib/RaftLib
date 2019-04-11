@@ -48,8 +48,16 @@ include( CheckGitDep )
 
 add_subdirectory( src )
 add_subdirectory( raftinc )
-add_subdirectory( examples )
-add_subdirectory( benchmarks )
+
+mark_as_advanced( BUILD_EXAMPLES true )
+if( BUILD_EXAMPLES )
+    add_subdirectory( examples )
+endif( BUILD_EXAMPLES )
+
+mark_as_advanced( BUILD_BENCHMARKS true )
+if( BUILD_BENCHMARKS )
+    add_subdirectory( benchmarks )
+endif( BUILD_BENCHMARKS )
 
 mark_as_advanced( BUILD_WOPENCV false )
 if( BUILD_WOPENCV )
@@ -59,8 +67,11 @@ endif( BUILD_WOPENCV )
 ##
 # Set up unit tests
 ##
-enable_testing()
-add_subdirectory( testsuite )
+mark_as_advanced( BUILD_TESTS  true )
+if( BUILD_TESTS )
+    enable_testing()
+    add_subdirectory( testsuite )
+endif( BUILD_TESTS )
 
 ##
 # install main headers in ${prefix}/include dir
