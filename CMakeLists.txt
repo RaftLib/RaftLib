@@ -49,12 +49,14 @@ include( CheckGitDep )
 add_subdirectory( src )
 add_subdirectory( raftinc )
 
-mark_as_advanced( BUILD_EXAMPLES true )
+mark_as_advanced( BUILD_EXAMPLES )
+set( BUILD_EXAMPLES true CACHE BOOL )
 if( BUILD_EXAMPLES )
     add_subdirectory( examples )
 endif( BUILD_EXAMPLES )
 
-mark_as_advanced( BUILD_BENCHMARKS true )
+mark_as_advanced( BUILD_BENCHMARKS )
+set( BUILD_BENCHMARKS true CACHE BOOL )
 if( BUILD_BENCHMARKS )
     add_subdirectory( benchmarks )
 endif( BUILD_BENCHMARKS )
@@ -67,7 +69,8 @@ endif( BUILD_WOPENCV )
 ##
 # Set up unit tests
 ##
-mark_as_advanced( BUILD_TESTS  true )
+mark_as_advanced( BUILD_TESTS )
+set( BUILD_TESTS true CACHE BOOL )
 if( BUILD_TESTS )
     enable_testing()
     add_subdirectory( testsuite )
