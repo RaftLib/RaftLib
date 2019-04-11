@@ -34,6 +34,13 @@ iteration):
 -DUSEQTHREAD=1
 ```
 
+Building the examples, benchmarks and tests can be disabled using:
+```bash
+-DBUILD_EXAMPLES=false
+-DBUILD_BENCHMARKS=false
+-DBUILD_TESTS=false
+```
+
 To build:
 
 ```bash
