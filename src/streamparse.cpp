@@ -27,14 +27,14 @@
  */
 raft::parsemap_ptr operator >> ( raft::kernel &src, raft::kernel &dst )
 {
-    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
     parsemap_ptr->parse_link( &src, &dst);
     return( parsemap_ptr );
 }
 
 raft::parsemap_ptr operator >> ( raft::kernel_wrapper src, raft::kernel &dst )
 {
-    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
     auto *src_ptr( src.get() );
     auto *dst_ptr( &dst );
     parsemap_ptr->parse_link( src_ptr, dst_ptr );
@@ -43,7 +43,7 @@ raft::parsemap_ptr operator >> ( raft::kernel_wrapper src, raft::kernel &dst )
 
 raft::parsemap_ptr operator >> ( raft::kernel &src, raft::kernel_wrapper dst )
 {
-    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
     auto *src_ptr( &src );
     auto *dst_ptr( dst.get() );
     parsemap_ptr->parse_link( src_ptr, dst_ptr);
@@ -52,7 +52,7 @@ raft::parsemap_ptr operator >> ( raft::kernel &src, raft::kernel_wrapper dst )
 
 raft::parsemap_ptr operator >> ( raft::kernel_wrapper src, raft::kernel_wrapper dst )
 {
-    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
     auto *src_ptr( src.get() );
     auto *dst_ptr( dst.get() );
     parsemap_ptr->parse_link( src_ptr, dst_ptr);
@@ -101,7 +101,7 @@ raft::parsemap_ptr operator >> ( raft::parsemap_ptr         src ,
 raft::parsemap_ptr operator >> ( raft::kernel               &src,
                                  const raft::manip_vec_t     vec    )
 {
-    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
     parsemap_ptr->start_group();
     parsemap_ptr->add_to_group( &src );
     /** need to make a state structure **/
@@ -119,7 +119,7 @@ raft::parsemap_ptr operator >> (    raft::kernel_wrapper    src,
                                     const raft::manip_vec_t vec     )
 {
     auto *src_ptr( src.get() );
-    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
     parsemap_ptr->start_group();
     parsemap_ptr->add_to_group( src_ptr );
     /** need to make a state structure **/
@@ -136,7 +136,7 @@ raft::parsemap_ptr operator >> (    raft::kernel_wrapper    src,
 raft::parsemap_ptr operator <= ( raft::kernel &src,
                                  raft::kernel &dst )
 {
-    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
     parsemap_ptr->parse_link_split( &src, &dst ); 
     return( parsemap_ptr );
 }
@@ -148,7 +148,7 @@ raft::parsemap_ptr operator <= ( raft::kernel &src,
 raft::parsemap_ptr operator <= ( raft::kernel &src,
                                  raft::parsemap_ptr dst )
 {
-    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
     return( parsemap_ptr );
 }
 
@@ -159,7 +159,7 @@ raft::parsemap_ptr operator <= ( raft::kernel &src,
 raft::parsemap_ptr operator <= ( raft::parsemap_ptr src,
                                  raft::parsemap_ptr dst )
 {
-    auto parsemap_ptr( std::make_unique< raft::parsemap >( ) );
+    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
 
 
     return( parsemap_ptr );

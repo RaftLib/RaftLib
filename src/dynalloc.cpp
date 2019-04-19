@@ -90,7 +90,7 @@ dynalloc::run()
        */
       if( a.fixed_buffer_size != 0 )
       {
-         /** skip this one **/
+         /** skip this one....it came with a buffer, not ours to touch **/
          return;
       }
       const auto hash_val( dynalloc::hash( a, b ) );

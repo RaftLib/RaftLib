@@ -27,7 +27,7 @@
 
 
 int
-main( int argc, char **argv )
+main( )
 {
   using gen   = raft::test::generate< std::int32_t >;
   using print = raft::print< std::int32_t  , '\n' >;

@@ -38,7 +38,7 @@ namespace raft
     /** also parsemap_ptr smart ptr obj used in map and streamparse **/
     class parsemap;
     using port_key_type = std::string;
-    using parsemap_ptr = std::unique_ptr< raft::parsemap >;
+    using parsemap_ptr = std::shared_ptr< raft::parsemap >;
 } /** end namespace raft **/
 
 template < typename T > 
