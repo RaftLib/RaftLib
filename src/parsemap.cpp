@@ -112,10 +112,37 @@ raft::parsemap::parse_link_split( raft::kernel *src,
 
 
 void 
-raft::parsemap::parse_link_split( raft::kernel   *src 
-    /** this map is the implicit destination **/)
+raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is the implicit destination **/)
 {
-    UNUSED( src );
+    /** take the first group_ptr_t in parse_head **/
+
+    /**
+     * rules: there's only one source, with N-output ports
+     * 1) there must be an output port, along with 
+     * one active input kernel for each of the destination
+     * kernels
+     */
+    assert( parse_head.size() > 0 );
+    /**
+     * this is the head
+     */
+    auto &start( parse_head.front() );
+    /**
+     * check the number of kernels there
+     */
+    const auto dest_count( start->size() );
+    /**
+     * check the number of src output ports
+     */
+    const auto src_output_count( src->output.count() );
+    
+
+    /** 
+     * we need to add group to the head to 
+     * represent the source as the new head
+     * so...make a head, insert, then add
+     * source to that head.
+     */
     return;
 }
 

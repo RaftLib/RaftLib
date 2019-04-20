@@ -72,8 +72,7 @@ public:
                            raft::kernel *dst );
     
     
-    void parse_link_split( raft::kernel   *src );
-
+    void parse_link_split_prepend( raft::kernel   *src );
 
     /**
      * parse_link_join - very similar to the

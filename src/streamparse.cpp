@@ -101,9 +101,8 @@ raft::parsemap_ptr operator <= ( raft::kernel &src,
 raft::parsemap_ptr operator <= ( raft::kernel &src,
                                  raft::parsemap_ptr dst )
 {
-    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
-    assert( false ); 
-    return( parsemap_ptr );
+    dst->parse_link_split_prepend( &src );
+    return( dst );
 }
 
 
