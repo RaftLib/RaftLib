@@ -83,8 +83,6 @@ raft::parsemap::parse_link_split( raft::kernel *src,
     assert( dst != nullptr );
     assert( get_group_size() == 0 );
     const std::string enabled_port( dst->getEnabledPort() );
-    (*dst)[ enabled_port ];
-    
     updateKernels( src, dst );
     parse_link_helper( src, dst );
     if( get_group_size() == 0 )
@@ -105,7 +103,6 @@ raft::parsemap::parse_link_split( raft::kernel *src,
     {
         auto &kernel( (*src)[ it.name() ] );
         auto *cloned_kernel( dst->clone() );
-        (*cloned_kernel)[ enabled_port /** dst enabled port **/ ];
         updateKernels( &kernel, cloned_kernel );
         parse_link_helper( &kernel, cloned_kernel );
         add_to_group( cloned_kernel );

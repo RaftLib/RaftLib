@@ -80,6 +80,36 @@ raft::parsemap_ptr operator >> ( raft::parsemap_ptr src ,   raft::kernel_wrapper
 
 
 /**
+ * basic splits and joins
+ */
+
+/**
+ * raft::kernel <= raft;:kernel
+ */
+raft::parsemap_ptr operator <= ( raft::kernel &src,
+                                 raft::kernel &dst )
+{
+    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
+    parsemap_ptr->parse_link_split( &src, &dst ); 
+    return( parsemap_ptr );
+}
+/**
+ * parsemap := raft::kernel <= raft::kernel >> raft::kernel
+ * parsemap := raft::kernel <= parsemap 
+ * parsemap
+ */
+raft::parsemap_ptr operator <= ( raft::kernel &src,
+                                 raft::parsemap_ptr dst )
+{
+    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
+    assert( false ); 
+    return( parsemap_ptr );
+}
+
+
+#if 0
+
+/**
  * we need to start adding in the manip_vec_t types. there will be an
  * all combinations of the above and the parsemap on lhs in addition
  * to all the other combinations.w
@@ -130,27 +160,6 @@ raft::parsemap_ptr operator >> (    raft::kernel_wrapper    src,
     return( parsemap_ptr );
 }
 
-/**
- * raft::kernel <= raft;:kernel
- */
-raft::parsemap_ptr operator <= ( raft::kernel &src,
-                                 raft::kernel &dst )
-{
-    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
-    parsemap_ptr->parse_link_split( &src, &dst ); 
-    return( parsemap_ptr );
-}
-/**
- * parsemap := raft::kernel <= raft::kernel >> raft::kernel
- * parsemap := raft::kernel <= parsemap 
- * parsemap
- */
-raft::parsemap_ptr operator <= ( raft::kernel &src,
-                                 raft::parsemap_ptr dst )
-{
-    auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
-    return( parsemap_ptr );
-}
 
                                  
 /**
@@ -160,9 +169,9 @@ raft::parsemap_ptr operator <= ( raft::parsemap_ptr src,
                                  raft::parsemap_ptr dst )
 {
     auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
-
-
+    assert( false );
     return( parsemap_ptr );
 
 }
+#endif
 

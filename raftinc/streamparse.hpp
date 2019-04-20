@@ -70,6 +70,7 @@ raft::parsemap_ptr operator >> ( raft::kernel_wrapper src ,   raft::kernel_wrapp
 raft::parsemap_ptr operator >> ( raft::parsemap_ptr src ,   raft::kernel &dst           );
 raft::parsemap_ptr operator >> ( raft::parsemap_ptr src ,   raft::kernel_wrapper dst    );
 
+#if 0
 /**
  * we need to start adding in the manip_vec_t types. there will be an
  * all combinations of the above and the parsemap on lhs in addition
@@ -88,7 +89,7 @@ raft::parsemap_ptr operator >> ( raft::kernel               &src,
  */
 raft::parsemap_ptr operator >> (    raft::kernel_wrapper    src,
                                     const raft::manip_vec_t vec     );
-
+#endif
 
 /**
  * raft::kernel <= raft;:kernel
@@ -108,8 +109,8 @@ raft::parsemap_ptr operator <= ( raft::kernel &src,
 /**
  * raft::parsemap_ptr <= raft::parsemap_ptr
  */
-raft::parsemap_ptr operator <= ( raft::parsemap_ptr src,
-                                 raft::parsemap_ptr dst );
+//raft::parsemap_ptr operator <= ( raft::parsemap_ptr src,
+//                                 raft::parsemap_ptr dst );
 
 
 

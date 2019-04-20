@@ -60,8 +60,8 @@ set( TESTAPPS
     nonTrivialAllocatorPop
     nonTrivialAllocatorPopExternal
     noPortException
-    parallelchain
-    parallel
+#    parallelchain
+#    parallel
 ## compiles doesn't run 
 #    partitionTest
 ## compiles doesn't run 
@@ -82,7 +82,7 @@ set( TESTAPPS
 #    staticContJoinRetStruct
 #    staticJoin
 #    staticJoinRetStruct
-    staticLongSplitChain
+#    staticLongSplitChain
 ## runs, test fails
 #    staticLongSplitChainRetStruct
 #    staticSplitChainJoin
