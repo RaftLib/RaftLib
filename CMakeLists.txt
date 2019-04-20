@@ -48,19 +48,36 @@ include( CheckGitDep )
 
 add_subdirectory( src )
 add_subdirectory( raftinc )
-add_subdirectory( examples )
-add_subdirectory( benchmarks )
 
-mark_as_advanced( BUILD_WOPENCV false )
+
+mark_as_advanced( BUILD_EXAMPLES )
+set( BUILD_EXAMPLES false CACHE BOOL "Examples are built if true" )
+if( BUILD_EXAMPLES )
+add_subdirectory( examples )
+endif( BUILD_EXAMPLES )
+
+mark_as_advanced( BUILD_BENCHMARKS )
+set( BUILD_BENCHMARKS false CACHE BOOL "Benchmarks are built if true" )
+if( BUILD_BENCHMARKS )
+add_subdirectory( benchmarks )
+endif( BUILD_BENCHMARKS )
+
+mark_as_advanced( BUILD_WOPENCV )
+set( BUILD_WOPENCV false CACHE BOOL "Build with opencv example if true" )
 if( BUILD_WOPENCV )
     add_subdirectory( examples/opencv )
 endif( BUILD_WOPENCV )
 
+
+mark_as_advanced( BUILD_TESTS )
+set( BUILD_TESTS true CACHE BOOL "Tests build target available if true" )
+if( BUILD_TESTS )
 ##
 # Set up unit tests
 ##
 enable_testing()
 add_subdirectory( testsuite )
+endif( BUILD_TESTS )
 
 ##
 # install main headers in ${prefix}/include dir
