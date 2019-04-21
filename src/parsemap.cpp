@@ -82,6 +82,7 @@ raft::parsemap::parse_link_split( raft::kernel *src,
     assert( src != nullptr );
     assert( dst != nullptr );
     assert( get_group_size() == 0 );
+    /** link the first source -> destination **/
     const std::string enabled_port( dst->getEnabledPort() );
     updateKernels( src, dst );
     parse_link_helper( src, dst );
@@ -114,6 +115,7 @@ raft::parsemap::parse_link_split( raft::kernel *src,
 void 
 raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is the implicit destination **/)
 {
+    assert( src != nullptr );
     /** take the first group_ptr_t in parse_head **/
 
     /**
@@ -143,6 +145,7 @@ raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is th
      * so...make a head, insert, then add
      * source to that head.
      */
+
     return;
 }
 
