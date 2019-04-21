@@ -102,7 +102,7 @@ public:
     void start_group();
 
     /**
-     * add_to_group - add a new kernel to the head. This
+     * add_to_tail_group - add a new kernel to the head. This
      * is typically the RHS as the LHS is popped off from
      * the previous reduction. Will add head to the most
      * recent group added. Call start_group if a fresh 
@@ -111,7 +111,7 @@ public:
      * @param k - raft::kernel*, kernel to add to current 
      *            group. 
      */
-    void add_to_group( raft::kernel * const k );
+    void add_to_tail_group( raft::kernel * const k );
    
     /**
      * get_group_size - returns the total number of groups

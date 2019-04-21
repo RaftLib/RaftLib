@@ -63,7 +63,7 @@ parsemap::parse_link( raft::kernel *src,
         start_group();
     }
     updateKernels( src, dst );
-    add_to_group( dst );
+    add_to_tail_group( dst );
     /**
      * TODO: 
      * run function pointers for settings
@@ -90,7 +90,7 @@ raft::parsemap::parse_link_split( raft::kernel *src,
     {
         start_group();
     }
-    add_to_group( dst );
+    add_to_tail_group( dst );
     /**
      * NOTE: following conditions should be met, src must 
      * have more than one output port, and multiple ports 
@@ -106,7 +106,7 @@ raft::parsemap::parse_link_split( raft::kernel *src,
         auto *cloned_kernel( dst->clone() );
         updateKernels( &kernel, cloned_kernel );
         parse_link_helper( &kernel, cloned_kernel );
-        add_to_group( cloned_kernel );
+        add_to_tail_group( cloned_kernel );
     }
     return;
 }
@@ -298,7 +298,7 @@ raft::parsemap::start_group()
 }
 
 void 
-raft::parsemap::add_to_group( raft::kernel * const k )
+raft::parsemap::add_to_tail_group( raft::kernel * const k )
 {
     assert( k != nullptr );
     assert( get_group_size() > 0 );
