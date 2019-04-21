@@ -101,17 +101,34 @@ public:
      */
     void start_group();
 
+
     /**
-     * add_to_tail_group - add a new kernel to the head. This
-     * is typically the RHS as the LHS is popped off from
-     * the previous reduction. Will add head to the most
+     * prepend_group - add a new group to the LHS with
+     * no kernels, basically adds an empty container
+     * to the left most side of the parse tree. This is 
+     * quite useful for dealing with operator precedence
+     * issues. 
+     */
+    void prepend_group();
+
+    /**
+     * add_to_tail_group - add a new kernel to the RHS of
+     * the parse tree. Will add head to the most
      * recent group added. Call start_group if a fresh 
      * group is desired.
      *
-     * @param k - raft::kernel*, kernel to add to current 
-     *            group. 
+     * @param k - raft::kernel*, kernel to add to tail
      */
     void add_to_tail_group( raft::kernel * const k );
+    
+    /**
+     * add_to_head_group - add a new kernel to the LHS of parse. 
+     * Will add head to the most recent group added. Call 
+     * start_group if a fresh group is desired.
+     *
+     * @param k - raft::kernel*, kernel to add to head 
+     */
+    void add_to_head_group( raft::kernel * const k );
    
     /**
      * get_group_size - returns the total number of groups

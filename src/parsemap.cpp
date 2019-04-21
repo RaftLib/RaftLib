@@ -297,12 +297,28 @@ raft::parsemap::start_group()
     return;
 }
 
+void
+raft::parsemap::prepend_group()
+{
+    parse_head.emplace( parse_head.begin(), 
+                        std::make_unique< group_t >() );
+}
+
 void 
 raft::parsemap::add_to_tail_group( raft::kernel * const k )
 {
     assert( k != nullptr );
     assert( get_group_size() > 0 );
     parse_head.back()->emplace_back( k );
+    return;
+}
+
+void 
+raft::parsemap::add_to_head_group( raft::kernel * const k )
+{
+    assert( k != nullptr );
+    assert( get_group_size() > 0 );
+    parse_head.front()->emplace_back( k );
     return;
 }
 
