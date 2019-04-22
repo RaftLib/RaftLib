@@ -76,4 +76,5 @@ using RaftManipException
 using NonsenseChainRaftManipException
     = TemplateStreamParseException< 2 >;
 
+
 #endif /* END _STREAMPARSEEXCEPTION_HPP_ */

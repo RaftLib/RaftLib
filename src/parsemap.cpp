@@ -60,10 +60,10 @@ parsemap::parse_link( raft::kernel *src,
     parse_link_helper( src, dst );
     if( get_group_size() == 0 )
     {
-        start_group();
+        new_rhs_group();
     }
     updateKernels( src, dst );
-    add_to_tail_group( dst );
+    add_to_rhs_group( dst );
     /**
      * TODO: 
      * run function pointers for settings
@@ -88,9 +88,9 @@ raft::parsemap::parse_link_split( raft::kernel *src,
     parse_link_helper( src, dst );
     if( get_group_size() == 0 )
     {
-        start_group();
+        new_rhs_group();
     }
-    add_to_tail_group( dst );
+    add_to_rhs_group( dst );
     /**
      * NOTE: following conditions should be met, src must 
      * have more than one output port, and multiple ports 
@@ -106,7 +106,7 @@ raft::parsemap::parse_link_split( raft::kernel *src,
         auto *cloned_kernel( dst->clone() );
         updateKernels( &kernel, cloned_kernel );
         parse_link_helper( &kernel, cloned_kernel );
-        add_to_tail_group( cloned_kernel );
+        add_to_rhs_group( cloned_kernel );
     }
     return;
 }
@@ -133,18 +133,101 @@ raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is th
      * check the number of kernels there
      */
     const auto dest_count( start->size() );
+    assert( dest_count == 1 );
+
     /**
      * check the number of src output ports
      */
     const auto src_output_count( src->output.count() );
-    
-
+    if( src_output_count < 1 )
+    {
+        //TODO - throw proper exception 
+        assert( false );
+    }
+    enum parse_case : int { UNKNOWN, 
+                            EQUAL_OUTPUT_DEST, 
+                            SELECTED_OUTPUT_DESTINATION };
+    parse_case state = UNKNOWN;
+    /**
+     * The split semantics say that we should duplicate the 
+     * chains past the first, so...take the extant kernels in 
+     * the LHS of the graph, then attach them to the ports
+     * from the output side.
+     */
+    if( src->getEnabledPortCount() == 0 )
+    {
+        state = EQUAL_OUTPUT_DEST;
+    }
+    else
+    {
+        state = SELECTED_OUTPUT_DESTINATION;
+    }
+    auto &destination_original( start->front() );
     /** 
      * we need to add group to the head to 
      * represent the source as the new head
      * so...make a head, insert, then add
      * source to that head.
      */
+    switch( state )
+    {
+        case( EQUAL_OUTPUT_DEST ):
+        {
+            /** 
+             * easy case, no ports selected, semantics
+             * say we simply iterate over src output
+             * ports, and duplicate from there. 
+             * Note: when we duplicate the kernels from
+             * the LHS to RHS, we don't need to add them
+             * into the groups, they're not accessible
+             * to the DSL save for the end points...
+             * those we'll add in. 
+             */
+            auto &src_output_ports( src->output );
+            auto index( 0 );
+            for( auto it( src_output_ports.begin() ); it!= src_output_ports.end(); ++it )
+            {   
+                /** activate the port on the source kernel **/
+                auto &kernel(       (*src)[ it.name() ]               );
+                if( index == 0 )
+                {
+                    /**
+                     * if here, then we've already an initialized 
+                     * source and destination, and all we need to 
+                     * do is link it and add it. 
+                     */
+                    updateKernels(      &kernel, destination_original       );
+                    parse_link_helper(  &kernel, destination_original       );
+                    // all of these are already in the LHS structure
+                }
+                else
+                {
+                    auto *cloned_kernel( destination_original->clone() );
+                    updateKernels( &kernel, cloned_kernel );
+                    parse_link_helper( &kernel, cloned_kernel );
+                    add_to_lhs_group( cloned_kernel );
+                }
+                index++;
+            }
+        }
+        break;
+        case( SELECTED_OUTPUT_DESTINATION ):
+        {
+            //TODO - write this, needs to have a new port select
+            //mechanism. 
+        }
+        break;
+        default:
+            assert( false );
+    }
+    
+    /** 
+     * for all states we need to add a new head to the
+     * parse graph.
+     */
+    new_lhs_group();
+    add_to_lhs_group( src );
+
 
     return;
 }
@@ -291,21 +374,21 @@ raft::parsemap::parse_link_helper( raft::kernel *src,
 }
 
 void 
-raft::parsemap::start_group()
+raft::parsemap::new_rhs_group()
 {
     parse_head.emplace_back( std::make_unique< group_t >() );
     return;
 }
 
 void
-raft::parsemap::prepend_group()
+raft::parsemap::new_lhs_group()
 {
     parse_head.emplace( parse_head.begin(), 
                         std::make_unique< group_t >() );
 }
 
 void 
-raft::parsemap::add_to_tail_group( raft::kernel * const k )
+raft::parsemap::add_to_rhs_group( raft::kernel * const k )
 {
     assert( k != nullptr );
     assert( get_group_size() > 0 );
@@ -314,7 +397,7 @@ raft::parsemap::add_to_tail_group( raft::kernel * const k )
 }
 
 void 
-raft::parsemap::add_to_head_group( raft::kernel * const k )
+raft::parsemap::add_to_lhs_group( raft::kernel * const k )
 {
     assert( k != nullptr );
     assert( get_group_size() > 0 );

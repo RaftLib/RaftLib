@@ -132,7 +132,7 @@ raft::parsemap_ptr operator >> ( raft::kernel               &src,
 {
     auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
     parsemap_ptr->start_group();
-    parsemap_ptr->add_to_tail_group( &src );
+    parsemap_ptr->add_to_rhs_group( &src );
     /** need to make a state structure **/
     auto *s( new raft::parse::state() );
     /** will be or'd inside the parser **/
@@ -150,7 +150,7 @@ raft::parsemap_ptr operator >> (    raft::kernel_wrapper    src,
     auto *src_ptr( src.get() );
     auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
     parsemap_ptr->start_group();
-    parsemap_ptr->add_to_tail_group( src_ptr );
+    parsemap_ptr->add_to_rhs_group( src_ptr );
     /** need to make a state structure **/
     auto *s( new raft::parse::state() );
     /** will be or'd inside the parser **/

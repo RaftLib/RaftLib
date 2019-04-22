@@ -189,7 +189,6 @@ template < class T > struct Data< T,
       //FREE USED HERE
       if( ! (this)->external_alloc )
       {
-         free( (this)->store );
 #if (defined _WIN64 ) || (defined _WIN32)
 		 _aligned_free( (this)->store );
 #else

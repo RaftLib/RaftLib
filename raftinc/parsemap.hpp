@@ -99,36 +99,36 @@ public:
      * is typically the destination side, the head groups
      * from LHS -> RHS.
      */
-    void start_group();
+    void new_rhs_group();
 
 
     /**
-     * prepend_group - add a new group to the LHS with
+     * new_lhs_group - add a new group to the LHS with
      * no kernels, basically adds an empty container
      * to the left most side of the parse tree. This is 
      * quite useful for dealing with operator precedence
      * issues. 
      */
-    void prepend_group();
+    void new_lhs_group();
 
     /**
-     * add_to_tail_group - add a new kernel to the RHS of
+     * add_to_rhs_group - add a new kernel to the RHS of
      * the parse tree. Will add head to the most
-     * recent group added. Call start_group if a fresh 
+     * recent group added. Call new_rhs_group if a fresh 
      * group is desired.
      *
-     * @param k - raft::kernel*, kernel to add to tail
+     * @param k - raft::kernel*, kernel to add to rhs
      */
-    void add_to_tail_group( raft::kernel * const k );
+    void add_to_rhs_group( raft::kernel * const k );
     
     /**
-     * add_to_head_group - add a new kernel to the LHS of parse. 
+     * add_to_lhs_group - add a new kernel to the LHS of parse. 
      * Will add head to the most recent group added. Call 
-     * start_group if a fresh group is desired.
+     * new_rhs_group if a fresh group is desired.
      *
      * @param k - raft::kernel*, kernel to add to head 
      */
-    void add_to_head_group( raft::kernel * const k );
+    void add_to_lhs_group( raft::kernel * const k );
    
     /**
      * get_group_size - returns the total number of groups
