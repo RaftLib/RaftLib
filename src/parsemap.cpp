@@ -202,6 +202,16 @@ raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is th
                 }
                 else
                 {
+                    /**
+                     * we need to clone the graph from the LHS (old LHS)
+                     * to the end point, then place the end kernels returned
+                     * from the clone to the RHS end of this parse graph, and put the 
+                     * source kernels in the LHS (ones in the middle aren't accessible
+                     * regardless, but adding them here will make them accessible
+                     * through the graph.
+                     */
+                    auto *temporary_map( raft::graphtools::duplicateBetweenVertices( 
+                    
                     auto *cloned_kernel( destination_original->clone() );
                     updateKernels( &kernel, cloned_kernel );
                     parse_link_helper( &kernel, cloned_kernel );
