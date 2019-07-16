@@ -210,7 +210,9 @@ raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is th
                      * regardless, but adding them here will make them accessible
                      * through the graph.
                      */
-                    auto *temporary_map( raft::graphtools::duplicateBetweenVertices( 
+                    //FIXME
+                    auto *temporary_map( GraphTools::duplicateBetweenVertices( nullptr, /** temp **/
+                                                                               nullptr ) );
                     
                     auto *cloned_kernel( destination_original->clone() );
                     updateKernels( &kernel, cloned_kernel );
