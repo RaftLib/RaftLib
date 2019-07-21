@@ -21,7 +21,7 @@
 
 Blocked::Blocked()
 {
-    /** nothing to do here **/
+
 }
 
 Blocked::Blocked( const Blocked &other ) : all( other.all )

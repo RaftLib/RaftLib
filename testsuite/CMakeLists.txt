@@ -8,7 +8,7 @@ find_package( Threads )
 include( CheckSTD )
 #
 find_package( LIBRT )
-
+find_package( NUMA  )
 
 
 set( TESTAPPS 

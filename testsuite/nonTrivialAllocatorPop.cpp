@@ -5,42 +5,12 @@
 #include <raft>
 #include <raftio>
 #include <limits>
+#include "non_trivial_obj_def.tcc"
 
 static bool global_bool = false;
 
-struct SomeNonTrivialObject
-{
-
-    SomeNonTrivialObject()
-    {
-        value = nullptr;
-    }
-
-    SomeNonTrivialObject( std::int64_t *value )
-    {
-        if( value != nullptr )
-        {
-            (this)->value = value;
-        }
-    }
-
-
-    ~SomeNonTrivialObject()
-    {
-        *value = std::numeric_limits< std::int64_t >::max();
-    }
-
-    SomeNonTrivialObject( const SomeNonTrivialObject &other )
-    {
-        /** let's pass the pointer to this object so we can see if it's deleted **/
-        (this)->value = other.value;
-    }
-
-
-    std::int64_t *value = nullptr;
-
-};
-
+/** with false param b/c we don't want the padding **/
+using non_trivial_obj_t = raft::test::non_trivial_object< false >;
 
 /**
  * Idea is that we want to test if the destructor is called
@@ -60,9 +30,9 @@ struct SomeNonTrivialObject
 class source : public raft::kernel
 {
 public:
-    source( SomeNonTrivialObject * obj ) : the_obj (obj)
+    source( non_trivial_obj_t * obj ) : the_obj (obj)
     {
-        output.addPort< SomeNonTrivialObject >( "out" );
+        output.addPort< non_trivial_obj_t >( "out" );
     }
 
     IMPL_NO_CLONE();
@@ -72,12 +42,12 @@ public:
          /** 
           * allocate passes the arguments to the constructor
           */
-         output[ "out" ].allocate< SomeNonTrivialObject >( *the_obj  ); 
+         output[ "out" ].allocate< non_trivial_obj_t >( *the_obj  ); 
          output[ "out" ].send();
          return( raft::stop );
     }
 
-    SomeNonTrivialObject    *the_obj;
+    non_trivial_obj_t    *the_obj;
 };
 
 class sink : public raft::kernel
@@ -85,14 +55,14 @@ class sink : public raft::kernel
 public:
     sink()
     {
-        input.addPort< SomeNonTrivialObject >( "in" );
+        input.addPort< non_trivial_obj_t >( "in" );
     }
 
     IMPL_NO_CLONE();
 
     virtual raft::kstatus run()
     {
-        SomeNonTrivialObject test;
+        non_trivial_obj_t test;
         input[ "in" ].pop( test );
         /** ok, let's see if we get all one's or something else **/
         if( (*test.value) == std::numeric_limits< std::int64_t >::max() )
@@ -113,7 +83,7 @@ main( )
 {
     std::int64_t the_value = 100;
 
-    SomeNonTrivialObject sto( &the_value );
+    non_trivial_obj_t sto( &the_value );
     
     raft::map m;
     source  s( &sto );

@@ -20,7 +20,6 @@ set( CPP_SRC_FILES
         fifo.cpp
         graphtools.cpp
         kernel_all.cpp
-        kernelcontainer.cpp
         kernel.cpp
         kernelexception.cpp
         kernel_pair_t.cpp

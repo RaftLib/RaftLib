@@ -5,17 +5,7 @@
 #include <cstddef>
 #include "alloc_traits.tcc"
 #include "defs.hpp"
-
-
-template < std::size_t N > class foo
-{
-public:
-   foo( int a ) : A( a ){}
-
-private:
-   int A;
-   char pad[ N ];
-};
+#include "foodef.tcc"
 
 
 int

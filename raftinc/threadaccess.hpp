@@ -47,18 +47,31 @@ struct alignas( L1D_CACHE_LINE_SIZE ) ThreadAccess
 {
     ThreadAccess() = default;
 
-    ThreadAccess( const ThreadAccess  &other )
+    constexpr ThreadAccess( const ThreadAccess  &other )
     {
         (this)->whole = other.whole;
     }
     
+    constexpr ThreadAccess& operator = (const ThreadAccess &other ) noexcept
+    {
+        /** ignore the case of 'this' == other **/
+        (this)->whole = other.whole;
+        return( *this );
+    }
+    
+    /** 
+     * technically not needed but this makes debugging
+     * a bit easier. - jcb July 2019
+     */
+    ~ThreadAccess(){ (this)->whole = 0; }
+
     union
     {
         std::uint64_t whole = 0;
         dm::key_t     flag[ 8 ];
     };
 
-    raft::byte_t    padding[ L1D_CACHE_LINE_SIZE - 8 /** padd to cache line **/ ];
+    raft::byte_t    padding[ L1D_CACHE_LINE_SIZE - 8 /** padd to cache line **/ ]   = {};
 };
 
 

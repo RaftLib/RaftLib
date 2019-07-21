@@ -3,26 +3,8 @@
 #include <cstdint>
 #include <string>
 #include <cstdlib>
+#include "foodef.tcc"
 
-
-template < std::size_t N > struct foo
-{
-   foo() : length( N ){}
-
-   foo( const foo &other ) : length( other.length )
-   {
-        using index_type = std::remove_const_t<decltype(N)>;
-        for( index_type i( 0 ); i < N; i++ )
-        {
-            pad[ i ] = other.pad[ i ];
-        }
-   }
-    
-   ~foo() = default;
-
-   int length;
-   int pad[ N ];
-};
 
 using obj_t = foo< 80 >;
 

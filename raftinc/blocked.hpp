@@ -31,14 +31,28 @@
  */
 struct ALIGN( L1D_CACHE_LINE_SIZE ) Blocked
 {
+    /** 
+     * this is really the backign store for the number of 
+     * times any queue in the system is blocked. Likely
+     * this is plenty of storage given the purpose and 
+     * no deleterious impact if we just wrap....
+     */
     using value_type = std::uint32_t;
     using whole_type = std::uint64_t;
     
     static_assert( sizeof( value_type ) * 2 == sizeof( whole_type ),
                    "Error, the whole type must be double the size of the half type" );
+    
     Blocked();
 
     Blocked( const Blocked &other );
+
+    constexpr Blocked& operator = ( const Blocked &other ) noexcept
+    {
+        /** again, simple integer, let's ignore the case of other == this **/
+        (this)->all = other.all;
+        return( *this );
+    }
 
     Blocked& operator += ( const Blocked &rhs ) noexcept;
     

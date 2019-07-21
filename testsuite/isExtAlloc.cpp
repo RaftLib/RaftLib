@@ -5,17 +5,9 @@
 #include <array>
 #include "alloc_traits.tcc"
 #include "defs.hpp"
+#include "foodef.tcc"
 
 
-template < std::size_t N > class foo
-{
-public:
-   foo( const int a ) : A( a ){}
-
-private:
-   const int A;
-   char pad[ N ];
-};
 
 int
 main()
