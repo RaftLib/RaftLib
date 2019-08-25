@@ -47,7 +47,7 @@ MapBase::~MapBase()
       {   
          if( kern->internal_alloc )
          {
-            delete( kern );
+            //delete( kern );
          }
       }
    }

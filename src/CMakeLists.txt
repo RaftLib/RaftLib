@@ -23,6 +23,7 @@ set( CPP_SRC_FILES
         kernel.cpp
         kernelexception.cpp
         kernel_pair_t.cpp
+        kernel_wrapper.cpp
         leastusedfirst.cpp
         mapbase.cpp
         map.cpp

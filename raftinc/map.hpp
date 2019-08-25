@@ -112,6 +112,7 @@ public:
       partition pt;
       pt.partition( all_kernels );
       
+      
       /** adds in split/join kernels **/
       //enableDuplication( source_kernels, all_kernels );
       volatile bool exit_alloc( false );

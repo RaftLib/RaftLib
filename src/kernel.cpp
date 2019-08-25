@@ -113,6 +113,7 @@ kernel::allConnected()
                 
         }
     }
+    volatile const auto var( typeid( (*this) ).name() );
 
     for( auto it( output.begin() ); it != output.end(); ++it )
     {
