@@ -9,10 +9,16 @@
  * use the move syntax without a complicated copy. The kernel itself cannot live
  * on the stack, it must live in the heap or elsewhere.
  *
+ * NOTE: had some issues with various optimization levels with the standard
+ * shared pointer, moving back to this for a bit, would rather use that, but
+ * will do so later. Right now this works and it'll let us move on with getting
+ * the new version of the parser out the door. - jcb 31 Aug 2019 
+ *
  * @author: Jonathan Beard
- * @version: Thu Sep  1 16:12:43 2016
- * 
- * Copyright 2016 Jonathan Beard
+ * @created: Thu Sep  1 16:12:43 2016
+ * @version: Sat Aug  31 2019
+ *
+ * Copyright 2019 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +65,16 @@ public:
      */
     virtual ~kernel_wrapper();
 
+    /**
+     * operator * - this function will be used by the 
+     * kpair object when it takes ownership of the 
+     * pointer. This will then be passed to the map
+     * object. The wrapped pointer will be set with
+     * the sentinal value so that it isn't double
+     * released.  
+     * @return raft::kernel*
+     */
+    raft::kernel* operator * ();
     
 
 protected:
@@ -70,16 +86,6 @@ protected:
      */
     kernel_wrapper( raft::kernel * const k ); 
     
-    /**
-     * operator * - this function will be used by the 
-     * kpair object when it takes ownership of the 
-     * pointer. This will then be passed to the map
-     * object. The wrapped pointer will be set with
-     * the sentinal value so that it isn't double
-     * freed. 
-     * @return raft::kernel*
-     */
-    raft::kernel* operator * ();
 
     
     raft::kernel *k = reinterpret_cast< raft::kernel* >( sentinel );

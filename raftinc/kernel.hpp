@@ -117,10 +117,9 @@ public:
                class ... Args >
       static kernel_wrapper make( Args&&... params )
       {
-         kernel_wrapper output( new T( std::forward< Args >( params )... ) );
-         volatile auto *test_ptr( output.get() );
-         output->internal_alloc = true;
-         return( output );
+         auto *kernel( new T( std::forward< Args >( params )... ) );
+         kernel->internal_alloc = true;
+         return( kernel_wrapper( kernel ) );
       }
    
    /** 

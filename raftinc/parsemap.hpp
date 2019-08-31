@@ -30,6 +30,7 @@ namespace raft
 {
 /** just pre-declaration **/
 class kernel;
+class kernel_wrapper;
 
 class parsemap : public submap
 {

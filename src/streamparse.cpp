@@ -35,27 +35,21 @@ raft::parsemap_ptr operator >> ( raft::kernel &src, raft::kernel &dst )
 raft::parsemap_ptr operator >> ( raft::kernel_wrapper src, raft::kernel &dst )
 {
     auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
-    auto *src_ptr( src.get() );
-    auto *dst_ptr( &dst );
-    parsemap_ptr->parse_link( src_ptr, dst_ptr );
+    parsemap_ptr->parse_link( (*src), &dst );
     return( parsemap_ptr );
 }
 
 raft::parsemap_ptr operator >> ( raft::kernel &src, raft::kernel_wrapper dst )
 {
     auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
-    auto *src_ptr( &src );
-    auto *dst_ptr( dst.get() );
-    parsemap_ptr->parse_link( src_ptr, dst_ptr);
+    parsemap_ptr->parse_link( &src, (*dst) );
     return( parsemap_ptr );
 }
 
 raft::parsemap_ptr operator >> ( raft::kernel_wrapper src, raft::kernel_wrapper dst )
 {
     auto parsemap_ptr( std::make_shared< raft::parsemap >( ) );
-    auto *src_ptr( src.get() );
-    auto *dst_ptr( dst.get() );
-    parsemap_ptr->parse_link( src_ptr, dst_ptr);
+    parsemap_ptr->parse_link( (*src), (*dst) );
     return( parsemap_ptr );
 }
 
@@ -73,8 +67,7 @@ raft::parsemap_ptr operator >> ( raft::parsemap_ptr src ,   raft::kernel &dst   
 
 raft::parsemap_ptr operator >> ( raft::parsemap_ptr src ,   raft::kernel_wrapper dst    )
 {
-    auto *dst_ptr( dst.get() );
-    src->parse_link_continue( dst_ptr );    
+    src->parse_link_continue( (*dst) );    
     return( src );
 }
 
