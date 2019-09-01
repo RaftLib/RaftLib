@@ -23,25 +23,33 @@ struct base_non_trivial_object
     {
         if( value != nullptr )
         {
-            value = value;
+            /** 
+             * silly bug...fixed, was assigning  
+             * value <- value vs. setting this 
+             * likely introduced when we made this
+             * test case generic, fixed now. was causing
+             * nonTrivialAllocatePop to fail 
+             * -jcb 1 Sept 2019
+             */
+            (this)->value = value;
         }
     }
 
     ~base_non_trivial_object()
     {
         /** no cast needed, should return a 'ptr' val **/
-        *value = std::numeric_limits< ptr_t >::max();
+        *(this)->value = std::numeric_limits< ptr_t >::max();
     }
 
     constexpr base_non_trivial_object( self_t &other )
     {
         /** let's pass the pointer to this object so we can see if it's deleted **/
-        value = other.value;
+        (this)->value = other.value;
     }
 
     constexpr base_non_trivial_object& operator= ( self_t &other )
     {
-        value = other.value;
+        (this)->value = other.value;
         return( *this );
     }
 

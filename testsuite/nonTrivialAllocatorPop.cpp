@@ -94,8 +94,6 @@ main( )
     {
         return( EXIT_SUCCESS );
     }
-    else
-    {
-        return( EXIT_FAILURE );
-    }
+    /** otherwise **/
+    return( EXIT_FAILURE );
 }
