@@ -8,6 +8,14 @@
 #include "foodef.tcc"
 
 
+/**
+ * FIXME: this test case setup should rely on multiples
+ * of L1D_CACHE_LINE_SIZE vs. raw hard coded numbers..
+ * if we move to a 128B or 32B cache line theen these
+ * cases will fail or succeed haphazardly. - jcb 1 Sept 2019
+ */
+
+
 
 int
 main()
@@ -44,7 +52,17 @@ main()
     {
         return( EXIT_FAILURE );
     }
-    if( ext_alloc< foo< 60 > >::value != false )
+    /** 
+     * made this class an external one, which is now int vs. char, 
+     * fixing the qantity allocated, eventually we need to fix the
+     * hardcoding to something that is dynamic. 
+     */
+    //if( ext_alloc< foo< 60 > >::value != false )
+    /**
+     * this should hit internal ctor alloc and ret
+     * false.
+     */
+    if( ext_alloc< foo< 15 > >::value != false )
     {
         return( EXIT_FAILURE );
     }

@@ -11,7 +11,7 @@
 /**
  * TODO, make a class to abstract figuring out the 
  * move/copy/allocate semantics...it's getting far
- * go crowed in both the fifo.hpp and ringbufferheap.tcc
+ * go crowded in both the fifo.hpp and ringbufferheap.tcc
  * files, and therefore confusing.
  */
 
