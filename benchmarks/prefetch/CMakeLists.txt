@@ -5,10 +5,6 @@ find_package( Threads )
 # c/c++ std
 ##
 include( CheckSTD )
-##
-# for demangle, perhaps others
-##
-include( CheckBoostDep )
 
 find_package( LIBRT )
 
