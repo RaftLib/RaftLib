@@ -90,6 +90,10 @@ public:
     */
    virtual raft::kstatus run()
    {
+      /**
+       * FIXME: This will work for a single address space, but it's broken
+       * for multiple over SHM, need to fix. 
+       */
       std::lock_guard< std::mutex > lg( print< T, delim >::print_lock );
       auto &input_port( (this)->input[ "in" ] );
       auto &data( input_port.template peek< T >() );

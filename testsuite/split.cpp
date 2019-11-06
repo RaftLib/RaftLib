@@ -1,3 +1,9 @@
+/**
+ * This one tests the split kernel that distributes 
+ * work, which is distinct from the operator '<='
+ * which automatically connects and replicates 
+ * multiple downstream ports.
+ */
 #include <raft>
 #include <cstdint>
 #include <iostream>
@@ -14,11 +20,17 @@ main()
    using split = raft::split< type_t >;
    const auto count( 10000 );
    gen a( count );
+   /**
+    * The split kernel has a single input port, and N
+    * output ports, basically it just distributes work
+    * based on some policy. The default is round-robin,
+    * although we'll likely implement more in the future.
+    */
    split s;
    print p;
    
    raft::map m;
-   m += a >> s >> p;
+   m += a >> s /** split kernel **/>> p;
    m.exe();
 
    return( EXIT_SUCCESS );

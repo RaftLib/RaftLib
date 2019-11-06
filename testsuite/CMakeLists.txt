@@ -72,6 +72,7 @@ set( TESTAPPS
     prefetchEffective
 #    sequential
     splitchain
+    splitop
 ## runs, test fails 
 #    splitchainRetStruct
     split
