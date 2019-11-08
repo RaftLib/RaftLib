@@ -71,6 +71,8 @@ parsemap::parse_link( raft::kernel *src,
      */
     return;
 }
+    
+    
 
 
 
@@ -82,15 +84,10 @@ raft::parsemap::parse_link_split( raft::kernel *src,
     assert( src != nullptr );
     assert( dst != nullptr );
     assert( get_group_size() == 0 );
-    /** link the first source -> destination **/
-    const std::string enabled_port( dst->getEnabledPort() );
-    updateKernels( src, dst );
-    parse_link_helper( src, dst );
     if( get_group_size() == 0 )
     {
         new_rhs_group();
     }
-    add_to_rhs_group( dst );
     /**
      * NOTE: following conditions should be met, src must 
      * have more than one output port, and multiple ports 
@@ -100,12 +97,16 @@ raft::parsemap::parse_link_split( raft::kernel *src,
      */
      /** step 1, loop over ports **/
     auto &port( src->output );
-    for( auto it( ++port.begin() /** inc past first **/ ); it != port.end(); ++it )
+    for( auto it( port.begin() /** inc past first **/ ); it != port.end(); ++it )
     {
+        /** toggles "enabled port" **/
         auto &kernel( (*src)[ it.name() ] );
-        auto *cloned_kernel( dst->clone() );
-        updateKernels( &kernel, cloned_kernel );
-        parse_link_helper( &kernel, cloned_kernel );
+        /** if start, join to destination, otherwise clone destination and link **/
+        auto *cloned_kernel( 
+            it == port.begin() ? dst : dst->clone() 
+        );
+        updateKernels(      &kernel, cloned_kernel );
+        parse_link_helper(  &kernel, cloned_kernel );
         add_to_rhs_group( cloned_kernel );
     }
     return;
