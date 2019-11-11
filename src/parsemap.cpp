@@ -117,7 +117,7 @@ void
 raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is the implicit destination **/)
 {
     assert( src != nullptr );
-    /** take the first group_ptr_t in parse_head **/
+    /** take the first group_ptr_t in parse_tree **/
 
     /**
      * rules: there's only one source, with N-output ports
@@ -125,15 +125,19 @@ raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is th
      * one active input kernel for each of the destination
      * kernels
      */
-    assert( parse_head.size() > 0 );
+    assert( parse_tree.size() > 0 );
     /**
      * this is the head
      */
-    auto &start( parse_head.front() );
+    auto &start( parse_tree.front() );
     /**
      * check the number of kernels there
      */
     const auto dest_count( start->size() );
+    /**
+     * if we're pre-pending here, this should be 
+     * a single point....
+     */
     assert( dest_count == 1 );
 
     /**
@@ -185,12 +189,11 @@ raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is th
              * those we'll add in. 
              */
             auto &src_output_ports( src->output );
-            auto index( 0 );
             for( auto it( src_output_ports.begin() ); it!= src_output_ports.end(); ++it )
             {   
                 /** activate the port on the source kernel **/
                 auto &kernel(       (*src)[ it.name() ]               );
-                if( index == 0 )
+                if( index == src_output_ports.begin() )
                 {
                     /**
                      * if here, then we've already an initialized 
@@ -204,7 +207,14 @@ raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is th
                 else
                 {
                     /**
-                     * we need to clone the graph from the LHS (old LHS)
+                     * so we have 
+                     * a-> (b->c->XX ),
+                     * above we've connected a->b_{original}
+                     * we need to make new b's and the entire subchain to connect
+                     * to every output edge of a. 
+                     */
+                    /**
+                     * we need to clone the graph from the LHS (old LHS), destination original,
                      * to the end point, then place the end kernels returned
                      * from the clone to the RHS end of this parse graph, and put the 
                      * source kernels in the LHS (ones in the middle aren't accessible
@@ -212,15 +222,12 @@ raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is th
                      * through the graph.
                      */
                     //FIXME
-                    auto *temporary_map( GraphTools::duplicateBetweenVertices( nullptr, /** temp **/
-                                                                               nullptr ) );
-                    
-                    auto *cloned_kernel( destination_original->clone() );
-                    updateKernels( &kernel, cloned_kernel );
-                    parse_link_helper( &kernel, cloned_kernel );
-                    add_to_lhs_group( cloned_kernel );
+                    auto *temp_map( GraphTools::duplicateFromVertexToSink( destination_original ) ); 
+                    assert( temp_map != nullptr );
+                    /** copy over temp map to this map **/ 
+                                         
+                    delete( temp_map );
                 }
-                index++;
             }
         }
         break;
@@ -273,8 +280,8 @@ raft::parsemap::parse_link_continue(    /** source is implicit **/
     /** do we have any groups **/
     while( get_group_size() != 0 )
     {
-        /** do for each group **/
-        auto group( pop_group() );
+        /** do for each group in the RHS frontier **/
+        auto group( pop_tree_frontier() );
         /** make new temp group **/
         temp_groups.push_back( std::make_unique< group_t >() );
         
@@ -303,7 +310,7 @@ raft::parsemap::parse_link_continue(    /** source is implicit **/
     /** this should be empty here **/
     assert( get_group_size() == 0 );
     /** move smart pointers from temp_groups to main parse head **/
-    parse_head = std::move( temp_groups );
+    parse_tree = std::move( temp_groups );
     return;
 }
 
@@ -389,14 +396,14 @@ raft::parsemap::parse_link_helper( raft::kernel *src,
 void 
 raft::parsemap::new_rhs_group()
 {
-    parse_head.emplace_back( std::make_unique< group_t >() );
+    parse_tree.emplace_back( std::make_unique< group_t >() );
     return;
 }
 
 void
 raft::parsemap::new_lhs_group()
 {
-    parse_head.emplace( parse_head.begin(), 
+    parse_tree.emplace( parse_tree.begin(), 
                         std::make_unique< group_t >() );
 }
 
@@ -405,7 +412,7 @@ raft::parsemap::add_to_rhs_group( raft::kernel * const k )
 {
     assert( k != nullptr );
     assert( get_group_size() > 0 );
-    parse_head.back()->emplace_back( k );
+    parse_tree.back()->emplace_back( k );
     return;
 }
 
@@ -414,7 +421,7 @@ raft::parsemap::add_to_lhs_group( raft::kernel * const k )
 {
     assert( k != nullptr );
     assert( get_group_size() > 0 );
-    parse_head.front()->emplace_back( k );
+    parse_tree.front()->emplace_back( k );
     return;
 }
 
@@ -423,19 +430,19 @@ raft::parsemap::add_to_lhs_group( raft::kernel * const k )
 std::size_t
 raft::parsemap::get_group_size()
 {
-    return( parse_head.size() );
+    return( parse_tree.size() );
 }
 
 parsemap::group_ptr_t
-raft::parsemap::pop_group()
+raft::parsemap::pop_tree_frontier()
 {
-    if( parse_head.size() == 0 )
+    if( parse_tree.size() == 0 )
     {
         /** TODO throw exception **/
         assert( false );
     }
-    auto temp( std::move( parse_head.back() ) );
-    parse_head.pop_back();
+    auto temp( std::move( parse_tree.back() ) );
+    parse_tree.pop_back();
     return( temp );
 }
 

@@ -289,6 +289,8 @@ raft::temp_map*
 GraphTools::duplicateFromVertexToSink( raft::kernel * const start )
 {
     assert( start != nullptr );
+    /** this one is easy...the terminal vertices are a bit more difficult **/
+    d.temp_map->addSourceKernel( start );
     struct Data
     {
         Data() : temp_map( new raft::temp_map() )

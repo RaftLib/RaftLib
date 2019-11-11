@@ -28,12 +28,16 @@
 
 namespace raft
 {
+
 /** just pre-declaration **/
 class kernel;
 class kernel_wrapper;
 
 class parsemap : public submap
 {
+    /** 
+     * 
+     */
     using group_t       = std::vector< raft::kernel* >;
 public:
     
@@ -133,21 +137,25 @@ public:
    
     /**
      * get_group_size - returns the total number of groups
+     * at the parse head (which is the RHS of the parse tree 
+     * as it's expanded along the DAG from left to right (picture
+     * the stream operators and how they connect/reduce), 
      * not the number of kernels (this could vary by group).
      * @return std::size_t - total number of groups
      */
     std::size_t  get_group_size();
 
     /**
-     * pop_group - pops the head group (last one to be 
-     * added. If we're visualizing the graph as a DAG
+     * pop_tree_frontier - pops the head frontier (all 
+     * groups at the RHS of the parse tree, e.g., last one to be 
+     * added). If we're visualizing the graph as a DAG
      * LHS to RHS and top to bottom. This is the furthest
-     * RHS that has been parsed, all the way to the 
-     * bottom. As the callee pops, it will move up the 
-     * RHS and pop to the top.
+     * RHS set of groups that has been parsed, all the way to the 
+     * bottom. Returns all groups at the current RHS frontier.
+     * 
      * @return - group_ptr_t, aka, std::unique_ptr< std::vector< kernel > >
      */
-    group_ptr_t pop_group();
+    group_ptr_t pop_tree_frontier();
 
     
 
@@ -157,21 +165,13 @@ private:
                             raft::kernel *dst );
 
     /**
-     * pop_state - resets the state 
+     * parse-tree, really a list of the current parse from a single
+     * expression statement (basically all the stuff in a stream 
+     * description up to the semicolon). The lowest index, zero, 
+     * contains the LHS, the highest index contains the RHS. Each 
+     * group within the parse tree contains the kernels at that level. 
      */
-    void  pop_state();
-    /**
-     * this stack must be empty after each parse, 
-     * as in "a >> state >> state >> b" the state
-     * must be shoved in between a->b so that it 
-     * refers to the right link.
-     */
-    raft::parse::state state_stack;
-    /**
-     * The "parse_head" keeps track of the last kernels
-     * added. 
-     */
-    std::vector< group_ptr_t >       parse_head;    
+    std::vector< group_ptr_t >       parse_tree;    
 
     /** override default **/
     virtual void updateKernels( raft::kernel * const a, raft::kernel * const b );
