@@ -44,14 +44,6 @@ parsemap::~parsemap()
      */
 }
 
-void
-parsemap::push_state( raft::parse::state * const state )
-{
-    assert( state != nullptr ); 
-    /**
-     * TODO: finish me
-     */
-}
 
 void
 parsemap::parse_link( raft::kernel *src, 
@@ -64,11 +56,6 @@ parsemap::parse_link( raft::kernel *src,
     }
     updateKernels( src, dst );
     add_to_rhs_group( dst );
-    /**
-     * TODO: 
-     * run function pointers for settings
-     * pop state
-     */
     return;
 }
     
@@ -304,9 +291,6 @@ raft::parsemap::parse_link_continue(    /** source is implicit **/
             temp_groups.back()->emplace_back( dst_ptr );
         }
     }
-    /**
-     * TODO: empty state container 
-     */
     /** this should be empty here **/
     assert( get_group_size() == 0 );
     /** move smart pointers from temp_groups to main parse head **/

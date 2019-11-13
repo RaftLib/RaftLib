@@ -31,6 +31,7 @@ set( CPP_SRC_FILES
         noparallel.cpp
         parallelk.cpp
         parsemap.cpp
+        parsetree.cpp
         partition_basic.cpp
         partition_dummy.cpp
         pointer.cpp

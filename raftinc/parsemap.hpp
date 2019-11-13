@@ -19,11 +19,10 @@
  */
 #ifndef _PARSEMAP_HPP_
 #define _PARSEMAP_HPP_  1
-#include <stack>
-#include <memory>
 #include <cstdint>
-#include <vector>
+#include "parsetreedefs.hpp"
 #include "parsedefs.hpp"
+#include "parsetree.hpp"
 #include "submap.hpp"
 
 namespace raft
@@ -35,18 +34,10 @@ class kernel_wrapper;
 
 class parsemap : public submap
 {
-    /** 
-     * 
-     */
-    using group_t       = std::vector< raft::kernel* >;
 public:
-    
-    using group_ptr_t   = std::unique_ptr< group_t >;
     
     parsemap();
     virtual ~parsemap();
-
-    void push_state( raft::parse::state * const state );
    
    /** 
     * parse_link - this one is meant to be used
@@ -164,14 +155,8 @@ private:
     void parse_link_helper( raft::kernel *src, 
                             raft::kernel *dst );
 
-    /**
-     * parse-tree, really a list of the current parse from a single
-     * expression statement (basically all the stuff in a stream 
-     * description up to the semicolon). The lowest index, zero, 
-     * contains the LHS, the highest index contains the RHS. Each 
-     * group within the parse tree contains the kernels at that level. 
-     */
-    std::vector< group_ptr_t >       parse_tree;    
+    raft::parsetree tree; 
+    
 
     /** override default **/
     virtual void updateKernels( raft::kernel * const a, raft::kernel * const b );
