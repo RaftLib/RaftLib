@@ -104,7 +104,7 @@ void
 raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is the implicit destination **/)
 {
     assert( src != nullptr );
-    /** take the first group_ptr_t in parse_tree **/
+    /** take the first group_ptr_t in tree **/
 
     /**
      * rules: there's only one source, with N-output ports
@@ -112,11 +112,11 @@ raft::parsemap::parse_link_split_prepend( raft::kernel   *src /** this map is th
      * one active input kernel for each of the destination
      * kernels
      */
-    assert( parse_tree.size() > 0 );
+    assert( tree.size() > 0 );
     /**
      * this is the head
      */
-    auto &start( parse_tree.front() );
+    auto &start( tree.front() );
     /**
      * check the number of kernels there
      */
@@ -294,7 +294,7 @@ raft::parsemap::parse_link_continue(    /** source is implicit **/
     /** this should be empty here **/
     assert( get_group_size() == 0 );
     /** move smart pointers from temp_groups to main parse head **/
-    parse_tree = std::move( temp_groups );
+    tree = std::move( temp_groups );
     return;
 }
 
@@ -380,14 +380,14 @@ raft::parsemap::parse_link_helper( raft::kernel *src,
 void 
 raft::parsemap::new_rhs_group()
 {
-    parse_tree.emplace_back( std::make_unique< group_t >() );
+    tree.emplace_back( std::make_unique< group_t >() );
     return;
 }
 
 void
 raft::parsemap::new_lhs_group()
 {
-    parse_tree.emplace( parse_tree.begin(), 
+    tree.emplace( tree.begin(), 
                         std::make_unique< group_t >() );
 }
 
@@ -396,7 +396,7 @@ raft::parsemap::add_to_rhs_group( raft::kernel * const k )
 {
     assert( k != nullptr );
     assert( get_group_size() > 0 );
-    parse_tree.back()->emplace_back( k );
+    tree.back()->emplace_back( k );
     return;
 }
 
@@ -405,7 +405,7 @@ raft::parsemap::add_to_lhs_group( raft::kernel * const k )
 {
     assert( k != nullptr );
     assert( get_group_size() > 0 );
-    parse_tree.front()->emplace_back( k );
+    tree.front()->emplace_back( k );
     return;
 }
 
@@ -414,19 +414,19 @@ raft::parsemap::add_to_lhs_group( raft::kernel * const k )
 std::size_t
 raft::parsemap::get_group_size()
 {
-    return( parse_tree.size() );
+    return( tree.size() );
 }
 
 parsemap::group_ptr_t
 raft::parsemap::pop_tree_frontier()
 {
-    if( parse_tree.size() == 0 )
+    if( tree.size() == 0 )
     {
         /** TODO throw exception **/
         assert( false );
     }
-    auto temp( std::move( parse_tree.back() ) );
-    parse_tree.pop_back();
+    auto temp( std::move( tree.back() ) );
+    tree.pop_back();
     return( temp );
 }
 

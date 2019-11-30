@@ -22,7 +22,7 @@
     
     
 bool
-parsetree::pushRHS( frontier_t &&f )
+raft::parsetree::pushRHS( frontier_t &&f )
 {
     /**
      * return false if there is already a RHS
@@ -33,25 +33,26 @@ parsetree::pushRHS( frontier_t &&f )
     }
     assert( parse_tree.get_rhs() == nullptr );
     auto &old_rhs( parse_tree.get_rhs() );
-    old_rhs = f;
+    old_rhs = std::move( f );
     return( true );
 }
 
 
 frontier_t  
-parsetree::popRHS()
+raft::parsetree::popRHS()
 {
     /** 
      * is_rhs should have been called by this point 
      */
     assert( parse_tree.get_rhs() == nullptr );
-    frontier_t old_rhs( /** get copy **/ parse_tree.get_rhs() );
-    parse_tree.get_rhs() = nullptr;  
+    frontier_t old_rhs = raft::make_frontier_t();
+    old_rhs = /** get copy **/ std::move( parse_tree.get_rhs() );
+    parse_tree.get_rhs() = nullptr;
     return( old_rhs );
 }
 
 void 
-parsetree::pushLHS( frontier_t &&f )
+raft::parsetree::pushLHS( frontier_t &&f )
 {
     /**
      * return false if there is already a LHS
@@ -62,12 +63,12 @@ parsetree::pushLHS( frontier_t &&f )
     }
     assert( parse_tree.get_lhs() == nullptr );
     auto &old_lhs( parse_tree.get_lhs() );
-    old_lhs = f;
+    old_lhs = std::move( f );
     return( true );
 }
 
 frontier_t 
-parsetree::popLHS()
+raft::parsetree::popLHS()
 {
     /** 
      * is_lhs should have been called by this point 
@@ -79,9 +80,9 @@ parsetree::popLHS()
 }
 
 bool 
-parsetree::is_RHS()
+raft::parsetree::is_RHS()
 {
-    if( parsetree.get_rhs() == nullptr )
+    if( parse_tree.get_rhs() == nullptr )
     {
         return( false );
     }
@@ -89,9 +90,9 @@ parsetree::is_RHS()
 }
 
 bool 
-parsetree::is_LHS()
+raft::parsetree::is_LHS()
 {
-    if( parsetree.get_lhs() == nullptr )
+    if( parse_tree.get_lhs() == nullptr )
     {
         return( false );
     }

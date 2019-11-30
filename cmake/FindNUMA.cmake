@@ -18,7 +18,7 @@ else( NUMA_LIBRARY )
 # get machine type
 ##
     execute_process( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
-    execute_process( COMMAND ${CMAKE_SOURCE_DIR}/scripts/findnodes.pl
+    execute_process( COMMAND ${CMAKE_SOURCE_DIR}/helpers/findnodes.pl
                      COMMAND tr -d '\n' 
                      OUTPUT_VARIABLE HASNUMA )
     if( HASNUMA EQUAL 0 )

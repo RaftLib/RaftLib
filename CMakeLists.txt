@@ -26,6 +26,7 @@ set( HELPER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/helpers )
 ##
 # helper exec to get the L1 cache size from Linux/OS X/Win
 ##
+message( ERROR "${CMAKE_CXX_COMPILER} ${HELPER_DIR}/cacheinfo.cpp -o ${HELPER_DIR}/cacheinfo" )
 execute_process( COMMAND ${CMAKE_CXX_COMPILER} ${HELPER_DIR}/cacheinfo.cpp -o ${HELPER_DIR}/cacheinfo)
 execute_process( COMMAND ${HELPER_DIR}/cacheinfo 
                  COMMAND tr -d '\n' 

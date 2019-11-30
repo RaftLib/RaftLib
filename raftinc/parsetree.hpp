@@ -28,7 +28,13 @@ namespace raft
 /** pre-declaration **/
 class parsetreedefs;
 
+class parsetree
 {
+
+/**
+ * internal struct, private 
+ */
+
 template< class A > struct ptree_t : public std::pair< A, A >
 {
     /** 
@@ -55,9 +61,11 @@ template< class A > struct ptree_t : public std::pair< A, A >
     }
 };
 
+/** still private here **/
+
 public:
     parsetree() = default;
-    virtual ~parseatree() = default;
+    virtual ~parsetree() = default;
 
     /** 
      * pushRHS - push a frontier to the RHS of the parse tree
@@ -104,9 +112,9 @@ public:
     bool is_LHS();
 
 private:
-    ptree_t< frontier_t >   parse_tree  = { nullptr, nullptr };
+    ptree_t< frontier_t >   parse_tree;
 
-};
+}; /** end class parsetree **/
 
 } /** namespace raft **/
 

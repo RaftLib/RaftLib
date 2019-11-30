@@ -28,4 +28,20 @@ using group_t       = std::vector< raft::kernel* >;
 using group_ptr_t   = std::unique_ptr< group_t >;
 using frontier_t    = std::unique_ptr< group_ptr_t >;
 
+namespace raft
+{
+
+/**
+ * a bit of a silly hack to get around having to use
+ * make_unique with the above given the names didn't 
+ * match.
+ */
+frontier_t 
+make_frontier_t()
+{
+    return std::unique_ptr< group_ptr_t >( new group_ptr_t( ) );
+}
+
+}
+
 #endif /* END _PARSETREEDEFS_HPP_ */
