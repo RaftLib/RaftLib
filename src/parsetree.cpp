@@ -45,13 +45,13 @@ raft::parsetree::popRHS()
      * is_rhs should have been called by this point 
      */
     assert( parse_tree.get_rhs() == nullptr );
-    frontier_t old_rhs = raft::make_frontier_t();
+    auto old_rhs( raft::make_frontier_t() );
     old_rhs = /** get copy **/ std::move( parse_tree.get_rhs() );
     parse_tree.get_rhs() = nullptr;
     return( old_rhs );
 }
 
-void 
+bool
 raft::parsetree::pushLHS( frontier_t &&f )
 {
     /**
@@ -74,7 +74,8 @@ raft::parsetree::popLHS()
      * is_lhs should have been called by this point 
      */
     assert( parse_tree.get_lhs() == nullptr );
-    frontier_t old_lhs( /** get copy **/ parse_tree.get_lhs() );
+    auto old_lhs( raft::make_frontier_t() );
+    old_lhs = /** get copy **/ std::move( parse_tree.get_lhs() );
     parse_tree.get_lhs() = nullptr;  
     return( old_lhs );
 }

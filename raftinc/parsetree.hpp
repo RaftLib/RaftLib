@@ -31,6 +31,7 @@ class parsetreedefs;
 class parsetree
 {
 
+private:
 /**
  * internal struct, private 
  */
@@ -44,6 +45,26 @@ template< class A > struct ptree_t : public std::pair< A, A >
     {
         /** nothing else to do here **/
     }
+    
+    /** 
+     * constructor, call pair constructor
+     */
+    ptree_t( const A &a1, const A &a2 ) : std::pair< A, A >( a1, a2 )
+    {
+        /** nothing else to do here **/
+    }
+    
+    /** 
+     * constructor, call pair constructor
+     */
+    ptree_t( const A &&a1, const A &&a2 ) : std::pair< A, A >( a1, a2 )
+    {
+        /** nothing else to do here **/
+    }
+
+    ptree_t( const ptree_t &p ) = default;
+    
+    ptree_t( ptree_t  &&p ) = default;
    
     virtual ~ptree_t() = default;
 
@@ -112,7 +133,7 @@ public:
     bool is_LHS();
 
 private:
-    ptree_t< frontier_t >   parse_tree;
+    ptree_t< frontier_t >   parse_tree; 
 
 }; /** end class parsetree **/
 

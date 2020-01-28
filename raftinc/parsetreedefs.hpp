@@ -26,7 +26,7 @@
 
 using group_t       = std::vector< raft::kernel* >;
 using group_ptr_t   = std::unique_ptr< group_t >;
-using frontier_t    = std::unique_ptr< group_ptr_t >;
+using frontier_t    = std::vector< group_ptr_t >;
 
 namespace raft
 {
@@ -39,7 +39,7 @@ namespace raft
 frontier_t 
 make_frontier_t()
 {
-    return std::unique_ptr< group_ptr_t >( new group_ptr_t( ) );
+    return std::unique_ptr< group_ptr_t >( new group_ptr_t(  nullptr ) );
 }
 
 }
