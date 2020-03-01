@@ -11,7 +11,13 @@ if (HAS_ALIGNED_NEW)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -faligned-new")
 endif()
     
-    
+###
+# Grab boost for BGL
+###
+find_package( Boost
+                1.67.0 
+                REQUIRED 
+                COMPONENTS graph )
 
 option( USEQTHREAD "Use QThread threading library" false )
 find_package( QThreads )

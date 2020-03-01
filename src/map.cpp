@@ -33,7 +33,6 @@
 
 #include "common.hpp"
 #include "map.hpp"
-#include "graphtools.hpp"
 #include "mapexception.hpp"
 #include "parsemap.hpp"
 

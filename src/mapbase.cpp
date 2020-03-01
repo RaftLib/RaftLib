@@ -30,7 +30,6 @@
 
 #include "common.hpp"
 #include "mapbase.hpp"
-#include "graphtools.hpp"
 #include "demangle.hpp"
 
 MapBase::MapBase()

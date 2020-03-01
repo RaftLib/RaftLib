@@ -18,7 +18,6 @@ set( CPP_SRC_FILES
         demangle.cpp
         dynalloc.cpp
         fifo.cpp
-        graphtools.cpp
         kernel_all.cpp
         kernel.cpp
         kernelexception.cpp
@@ -30,8 +29,6 @@ set( CPP_SRC_FILES
         mapexception.cpp
         noparallel.cpp
         parallelk.cpp
-        parsemap.cpp
-        parsetree.cpp
         partition_basic.cpp
         partition_dummy.cpp
         pointer.cpp

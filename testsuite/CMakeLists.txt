@@ -13,52 +13,52 @@ find_package( NUMA  )
 
 set( TESTAPPS 
     allocate
-    allocatePopExternal
-    allocatePopInternal
-    allocatePopInternalObject
-    allocatePopPush
-    allocateRefWrapperOneLHS
-    allocateRefWrapperOneRHS
-    allocateRefWrapperTwo
-    allocate_s
-    allocateSendPush
-    allocateSendRandomPush
+#    allocatePopExternal
+#    allocatePopInternal
+#    allocatePopInternalObject
+#    allocatePopPush
+#    allocateRefWrapperOneLHS
+#    allocateRefWrapperOneRHS
+#    allocateRefWrapperTwo
+#    allocate_s
+#    allocateSendPush
+#    allocateSendRandomPush
 ## compiles doesn't run 
 #    allocate_s_string
-    allpush
-    ap
-    bracketsTest
+#    allpush
+#    ap
+#    bracketsTest
 ## compiles doesn't run 
 #    chain
-    chainDynamic
-    chainMultiplePorts
-    chainMultiplePortsDynamic
+#    chainDynamic
+#    chainMultiplePorts
+#    chainMultiplePortsDynamic
 #    contSplitKsetJoin
-    demangle
-    disconnectedGraph
-    doesntFitInCacheLine
-    dynallocate
+#    demangle
+#    disconnectedGraph
+#    doesntFitInCacheLine
+#    dynallocate
 #    exponential
-    fitInCacheLine
-    fixedAllocate
+#    fitInCacheLine
+#    fixedAllocate
 ## runs but fails
 #    fixedMatchTest
-    foreach
+#    foreach
 #    gamma
 #    gaussian
-    isExtAlloc
-    isExtArray
-    isExtClass
-    isInlineClass
-    isInlineNonClass
-    join
+#    isExtAlloc
+#    isExtArray
+#    isExtClass
+#    isInlineClass
+#    isInlineNonClass
+#    join
 #    ksetContContJoin
 #    KsetJoin
-    ksettest
-    lambdatest
-    nonTrivialAllocatorPop
-    nonTrivialAllocatorPopExternal
-    noPortException
+#    ksettest
+#    lambdatest
+#    nonTrivialAllocatorPop
+#    nonTrivialAllocatorPopExternal
+#    noPortException
 #    parallelchain
 #    parallel
 ## compiles doesn't run 
@@ -67,15 +67,15 @@ set( TESTAPPS
 #    peek
 ## runs...seems to live lock
 #    peekrange
-    poolThreadRaftManip
-    portTypeException
-    prefetchEffective
+#    poolThreadRaftManip
+#    portTypeException
+#    prefetchEffective
 #    sequential
-    splitchain
-    splitop
+#    splitchain
+#    splitop
 ## runs, test fails 
 #    splitchainRetStruct
-    split
+#    split
 #    splitKsetCont
 #    splitKsetJoin
 #    staticContJoin
@@ -89,7 +89,7 @@ set( TESTAPPS
 #    staticSplitChainJoinRetStruct
 #    staticSplitJoin
 #    staticSplitJoinRetStruct
-    stdlibsupport
+#    stdlibsupport
 #    streamManipFourA
 #    streamManipFourB
 #    streamManipFourC
@@ -114,13 +114,12 @@ set( TESTAPPS
 #    testraft10
 ## compiles doesn't run
 #twiceAdd
-    uniform
+#    uniform
      )
 
 foreach( APP ${TESTAPPS} )
  add_executable( ${APP} "${APP}.cpp" )
  target_link_libraries( ${APP} raft  ${CMAKE_THREAD_LIBS_INIT} 
-                                     ${CMAKE_SCOTCH_LIBS}
                                      shm
                                      ${CMAKE_RT_LIBS} 
                                      ${CMAKE_QTHREAD_LIBS}

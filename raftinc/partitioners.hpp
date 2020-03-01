@@ -25,9 +25,6 @@
  * some of the necessary bits to conditionally compile
  */
 #include "partition_basic.hpp"
-#if USE_PARTITION
-#include "partition_scotch.hpp"
-#endif
 #include "partition_dummy.hpp"
 
 #endif /* END _PARTITIONERS_HPP_ */

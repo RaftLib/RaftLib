@@ -24,7 +24,6 @@
 #include <map>
 #include <cassert>
 
-#include "graphtools.hpp"
 #include "dynalloc.hpp"
 
 #ifndef INITIAL_ALLOC_SIZE

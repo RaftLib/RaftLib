@@ -24,7 +24,6 @@
 #include <thread>
 #include "kernelkeeper.tcc"
 #include "stdalloc.hpp"
-#include "graphtools.hpp"
 #include "port_info.hpp"
 #include "ringbuffertypes.hpp"
 

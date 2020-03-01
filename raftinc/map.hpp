@@ -75,12 +75,8 @@ public:
  * enabling thread pinning if available by default)
  */
 #ifdef __linux
-#if USE_PARTITION
-             partition_scotch
-#else
              //partition_basic /** no scotch, simple affinity assign **/
              partition_dummy
-#endif
 #else /** OS X, WIN64 **/
              partition_dummy
 #endif

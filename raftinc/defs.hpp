@@ -51,11 +51,6 @@ using ptr_t = std::uintptr_t;
 
 using core_id_t = std::int64_t;
 
-/** type for edge weights when giving to Scotch partitioner **/
-using weight_t  = std::int32_t;
-/** type for edge id, largely used by graph.tcc and partition_scotch.hpp **/
-using edge_id_t = std::int32_t;
-
 
 #ifndef UNUSED 
 #ifdef __clang__

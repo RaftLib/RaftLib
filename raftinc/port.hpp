@@ -31,7 +31,6 @@
 #include <memory>
 
 #include "portbase.hpp"
-#include "graphtools.hpp"
 #include "ringbuffertypes.hpp"
 #include "fifo.hpp"
 #include "port_info.hpp"
@@ -392,7 +391,6 @@ protected:
    friend class raft::kernel;
    friend class raft::map;
    friend class raft::parsemap;
-   friend class GraphTools;
    friend class basic_parallel;
    friend class raft::parallel_k;
 };
