@@ -5,7 +5,7 @@ set( DEPDIR ${CMAKE_SOURCE_DIR}/git-dep )
 ##
 # LIST MODULES HERE
 ##
-set( GIT_MODULES cmdargs shm )
+include( ${DEPDIR}/gitmodules.cmake )
 ##
 # NOW CHECK THEM OUT 
 ##

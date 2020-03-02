@@ -4,3 +4,6 @@
 [submodule "git-dep/shm"]
 	path = git-dep/shm
 	url = https://github.com/RaftLib/shm.git
+[submodule "git-dep/demangle"]
+	path = git-dep/demangle
+	url = https://github.com/RaftLib/demangle.git
