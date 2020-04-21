@@ -5,8 +5,10 @@
 #include <raft>
 #include <raftio>
 #include <limits>
-#include <unistd.h>
 
+#ifdef __unix__
+#include <unistd.h>
+#endif
 
 static bool global_bool = false;
 
