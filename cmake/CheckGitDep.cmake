@@ -5,7 +5,11 @@ set( DEPDIR ${CMAKE_SOURCE_DIR}/git-dep )
 ##
 # LIST MODULES HERE
 ##
-set( GIT_MODULES cmdargs shm )
+if(WIN32)
+ set( GIT_MODULES cmdargs )
+else()
+ set( GIT_MODULES cmdargs shm )
+endif()
 ##
 # NOW CHECK THEM OUT 
 ##

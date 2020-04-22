@@ -17,10 +17,19 @@
 
 //FIXME, add std::move for int_allocate obj
 #ifndef L1D_CACHE_LINE_SIZE
+
+#ifdef _MSC_VER
+#define STRINGIZE_HELPER(x) #x
+#define STRINGIZE(x) STRINGIZE_HELPER(x)
+#define WARNING(desc) message(__FILE__ "(" STRINGIZE(__LINE__) ") : Warning: " #desc)
+#pragma WARNING(Using 64 bytes as default cache line size, to fix recompile with -DL1D_CACHE_LINE_SIZE=XXX)
+#else
 #warning "Using 64 bytes as default cache line size, to fix recompile with -DL1D_CACHE_LINE_SIZE=XXX"
-#define L1D_CACHE_LINE_SIZE 64
 #endif
 
+#define L1D_CACHE_LINE_SIZE 64
+
+#endif
 /**
  * see if the given class/type fits within a single cache line
  */

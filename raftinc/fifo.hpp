@@ -182,7 +182,11 @@ public:
       void *ptr( nullptr );
       /** call blocks till an element is available **/
       local_allocate( &ptr );
-      T * __attribute__((__unused__)) temp( 
+#ifdef _MSC_VER // MSVC does not support __attribute__
+      T * temp(
+#else
+      T* __attribute__((__unused__)) temp(
+#endif
          new (ptr) T( std::forward< Args >( params )... ) );
       UNUSED( temp );
       return( autorelease< T, allocatetype >( 
