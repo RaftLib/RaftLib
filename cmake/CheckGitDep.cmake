@@ -2,14 +2,11 @@
 # check out other repos we need
 ##
 set( DEPDIR ${CMAKE_SOURCE_DIR}/git-dep )
+
 ##
 # LIST MODULES HERE
 ##
-if(WIN32)
- set( GIT_MODULES cmdargs )
-else()
- set( GIT_MODULES cmdargs shm )
-endif()
+include( ${DEPDIR}/gitmodules.cmake )
 ##
 # NOW CHECK THEM OUT 
 ##
@@ -26,9 +23,12 @@ foreach( GMOD ${GIT_MODULES} )
  ##
  if( EXISTS ${DEPDIR}/${GMOD}/CMakeLists.txt )
     add_subdirectory( ${DEPDIR}/${GMOD} )
+    if( EXISTS ${DEPDIR}/${GMOD}/include )
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${DEPDIR}/${GMOD}/include" )
+    endif()
  elseif( EXISTS ${DEPDIR}/${GMOD}/autogen.sh )
     ##TODO, need to cleanup in-source build manually...should fix
-    message( INFO " Found automake dir in git-dep, attempting to incorporate..." )
+    message( STATUS "Found automake dir in git-dep, attempting to incorporate..." )
     ExternalProject_Add( ${GMOD}
         SOURCE_DIR ${DEPDIR}/${GMOD}
         CONFIGURE_COMMAND ${DEPDIR}/${GMOD}/autogen.sh && ${DEPDIR}/${GMOD}/configure --prefix=${DEPDIR}/${GMOD}

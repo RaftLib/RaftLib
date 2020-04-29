@@ -50,7 +50,6 @@ set( TESTAPPS allocate
      noPortException
      twiceAdd
      disconnectedGraph 
-     demangle
      allocate_s_string
      allpush
      nonTrivialAllocatorPop

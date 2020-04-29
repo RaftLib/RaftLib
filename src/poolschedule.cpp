@@ -134,7 +134,7 @@ aligned_t pool_schedule::pool_run( void *data )
    if( thread_d->loc != -1 )
    {
       /** call does nothing if not available **/
-      affinity::set( thread_d->loc );
+      raft::affinity::set( thread_d->loc );
    }
    else
    {
