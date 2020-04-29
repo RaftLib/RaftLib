@@ -17,87 +17,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
 #include <utility>
-#include <map>
-#include <iostream>
 #include "port_info.hpp"
 #include "portmap_t.hpp"
 #include "portiterator.hpp"
 
-PortIterator::PortIterator( portmap_t * const port_map ) : port_map( port_map )
+PortIterator::PortIterator( portmap_t * const port_map )
+	: map_iterator(port_map->map.begin())
 {
-   PortIterator::initKeyMap( port_map, key_map );
-   //pthread_mutex_lock_d( &(port_map->mutex_map), __FILE__, __LINE__ ); 
+
 }
 
 PortIterator::PortIterator( portmap_t * const port_map, 
-                            const std::size_t index ) : 
-                                                    port_map( port_map ),
-                                                    map_index( index )
+                            const std::size_t index )
+	: map_iterator(index == port_map->map.size() 
+        ? port_map->map.end()
+        : std::next(port_map->map.begin(), index) )
 {
-   is_end = true;
-   PortIterator::initKeyMap( port_map, key_map );
-}
-
-PortIterator::PortIterator( const PortIterator &it ) : port_map( it.port_map ),
-                                                       map_index( it.map_index )
-{
-   PortIterator::initKeyMap( port_map, key_map );
-}
-
-PortIterator::~PortIterator()
-{
-   if( is_end )
-   {
-     // pthread_mutex_unlock( &(port_map->mutex_map) );
-   }
 }
 
 PortIterator&
 PortIterator::operator++() 
 {
-   map_index++;
+  ++map_iterator;
    return( (*this) );
 }
 
 const std::string&
-PortIterator::name()
+PortIterator::name() const
 {
-    return( key_map[ map_index ] );
+    return( map_iterator->first );
 }
 
 bool
-PortIterator::operator==( const PortIterator &rhs ) 
+PortIterator::operator==( const PortIterator &rhs ) const
 {
-   /** 
-    * TODO, on a more philosophical note, should this
-    * be a ptr comparison for the FIFO's but then the 
-    * end function would be harder to implement
-    */
-   return( map_index == rhs.map_index );
+   return( map_iterator == rhs.map_iterator );
 }
 
 bool 
-PortIterator::operator!=( const PortIterator &rhs ) 
+PortIterator::operator!=( const PortIterator &rhs ) const
 {
-   return( map_index != rhs.map_index );
+   return( map_iterator != rhs.map_iterator );
 }
 
 FIFO&
-PortIterator::operator*() 
+PortIterator::operator*() const
 { 
-   return(
-      (*port_map->map[ key_map[ map_index ] ].getFIFO() ) );
-}
-
-void
-PortIterator::initKeyMap( portmap_t * const port_map, 
-                          std::vector< std::string > &key_map ) 
-{
-   std::map< std::string, PortInfo > &map_ref( port_map->map );
-   for( const auto &pair : map_ref )
-   {
-      key_map.emplace_back( pair.first );
-   }
+   return(*map_iterator->second.getFIFO());
 }

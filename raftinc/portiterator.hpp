@@ -21,8 +21,6 @@
 #define _PORTITERATOR_HPP_  1
 #include <iterator>
 #include <map>
-#include <thread>
-#include <mutex>
 #include <cstddef>
 
 #include "portmap_t.hpp"
@@ -32,32 +30,22 @@ class FIFO;
 class PortIterator : public std::iterator< std::forward_iterator_tag, FIFO >
 {
 public:
-   PortIterator( portmap_t * const port_map );
+   explicit PortIterator( portmap_t * port_map );
    
-   PortIterator( portmap_t * const port_map, const std::size_t index );
-
-   PortIterator( const PortIterator &it );
-
-   virtual ~PortIterator();
+   PortIterator( portmap_t * port_map, std::size_t index );
 
    PortIterator& operator++() ;
    
-   bool operator==(const PortIterator& rhs) ; 
-   bool operator!=(const PortIterator& rhs) ;
-   FIFO& operator*() ;
-
-
-   const std::string& name();
+   bool operator==(const PortIterator& rhs) const; 
+   bool operator!=(const PortIterator& rhs) const;
+   FIFO& operator*() const;
+   
+   const std::string& name() const;
 
 private:
-   static inline
-   void initKeyMap( portmap_t * const port_map, 
-                    std::vector< std::string > &key_map ) ;
-   
-   portmap_t * const               port_map;
-   std::vector< std::string >      key_map;
-   std::size_t                     map_index = 0;
-   bool                            is_end       = false;
+   using map_iterator_type = std::decay_t<decltype(begin(portmap_t::map))>;
+
+   map_iterator_type map_iterator;
 };
 
 #endif /* END _PORTITERATOR_HPP_ */
