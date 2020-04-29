@@ -8,7 +8,6 @@ set(CPP_SRC_FILES
     dynalloc.cpp
     fifo.cpp
     graphtools.cpp
-    kernelcontainer.cpp
     kernel.cpp
     kernel_all.cpp
     kernelexception.cpp

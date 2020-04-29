@@ -51,6 +51,16 @@ template < std::size_t size = 65536 > struct filechunk
       start_position = other.start_position;
       length = other.length;
    }
+   
+   constexpr filechunk< size >& operator = ( const filechunk< size > &other )
+   {
+        //TODO - this will work for now, but there's better things
+        //that we can do. 
+        std::memcpy( buffer, other.buffer, other.length + 1 /** cp null term **/ );
+        start_position = other.start_position;
+        length = other.length;
+        return( *this );
+   }
 
    char           buffer[ size ];
    std::size_t    start_position    = 0;
