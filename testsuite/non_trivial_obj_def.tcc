@@ -1,5 +1,7 @@
 /** for page size defs  **/
-#include <unistd.h>
+#ifdef __unix__	
+#include <unistd.h>	
+#endif
 /** for numeric limits  **/
 #include <limits>
 /** for std::size_t     **/
