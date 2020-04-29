@@ -5,17 +5,17 @@
 #include <array>
 #include "alloc_traits.tcc"
 #include "defs.hpp"
+#include "foodef.tcc"
 
 
-template < std::size_t N > class foo
-{
-public:
-   foo( const int a ) : A( a ){}
+/**
+ * FIXME: this test case setup should rely on multiples
+ * of L1D_CACHE_LINE_SIZE vs. raw hard coded numbers..
+ * if we move to a 128B or 32B cache line theen these
+ * cases will fail or succeed haphazardly. - jcb 1 Sept 2019
+ */
 
-private:
-   const int A;
-   char pad[ N ];
-};
+
 
 int
 main()
@@ -52,7 +52,17 @@ main()
     {
         return( EXIT_FAILURE );
     }
-    if( ext_alloc< foo< 60 > >::value != false )
+    /** 
+     * made this class an external one, which is now int vs. char, 
+     * fixing the qantity allocated, eventually we need to fix the
+     * hardcoding to something that is dynamic. 
+     */
+    //if( ext_alloc< foo< 60 > >::value != false )
+    /**
+     * this should hit internal ctor alloc and ret
+     * false.
+     */
+    if( ext_alloc< foo< 15 > >::value != false )
     {
         return( EXIT_FAILURE );
     }
