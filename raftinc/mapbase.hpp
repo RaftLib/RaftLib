@@ -83,7 +83,7 @@ public:
                           const std::size_t buffer = 0 )
    {
       updateKernels( a, b );
-      PortInfo *port_info_a;
+      PortInfo *port_info_a( nullptr );
       try{ 
          port_info_a =  &(a->output.getPortInfo());
       }
@@ -94,7 +94,7 @@ public:
                        a );
       }
       port_info_a->fixed_buffer_size = buffer;
-      PortInfo *port_info_b;
+      PortInfo *port_info_b( nullptr );
       try{
          port_info_b = &(b->input.getPortInfo());
       }
@@ -174,7 +174,7 @@ public:
                           const std::size_t buffer = 0 )
    {
       updateKernels( a, b );
-      PortInfo *port_info_a;
+      PortInfo *port_info_a( nullptr );
       try{
          port_info_a = &(a->output.getPortInfo() );
       }

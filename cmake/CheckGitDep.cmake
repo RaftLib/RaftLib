@@ -26,6 +26,14 @@ foreach( GMOD ${GIT_MODULES} )
     if( EXISTS ${DEPDIR}/${GMOD}/include )
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${DEPDIR}/${GMOD}/include" )
     endif()
+    ##
+    # A bit of a silly hack to pull in flags from sub-modules
+    # that we have when we want to inject namespaces into the 
+    # sub-modules. 
+    ##
+    if( EXISTS ${DEPDIR}/${GMOD}/moduleflags.cmake )
+        include( ${DEPDIR}/${GMOD}/moduleflags.cmake )
+    endif()
  elseif( EXISTS ${DEPDIR}/${GMOD}/autogen.sh )
     ##TODO, need to cleanup in-source build manually...should fix
     message( STATUS "Found automake dir in git-dep, attempting to incorporate..." )
