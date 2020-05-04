@@ -5,7 +5,7 @@
 std::string 
 common::__printClassName( const std::string &&obj_name )
 {
-   return raft::demangle(obj_name.c_str());
+   return( raft::demangle(obj_name.c_str()) );
 }
 
 

@@ -46,7 +46,6 @@
 #include "kpair.hpp"
 #include "portorder.hpp"
 #include "kernel_pair_t.hpp"
-#include "demangle.hpp"
 
 class MapBase
 {
@@ -315,27 +314,9 @@ protected:
         }
     }
 
-   static void inline portNotFound( const bool src, 
-                                    const AmbiguousPortAssignmentException &ex, 
-                                    raft::kernel * const k )
-   {
-         std::stringstream ss;
-         const auto name( raft::demangle( typeid( *k ).name() ) );
-         if( src )
-         {
-            ss << ex.what() << "\n";
-            ss << "Output port from source kernel (" << name << ") " <<
-                   "has more than a single port.";
-
-         }
-         else
-         {
-            ss << ex.what() << "\n";
-            ss << "Input port from destination kernel (" << name << ") " <<
-                   "has more than a single port.";
-         }
-         throw AmbiguousPortAssignmentException( ss.str() );
-   }
+   static void portNotFound( const bool src, 
+                             const AmbiguousPortAssignmentException &ex, 
+                             raft::kernel * const k );
 
    /** need to keep source kernels **/
    kernelkeeper              source_kernels;
