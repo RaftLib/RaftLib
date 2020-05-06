@@ -55,11 +55,6 @@ if( BUILD_EXAMPLES )
     add_subdirectory( examples )
 endif( BUILD_EXAMPLES )
 
-mark_as_advanced( BUILD_BENCHMARKS )
-set( BUILD_BENCHMARKS false CACHE BOOL "Benchmarks are built if true" )
-if( BUILD_BENCHMARKS )
-    add_subdirectory( benchmarks )
-endif( BUILD_BENCHMARKS )
 
 mark_as_advanced( BUILD_WOPENCV )
 set( BUILD_BENCHMARKS false CACHE BOOL "Build OpenCV Examples if true" ) 
