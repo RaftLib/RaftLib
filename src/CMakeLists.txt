@@ -53,8 +53,8 @@ target_link_libraries(
                        raft 
                        ${CMAKE_SCOTCH_LIBS}
                        ${CMAKE_QTHREAD_LIBS} 
-                       affinity
                        demangle
+                       affinity
                      )
 
 

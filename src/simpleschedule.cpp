@@ -3,7 +3,7 @@
  * @author: Jonathan Beard
  * @version: Thu Sep 11 15:49:57 2014
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2020 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@
 #include "simpleschedule.hpp"
 #include "rafttypes.hpp"
 #include "affinity.hpp"
+
 #ifdef USE_PARTITION
 #include "partition_scotch.hpp"
 #endif
