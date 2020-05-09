@@ -54,6 +54,14 @@ NOTE: The default prefix in the makefile is:
 ```
 PREFIX ?= /usr/local
 ```
+
+## Using
+* When building applications with RaftLib, on Linux it is best to 
+use the **pkg-config** file, as an example, using the _poc.cpp_ example,
+```bash
+g++ `pkg-config --cflags raftlib` poc.cpp -o poc `pkg-config --libs raftlib`
+```
+
 Feel free to substitute your favorite build tool. I use Ninja and make depending on which machine I'm on. To change out, use cmake to generate the appropriate build files with the -Gxxx flag.
 
 ### Citation

@@ -34,15 +34,30 @@ execute_process( COMMAND rm -f ${HELPER_DIR}/cacheinfo )
 
 if( NOT L1D_LINE_SIZE )
     set( L1D_LINE_SIZE 64 )
-    message( INFO " Couldn't detect cache line size, set to: ${L1D_LINE_SIZE}" )
+    message( STATUS "Couldn't detect cache line size, set to: ${L1D_LINE_SIZE}" )
 else( NOT L1D_LINE_SIZE )
-    message( INFO " Detected cache line size, set to: ${L1D_LINE_SIZE}" )
+    message( STATUS "Detected cache line size, set to: ${L1D_LINE_SIZE}" )
 endif( NOT L1D_LINE_SIZE )
 
 ##
 # for cache line size
 ##
 add_definitions( "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" ) 
+
+
+##
+# get pkg-config for install
+##
+mark_as_advanced( PKG_CONFIG_PATHWAY )
+set( PKG_CONFIG_PATH "" CACHE STRING "Set the pkg-config path, othwerwise will figure out" )
+if( NOT PKG_CONFIG_PATH )
+execute_process( COMMAND  pkg-config --variable pc_path pkg-config 
+                 COMMAND  tr ':' '\n' 
+                 COMMAND  head -n 1
+                 OUTPUT_VARIABLE LOCAL_PKG_CONFIG_PATHWAY )
+set( PKG_CONFIG_PATH ${LOCAL_PKG_CONFIG_PATHWAY} )
+endif()
+message( STATUS "Setting PKG_CONFIG_PATH to: ${PKG_CONFIG_PATH}" )
 
 include( CheckGitDep )
 
@@ -85,3 +100,18 @@ foreach( HFILE ${MAINHEADERS} )
  install( FILES ${CMAKE_CURRENT_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 endforeach( HFILE ${MAINHEADERS} )
 
+##
+# setup pkg-config files
+##
+if( NOT ${USEQTHREAD} )
+install( CODE "file( COPY  ${CMAKE_SOURCE_DIR}/raftlib.pc
+                     DESTINATION ${CMAKE_BINARY_DIR} )" )
+else()
+install( CODE "file( COPY  ${CMAKE_SOURCE_DIR}/raftlib.pc-qthreads
+                     DESTINATION ${CMAKE_BINARY_DIR} )" )
+install( CODE "file( RENAME raftlib.pc-qthreads raftlib.pc )" )                     
+endif()
+
+
+install( CODE "file( COPY  raftlib.pc
+                     DESTINATION ${PKG_CONFIG_PATH} )" )

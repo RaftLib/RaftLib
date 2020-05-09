@@ -8,6 +8,6 @@ Description: RaftLib C++ Streaming/Data-flow Library
 Version: 0.7a
 Requires: 
 Conflicts: 
-Libs:  -L${libdir} -lshm -lraft -lpthread #-lrt
+Libs:  -L${libdir} -lraft -lshm -laffinity -ldemangle -lpthread -lrt 
 Libs.private: 
 Cflags:  -std=c++14 -DL1D_CACHE_LINE_SIZE=64 -DPLATFORM_HAS_NUMA=0 -I/usr/local/include
