@@ -104,14 +104,14 @@ endforeach( HFILE ${MAINHEADERS} )
 # setup pkg-config files
 ##
 if( NOT ${USEQTHREAD} )
-install( CODE "file( COPY  ${CMAKE_SOURCE_DIR}/raftlib.pc
-                     DESTINATION ${CMAKE_BINARY_DIR} )" )
+install( CODE "file( COPY  ${CMAKE_CURRENT_SOURCE_DIR}/raftlib.pc
+                     DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )" )
 else()
-install( CODE "file( COPY  ${CMAKE_SOURCE_DIR}/raftlib.pc-qthreads
-                     DESTINATION ${CMAKE_BINARY_DIR} )" )
-install( CODE "file( RENAME raftlib.pc-qthreads raftlib.pc )" )                     
+install( CODE "file( COPY  ${CMAKE_CURRENT_SOURCE_DIR}/raftlib.pc-qthreads
+                     DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )" )
+install( CODE "file( RENAME ${CMAKE_CURRENT_BINARY_DIR}/raftlib.pc-qthreads ${CMAKE_CURRENT_BINARY_DIR}/raftlib.pc )" )                     
 endif()
 
 
-install( CODE "file( COPY  raftlib.pc
+install( CODE "file( COPY  ${CMAKE_CURRENT_BINARY_DIR}/raftlib.pc
                      DESTINATION ${PKG_CONFIG_PATH} )" )
