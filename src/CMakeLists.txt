@@ -54,6 +54,7 @@ target_link_libraries(
                        ${CMAKE_SCOTCH_LIBS}
                        ${CMAKE_QTHREAD_LIBS} 
                        demangle
+                       affinity
                      )
 
 

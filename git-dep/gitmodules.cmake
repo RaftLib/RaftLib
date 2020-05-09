@@ -3,10 +3,10 @@
 # - will be ignored by platforms that don't include these options
 # so not a huge deal. 
 ##
-set( DEMANGLE_CUSTOM_NAMESPACE YES ) 
+set( DEMANGLE_CUSTOM_NAMESPACE TRUE ) 
 set( DEMANGLE_NAMESPACE "raft" )
 
-set( AFFINITY_CUSTOM_NAMESPACE YES )
+set( AFFINITY_CUSTOM_NAMESPACE TRUE )
 set( AFFINITY_NAMESPACE "raft" )
 
 ##
