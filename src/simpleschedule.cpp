@@ -157,7 +157,7 @@ simple_schedule::simple_run( void * data )
    if( thread_d->loc != -1 )
    {
       /** call does nothing if not available **/
-      affinity::set( thread_d->loc );
+      raft::affinity::set( thread_d->loc );
    }
    else
    {

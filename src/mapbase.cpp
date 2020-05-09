@@ -31,6 +31,7 @@
 #include "common.hpp"
 #include "mapbase.hpp"
 #include "graphtools.hpp"
+#include "demangle.hpp"
 
 MapBase::MapBase()
 {
@@ -97,4 +98,26 @@ MapBase::insert( raft::kernel *a,  PortInfo &a_out,
          *i, i_in.my_name, i_in );
    join( *i, i_out.my_name, i_out,
          *b, b_in.my_name, b_in );
+}
+   
+void MapBase::portNotFound( const bool src, 
+                            const AmbiguousPortAssignmentException &ex, 
+                            raft::kernel * const k )
+{
+      std::stringstream ss;
+      const auto name( raft::demangle( typeid( *k ).name() ) );
+      if( src )
+      {
+         ss << ex.what() << "\n";
+         ss << "Output port from source kernel (" << name << ") " <<
+                "has more than a single port.";
+
+      }
+      else
+      {
+         ss << ex.what() << "\n";
+         ss << "Input port from destination kernel (" << name << ") " <<
+                "has more than a single port.";
+      }
+      throw AmbiguousPortAssignmentException( ss.str() );
 }

@@ -1,10 +1,8 @@
 
 set(CPP_SRC_FILES 
-    affinity.cpp
     allocate.cpp
     basicparallel.cpp
     common.cpp
-    demangle.cpp
     dynalloc.cpp
     fifo.cpp
     graphtools.cpp
@@ -55,6 +53,8 @@ target_link_libraries(
                        raft 
                        ${CMAKE_SCOTCH_LIBS}
                        ${CMAKE_QTHREAD_LIBS} 
+                       affinity
+                       demangle
                      )
 
 
