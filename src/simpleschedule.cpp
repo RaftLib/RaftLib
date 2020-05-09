@@ -28,7 +28,10 @@
 #include "map.hpp"
 #include "simpleschedule.hpp"
 #include "rafttypes.hpp"
+
+
 #include "affinity.hpp"
+
 #ifdef USE_PARTITION
 #include "partition_scotch.hpp"
 #endif

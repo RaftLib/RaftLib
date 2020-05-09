@@ -15,11 +15,12 @@ set( AFFINITY_NAMESPACE "raft" )
 if( WIN32 )
 set( GIT_MODULES 
         cmdargs 
-        demangle )
+        demangle 
+        affinity 
+        )
 else()
 ##
 set( GIT_MODULES 
-        affinity 
         shm 
         cmdargs 
         demangle )
