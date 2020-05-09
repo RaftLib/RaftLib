@@ -25,10 +25,3 @@ set( GIT_MODULES
         demangle )
 endif()
 
-
-##
-# TODO ITEMS
-##
-# 1) export CXXFLAGS here as an option, list them here, action 
-# takes place in /cmake/CheckGitDep.cmake file, same for libs
-##
