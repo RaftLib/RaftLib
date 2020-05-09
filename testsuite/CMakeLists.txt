@@ -39,7 +39,6 @@ set( TESTAPPS allocate
      allocatePopInternal 
      allocatePopInternalObject
      allocatePopExternal 
-     prefetchEffective 
      parallelchain 
      ksettest 
      fixedMatchTest 
