@@ -6,7 +6,11 @@ find_package( Threads )
 ##
 include( CheckSTD )
 
+if( NOT WIN32 )
 find_package( LIBRT )
+endif()
+
+
 ##
 # check for Scotch, use if there
 ##
