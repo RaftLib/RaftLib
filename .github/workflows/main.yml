@@ -23,8 +23,8 @@ jobs:
         cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
         buildDirectory: "${{ github.workspace }}/../../_temp"
         buildWithCMake: true
-        cmakeBuildType: Release 
         cmakeGenerator: VS16Win64 
+        buildWithCMakeArgs: --config Release  
         
     - name: 'Run CTest'
       run: ctest -C Release
