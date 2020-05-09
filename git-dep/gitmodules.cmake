@@ -23,6 +23,7 @@ else()
 set( GIT_MODULES 
         shm 
         cmdargs 
-        demangle )
+        demangle 
+        affinity ) 
 endif()
 
