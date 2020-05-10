@@ -5,8 +5,8 @@ User Group / Mailing List: [slack channel](https://join.slack.com/t/raftlib/shar
 =============
 
 ### Build status
-[![Build Status](https://travis-ci.org/RaftLib/RaftLib.svg?branch=master)](https://travis-ci.org/RaftLib/RaftLib)
 
+![CI](https://github.com/RaftLib/RaftLib/workflows/CI/badge.svg?event=push)
 
 ### Pre-requisites
 
