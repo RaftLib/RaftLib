@@ -6,7 +6,7 @@ User Group / Mailing List: [slack channel](https://join.slack.com/t/raftlib/shar
 
 ### Build status
 
-![CI](https://github.com/f-tischler/RaftLib/workflows/CI/badge.svg?event=push)
+![CI](https://github.com/RaftLib/RaftLib/workflows/CI/badge.svg?event=push)
 
 ### Pre-requisites
 
