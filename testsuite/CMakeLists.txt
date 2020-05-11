@@ -56,7 +56,7 @@ set( TESTAPPS allocate
      allocate_s_string
      allpush
      nonTrivialAllocatorPop
-     nonTrivialAllocatorPopExternal
+     #nonTrivialAllocatorPopExternal
      )
 
 if( BUILDRANDOM )

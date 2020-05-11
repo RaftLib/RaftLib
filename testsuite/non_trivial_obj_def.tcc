@@ -19,7 +19,9 @@ struct base_non_trivial_object
     using ptr_t = std::int64_t;
     using self_t = const base_non_trivial_object;
 
-    base_non_trivial_object() = default;
+    base_non_trivial_object()
+    {
+    }
     
     base_non_trivial_object( ptr_t *value )
     {
