@@ -29,7 +29,6 @@
 #include "map.hpp"
 #include "poolschedule.hpp"
 #include "rafttypes.hpp"
-#include "sched_cmd_t.hpp"
 #include <qthread/qthread.hpp>
 #include <qthread/sinc.h>
 #include <mutex>

@@ -6,7 +6,7 @@
 #include <raftio>
 #include "non_trivial_obj_def.tcc"
 
-static bool global_bool = false;
+bool global_bool = false;
 
 /** with true  param b/c we want the padding **/
 using non_trivial_obj_t = raft::test::non_trivial_object< true >;
