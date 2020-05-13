@@ -80,7 +80,7 @@ template <> struct non_trivial_object<true> : base_non_trivial_object
 #elif defined (_SC_PAGESIZE )
     _SC_PAGESIZE << 1
 #else
-    1 << 30
+    1 << 13 /** more reasonable size, larger will seg fault on some systems **/
 #endif
     ];
 };
