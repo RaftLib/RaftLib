@@ -57,6 +57,7 @@ set( TESTAPPS allocate
      allpush
      nonTrivialAllocatorPop
      nonTrivialAllocatorPopExternal
+     vectorAlloc
      )
 
 if( BUILDRANDOM )
