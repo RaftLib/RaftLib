@@ -77,7 +77,7 @@ If you use this framework for something that gets published, please cite it as:
 }
 ```
 ### Other Info Sources
-* [OpenCV wrappers for RaftLib](https://github.com/jdavidberger/RaftOCV/tree/d47d8f5789da986d0288c2e9a9397593c0cac387)
+* [OpenCV wrappers for RaftLib](https://github.com/RaftLib/RaftOCV)
 * [Project web page](http://raftlib.io)
 * [Project wiki page](https://github.com/jonathan-beard/RaftLib/wiki)
 * [Blog post intro](https://goo.gl/4VDlbr)
