@@ -58,6 +58,7 @@ set( TESTAPPS allocate
      nonTrivialAllocatorPop
      nonTrivialAllocatorPopExternal
      vectorAlloc
+     stringAlloc
      )
 
 if( BUILDRANDOM )
