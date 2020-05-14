@@ -1,7 +1,7 @@
 ##
 # check out other repos we need
 ##
-set( DEPDIR ${CMAKE_SOURCE_DIR}/git-dep )
+set( DEPDIR ${CMAKE_CURRENT_SOURCE_DIR}/git-dep )
 
 
 
@@ -17,9 +17,9 @@ include(ExternalProject)
 foreach( GMOD ${GIT_MODULES} )
  message( INFO " Initializing sub-module ${DEPDIR}/${GMOD} from git repo!" )
  execute_process( COMMAND git submodule init ${DEPDIR}/${GMOD}
-                  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}) 
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}) 
  execute_process( COMMAND git submodule update ${DEPDIR}/${GMOD} 
-                  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
  ##
  # build execs if needed
  ##
