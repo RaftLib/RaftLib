@@ -12,8 +12,6 @@ User Group / Mailing List: [slack channel](https://join.slack.com/t/raftlib/shar
 
 #### OS X & Linux
 Compiler: c++14 capable -> Clang, GNU GCC 5.0+, or Intel icc
-Libraries: 
-* Boost, if not installed, needed headers automatically downloaded with cmake
 
 #### Windows
 * Latest merge from pull request to main should enable compilation on VS on Win10.
