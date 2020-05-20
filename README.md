@@ -1,6 +1,6 @@
 [RaftLib](http://raftlib.io) is a C++ Library for enabling stream/data-flow parallel computation. Using simple right shift operators (just like the C++ streams that you would use for string manipulation), you can link parallel compute kernels together. With RaftLib, we do away with explicit use of pthreads, std::thread, OpenMP, or any other parallel "threading" library. These are often mis-used, creating non-deterministic behavior. RaftLib's model allows lock-free FIFO-like access to the communications channels connecting each compute kernel. The full system has many auto-parallelization, optimization, and convenience features that enable relatively simple authoring of performant applications. This project is currently in the alpha stage. The beta release will bring back multi-node support, along with (planned) container support for the remote machines. Feel free to give it a shot, if you have any issues, also feel free to send the authors an e-mail.
 
-User Group / Mailing List: [slack channel](https://join.slack.com/t/raftlib/shared_invite/enQtMjk3MjYyODYxODYzLWM5YmMxZTE1YmY0NDIwZTFkNmE1OThhMTUxOGZlYWI5MmE4ZjViZWI1OWI5ZGRmNTdmYWMwNWJjN2VkOWEwOTM)
+User Group / Mailing List: [slack channel](https://join.slack.com/t/raftlib/shared_invite/zt-3sk6ms6f-eEBd23dz98JnoRiXLaRmNw)
 
 =============
 
