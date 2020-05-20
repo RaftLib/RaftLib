@@ -43,11 +43,14 @@ MapBase::~MapBase()
     auto &the_container( internally_created_kernels.acquire() );
     for( auto *kernel : the_container )
     {
-        if( kernel != nullptr )
-        {   
-            delete( kernel );
-            kernel = nullptr;
-        }   
+        /**
+         * NOTE: if we re-add the dynamic add code that doesn't
+         * lock the list on remove, and sets this list entry to 
+         * nullptr after calling detructor, then we might need to
+         * re-add the nullptr check, or make this a custom 
+         * asynch structure vs. the stdlib container it is now. 
+         */
+        delete( kernel );
     }
     /** 
      * as long as this derives from something that meets the "sequence container" def
