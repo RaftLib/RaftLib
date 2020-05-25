@@ -26,8 +26,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _MAPBASE_HPP_
-#define _MAPBASE_HPP_  1
+#ifndef MAPBASE_HPP
+#define MAPBASE_HPP  1
 #include <typeinfo>
 #include <cassert>
 #include <vector>
@@ -346,4 +346,4 @@ protected:
 };
    
 
-#endif /* END _MAPBASE_HPP_ */
+#endif /* END MAPBASE_HPP */

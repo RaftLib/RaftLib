@@ -20,8 +20,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PARTITION_DUMMY_HPP_
-#define _PARTITION_DUMMY_HPP_  1
+#ifndef PARTITION_DUMMY_HPP
+#define PARTITION_DUMMY_HPP  1
 #include "interface_partition.hpp"
 
 class partition_dummy : public interface_partition
@@ -33,4 +33,4 @@ public:
     virtual void partition( kernelkeeper &kernels );
 
 };
-#endif /* END _PARTITION_DUMMY_HPP_ */
+#endif /* END PARTITION_DUMMY_HPP */

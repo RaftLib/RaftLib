@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _GENERATE_TCC_
-#define _GENERATE_TCC_  1
+#ifndef GENERATE_TCC
+#define GENERATE_TCC  1
 namespace raft
 {
 
@@ -57,4 +57,4 @@ private:
 } //end namespace test
 
 } //end namespace raft
-#endif /* END _GENERATE_TCC_ */
+#endif /* END GENERATE_TCC */

@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _JOIN_TCC_
-#define _JOIN_TCC_  1
+#ifndef JOIN_TCC
+#define JOIN_TCC  1
 #include <raft>
 #include <cstddef>
 
@@ -83,4 +83,4 @@ protected:
    method split_func;
 };
 }
-#endif /* END _JOIN_TCC_ */
+#endif /* END JOIN_TCC */

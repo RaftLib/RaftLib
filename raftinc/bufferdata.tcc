@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _BUFFERDATA_TCC_
-#define _BUFFERDATA_TCC_  1
+#ifndef BUFFERDATA_TCC
+#define BUFFERDATA_TCC  1
 #include <cstdint>
 #include <cstddef>
 #include <cstring>
@@ -481,4 +481,4 @@ template < class T > struct Data< T, Type::SharedMemory > :
 };
 #endif //END BUILDSHM
 } //end namespace Buffer
-#endif /* END _BUFFERDATA_TCC_ */
+#endif /* END BUFFERDATA_TCC */

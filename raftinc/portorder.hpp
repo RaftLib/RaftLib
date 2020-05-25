@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PORTORDER_HPP_
-#define _PORTORDER_HPP_  1
+#ifndef PORTORDER_HPP
+#define PORTORDER_HPP  1
 #include <cstdint>
 
 namespace raft
@@ -30,4 +30,4 @@ namespace order
 }
 
 } /** end namespace raft **/
-#endif /* END _PORTORDER_HPP_ */
+#endif /* END PORTORDER_HPP */

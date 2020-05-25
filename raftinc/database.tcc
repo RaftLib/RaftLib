@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _DATABASE_TCC_
-#define _DATABASE_TCC_  1
+#ifndef DATABASE_TCC
+#define DATABASE_TCC  1
 
 #include "pointer.hpp"
 #include "signal.hpp"
@@ -123,4 +123,4 @@ template < class T > struct DataBase
 };
 
 } /** end namespace Buffer **/
-#endif /* END _DATABASE_TCC_ */
+#endif /* END DATABASE_TCC */

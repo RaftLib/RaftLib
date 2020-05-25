@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RAFTMATH_TCC_
-#define _RAFTMATH_TCC_  1
+#ifndef RAFTMATH_TCC
+#define RAFTMATH_TCC  1
 
 namespace raft
 {
@@ -101,4 +101,4 @@ template < typename RETTYPE,
 
 } /** end namespace raft **/
 
-#endif /* END _RAFTMATH_TCC_ */
+#endif /* END RAFTMATH_TCC */

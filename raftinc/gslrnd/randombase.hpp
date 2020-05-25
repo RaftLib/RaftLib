@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RANDOMBASE_HPP_
-#define _RANDOMBASE_HPP_  1
+#ifndef RANDOMBASE_HPP
+#define RANDOMBASE_HPP  1
 #include <cstdint>
 
 namespace raft{
@@ -65,4 +65,4 @@ protected:
 };
 
 }
-#endif /* END _RANDOMBASE_HPP_ */
+#endif /* END RANDOMBASE_HPP */

@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RANDOMSTRING_TCC_
-#define _RANDOMSTRING_TCC_  1
+#ifndef RANDOMSTRING_TCC
+#define RANDOMSTRING_TCC  1
 #include <string>
 #include <cstdint>
 #include <cstring>
@@ -100,4 +100,4 @@ private:
    const gsl_rng_type *t;
 };
 
-#endif /* END _RANDOMSTRING_TCC_ */
+#endif /* END RANDOMSTRING_TCC */

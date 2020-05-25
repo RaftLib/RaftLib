@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _DEPARTURERATESAMPLETYPE_TCC_
-#define _DEPARTURERATESAMPLETYPE_TCC_  1
+#ifndef DEPARTURERATESAMPLETYPE_TCC
+#define DEPARTURERATESAMPLETYPE_TCC  1
 #include <string>
 
 #include <queue>
@@ -130,4 +130,4 @@ std::array< ITEM , 100000 > item_log;
 std::int64_t item_index = 0;
 #endif
 };
-#endif /* END _DEPARTURERATESAMPLETYPE_TCC_ */
+#endif /* END DEPARTURERATESAMPLETYPE_TCC */

@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PORT_INFO_TYPES_HPP_
-#define _PORT_INFO_TYPES_HPP_  1
+#ifndef PORT_INFO_TYPES_HPP
+#define PORT_INFO_TYPES_HPP  1
 #include <cstddef>
 #include <map>
 #include <functional>
@@ -40,4 +40,4 @@ using instr_map_t =  std::map< bool, std::function< FIFO* ( std::size_t /** n_it
 
 using split_factory_t = std::function< raft::kernel*() >;
 using join_factory_t  = std::function< raft::kernel*() >;
-#endif /* END _PORT_INFO_TYPES_HPP_ */
+#endif /* END PORT_INFO_TYPES_HPP */

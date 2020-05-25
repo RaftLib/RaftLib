@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _DEFS_HPP_
-#define _DEFS_HPP_  1
+#ifndef DEFS_HPP
+#define DEFS_HPP  1
 #include <set>
 #include <map>
 #include <functional>
@@ -85,4 +85,4 @@ namespace raft
 enum schedule_behavior : std::uint8_t { any_port = 0,
                                         all_port = 1 };
 }
-#endif /* END _DEFS_HPP_ */
+#endif /* END DEFS_HPP */

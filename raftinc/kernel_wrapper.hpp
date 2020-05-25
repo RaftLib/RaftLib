@@ -26,8 +26,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _KERNEL_WRAPPER_HPP_
-#define _KERNEL_WRAPPER_HPP_  1
+#ifndef KERNEL_WRAPPER_HPP
+#define KERNEL_WRAPPER_HPP  1
 #include <cstdint>
 
 /** pre-declare kpair, header included in cpp file **/
@@ -98,4 +98,4 @@ protected:
 
 }
 
-#endif /* END _KERNEL_WRAPPER_HPP_ */
+#endif /* END KERNEL_WRAPPER_HPP */

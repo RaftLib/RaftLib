@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _COMMON_HPP_
-#define _COMMON_HPP_  1
+#ifndef COMMON_HPP
+#define COMMON_HPP  1
 #include <string>
 #include <cstdlib>
 #include <cassert>
@@ -56,4 +56,4 @@ template < class K > static
 
 };
 
-#endif /* END _COMMON_HPP_ */
+#endif /* END COMMON_HPP */

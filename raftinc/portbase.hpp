@@ -20,8 +20,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PORTBASE_HPP_
-#define _PORTBASE_HPP_  1
+#ifndef PORTBASE_HPP
+#define PORTBASE_HPP  1
 
 #include "portiterator.hpp"
 
@@ -66,4 +66,4 @@ public:
    virtual PortIterator end()   = 0;
 
 };
-#endif /* END _PORTBASE_HPP_ */
+#endif /* END PORTBASE_HPP */

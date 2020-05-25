@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _TYPECHECK_HPP_
-#define _TYPECHECK_HPP_  1
+#ifndef TYPECHECK_HPP
+#define TYPECHECK_HPP  1
 #include <cstddef>
 
 class typecheck {
@@ -31,4 +31,4 @@ public:
    type_size() = 0;
 
 };
-#endif /* END _TYPECHECK_HPP_ */
+#endif /* END TYPECHECK_HPP */

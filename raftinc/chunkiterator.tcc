@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _CHUNKITERATOR_HPP_
-#define _CHUNKITERATOR_HPP_  1
+#ifndef CHUNKITERATOR_HPP
+#define CHUNKITERATOR_HPP  1
 #include <iterator>
 #include <map>
 #include <thread>
@@ -133,4 +133,4 @@ private:
 };
 
 }
-#endif /* END _CHUNKITERATOR_HPP_ */
+#endif /* END CHUNKITERATOR_HPP */

@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PORTEXCEPTION_HPP_
-#define _PORTEXCEPTION_HPP_  1
+#ifndef PORTEXCEPTION_HPP
+#define PORTEXCEPTION_HPP  1
 #include <string>
 #include <utility> 
 

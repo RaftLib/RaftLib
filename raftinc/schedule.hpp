@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _SCHEDULE_HPP_
-#define _SCHEDULE_HPP_  1
+#ifndef SCHEDULE_HPP
+#define SCHEDULE_HPP  1
 #include <setjmp.h>
 #include "signalvars.hpp"
 #include "systemsignalhandler.hpp"
@@ -183,4 +183,4 @@ protected:
    kernelkeeper &dst_kernels;
    kernelkeeper &internally_created_kernels;
 };
-#endif /* END _SCHEDULE_HPP_ */
+#endif /* END SCHEDULE_HPP */

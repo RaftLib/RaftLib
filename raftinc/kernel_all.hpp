@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _KERNEL_ALL_HPP_
-#define _KERNEL_ALL_HPP_  1
+#ifndef KERNEL_ALL_HPP
+#define KERNEL_ALL_HPP  1
 
 #include "kernel.hpp"
 
@@ -34,4 +34,4 @@ public:
 };
 
 } /** end namespace raft **/
-#endif /* END _KERNEL_ALL_HPP_ */
+#endif /* END KERNEL_ALL_HPP */

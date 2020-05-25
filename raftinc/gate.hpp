@@ -3,8 +3,8 @@
  * @author: Jonathan Beard
  * @version: Wed Aug 28 17:32:47 2013
  */
-#ifndef _GATE_HPP_
-#define _GATE_HPP_  1
+#ifndef GATE_HPP
+#define GATE_HPP  1
 
 #include <cstdint>
 #include <ostream>
@@ -85,4 +85,4 @@ private:
    const  proc_t   process_count;
    bool   child;
 };
-#endif /* END _GATE_HPP_ */
+#endif /* END GATE_HPP */

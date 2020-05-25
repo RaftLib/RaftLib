@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PARALLELK_HPP_
-#define _PARALLELK_HPP_  1
+#ifndef PARALLELK_HPP
+#define PARALLELK_HPP  1
 #if LIBCOMPILE == 1
 #include "kernel.hpp"
 #else
@@ -64,4 +64,4 @@ protected:
 };
 
 }
-#endif /* END _PARALLELK_HPP_ */
+#endif /* END PARALLELK_HPP */

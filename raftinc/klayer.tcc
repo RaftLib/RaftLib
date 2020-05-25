@@ -22,7 +22,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _KLAYER_TCC_
-#define _KLAYER_TCC_  1
+#ifndef KLAYER_TCC
+#define KLAYER_TCC  1
 
-#endif /* END _KLAYER_TCC_ */
+#endif /* END KLAYER_TCC */

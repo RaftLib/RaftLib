@@ -4,8 +4,8 @@
 #include <type_traits>
 #include <typeinfo>
 
-#ifndef _ALLOC_TRAITS_
-#define _ALLOC_TRAITS_ 1
+#ifndef ALLOC_TRAITS
+#define ALLOC_TRAITS 1
 
 
 /**

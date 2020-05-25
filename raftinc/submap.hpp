@@ -22,8 +22,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _SUBMAP_HPP_
-#define _SUBMAP_HPP_  1
+#ifndef SUBMAP_HPP
+#define SUBMAP_HPP  1
 #include <map>
 #include <string>
 
@@ -52,4 +52,4 @@ protected:
 };
 
 } /** end namespace raft **/
-#endif /* END _SUBMAP_HPP_ */
+#endif /* END SUBMAP_HPP */

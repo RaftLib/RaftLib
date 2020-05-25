@@ -17,12 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RAFTTYPES_HPP_
-#define _RAFTTYPES_HPP_  1
+#ifndef RAFTTYPES_HPP
+#define RAFTTYPES_HPP  1
 namespace raft{
 enum kstatus {
    stop,
    proceed
 };
 }
-#endif /* END _RAFTTYPES_HPP_ */
+#endif /* END RAFTTYPES_HPP */

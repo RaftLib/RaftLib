@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _SIMPLESSCHEDULE_HPP_
-#define _SIMPLESSCHEDULE_HPP_  1
+#ifndef SIMPLESSCHEDULE_HPP
+#define SIMPLESSCHEDULE_HPP  1
 #include <vector>
 #include <thread>
 #include <cstdint>
@@ -73,4 +73,4 @@ protected:
    std::mutex                    thread_map_mutex;
    std::vector< thread_info_t* > thread_map;
 };
-#endif /* END _SIMPLESSCHEDULE_HPP_ */
+#endif /* END SIMPLESSCHEDULE_HPP */

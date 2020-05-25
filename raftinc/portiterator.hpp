@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PORTITERATOR_HPP_
-#define _PORTITERATOR_HPP_  1
+#ifndef PORTITERATOR_HPP
+#define PORTITERATOR_HPP  1
 #include <iterator>
 #include <map>
 #include <cstddef>
@@ -48,4 +48,4 @@ private:
    map_iterator_type map_iterator;
 };
 
-#endif /* END _PORTITERATOR_HPP_ */
+#endif /* END PORTITERATOR_HPP */

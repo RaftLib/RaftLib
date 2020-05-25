@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _POINTER_HPP_
-#define _POINTER_HPP_  1
+#ifndef POINTER_HPP
+#define POINTER_HPP  1
 
 #include <cstdlib>
 #include <cstdint>
@@ -100,4 +100,4 @@ private:
    volatile wrap_t    wrap_b  = 0;
    const    std::size_t      max_cap;
 };
-#endif /* END _POINTER_HPP_ */
+#endif /* END POINTER_HPP */

@@ -18,8 +18,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _DCT_TCC_
-#define _DCT_TCC_  1
+#ifndef DCT_TCC
+#define DCT_TCC  1
 #include <raft>
 #include <cmath>
 #include <cstddef>
@@ -224,4 +224,4 @@ public:
 
 
 } /** end namespace raft **/
-#endif /* END _DCT_TCC_ */
+#endif /* END DCT_TCC */

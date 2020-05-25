@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _SPLITMETHOD_HPP_
-#define _SPLITMETHOD_HPP_  1
+#ifndef SPLITMETHOD_HPP
+#define SPLITMETHOD_HPP  1
 
 #include <type_traits>
 #include <functional>
@@ -108,4 +108,4 @@ protected:
    enum functype { sendtype, gettype };
    virtual FIFO*  select_fifo( Port &port_list, const functype type ) = 0;
 };
-#endif /* END _SPLITMETHOD_HPP_ */
+#endif /* END SPLITMETHOD_HPP */

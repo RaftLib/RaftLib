@@ -19,8 +19,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _SYSTEMSIGNAL_HPP_
-#define _SYSTEMSIGNAL_HPP_  1
+#ifndef SYSTEMSIGNAL_HPP
+#define SYSTEMSIGNAL_HPP  1
 
 #include "signalvars.hpp"
 #include "rafttypes.hpp"
@@ -47,4 +47,4 @@ using sighandler = raft::kstatus (*)( FIFO               &fifo,
                                       const raft::signal  signal,
                                       void               *data ); 
 
-#endif /* END _SYSTEMSIGNAL_HPP_ */
+#endif /* END SYSTEMSIGNAL_HPP */

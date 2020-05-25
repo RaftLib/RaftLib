@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _ARRIVALRATESAMPLETYPE_TCC_
-#define _ARRIVALRATESAMPLETYPE_TCC_  1
+#ifndef ARRIVALRATESAMPLETYPE_TCC
+#define ARRIVALRATESAMPLETYPE_TCC  1
 
 #include <string>
 
@@ -106,4 +106,4 @@ private:
    bool    finished;
    sclock_t prev_time;
 };
-#endif /* END _ARRIVALRATESAMPLETYPE_TCC_ */
+#endif /* END ARRIVALRATESAMPLETYPE_TCC */
