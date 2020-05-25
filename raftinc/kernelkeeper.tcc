@@ -18,8 +18,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _KERNELKEEPER_TCC_
-#define _KERNELKEEPER_TCC_  1
+#ifndef KERNELKEEPER_TCC
+#define KERNELKEEPER_TCC  1
 #include <set>
 #include <cstdio>
 #include <cstdlib>
@@ -114,4 +114,4 @@ public:
 
 using kernelkeeper   = keeper< std::set< raft::kernel* >, raft::kernel >;
 
-#endif /* END _KERNELKEEPER_TCC_ */
+#endif /* END KERNELKEEPER_TCC */

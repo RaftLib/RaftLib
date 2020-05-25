@@ -23,8 +23,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PORTTEMPLATE_HPP_
-#define _PORTTEMPLATE_HPP_  1
+#ifndef PORTTEMPLATE_HPP
+#define PORTTEMPLATE_HPP  1
 #include <map>
 #include "port_info.hpp"
 
@@ -38,4 +38,4 @@ public:
 protected:  
    std::map< std::string, PortInfo& > map; 
 };
-#endif /* END _PORTTEMPLATE_HPP_ */
+#endif /* END PORTTEMPLATE_HPP */

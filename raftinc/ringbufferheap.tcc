@@ -17,12 +17,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RINGBUFFERHEAP_TCC_
-#define _RINGBUFFERHEAP_TCC_  1
+#ifndef RINGBUFFERHEAP_TCC
+#define RINGBUFFERHEAP_TCC  1
 
 #include "portexception.hpp"
 #include "ringbufferheap_abstract.tcc"
-#include "scheduleconst.hpp"
 #include "defs.hpp"
 #include "alloc_traits.tcc"
 #include "prefetch.hpp"
@@ -1494,4 +1493,4 @@ protected:
 
 };
 
-#endif /* END _RINGBUFFERHEAP_TCC_ */
+#endif /* END RINGBUFFERHEAP_TCC */

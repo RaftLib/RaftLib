@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _MAPEXCEPTION_HPP_
-#define _MAPEXCEPTION_HPP_  1
+#ifndef MAPEXCEPTION_HPP
+#define MAPEXCEPTION_HPP  1
 #include <string>
 #include <utility>
 
@@ -44,4 +44,4 @@ public:
 using InvalidTopologyOperationException
     = MapExceptionBase< 0 >;
 
-#endif /* END _MAPEXCEPTION_HPP_ */
+#endif /* END MAPEXCEPTION_HPP */

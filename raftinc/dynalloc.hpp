@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _DYNALLOC_HPP_
-#define _DYNALLOC_HPP_  1
+#ifndef DYNALLOC_HPP
+#define DYNALLOC_HPP  1
 #include "allocate.hpp"
 
 namespace raft
@@ -59,4 +59,4 @@ private:
                              PortInfo &b );
 };
 
-#endif /* END _DYNALLOC_HPP_ */
+#endif /* END DYNALLOC_HPP */

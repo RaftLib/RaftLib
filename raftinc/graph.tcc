@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _GRAPH_TCC_
-#define _GRAPH_TCC_  1
+#ifndef GRAPH_TCC
+#define GRAPH_TCC  1
 #include <cstddef>
 #include <cstdint>
 #include <map>
@@ -273,4 +273,4 @@ public:
 };
 
 } /** end namespace raft **/
-#endif /* END _GRAPH_TCC_ */
+#endif /* END GRAPH_TCC */

@@ -20,8 +20,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _STREAMINGSTAT_TCC_
-#define _STREAMINGSTAT_TCC_  1
+#ifndef STREAMINGSTAT_TCC
+#define STREAMINGSTAT_TCC  1
 
 #include <cstdint>
 #include <cmath>
@@ -104,4 +104,4 @@ private:
 };
 
 } /** end namespace raft **/
-#endif /* END _STREAMINGSTAT_TCC_ */
+#endif /* END STREAMINGSTAT_TCC */

@@ -21,8 +21,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PARTITION_BASIC_TCC_
-#define _PARTITION_BASIC_TCC_  1
+#ifndef PARTITION_BASIC_TCC
+#define PARTITION_BASIC_TCC  1
 #include <cstdint>
 #include <cstddef>
 #include "interface_partition.hpp"
@@ -46,4 +46,4 @@ public:
    virtual void partition( kernelkeeper &c );
 };
 
-#endif /* END _PARTITION_BASIC_TCC_ */
+#endif /* END PARTITION_BASIC_TCC */

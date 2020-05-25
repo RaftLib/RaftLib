@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _ROUNDROBIN_HPP_
-#define _ROUNDROBIN_HPP_  1
+#ifndef ROUNDROBIN_HPP
+#define ROUNDROBIN_HPP  1
 
 #include "fifo.hpp"
 #include "port.hpp"
@@ -33,4 +33,4 @@ public:
 protected:
    virtual FIFO*  select_fifo( Port &port_list, const functype type );
 };
-#endif /* END _ROUNDROBIN_HPP_ */
+#endif /* END ROUNDROBIN_HPP */

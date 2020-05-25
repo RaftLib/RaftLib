@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _BASICPARALLEL_HPP_
-#define _BASICPARALLEL_HPP_  1
+#ifndef BASICPARALLEL_HPP
+#define BASICPARALLEL_HPP  1
 
 
 #include "kernel.hpp"
@@ -69,4 +69,4 @@ protected:
    volatile bool  &exit_para;
 };
 
-#endif /* END _BASICPARALLEL_HPP_ */
+#endif /* END BASICPARALLEL_HPP */

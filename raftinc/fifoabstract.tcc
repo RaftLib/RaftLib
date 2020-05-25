@@ -19,8 +19,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _FIFOABSTRACT_TCC_
-#define _FIFOABSTRACT_TCC_  1
+#ifndef FIFOABSTRACT_TCC
+#define FIFOABSTRACT_TCC  1
 #include "ringbuffertypes.hpp"
 #include "bufferdata.tcc"
 #include "blocked.hpp"
@@ -40,4 +40,4 @@ protected:
    volatile bool            allocate_called = false;
    Blocked::value_type      n_allocated     = 1;
 };
-#endif /* END _FIFOABSTRACT_TCC_ */
+#endif /* END FIFOABSTRACT_TCC */

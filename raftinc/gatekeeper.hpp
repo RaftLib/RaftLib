@@ -3,8 +3,8 @@
  * @author: Jonathan Beard
  * @version: Thu Aug 29 09:17:03 2013
  */
-#ifndef _GATEKEEPER_HPP_
-#define _GATEKEEPER_HPP_  1
+#ifndef GATEKEEPER_HPP
+#define GATEKEEPER_HPP  1
 
 
 
@@ -61,4 +61,4 @@ private:
    const int64_t num_processors;
 };
 
-#endif /* END _GATEKEEPER_HPP_ */
+#endif /* END GATEKEEPER_HPP */

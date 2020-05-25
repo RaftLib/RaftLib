@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PORTMAP_T_HPP_
-#define _PORTMAP_T_HPP_  1
+#ifndef PORTMAP_T_HPP
+#define PORTMAP_T_HPP  1
 
 #include <map>
 #include <string>
@@ -34,4 +34,4 @@ struct portmap_t
    std::mutex                        mutex_map;
 };
 
-#endif /* END _PORTMAP_T_HPP_ */
+#endif /* END PORTMAP_T_HPP */

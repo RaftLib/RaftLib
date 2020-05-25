@@ -18,8 +18,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _INTERFACE_PARTITION_HPP_
-#define _INTERFACE_PARTITION_HPP_  1
+#ifndef INTERFACE_PARTITION_HPP
+#define INTERFACE_PARTITION_HPP  1
 
 #include "kernelkeeper.tcc"
 #include "kernel.hpp"
@@ -50,4 +50,4 @@ protected:
         return;
     }
 };
-#endif /* END _INTERFACE_PARTITION_HPP_ */
+#endif /* END INTERFACE_PARTITION_HPP */

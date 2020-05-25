@@ -17,11 +17,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RINGBUFFERHEAP_ABSTRACT_TCC_
-#define _RINGBUFFERHEAP_ABSTRACT_TCC_  1
+#ifndef RINGBUFFERHEAP_ABSTRACT_TCC
+#define RINGBUFFERHEAP_ABSTRACT_TCC  1
 
 #include "portexception.hpp"
-#include "scheduleconst.hpp"
 #include "defs.hpp"
 #ifdef USEQTHREADS
 #include <qthread/qthread.hpp>
@@ -456,4 +455,4 @@ protected:
    
 };
 
-#endif /* END _RINGBUFFERHEAP_ABSTRACT_TCC_ */
+#endif /* END RINGBUFFERHEAP_ABSTRACT_TCC */

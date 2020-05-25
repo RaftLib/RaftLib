@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _MAP_HPP_
-#define _MAP_HPP_  1
+#ifndef MAP_HPP
+#define MAP_HPP  1
 #include <typeinfo>
 #include <cassert>
 #include <thread>
@@ -246,4 +246,4 @@ private:
 }; /** end map decl **/
 
 } /** end namespace raft **/
-#endif /* END _MAP_HPP_ */
+#endif /* END MAP_HPP */

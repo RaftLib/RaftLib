@@ -22,8 +22,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _ALLOCATE_HPP_
-#define _ALLOCATE_HPP_  1
+#ifndef ALLOCATE_HPP
+#define ALLOCATE_HPP  1
 
 #include "kernelkeeper.tcc"
 #include "kernel.hpp"
@@ -133,4 +133,4 @@ private:
    volatile bool ready = false;
    friend class basic_parallel;
 };
-#endif /* END _ALLOCATE_HPP_ */
+#endif /* END ALLOCATE_HPP */

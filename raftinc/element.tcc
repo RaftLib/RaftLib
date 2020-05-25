@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _ELEMENT_TCC_
-#define _ELEMENT_TCC_  1
+#ifndef ELEMENT_TCC
+#define ELEMENT_TCC  1
 
 namespace Buffer{
 
@@ -41,4 +41,4 @@ template < class X > struct Element
 }; /** end Element< X > **/
 
 } /** end namespace Buffer **/
-#endif /* END _ELEMENT_TCC_ */
+#endif /* END ELEMENT_TCC */

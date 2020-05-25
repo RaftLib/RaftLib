@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _FOREACH_TCC_
-#define _FOREACH_TCC_  1
+#ifndef FOREACH_TCC
+#define FOREACH_TCC  1
 #include <raft>
 namespace raft
 {
@@ -41,4 +41,4 @@ public:
 
 };
 } /** end namespace raft **/
-#endif /* END _FOREACH_TCC_ */
+#endif /* END FOREACH_TCC */

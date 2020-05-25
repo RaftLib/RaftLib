@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RINGBUFFER_TCC_
-#define _RINGBUFFER_TCC_ 1
+#ifndef RINGBUFFER_TCC
+#define RINGBUFFER_TCC 1
 
 #include <array>
 #include <cstddef>
@@ -478,4 +478,4 @@ public:
 protected:
 };
 #endif // end BUILDSHM
-#endif /* END _RINGBUFFER_TCC_ */
+#endif /* END RINGBUFFER_TCC */

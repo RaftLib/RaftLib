@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _CONTAINER_TCC_
-#define _CONTAINER_TCC_  1
+#ifndef CONTAINER_TCC
+#define CONTAINER_TCC  1
 #include <vector>
 #include <mutex>
 #include <cassert>
@@ -62,4 +62,4 @@ private:
 };
 
 
-#endif /* END _CONTAINER_TCC_ */
+#endif /* END CONTAINER_TCC */

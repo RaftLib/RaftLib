@@ -18,8 +18,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _STAT_TCC_
-#define _STAT_TCC_  1
+#ifndef STAT_TCC
+#define STAT_TCC  1
 #include <functional>
 #include <utility>
 #include <cstdint>
@@ -259,4 +259,4 @@ public:
    }
 };
 }
-#endif /* END _STAT_TCC_ */
+#endif /* END STAT_TCC */

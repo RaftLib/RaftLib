@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _RINGBUFFERBASE_TCC_
-#define _RINGBUFFERBASE_TCC_  1
+#ifndef RINGBUFFERBASE_TCC
+#define RINGBUFFERBASE_TCC  1
 
 #include <array>
 #include <cstdlib>
@@ -67,4 +67,4 @@ public:
 /** infinite dummy implementation, can use shared memory or SHM **/
 #include "ringbufferinfinite.tcc"
 
-#endif /* END _RINGBUFFERBASE_TCC_ */
+#endif /* END RINGBUFFERBASE_TCC */

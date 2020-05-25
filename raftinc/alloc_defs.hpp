@@ -21,9 +21,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _ALLOC_DEFS_HPP_
-#define _ALLOC_DEFS_HPP_  1
+#ifndef ALLOC_DEFS_HPP
+#define ALLOC_DEFS_HPP  1
 
 enum memory_type : std::uint8_t { heap, SHM };
 
-#endif /* END _ALLOC_DEFS_HPP_ */
+#endif /* END ALLOC_DEFS_HPP */

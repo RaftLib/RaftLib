@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _PARTITION_SCOTCH_TCC_
-#define _PARTITION_SCOTCH_TCC_  1
+#ifndef PARTITION_SCOTCH_TCC
+#define PARTITION_SCOTCH_TCC  1
 #ifdef USE_PARTITION
 #include <cmath>
 #include <cstdio>

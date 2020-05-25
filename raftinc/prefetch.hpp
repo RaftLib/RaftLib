@@ -1,5 +1,5 @@
-#ifndef __PREFETCH_HPP
-#define __PREFETCH_HPP
+#ifndef PREFETCH_HPP
+#define PREFETCH_HPP
 #include <cstddef>
 #include <cstdint>
 #include <cassert>

@@ -20,8 +20,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _KERNEL_PAIR_T_HPP_
-#define _KERNEL_PAIR_T_HPP_  1
+#ifndef KERNEL_PAIR_T_HPP
+#define KERNEL_PAIR_T_HPP  1
 #include <functional>
 #include <vector>
 #include <utility>
@@ -181,4 +181,4 @@ private:
 };
 
 
-#endif /* END _KERNEL_PAIR_T_HPP_ */
+#endif /* END KERNEL_PAIR_T_HPP */
