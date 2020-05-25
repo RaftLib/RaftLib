@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LEASTUSEDFIRST_HPP
-#define LEASTUSEDFIRST_HPP  1
+#ifndef RAFTLEASTUSEDFIRST_HPP
+#define RAFTLEASTUSEDFIRST_HPP  1
 
-#endif /* END LEASTUSEDFIRST_HPP */
+#endif /* END RAFTLEASTUSEDFIRST_HPP */

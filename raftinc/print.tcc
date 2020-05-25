@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PRINT_TCC
-#define PRINT_TCC  1
+#ifndef RAFTPRINT_TCC
+#define RAFTPRINT_TCC  1
 
 #include <functional>
 #include <ostream>
@@ -142,4 +142,4 @@ public:
 };
 
 } /* end namespace raft */
-#endif /* END PRINT_TCC */
+#endif /* END RAFTPRINT_TCC */

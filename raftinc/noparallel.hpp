@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef NOPARALLEL_HPP
-#define NOPARALLEL_HPP  1
+#ifndef RAFTNOPARALLEL_HPP
+#define RAFTNOPARALLEL_HPP  1
 
 
 #include "kernel.hpp"
@@ -48,4 +48,4 @@ public:
 
 };
 
-#endif /* END NOPARALLEL_HPP */
+#endif /* END RAFTNOPARALLEL_HPP */

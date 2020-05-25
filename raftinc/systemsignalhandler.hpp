@@ -20,8 +20,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _SYSTEMSIGNALHANDLER_HPP_
-#define _SYSTEMSIGNALHANDLER_HPP_  1
+#ifndef RAFTSYSTEMSIGNALHANDLER_HPP
+#define RAFTSYSTEMSIGNALHANDLER_HPP  1
 #include <exception>
 #include <map>
 #include <string>
@@ -82,4 +82,4 @@ private:
    std::map< raft::signal, 
              sighandler >  handlers;
 };
-#endif /* END _SYSTEMSIGNALHANDLER_HPP_ */
+#endif /* END RAFTSYSTEMSIGNALHANDLER_HPP */

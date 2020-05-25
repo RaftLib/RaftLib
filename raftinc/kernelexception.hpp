@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef KERNELEXCEPTION_HPP
-#define KERNELEXCEPTION_HPP  1
+#ifndef RAFTKERNELEXCEPTION_HPP
+#define RAFTKERNELEXCEPTION_HPP  1
 #include <string>
 
 #include "raftexception.hpp"
@@ -44,4 +44,4 @@ public:
 using CloneNotImplementedException = KernelExceptionBase< 0 >;
 
 
-#endif /* END KERNELEXCEPTION_HPP */
+#endif /* END RAFTKERNELEXCEPTION_HPP */

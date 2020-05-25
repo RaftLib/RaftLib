@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PARTITIONERS_HPP
-#define PARTITIONERS_HPP  1
+#ifndef RAFTPARTITIONERS_HPP
+#define RAFTPARTITIONERS_HPP  1
 
 /** 
  * simply a list of the current partitioners...plus
@@ -30,4 +30,4 @@
 #endif
 #include "partition_dummy.hpp"
 
-#endif /* END PARTITIONERS_HPP */
+#endif /* END RAFTPARTITIONERS_HPP */

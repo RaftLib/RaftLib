@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PORT_HPP
-#define PORT_HPP  1
+#ifndef RAFTPORT_HPP
+#define RAFTPORT_HPP  1
 
 #include <map>
 #include <vector>
@@ -386,4 +386,4 @@ protected:
 
 
 
-#endif /* END PORT_HPP */
+#endif /* END RAFTPORT_HPP */

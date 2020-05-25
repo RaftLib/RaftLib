@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef READEACH_TCC
-#define READEACH_TCC  1
+#ifndef RAFTREADEACH_TCC
+#define RAFTREADEACH_TCC  1
 #include <iterator>
 #include <functional>
 #include <map>
@@ -81,4 +81,4 @@ read_each( Iterator &&begin,
 
 
 } /** end namespace raft **/
-#endif /* END READEACH_TCC */
+#endif /* END RAFTREADEACH_TCC */

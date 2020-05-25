@@ -23,8 +23,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef AUTORELEASE_TCC
-#define AUTORELEASE_TCC  1
+#ifndef RAFTAUTORELEASE_TCC
+#define RAFTAUTORELEASE_TCC  1
 
 #include "autoreleasebase.hpp"
 
@@ -227,4 +227,4 @@ private:
    FIFO                 &fifo;
    bool                 copied = false;
 };
-#endif /* END AUTORELEASE_TCC */
+#endif /* END RAFTAUTORELEASE_TCC */

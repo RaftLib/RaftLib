@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef RANDOM_TCC
-#define RANDOM_TCC  1
+#ifndef RAFTRANDOM_TCC
+#define RAFTRANDOM_TCC  1
 /** use cpp rnd generator **/
 #include <random>
 #include <raft>
@@ -96,4 +96,4 @@ private:
 
 }
 
-#endif /* END RANDOM_TCC */
+#endif /* END RAFTRANDOM_TCC */

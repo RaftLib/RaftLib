@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef UTILITY_HPP
-#define UTILITY_HPP  1
+#ifndef RAFTUTILITY_HPP
+#define RAFTUTILITY_HPP  1
 #include <vector>
 #include <cstddef>
 #include <cstdint>
@@ -87,4 +87,4 @@ range( const A a,
   }
 }
 }
-#endif /* END UTILITY_HPP */
+#endif /* END RAFTUTILITY_HPP */

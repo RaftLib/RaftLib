@@ -19,8 +19,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef STDALLOC_HPP
-#define STDALLOC_HPP  1
+#ifndef RAFTSTDALLOC_HPP
+#define RAFTSTDALLOC_HPP  1
 #include "allocate.hpp"
 
 namespace raft
@@ -54,4 +54,4 @@ public:
     */
    virtual void run();
 };
-#endif /* END STDALLOC_HPP */
+#endif /* END RAFTSTDALLOC_HPP */

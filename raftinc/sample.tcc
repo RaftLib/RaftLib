@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SAMPLE_HPP
-#define SAMPLE_HPP  1
+#ifndef RAFTSAMPLE_HPP
+#define RAFTSAMPLE_HPP  1
 
 #include <functional>
 #include <vector>
@@ -108,4 +108,4 @@ private:
 /** pointer just in case I want to use it across processes **/
 std::vector< SampleType< T, type > * > *sample_list;
 };
-#endif /* END SAMPLE_HPP */
+#endif /* END RAFTSAMPLE_HPP */

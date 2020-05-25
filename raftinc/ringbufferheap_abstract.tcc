@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef RINGBUFFERHEAP_ABSTRACT_TCC
-#define RINGBUFFERHEAP_ABSTRACT_TCC  1
+#ifndef RAFTRINGBUFFERHEAP_ABSTRACT_TCC
+#define RAFTRINGBUFFERHEAP_ABSTRACT_TCC  1
 
 #include "portexception.hpp"
 #include "defs.hpp"
@@ -455,4 +455,4 @@ protected:
    
 };
 
-#endif /* END RINGBUFFERHEAP_ABSTRACT_TCC */
+#endif /* END RAFTRINGBUFFERHEAP_ABSTRACT_TCC */

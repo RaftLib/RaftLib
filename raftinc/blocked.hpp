@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef BLOCKED_HPP
-#define BLOCKED_HPP  1
+#ifndef RAFTBLOCKED_HPP
+#define RAFTBLOCKED_HPP  1
 #include <cstdint>
 #include <cassert>
 #include "internaldefs.hpp"
@@ -63,4 +63,4 @@ struct ALIGN(64) Blocked
 
 ;
 
-#endif /* END BLOCKED_HPP */
+#endif /* END RAFTBLOCKED_HPP */

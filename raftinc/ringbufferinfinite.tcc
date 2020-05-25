@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef RINGBUFFERINFINITE_TCC
-#define RINGBUFFERINFINITE_TCC  1
+#ifndef RAFTRINGBUFFERINFINITE_TCC
+#define RAFTRINGBUFFERINFINITE_TCC  1
 #include "alloc_traits.tcc"
 
 //TODO -> fixme
@@ -256,4 +256,4 @@ protected:
       }
    }
 };
-#endif /* END RINGBUFFERINFINITE_TCC */
+#endif /* END RAFTRINGBUFFERINFINITE_TCC */

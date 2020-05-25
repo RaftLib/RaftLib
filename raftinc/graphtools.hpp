@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef GRAPHTOOLS_HPP
-#define GRAPHTOOLS_HPP  1
+#ifndef RAFTGRAPHTOOLS_HPP
+#define RAFTGRAPHTOOLS_HPP  1
 #include <functional>
 #include <set>
 #include <queue>
@@ -134,4 +134,4 @@ private:
                       vertex_func                 func,
                       void                        *data );
 };
-#endif /* END GRAPHTOOLS_HPP */
+#endif /* END RAFTGRAPHTOOLS_HPP */

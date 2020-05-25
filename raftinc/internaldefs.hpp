@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef INTERNALDEFS_HPP
-#define INTERNALDEFS_HPP  1
+#ifndef RAFTINTERNALDEFS_HPP
+#define RAFTINTERNALDEFS_HPP  1
 
 #ifdef _MSC_VER
 #    if (_MSC_VER >= 1800)
@@ -79,4 +79,4 @@
 
 #endif
 
-#endif /* END INTERNALDEFS_HPP */
+#endif /* END RAFTINTERNALDEFS_HPP */

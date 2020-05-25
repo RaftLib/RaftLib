@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef RATESAMPLETYPE_TCC
-#define RATESAMPLETYPE_TCC  1
+#ifndef RAFTRATESAMPLETYPE_TCC
+#define RAFTRATESAMPLETYPE_TCC  1
 #include <string>
 #include "ringbufferbase.tcc"
 #include "ringbuffertypes.hpp"
@@ -98,4 +98,4 @@ struct stats
 #endif
 } real, temp = { 1 };
 };
-#endif /* END RATESAMPLETYPE_TCC */
+#endif /* END RAFTRATESAMPLETYPE_TCC */

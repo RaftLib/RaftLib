@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SIGNAL_HPP
-#define SIGNAL_HPP  1
+#ifndef RAFTSIGNAL_HPP
+#define RAFTSIGNAL_HPP  1
 #include <cstddef>
 #include "signalvars.hpp"
 /**
@@ -44,4 +44,4 @@ struct Signal
    std::size_t  index = 0;
 };
 } /** end namespace buffer **/
-#endif /* END SIGNAL_HPP */
+#endif /* END RAFTSIGNAL_HPP */

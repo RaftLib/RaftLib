@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MEANSAMPLETYPE_TCC
-#define MEANSAMPLETYPE_TCC  1
+#ifndef RAFTMEANSAMPLETYPE_TCC
+#define RAFTMEANSAMPLETYPE_TCC  1
 #include <string>
 
 #include "ringbuffertypes.hpp"
@@ -94,4 +94,4 @@ struct stats{
    volatile std::int64_t frames_count;
 } real, temp;
 };
-#endif /* END MEANSAMPLETYPE_TCC */
+#endif /* END RAFTMEANSAMPLETYPE_TCC */

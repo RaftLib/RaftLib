@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef DATAMANAGER_TCC
-#define DATAMANAGER_TCC  1
+#ifndef RAFTDATAMANAGER_TCC
+#define RAFTDATAMANAGER_TCC  1
 #include <cassert>
 #include <cstddef>
 #include <array>
@@ -293,4 +293,4 @@ private:
       return;
    }
 };
-#endif /* END DATAMANAGER_TCC */
+#endif /* END RAFTDATAMANAGER_TCC */

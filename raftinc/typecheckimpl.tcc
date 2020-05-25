@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef TYPECHECKIMPL_TCC
-#define TYPECHECKIMPL_TCC  1
+#ifndef RAFTTYPECHECKIMPL_TCC
+#define RAFTTYPECHECKIMPL_TCC  1
 #include "typecheck.hpp"
 
 template < class T > typecheckimpl : public typecheck
@@ -34,4 +34,4 @@ public:
       return( true );
    }
 };
-#endif /* END TYPECHECKIMPL_TCC */
+#endif /* END RAFTTYPECHECKIMPL_TCC */
