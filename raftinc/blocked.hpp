@@ -23,11 +23,7 @@
 #include <cassert>
 #include "internaldefs.hpp"
 
-/**
- * FIXME...should probably align these to cache line then 
- * zero extend pad for producer/consumer.
- */
-struct ALIGN(64) Blocked
+struct ALIGN( L1D_CACHE_LINE_SIZE ) Blocked
 {
     using value_type = std::uint32_t;
     using whole_type = std::uint64_t;

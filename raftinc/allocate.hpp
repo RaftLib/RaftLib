@@ -31,22 +31,8 @@
 #include "fifo.hpp"
 #include <set>
 
-/**
- * ALLOC_ALIGN_WIDTH - there's probably a better way
- * to do this, but for the moment I'm mainly running
- * on x86_64 so this will work.  In the future I'l
- * see about defining others for other architectures
- * or perhaps start including the header files 
- * that reference the alignments.
- */
-
-#if defined __AVX__ || __AVX2__ || _WIN64
-#define ALLOC_ALIGN_WIDTH 32
-#else
-#define ALLOC_ALIGN_WIDTH 16
-#endif
-
-#define INITIAL_ALLOC_SIZE 64
+#define ALLOC_ALIGN_WIDTH   L1D_CACHE_LINE_SIZE
+#define INITIAL_ALLOC_SIZE  64
 
 namespace raft
 {
