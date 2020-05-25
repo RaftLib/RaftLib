@@ -2,7 +2,6 @@
 
 #include "kpair.hpp"
 #include "kernel.hpp"
-#include "portorder.hpp"
 #include "kernel_wrapper.hpp"
 
 kpair::kpair( raft::kernel &a, 

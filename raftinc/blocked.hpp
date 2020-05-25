@@ -3,7 +3,7 @@
  * @author: Jonathan Beard
  * @version: Sun Jun 29 14:06:10 2014
  *
- * Copyright 2014 Jonathan Beard
+ * Copyright 2020 Jonathan Beard
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,31 +21,41 @@
 #define RAFTBLOCKED_HPP  1
 #include <cstdint>
 #include <cassert>
+#include "defs.hpp"
 #include "internaldefs.hpp"
+
 
 struct ALIGN( L1D_CACHE_LINE_SIZE ) Blocked
 {
+    /** 
+     * this is really the backign store for the number of 
+     * times any queue in the system is blocked. Likely
+     * this is plenty of storage given the purpose and 
+     * no deleterious impact if we just wrap....
+     */
     using value_type = std::uint32_t;
     using whole_type = std::uint64_t;
     
     static_assert( sizeof( value_type ) * 2 == sizeof( whole_type ),
                    "Error, the whole type must be double the size of the half type" );
-    Blocked() = default;
+    
+    Blocked();
 
-    Blocked( const Blocked &other ) : all( other.all ){}
+    Blocked( const Blocked &other );
 
-    Blocked& operator += ( const Blocked &rhs )
+    constexpr Blocked& operator = ( const Blocked &other ) noexcept
     {
-       if( ! rhs.bec.blocked )
-       {
-          (this)->bec.count += rhs.bec.count;
-       }
-       return( *this );
+        /** again, simple integer, let's ignore the case of other == this **/
+        (this)->all = other.all;
+        return( *this );
     }
+
+    Blocked& operator += ( const Blocked &rhs ) noexcept;
+    
     struct blocked_and_counter
     {
-       value_type   blocked;
-       value_type    count;
+       value_type   blocked = 0;
+       value_type   count   = 0;
     };
     
     union

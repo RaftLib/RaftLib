@@ -5,9 +5,9 @@
  * are only a few choices, but that could likely change.
  *
  * @author: Jonathan Beard
- * @version: Tue Aug 16 19:47:01 2016
+ * @version: 25 May 2020
  * 
- * Copyright 2016 Jonathan Beard
+ * Copyright 2020 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,6 @@
 #ifndef RAFTALLOC_DEFS_HPP
 #define RAFTALLOC_DEFS_HPP  1
 
-enum memory_type : std::uint8_t { heap, SHM };
+enum memory_type : std::uint8_t { heap, shm };
 
 #endif /* END RAFTALLOC_DEFS_HPP */

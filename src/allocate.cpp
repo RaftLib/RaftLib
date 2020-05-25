@@ -73,9 +73,7 @@ Allocate::initialize( PortInfo * const src,
          "Destination port \"" + dst->my_name +  "\" already initialized!" );
    }
    src->setFIFO( fifo );
-   fifo->set_src_kernel( src->my_kernel );
    dst->setFIFO( fifo );
-   fifo->set_dst_kernel( dst->my_kernel );
    /** NOTE: this list simply speeds up the monitoring if we want it **/
    allocated_fifo.insert( fifo );
 }
@@ -84,8 +82,7 @@ Allocate::initialize( PortInfo * const src,
 void
 Allocate::allocate( PortInfo &a, PortInfo &b, void *data )
 {
-   (void) data;
-
+   UNUSED( data );
    FIFO *fifo( nullptr );
    auto &func_map( a.const_map[ Type::Heap ] );
    auto test_func( (*func_map)[ false ] );

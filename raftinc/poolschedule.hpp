@@ -36,6 +36,7 @@
 using aligned_t = std::uint64_t;
 #endif
 #include "schedule.hpp"
+#include "internaldefs.hpp"
 
 namespace raft{
    class kernel;
@@ -86,7 +87,7 @@ protected:
      * since we don't really need some of the info. this
      * is passed to each kernel within teh pool_run func
      */
-    struct alignas( 64 ) thread_data
+    struct ALIGN( 64 ) thread_data
     {
        constexpr thread_data( raft::kernel * const k ) : k( k ){}
 

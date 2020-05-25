@@ -31,8 +31,19 @@
 #include "fifo.hpp"
 #include <set>
 
-#define ALLOC_ALIGN_WIDTH   L1D_CACHE_LINE_SIZE
-#define INITIAL_ALLOC_SIZE  64
+/**
+ * ALLOC_ALIGN_WIDTH - in previous versions we'd align based
+ * on perceived vector width, however, there's more benefit
+ * in aligning to cache line sizes. 
+ */
+
+#if defined __AVX__ || __AVX2__ || _WIN64
+#define ALLOC_ALIGN_WIDTH L1D_CACHE_LINE_SIZE
+#else
+#define ALLOC_ALIGN_WIDTH L1D_CACHE_LINE_SIZE
+#endif
+
+#define INITIAL_ALLOC_SIZE 64
 
 namespace raft
 {

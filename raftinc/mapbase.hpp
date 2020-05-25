@@ -10,9 +10,9 @@
  * within it.  
  *
  * @author: Jonathan Beard
- * @version: Sun July 23 06:22 2017
+ * @version: 25 May 2020 
  * 
- * Copyright 2017 Jonathan Beard
+ * Copyright 2020 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@
 #include <vector>
 #include <thread>
 #include <sstream>
-
+#include "defs.hpp"
 #include "kernelkeeper.tcc"
 #include "portexception.hpp"
 #include "schedule.hpp"
@@ -44,7 +44,6 @@
 #include "dynalloc.hpp"
 #include "stdalloc.hpp"
 #include "kpair.hpp"
-#include "portorder.hpp"
 #include "kernel_pair_t.hpp"
 
 class MapBase

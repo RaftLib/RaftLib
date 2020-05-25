@@ -1,9 +1,9 @@
 /**
  * kpair.hpp - 
  * @author: Jonathan Beard
- * @version: Wed Dec  9 11:36:08 2015
+ * @version: 25 May 2020 
  * 
- * Copyright 2015 Jonathan Beard
+ * Copyright 2020 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
 
 #include <string>
 #include "kset.tcc"
-#include "portorder.hpp"
 #include "defs.hpp"
 
 namespace raft

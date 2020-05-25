@@ -1,9 +1,9 @@
 /**
- * portorder.hpp - 
+ * sysschedutil.hpp - 
  * @author: Jonathan Beard
- * @version: Wed Mar 16 13:11:49 2016
+ * @version: Mon May 25 09:11:32 2020
  * 
- * Copyright 2016 Jonathan Beard
+ * Copyright 2020 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef RAFTPORTORDER_HPP
-#define RAFTPORTORDER_HPP  1
-#include <cstdint>
+#ifndef RAFTSYSSCHEDUTIL_HPP
+#define RAFTSYSSCHEDUTIL_HPP  1
+
+#ifdef USEQTHREADS
+#include <qthread/qthread.hpp>
+#else
+#include <sched.h>
+#endif
 
 namespace raft
 {
 
-namespace order
+/**
+ * yield - generic yield function for whatever the underlying
+ * implementation is, could be qthreads, a process, or a thread
+ * but it'll call the right implementation for you. 
+ */
+static inline void yield()
 {
-    enum spec : std::uint8_t { in = 0, out = 1 };
+#ifdef USEQTHREADS
+    qthread_yield();
+#else         
+    sched_yield();
+#endif
+    return;
 }
 
 } /** end namespace raft **/
-#endif /* END RAFTPORTORDER_HPP */
+
+#endif /* END RAFTSYSSCHEDUTIL_HPP */
