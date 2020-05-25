@@ -29,6 +29,7 @@
 #include <type_traits>
 #if defined __APPLE__ || defined __linux
 #include <sys/mman.h>
+#include <shm>
 #endif
 #include "signalvars.hpp"
 #include "pointer.hpp"
@@ -38,7 +39,7 @@
 
 #include "alloc_traits.tcc"
 #include "defs.hpp"
-#include <shm>
+
 
 namespace Buffer
 {
@@ -325,6 +326,8 @@ template < class T >
 }; /** end heap > Line Size **/
 
 
+#if defined __APPLE__ || defined __linux
+
 template < class T > struct Data< T, Type::SharedMemory > : 
    public DataBase< T > 
 {
@@ -506,7 +509,7 @@ template < class T > struct Data< T, Type::SharedMemory > :
    const std::string ptr_key; 
    const Direction   dir;
 };
-
+#endif
 
 } //end namespace Buffer
 #endif /* END RAFTBUFFERDATA_TCC */
