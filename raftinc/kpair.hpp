@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef KPAIR_HPP
-#define KPAIR_HPP  1
+#ifndef RAFTKPAIR_HPP
+#define RAFTKPAIR_HPP  1
 
 #include <string>
 #include "kset.tcc"
@@ -159,4 +159,4 @@ kpair& operator >= ( raft::kernel &a, kpair &b );
 kpair& operator >= ( raft::kernel_wrapper &&w, kpair &b );
 
 
-#endif /* END KPAIR_HPP */
+#endif /* END RAFTKPAIR_HPP */

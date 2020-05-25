@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SAMPLETYPE_TCC
-#define SAMPLETYPE_TCC  1
+#ifndef RAFTSAMPLETYPE_TCC
+#define RAFTSAMPLETYPE_TCC  1
 
 #include <vector>
 #include <string>
@@ -63,4 +63,4 @@ double frame_width;
 
 };
 
-#endif /* END SAMPLETYPE_TCC */
+#endif /* END RAFTSAMPLETYPE_TCC */

@@ -22,8 +22,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef POOLSSCHEDULE_HPP
-#define POOLSSCHEDULE_HPP  1
+#ifndef RAFTPOOLSSCHEDULE_HPP
+#define RAFTPOOLSSCHEDULE_HPP  1
 #include <vector>
 #include <set>
 #include <thread>
@@ -101,4 +101,4 @@ protected:
     std::mutex                  tail_mutex;
     std::vector< thread_data* > tail;
 };
-#endif /* END POOLSSCHEDULE_HPP */
+#endif /* END RAFTPOOLSSCHEDULE_HPP */

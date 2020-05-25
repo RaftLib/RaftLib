@@ -21,9 +21,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef ALLOC_DEFS_HPP
-#define ALLOC_DEFS_HPP  1
+#ifndef RAFTALLOC_DEFS_HPP
+#define RAFTALLOC_DEFS_HPP  1
 
 enum memory_type : std::uint8_t { heap, SHM };
 
-#endif /* END ALLOC_DEFS_HPP */
+#endif /* END RAFTALLOC_DEFS_HPP */

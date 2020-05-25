@@ -27,8 +27,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SIGNALDATA_HPP
-#define SIGNALDATA_HPP  1
+#ifndef RAFTSIGNALDATA_HPP
+#define RAFTSIGNALDATA_HPP  1
 
 #include <thread>
 #include "defs.hpp"
@@ -45,4 +45,4 @@ public:
    
    void         set_signal( const std::thread::id id, const raft::signal signal );
 };
-#endif /* END SIGNALDATA_HPP */
+#endif /* END RAFTSIGNALDATA_HPP */

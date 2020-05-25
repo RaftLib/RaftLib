@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PORT_INFO_HPP
-#define PORT_INFO_HPP  1
+#ifndef RAFTPORT_INFO_HPP
+#define RAFTPORT_INFO_HPP  1
 #include <typeinfo>
 #include <typeindex>
 #include <string>
@@ -113,4 +113,4 @@ struct PortInfo
    std::size_t       start_index     = 0;
    std::size_t       fixed_buffer_size = 0;   
 };
-#endif /* END PORT_INFO_HPP */
+#endif /* END RAFTPORT_INFO_HPP */

@@ -18,8 +18,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FILTER_TCC
-#define FILTER_TCC  1
+#ifndef RAFTFILTER_TCC
+#define RAFTFILTER_TCC  1
 #include <algorithm>
 #include <cstdint>
 #include <cstdlib>
@@ -208,4 +208,4 @@ public:
 
    }
 };
-#endif /* END FILTER_TCC */
+#endif /* END RAFTFILTER_TCC */

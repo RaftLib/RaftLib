@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FIFO_HPP
-#define FIFO_HPP  1
+#ifndef RAFTFIFO_HPP
+#define RAFTFIFO_HPP  1
 #include <cstddef>
 #include <typeinfo>
 #include <iterator>
@@ -682,4 +682,4 @@ protected:
 };
 
 
-#endif /* END FIFO_HPP */
+#endif /* END RAFTFIFO_HPP */

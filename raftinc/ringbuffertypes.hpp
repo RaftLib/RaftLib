@@ -1,5 +1,5 @@
-#ifndef RINGBUFFERTYPES 
-#define RINGBUFFERTYPES 1
+#ifndef RAFTRINGBUFFERTYPES 
+#define RAFTRINGBUFFERTYPES 1
 namespace Type{
    enum RingBufferType { Heap, SharedMemory, TCP, Infinite, N_TYPE};
 }

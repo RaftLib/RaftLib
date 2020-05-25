@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LAMBDAK_TCC
-#define LAMBDAK_TCC  1
+#ifndef RAFTLAMBDAK_TCC
+#define RAFTLAMBDAK_TCC  1
 #include <functional>
 #include <utility>
 #include <typeinfo>
@@ -209,4 +209,4 @@ template <> struct AddSamePorts<>
 };
 
 } /* end namespace raft */
-#endif /* END LAMBDAK_TCC */
+#endif /* END RAFTLAMBDAK_TCC */

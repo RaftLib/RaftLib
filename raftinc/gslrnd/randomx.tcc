@@ -19,8 +19,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef RANDOMX_TCC
-#define RANDOMX_TCC  1
+#ifndef RAFTRANDOMX_TCC
+#define RAFTRANDOMX_TCC  1
 #include <cstdint>
 #include <raft>
 
@@ -113,4 +113,4 @@ protected:
 
 }
 
-#endif /* END RANDOMX_TCC */
+#endif /* END RAFTRANDOMX_TCC */

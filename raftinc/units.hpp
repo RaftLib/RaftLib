@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef UNITS_HPP
-#define UNITS_HPP  1
+#ifndef RAFTUNITS_HPP
+#define RAFTUNITS_HPP  1
 
 #include <cstddef>
 #include <array>
@@ -39,4 +39,4 @@ static constexpr std::array<  const char[3] ,
                   Unit::N_UNIT > unit_prints
                          = {{ "B", "KB", "MB", "GB", "TB" }};
 
-#endif /* END UNITS_HPP */
+#endif /* END RAFTUNITS_HPP */

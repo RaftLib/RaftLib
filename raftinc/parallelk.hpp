@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PARALLELK_HPP
-#define PARALLELK_HPP  1
+#ifndef RAFTPARALLELK_HPP
+#define RAFTPARALLELK_HPP  1
 #if LIBCOMPILE == 1
 #include "kernel.hpp"
 #else
@@ -64,4 +64,4 @@ protected:
 };
 
 }
-#endif /* END PARALLELK_HPP */
+#endif /* END RAFTPARALLELK_HPP */

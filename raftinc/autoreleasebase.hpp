@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef AUTORELEASEBASE_HPP
-#define AUTORELEASEBASE_HPP  1
+#ifndef RAFTAUTORELEASEBASE_HPP
+#define RAFTAUTORELEASEBASE_HPP  1
 
 /**
  * this is used by the autorelease objects so that index operator []
@@ -41,4 +41,4 @@ public:
    virtual ~autoreleasebase() = default;
    /** empty class **/
 };
-#endif /* END AUTORELEASEBASE_HPP */
+#endif /* END RAFTAUTORELEASEBASE_HPP */

@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SIGNALVARS_HPP
-#define SIGNALVARS_HPP  1
+#ifndef RAFTSIGNALVARS_HPP
+#define RAFTSIGNALVARS_HPP  1
 #include <cstdint>
 
 namespace raft{
@@ -37,4 +37,4 @@ enum signal : std::uint32_t {
    eof = MAX_SYSTEM_SIGNAL
 };
 }
-#endif /* END SIGNALVARS_HPP */
+#endif /* END RAFTSIGNALVARS_HPP */

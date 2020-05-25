@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef REDUCE_TCC
-#define REDUCE_TCC  1
+#ifndef RAFTREDUCE_TCC
+#define RAFTREDUCE_TCC  1
 #include <raft>
 #include "parallelk.hpp"
 
@@ -59,4 +59,4 @@ public:
 };
 
 }
-#endif /* END REDUCE_TCC */
+#endif /* END RAFTREDUCE_TCC */

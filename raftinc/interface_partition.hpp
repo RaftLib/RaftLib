@@ -18,8 +18,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef INTERFACE_PARTITION_HPP
-#define INTERFACE_PARTITION_HPP  1
+#ifndef RAFTINTERFACE_PARTITION_HPP
+#define RAFTINTERFACE_PARTITION_HPP  1
 
 #include "kernelkeeper.tcc"
 #include "kernel.hpp"
@@ -50,4 +50,4 @@ protected:
         return;
     }
 };
-#endif /* END INTERFACE_PARTITION_HPP */
+#endif /* END RAFTINTERFACE_PARTITION_HPP */

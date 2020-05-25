@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FILEIO_TCC
-#define FILEIO_TCC  1
+#ifndef RAFTFILEIO_TCC
+#define RAFTFILEIO_TCC  1
 #include <cstdlib>
 #include <cstdio>
 #include <cstddef>
@@ -199,4 +199,4 @@ private:
 };
 
 } /* end namespace raft */
-#endif /* END FILEIO_TCC */
+#endif /* END RAFTFILEIO_TCC */

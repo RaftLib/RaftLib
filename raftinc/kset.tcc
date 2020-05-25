@@ -20,8 +20,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef KSET_TCC
-#define KSET_TCC  1
+#ifndef RAFTKSET_TCC
+#define RAFTKSET_TCC  1
 #include <type_traits>
 #include <iostream>
 #include <cstdlib>
@@ -215,4 +215,4 @@ kset( K&&... kernels )
 }
 
 } /** end namespace raft */
-#endif /* END KSET_TCC */
+#endif /* END RAFTKSET_TCC */

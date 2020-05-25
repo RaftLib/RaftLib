@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef WRITEEACH_TCC
-#define WRITEEACH_TCC  1
+#ifndef RAFTWRITEEACH_TCC
+#define RAFTWRITEEACH_TCC  1
 #include <iterator>
 #include <raft>
 #include <cstddef>
@@ -84,4 +84,4 @@ write_each( BackInsert &&bi )
 }
 
 } /** end namespace raft **/
-#endif /* END WRITEEACH_TCC */
+#endif /* END RAFTWRITEEACH_TCC */

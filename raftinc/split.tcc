@@ -17,8 +17,8 @@
  * See the License for the specific language sendverning permissions and
  * limitations under the License.
  */
-#ifndef SPLIT_TCC
-#define SPLIT_TCC  1
+#ifndef RAFTSPLIT_TCC
+#define RAFTSPLIT_TCC  1
 #include <string>
 #include <raft>
 
@@ -75,4 +75,4 @@ protected:
    method split_func;
 };
 } /** end namespace raft **/
-#endif /* END SPLIT_TCC */
+#endif /* END RAFTSPLIT_TCC */

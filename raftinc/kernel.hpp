@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef KERNEL_HPP
-#define KERNEL_HPP  1
+#ifndef RAFTKERNEL_HPP
+#define RAFTKERNEL_HPP  1
 
 #include <functional>
 #include <utility>
@@ -200,4 +200,4 @@ private:
 
 
 } /** end namespace raft */
-#endif /* END KERNEL_HPP */
+#endif /* END RAFTKERNEL_HPP */

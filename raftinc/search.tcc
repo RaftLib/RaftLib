@@ -16,8 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SEARCH_TCC
-#define SEARCH_TCC  1
+#ifndef RAFTSEARCH_TCC
+#define RAFTSEARCH_TCC  1
 
 #include <utility>
 #include <cstddef>
@@ -89,4 +89,4 @@ private:
 
 }
 
-#endif /* END SEARCH_TCC */
+#endif /* END RAFTSEARCH_TCC */

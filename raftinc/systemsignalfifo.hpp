@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SYSTEMSIGNALFIFO_HPP
-#define SYSTEMSIGNALFIFO_HPP  1
+#ifndef RAFTSYSTEMSIGNALFIFO_HPP
+#define RAFTSYSTEMSIGNALFIFO_HPP  1
 
 #include "signalvars.hpp"
 
@@ -45,4 +45,4 @@ protected:
    virtual raft::signal get_system_signal() = 0;
 
 };
-#endif /* END SYSTEMSIGNALFIFO_HPP */
+#endif /* END RAFTSYSTEMSIGNALFIFO_HPP */
