@@ -20,7 +20,7 @@
 #ifndef RAFTSYSSCHEDUTIL_HPP
 #define RAFTSYSSCHEDUTIL_HPP  1
 
-#if (not defined _WIN64 ) || (not defined _WIN32)
+#if (! defined _WIN64) || (! defined _WIN32)
 #ifdef USEQTHREADS
 #include <qthread/qthread.hpp>
 #else
@@ -39,7 +39,7 @@ namespace raft
 static inline void yield()
 {
 
-#if (not defined _WIN64 ) || (not defined _WIN32)
+#if (! defined _WIN64) || (! defined _WIN32)
 #ifdef USEQTHREADS
     qthread_yield();
 #else         
