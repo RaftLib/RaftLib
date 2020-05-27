@@ -25,7 +25,7 @@
 
 RaftException::RaftException( const std::string message ) : 
     message( 
-#elif (defined _WIN64 ) || (defined _WIN32) 
+#if (defined _WIN64 ) || (defined _WIN32) 
     /**
      * fix for warning C4996: 'strdup': The POSIX name for this item is
      * a bit annoying given it is a POSIX function, but this is the best
