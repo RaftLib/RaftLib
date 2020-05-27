@@ -100,8 +100,7 @@ template < class T > struct Data< T,
          exit( EXIT_FAILURE );
       }
 #elif (defined _WIN64 ) || (defined _WIN32) 
-//FIXME, we need to test this on Win sys before making live    
-      (this)->store = reinterpret_cast< T* >(  _aligned_malloc( (this)->length_store ) );
+      (this)->store = reinterpret_cast< T* >(  _aligned_malloc( (this)->length_store, align ) );
 #else
       /** 
        * would use the array allocate, but well...we'd have to 
@@ -244,8 +243,7 @@ template < class T >
          exit( EXIT_FAILURE );
       }
 #elif (defined _WIN64 ) || (defined _WIN32) 
-//FIXME, we need to test this on Win sys before making live    
-      (this)->store = reinterpret_cast< type_t* >(  _aligned_malloc( (this)->length_store ) );
+      (this)->store = reinterpret_cast< type_t* >(  _aligned_malloc( (this)->length_store, align ) );
 #else
       /** 
        * would use the array allocate, but well...we'd have to 
