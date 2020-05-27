@@ -3,7 +3,7 @@
  * @author: Jonathan Beard
  * @version: Fri Dec 23 13:59:44 2016
  * 
- * Copyright 2016 Jonathan Beard
+ * Copyright 2020 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,18 @@
 #include "raftexception.hpp"
 
 RaftException::RaftException( const std::string message ) : 
-    message( strdup( message.c_str() ) )
+    message( 
+#if (defined _WIN64 ) || (defined _WIN32) 
+    /**
+     * fix for warning C4996: 'strdup': The POSIX name for this item is
+     * a bit annoying given it is a POSIX function, but this is the best
+     * we can do, see: https://bit.ly/2TH0Jci
+     */
+    _strdup( message.c_str() )
+#else //everybody else
+    strdup( message.c_str() ) 
+#endif
+    )
 {
 }
 

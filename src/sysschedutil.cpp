@@ -1,11 +1,7 @@
 /**
- * alloc_defs.hpp - a place to put internal allocation definitions
- * for use in deciding what type of memory to allocate within the
- * allocator for a particular edge in the graph. Right now there
- * are only a few choices, but that could likely change.
- *
+ * sysschedutil.cpp - 
  * @author: Jonathan Beard
- * @version: 25 May 2020
+ * @version: Mon May 25 09:11:32 2020
  * 
  * Copyright 2020 Jonathan Beard
  * 
@@ -21,9 +17,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef RAFTALLOC_DEFS_HPP
-#define RAFTALLOC_DEFS_HPP  1
 
-enum memory_type : std::uint8_t { heap, shm };
+#include "sysschedutil.hpp"
 
-#endif /* END RAFTALLOC_DEFS_HPP */
+#ifdef USEQTHREADS
+#include <qthread/qthread.hpp>
+#else
+#include <sched.h>
+#endif
+
+void 
+raft::yield()
+{
+#ifdef USEQTHREADS
+    qthread_yield();
+#else         
+    sched_yield();
+#endif
+    return;
+}

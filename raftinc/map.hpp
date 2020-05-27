@@ -122,7 +122,7 @@ public:
       }
       catch( std::exception &ex )
       {
-        std::cerr << "caught here\n"; 
+        std::cerr << "Exception caught with (" << ex.what() << ")\n"; 
       }
       scheduler sched( (*this) );
       sched.init();

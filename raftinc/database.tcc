@@ -23,7 +23,8 @@
 #include "pointer.hpp"
 #include "signal.hpp"
 #include <cstddef>
-
+#include "blocked.hpp"
+#include "threadaccess.hpp"
 
 namespace raft
 {
@@ -40,86 +41,68 @@ namespace Buffer
  */
 template < class T > struct DataBase 
 {
-   DataBase( const std::size_t max_cap ) : max_cap ( max_cap ),
-                                           length_store( sizeof( T ) * max_cap ),
-                                           length_signal( sizeof( T ) * max_cap ){}
+    DataBase( const std::size_t max_cap ) : max_cap ( max_cap ),
+                                            length_store( sizeof( T ) * max_cap ),
+                                            length_signal( sizeof( T ) * max_cap ),
+                                            dynamic_alloc_size( length_store +
+                                                                length_signal )
+                                            {}
 
-   /** 
-    * copyFrom - implement in all sub-structs to 
-    * copy the buffer.  Might need to reinterpret
-    * cast the other object or other type of cast
-    * in order to get all the data members you wish
-    * to copy.
-    * @param   other - struct to be copied
-    */
-   virtual void copyFrom( DataBase< T > *other ) = 0;
-
-
-   /**
-    * setSourceKernel - set the source kernel 
-    * so that an object using this buffer can
-    * have access to it, these must be preserved
-    * across copies.  Null kernel references 
-    * will fail an assertion and exit the program.
-    * @param    k - raft::kernel * const
-    */
-   inline void setSourceKernel( raft::kernel * const k )
-   {
-      assert( k != nullptr );
-      src_kernel = k;
-      return;
-   }
-
-   /**
-    * setDestKernel - set the destination kernel 
-    * so that an object using this buffer can
-    * have access to it, these must be preserved
-    * across copies.  Null kernel references 
-    * will fail an assertion and exit the program.
-    * @param    k - raft::kernel * const
-    */
-   inline void setDestKernel( raft::kernel * const k ) 
-   {
-      assert( k != nullptr );
-      dst_kernel = k;
-      return;
-   }
-
-   const std::size_t        max_cap;
-   /** sizes, might need to define a local type **/
-   const std::size_t       length_store;
-   const std::size_t       length_signal;
-   
-   /** 
-    * allocating these as structs gives a bit
-    * more flexibility later in what to pass
-    * along with the queue.  It'll be more 
-    * efficient copy wise to pass extra items
-    * in the signal, but conceivably there could
-    * be a case for adding items in the store
-    * as well.
-    */
-   Pointer                 *read_pt   = nullptr;
-   Pointer                 *write_pt  = nullptr;
-   
-   
-   T                       *store         = nullptr;
-   Signal                  *signal        = nullptr;
-   bool                    external_alloc = false;
-   /** variable set by scheduler, used for shutdown **/
-   bool                    is_valid       = true;
+    /** 
+     * copyFrom - implement in all sub-structs to 
+     * copy the buffer.  Might need to reinterpret
+     * cast the other object or other type of cast
+     * in order to get all the data members you wish
+     * to copy.
+     * @param   other - struct to be copied
+     */
+    virtual void copyFrom( DataBase< T > *other ) = 0;
 
 
-   /**
-    * need a reference to source and destination 
-    * kernels for preemption to work properly, essentially
-    * there has to be a way to give orderly control from
-    * the fifo copying data back to the scheduler and the
-    * only realistic way is through the kernel.  These
-    * must be preserved across copies.
-    */
-   raft::kernel            *src_kernel      = nullptr;
-   raft::kernel            *dst_kernel      = nullptr;
+    const std::size_t       max_cap;
+    /** sizes, might need to define a local type **/
+    const std::size_t       length_store;
+    const std::size_t       length_signal;
+    
+    const std::size_t       dynamic_alloc_size;
+
+
+    /**
+     * read/write pointer. the thread_access is in 
+     * between as it's well accessed by both just
+     * as frequently as the pointers themselves, 
+     * so we get decent caching behavior out of 
+     * doing it this way. 
+     */
+    Pointer                 read_pt;
+    ThreadAccess            thread_access[ 2 ];
+    Pointer                 write_pt;
+    
+    /** 
+     * FIXME - decide if 32 is the best choice or have
+     * a macro that defines it per compile.
+     */
+    T                       *store          = nullptr;
+    Signal                  *signal         = nullptr;
+    bool                    external_alloc  = false;
+    /** variable set by scheduler, used for shutdown **/
+    bool                    is_valid        = true;
+    
+    /**
+     * these keep reference over how many read/writes are
+     * blocked. used for dynamic adaptation.
+     */
+    Blocked                 read_stats; 
+    Blocked                 write_stats;
+    
+    /** need to force resize, this has the count requested **/
+    std::size_t             force_resize    = 0;
+
+     
+    using value_type = T;
+
+    
+    const std::size_t       static_alloc_size = sizeof( DataBase< T > );
 };
 
 } /** end namespace Buffer **/

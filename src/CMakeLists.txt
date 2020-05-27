@@ -2,6 +2,7 @@
 set(CPP_SRC_FILES 
     allocate.cpp
     basicparallel.cpp
+    blocked.cpp
     common.cpp
     dynalloc.cpp
     fifo.cpp
