@@ -21,29 +21,10 @@ find_package( QThreads )
 ##
 include( CheckSTD )
 
-set( HELPER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/helpers )
-
+## 
+# helpers
 ##
-# helper exec to get the L1 cache size from Linux/OS X/Win
-##
-if( APPLE )
-set( HELPER_COMPILER clang++ )
-else()
-set( HELPER_COMPILER ${CMAKE_CXX_COMPILER} )
-endif() 
-
-execute_process( COMMAND ${HELPER_COMPILER} ${HELPER_DIR}/cacheinfo.cpp -o ${HELPER_DIR}/cacheinfo)
-execute_process( COMMAND ${HELPER_DIR}/cacheinfo 
-                 COMMAND tr -d '\n' 
-                 OUTPUT_VARIABLE L1D_LINE_SIZE )
-execute_process( COMMAND rm -f ${HELPER_DIR}/cacheinfo )                 
-
-if( NOT L1D_LINE_SIZE )
-    set( L1D_LINE_SIZE 64 )
-    message( STATUS "Couldn't detect cache line size, set to: ${L1D_LINE_SIZE}" )
-else( NOT L1D_LINE_SIZE )
-    message( STATUS "Detected cache line size, set to: ${L1D_LINE_SIZE}" )
-endif( NOT L1D_LINE_SIZE )
+add_subdirectory(helpers)
 
 ##
 # for cache line size
