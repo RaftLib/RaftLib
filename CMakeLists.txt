@@ -4,13 +4,13 @@ set( version 0.9a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
+
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-faligned-new" HAS_ALIGNED_NEW)
 if (HAS_ALIGNED_NEW)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -faligned-new")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -faligned-new")
 endif()
-    
     
 
 option( USEQTHREAD "Use QThread threading library" false )
@@ -96,12 +96,15 @@ endforeach( HFILE ${MAINHEADERS} )
 if( NOT WIN32 )
 
 if( NOT ${USEQTHREAD} ) 
-install( CODE "file( COPY  ${CMAKE_CURRENT_SOURCE_DIR}/raftlib.pc
-                     DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )" )
+#install( CODE "file( COPY  ${CMAKE_CURRENT_SOURCE_DIR}/raftlib.pc
+#                     DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )" )
+configure_file( "raftlib.pc.in" "raftlib.pc" @ONLY )
+
 else()
 install( CODE "file( COPY  ${CMAKE_CURRENT_SOURCE_DIR}/raftlib.pc-qthreads
                      DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )" )
 install( CODE "file( RENAME ${CMAKE_CURRENT_BINARY_DIR}/raftlib.pc-qthreads ${CMAKE_CURRENT_BINARY_DIR}/raftlib.pc )" )                     
+
 endif( NOT ${USEQTHREAD} )
 
 
