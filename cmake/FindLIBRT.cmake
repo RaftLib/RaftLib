@@ -15,6 +15,7 @@ find_library( RT_LIBRARY
               /opt/local/lib )
 if( RT_LIBRARY )
     set( CMAKE_RT_LIBS ${RT_LIBRARY} )
+    set( CMAKE_RT_LINK "-l${RT_LIBRARY}" )
 else()
     set( CMAKE_RT_LIBS "" )
 endif()

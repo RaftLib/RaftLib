@@ -16,6 +16,7 @@ endif()
 ##
 find_package( Scotch )
 
+message( WARNING "THREADS: ${CMAKE_THREAD_LIBS_INIT}" )
 
 
 set( TESTAPPS allocate 
