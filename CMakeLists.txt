@@ -55,7 +55,13 @@ endif()
 
 endif( NOT WIN32 )
 
-
+##
+# need this for examples and testcases
+## 
+find_package( Threads )
+##
+# load git submodules
+##
 include( CheckGitDep )
 
 add_subdirectory( src )

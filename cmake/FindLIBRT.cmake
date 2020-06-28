@@ -2,7 +2,7 @@
 # start check for RT libs
 # var CMAKE_RT_LIBS will default to "" on non-unix platforms
 ##
-if( NOT CMAKE_HOST_UNIX )
+if( NOT CMAKE_HOST_UNIX OR WIN32 )
     set( CMAKE_RT_LIBS "" )
 else( NOT CMAKE_HOST_UNIX )
 find_library( RT_LIBRARY

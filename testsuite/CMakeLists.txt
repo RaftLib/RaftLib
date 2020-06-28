@@ -1,23 +1,9 @@
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
-find_package( Threads )
 ##
 # c/c++ std
 ##
 include( CheckSTD )
-
-if( NOT WIN32 )
-find_package( LIBRT )
-endif()
-
-
-##
-# check for Scotch, use if there
-##
-find_package( Scotch )
-
-message( WARNING "THREADS: ${CMAKE_THREAD_LIBS_INIT}" )
-
 
 set( TESTAPPS allocate 
     portTypeException dynallocate stdlibsupport split 
