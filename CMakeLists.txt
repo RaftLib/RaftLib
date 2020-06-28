@@ -4,7 +4,7 @@ set( version 0.9a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
-
+include(Colors)
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-faligned-new" HAS_ALIGNED_NEW)
 if (HAS_ALIGNED_NEW)
@@ -38,6 +38,7 @@ add_definitions( "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" )
 if( NOT WIN32 )
 mark_as_advanced( PKG_CONFIG_PATHWAY )
 set( PKG_CONFIG_PATH "" CACHE STRING "Set the pkg-config path, othwerwise will figure out" )
+
 if( NOT PKG_CONFIG_PATH )
 execute_process( COMMAND  pkg-config --variable pc_path pkg-config 
                  COMMAND  tr ':' '\n' 
@@ -45,7 +46,13 @@ execute_process( COMMAND  pkg-config --variable pc_path pkg-config
                  OUTPUT_VARIABLE LOCAL_PKG_CONFIG_PATHWAY )
 set( PKG_CONFIG_PATH ${LOCAL_PKG_CONFIG_PATHWAY} )
 endif()
+
+if( CMAKE_INSTALL_PREFIX )  
+message( WARNING "You should set ${RED}PKG_CONFIG_PATH=${CMAKE_INSTALL_PREFIX}/pkgconfig/:$PKG_CONFIG_PATH ${ColourReset} when installing to non-standard prefix for pkg-config to work correctly!" )
+else()
 message( STATUS "Setting PKG_CONFIG_PATH to: ${PKG_CONFIG_PATH}" )
+endif()
+
 endif( NOT WIN32 )
 
 
