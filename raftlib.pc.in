@@ -1,0 +1,13 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=@CMAKE_INSTALL_PREFIX@/lib
+includedir=@CMAKE_INSTALL_PREFIX@/include
+
+Name: raftlib 
+URL: http://raftlib.io
+Description: RaftLib C++ Streaming/Data-flow Library
+Version: 2020.6
+Requires: shm affinity demangle cmdargs
+Conflicts: 
+Libs:  -L${libdir} -lraft @CMAKE_QTHREAD_LDFLAGS@ @CMAKE_QTHREAD_LIBS@ @CMAKE_THREAD_LIBS_INIT@ @CMAKE_RT_LINK@ 
+Libs.private: shm affinity demangle cmdargs
+Cflags:  -std=c++14 -DL1D_CACHE_LINE_SIZE=@L1D_LINE_SIZE@ -I${includedir} @CMAKE_QTHREAD_INCS@

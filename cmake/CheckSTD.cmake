@@ -1,8 +1,22 @@
+
+include(CheckCXXCompilerFlag)
+
+CHECK_CXX_COMPILER_FLAG("-faligned-new" HAS_ALIGNED_NEW)
+if (HAS_ALIGNED_NEW)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -faligned-new")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -faligned-new")
+    ##
+    # and for the case where no release/debug is added
+    # adding to general definitions given it seems the
+    # only way to silence the warnings.
+    ##
+    add_definitions( "-faligned-new" )
+endif()
+
 if( UNIX )
 ##
 # Check for CXX14 or greater
 ##
-include( CheckCXXCompilerFlag )
 check_cxx_compiler_flag( "-std=c++14" COMPILER_SUPPORTS_CXX14 )
 if( COMPILER_SUPPORTS_CXX14 )
  set( CMAKE_CXX_STANDARD 14 )
