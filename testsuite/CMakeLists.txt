@@ -1,4 +1,4 @@
-list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
+list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )
 
 ##
 # c/c++ std
@@ -59,8 +59,6 @@ foreach( APP ${TESTAPPS} )
                                      demangle
                                      affinity
                                      ${CMAKE_THREAD_LIBS_INIT} 
-                                     ${CMAKE_SCOTCH_LIBS}
-                                     ${CMAKE_RT_LIBS} 
                                      ${CMAKE_QTHREAD_LIBS}
                                      )
  add_test( NAME "${APP}_test" COMMAND ${APP} )
