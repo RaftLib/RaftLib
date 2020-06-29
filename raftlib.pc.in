@@ -8,6 +8,6 @@ Description: RaftLib C++ Streaming/Data-flow Library
 Version: 2020.6
 Requires: shm affinity demangle
 Conflicts: 
-Libs:  -L${libdir} -lraft -lshm -laffinity -ldemangle -lpthread -lrt 
+Libs:  -L${libdir} -lraft -lshm -laffinity -ldemangle @CMAKE_THREAD_LIBS_INIT@ @CMAKE_RT_LINK@ 
 Libs.private: shm affinity demangle
 Cflags:  -std=c++14 -DL1D_CACHE_LINE_SIZE=@L1D_LINE_SIZE@ -I${includedir}
