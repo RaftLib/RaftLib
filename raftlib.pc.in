@@ -6,7 +6,7 @@ Name: raftlib
 URL: http://raftlib.io
 Description: RaftLib C++ Streaming/Data-flow Library
 Version: 2020.6
-Requires: shm affinity demangle
+Requires: shm affinity demangle cmdargs
 Conflicts: 
 Libs:  -L${libdir} -lraft @CMAKE_QTHREAD_LDFLAGS@ @CMAKE_QTHREAD_LIBS@ @CMAKE_THREAD_LIBS_INIT@ @CMAKE_RT_LINK@ 
 Libs.private: shm affinity demangle cmdargs
