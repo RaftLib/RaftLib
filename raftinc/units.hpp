@@ -23,12 +23,14 @@
 #include <cstddef>
 #include <array>
 
+namespace raft
+{
 /** unit enum used throughout **/
-enum Unit : std::size_t { Byte = 0, KB, MB, GB, TB, N_UNIT };
+enum unit : std::size_t { byte = 0, kb, mb, gb, tb, N_UNIT };
 
 /** constants for use later **/
 static constexpr std::array< double, 
-                  Unit::N_UNIT > unit_conversion
+                  unit::N_UNIT > unit_conversion
                       = {{ 1              /** bytes **/,
                            0.000976562    /** kilobytes **/,
                            9.53674e-7     /** megabytes **/, 
@@ -36,7 +38,8 @@ static constexpr std::array< double,
                            9.09495e-13    /** terabytes **/ }};
 
 static constexpr std::array<  const char[3] , 
-                  Unit::N_UNIT > unit_prints
-                         = {{ "B", "KB", "MB", "GB", "TB" }};
+                  unit::N_UNIT > unit_prints
+                         = {{ "b", "kb", "mb", "gb", "tb" }};
 
+} /** end namespace raft **/
 #endif /* END RAFTUNITS_HPP */
