@@ -1,9 +1,9 @@
 /**
  * sampletype.tcc - 
  * @author: Jonathan Beard
- * @version: Thu Aug 21 12:02:32 2014
+ * @version: Sat 11 July 2020
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2020 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ print( std::ostream &stream )
 
 protected:
 virtual std::string printHeader() = 0;
-virtual std::string printData( Unit unit = Unit::Byte )   = 0;
+virtual std::string printData( raft::unit unit = raft::unit::byte )   = 0;
 
 double frame_width;
 
