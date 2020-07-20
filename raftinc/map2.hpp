@@ -54,7 +54,7 @@ public:
    /** 
     * default destructor 
     */
-   virtual ~map() override;
+   virtual ~map() = default;
    
    /** 
     * FIXME, the graph tools need to take more than
@@ -109,40 +109,47 @@ public:
       
       /** adds in split/join kernels **/
       //enableDuplication( source_kernels, all_kernels );
-      alloc_object = new allocator( (*this), exit_alloc );
+      volatile bool exit_alloc( false );
+      allocator alloc( (*this), exit_alloc );
       /** launch allocator in a thread **/
-      allocator_thread = new std::thread( [&](){
-         alloc_object->run();
+      std::thread mem_thread( [&](){
+         alloc.run();
       });
       
       try
       {
-        alloc_object->waitTillReady();
+        alloc.waitTillReady();
       }
       catch( std::exception &ex )
       {
         std::cerr << "Exception caught with (" << ex.what() << ")\n"; 
       }
-      
-      sched_object = new scheduler( (*this) );
-      sched_object->init();
+      scheduler sched( (*this) );
+      sched.init();
       
       /** launch scheduler in thread **/
-      schedule_thread = new std::thread( [&](){
-         sched_object->start();
+      std::thread sched_thread( [&](){
+         sched.start();
       });
 
-
+      volatile bool exit_para( false );
       /** launch parallelism monitor **/
-      pm = new parallelism_monitor(  (*this)               /** ref to this    **/, 
-                                     (*alloc_object)       /** allocator      **/,
-                                     (*sched_object)       /** scheduler      **/,
-                                     exit_para   /** exit parameter **/);
-
-      pm_thread = new std::thread( [&](){
-         pm->start();
+      parallelism_monitor pm( (*this)     /** ref to this    **/, 
+                              alloc       /** allocator      **/,
+                              sched       /** scheduler      **/,
+                              exit_para   /** exit parameter **/);
+      std::thread parallel_mon( [&](){
+         pm.start();
       });
+      /** join scheduler first **/
+      sched_thread.join();
 
+      /** scheduler done, cleanup alloc **/
+      exit_alloc = true;
+      mem_thread.join();
+      /** no more need to duplicate kernels **/
+      exit_para = true;
+      parallel_mon.join();
 
       /** all fifo's deallocated when alloc goes out of scope **/
       return; 
@@ -164,45 +171,31 @@ protected:
      */
     void joink( kpair * const next );
 
-    /**
-     * checkEdges - runs a breadth first search through the graph
-     * to look for disconnected edges.
-     * @throws PortException - thrown if an unconnected edge is found.
-     */
-    void checkEdges();
+   /**
+    * checkEdges - runs a breadth first search through the graph
+    * to look for disconnected edges.
+    * @throws PortException - thrown if an unconnected edge is found.
+    */
+   void checkEdges();
 
-    /**
-     * enableDuplication - add split / join kernels where needed, 
-     * for the moment we're going with a simple split/join topology,
-     * however that doesn't mean that more complex topologies might
-     * not be implemented in the future.
-     * @param    source_k - std::set< raft::kernel* > with sources
-     */
-    void enableDuplication( kernelkeeper &source, 
+   /**
+    * enableDuplication - add split / join kernels where needed, 
+    * for the moment we're going with a simple split/join topology,
+    * however that doesn't mean that more complex topologies might
+    * not be implemented in the future.
+    * @param    source_k - std::set< raft::kernel* > with sources
+    */
+   void enableDuplication( kernelkeeper &source, 
                            kernelkeeper &all );
 
 
-    /** 
-     * TODO, refactor basic_parallel base class to match the
-     * all caps base class coding style
-     */
-    friend class ::basic_parallel;
-    friend class ::Schedule;
-    friend class ::Allocate;
-      
-
-    bool            exit_alloc          = false;
-    bool            exit_para           = false;
-    //FIXME - consider redoing alloc as an extension of std::thread
-    Allocate        *alloc_object       = nullptr;
-    std::thread     *allocator_thread   = nullptr;
-    
-    Schedule        *sched_object       = nullptr;
-    std::thread     *schedule_thread    = nullptr;
-
-
-    basic_parallel  *pm                 = nullptr;
-    std::thread     *pm_thread          = nullptr;
+   /** 
+    * TODO, refactor basic_parallel base class to match the
+    * all caps base class coding style
+    */
+   friend class ::basic_parallel;
+   friend class ::Schedule;
+   friend class ::Allocate;
 
 private:
     using split_stack_t = std::stack< std::size_t >;

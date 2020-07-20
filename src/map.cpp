@@ -41,6 +41,41 @@ raft::map::map() : MapBase()
 
 }
 
+raft::map::~map() 
+{      
+    /** scheduler done, cleanup alloc **/
+    exit_alloc = true;
+    /**
+     * could be a case where allocator_thread is null
+     * after an exception, check nullptr first...alternative
+     * would be to make a global variable that is flipped
+     * on exception, but that'd be a bit overkill for most
+     * cases. 
+     */
+    if( allocator_thread != nullptr )
+    {
+        allocator_thread->join();
+        delete( allocator_thread );
+    }
+    //can delete a nullptr
+    delete( alloc_object );
+
+
+    /** join scheduler first **/
+    if( schedule_thread != nullptr )
+    { 
+        schedule_thread->join();
+    }
+      
+    /** no more need to duplicate kernels **/
+    exit_para = true;
+    
+    if( pm_thread != nullptr )
+    {
+        pm_thread->join();
+    }
+}
+
 void
 raft::map::checkEdges()
 {

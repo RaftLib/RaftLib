@@ -29,7 +29,7 @@
 basic_parallel::basic_parallel( raft::map &map,
                                 Allocate &alloc,
                                 Schedule &sched,
-                                volatile bool &exit_para )
+                                bool &exit_para )
    : source_kernels( map.source_kernels ),
      all_kernels(    map.all_kernels ),
      alloc( alloc ),

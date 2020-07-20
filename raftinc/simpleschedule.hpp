@@ -34,9 +34,9 @@ class simple_schedule : public Schedule
 public:
    simple_schedule( raft::map &map );
 
-   virtual ~simple_schedule();
+   virtual ~simple_schedule() override;
 
-   virtual void start(); 
+   virtual void start() override;
    
 protected:
    void handleSchedule( raft::kernel * const kernel ); 
