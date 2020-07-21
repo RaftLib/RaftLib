@@ -61,3 +61,19 @@ raft::kernel* kernel_wrapper::operator *()
     k = reinterpret_cast< raft::kernel* >( kernel_wrapper::sentinel );
     return( ptr );
 }
+
+raft::kernel&
+kernel_wrapper::operator []( const std::string &&portname )
+{
+   if( k->enabled_port.size() < 2 )
+   {
+        k->enabled_port.push( portname );
+   }
+   else
+   {
+        throw AmbiguousPortAssignmentException(
+            "too many ports added with: " + portname
+        );
+   }
+   return( (*k) );
+}

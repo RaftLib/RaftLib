@@ -38,25 +38,18 @@ public:
 
 
 int
-main( int argc, char **argv )
+main( )
 {
-   int count( 1000 );
-   if( argc == 2 )
-   {
-      count = atoi( argv[ 1 ] );
-   }
    using type_t = std::int64_t;
-   using gen = raft::test::generate< type_t >;
-   using sum = Sum< type_t, type_t, type_t >;
-   using p_out = raft::print< type_t, '\n' >;
-   gen a( count ), b( count );
-   sum s;
-   p_out print;
+   using gen    = raft::test::generate< type_t >;
+   using sum    = Sum< type_t, type_t, type_t >;
+   using p_out  = raft::print< type_t, '\n' >;
 
    raft::map m;
-   m += a >> s[ "input_a" ];
-   m += b >> s[ "input_b" ];
-   m += s >> print;
+   auto s( raft::kernel::make< sum >() );
+   m += raft::kernel::make< gen >()  >> s[ "input_a" ];
+   m += raft::kernel::make< gen >()  >> s[ "input_b" ];
+   m += s >> raft::kernel::make< p_out >(); 
    m.exe();
    
    return( EXIT_SUCCESS );

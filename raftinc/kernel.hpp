@@ -156,6 +156,7 @@ protected:
     friend class ::kpair;
     friend class ::interface_partition;
     friend class ::pool_schedule;
+    friend class raft::kernel_wrapper;
 
     /**
      * NOTE: doesn't need to be atomic since only one thread
@@ -186,9 +187,9 @@ protected:
     core_id_t core_assign       = -1;
 
     raft::schedule_behavior     sched_behav = raft::any_port;
+   bool             dup_enabled       = false;
 private:
    /** TODO, replace dup with bit vector **/
-   bool             dup_enabled       = false;
    bool             dup_candidate     = false;
    const            std::size_t kernel_id;
 
