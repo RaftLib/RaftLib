@@ -55,6 +55,7 @@ basic_parallel::start()
        * outside of it.
        */
       std::vector< raft::kernel* > dup_list;
+
       GraphTools::BFS(  kernels,
                         (vertex_func) [&dup_list]( raft::kernel *kernel,
                                            void *data )
