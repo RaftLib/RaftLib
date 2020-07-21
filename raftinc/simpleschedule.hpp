@@ -72,5 +72,6 @@ protected:
    
    std::mutex                    thread_map_mutex;
    std::vector< thread_info_t* > thread_map;
+   bool keep_going  = true;
 };
 #endif /* END RAFTSIMPLESSCHEDULE_HPP */
