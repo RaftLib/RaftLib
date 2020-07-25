@@ -36,28 +36,64 @@ public:
 
 };
 
-
 int
 main( int argc, char **argv )
 {
-   int count( 1000 );
-   if( argc == 2 )
-   {
-      count = atoi( argv[ 1 ] );
-   }
-   using type_t = std::int64_t;
-   using gen = raft::test::generate< type_t >;
-   using sum = Sum< type_t, type_t, type_t >;
-   using p_out = raft::print< type_t, '\n' >;
-   gen a( count ), b( count );
-   sum s;
-   p_out print;
+    int count( 1000 );
+    if( argc == 2 )
+    {
+       count = atoi( argv[ 1 ] );
+    }
+    
+    //int64
+    {
+        using type_t = std::int64_t;
+        using gen = raft::test::generate< type_t >;
+        using sum = Sum< type_t, type_t, type_t >;
+        using p_out = raft::print< type_t, '\n' >;
+        gen a( count ), b( count );
+        sum s;
+        p_out print;
 
-   raft::map m;
-   m += a >> s[ "input_a" ];
-   m += b >> s[ "input_b" ];
-   m += s >> print;
-   m.exe();
-   
-   return( EXIT_SUCCESS );
+        raft::map m;
+        m += a >> s[ "input_a" ];
+        m += b >> s[ "input_b" ];
+        m += s >> print;
+        m.exe();
+    }
+    
+    //bool
+    {
+        using type_t = bool;
+        using gen = raft::test::generate< type_t >;
+        using sum = Sum< type_t, type_t, type_t >;
+        using p_out = raft::print< type_t, '\n' >;
+        gen a( count ), b( count );
+        sum s;
+        p_out print;
+
+        raft::map m;
+        m += a >> s[ "input_a" ];
+        m += b >> s[ "input_b" ];
+        m += s >> print;
+        m.exe();
+    }
+    //std::string
+    {
+        using type_t = std::string;
+        using gen = raft::test::generate< type_t >;
+        using sum = Sum< type_t, type_t, type_t >;
+        using p_out = raft::print< type_t, '\n' >;
+        gen a( count ), b( count );
+        sum s;
+        p_out print;
+
+        raft::map m;
+        m += a >> s[ "input_a" ];
+        m += b >> s[ "input_b" ];
+        m += s >> print;
+        m.exe();
+    }
+
+    return( EXIT_SUCCESS );
 }

@@ -99,6 +99,8 @@ public:
       return( raft::proceed );
    }
 };
+
+
 template< typename T > class print< T, '\0' > : public printabstract< T >
 {
 public:
