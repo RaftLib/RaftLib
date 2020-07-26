@@ -53,10 +53,10 @@ jobs:
   MacOS:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@master
       
     - name: 'Run CMake'
-      uses: lukka/run-cmake@v2
+      uses: lukka/run-cmake@master
       with:
         cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
         cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
