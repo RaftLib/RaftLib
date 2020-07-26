@@ -92,7 +92,7 @@ protected:
       while( dist-- )
       {
          /** add signal to last el only **/
-         auto val = (*begin);
+         const bool val = (*begin);
          /** use global push function **/
          if( dist == 0 )
          {
