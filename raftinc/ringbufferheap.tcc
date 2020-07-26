@@ -21,7 +21,7 @@
 #define RAFTRINGBUFFERHEAP_TCC  1
 
 #include "portexception.hpp"
-#include "ringbufferheap_abstract.tcc"
+#include "ringbufferheap_lessabstract.tcc"
 #include "defs.hpp"
 #include "alloc_traits.tcc"
 #include "prefetch.hpp"
@@ -35,10 +35,10 @@ class RingBufferBase<
     T,
     Type::Heap,
     typename std::enable_if< inline_nonclass_alloc< T >::value >::type >
-: public RingBufferBaseHeap< T, Type::Heap >
+: public RingBufferBaseHeapAbstract< T, Type::Heap >
 {
 public:
-   RingBufferBase() : RingBufferBaseHeap< T, Type::Heap >()
+   RingBufferBase() : RingBufferBaseHeapAbstract< T, Type::Heap >()
    {
    }
 
@@ -478,10 +478,10 @@ class RingBufferBase<
     T,
     Type::Heap,
     typename std::enable_if< inline_class_alloc< T >::value >::type >
-: public RingBufferBaseHeap< T, Type::Heap >
+: public RingBufferBaseHeapAbstract< T, Type::Heap >
 {
 public:
-   RingBufferBase() : RingBufferBaseHeap< T, Type::Heap >()
+   RingBufferBase() : RingBufferBaseHeapAbstract< T, Type::Heap >()
    {
    }
 
@@ -915,10 +915,10 @@ class RingBufferBase<
     T,
     Type::Heap,
     typename std::enable_if< ext_alloc< T >::value >::type >
-: public RingBufferBaseHeap< T, Type::Heap >
+: public RingBufferBaseHeapAbstract< T, Type::Heap >
 {
 public:
-   RingBufferBase() : RingBufferBaseHeap< T, Type::Heap >()
+   RingBufferBase() : RingBufferBaseHeapAbstract< T, Type::Heap >()
    {
    }
 
