@@ -63,7 +63,7 @@ jobs:
         cmakeBuildType: Release  
         buildDirectory: "${{ github.workspace }}/../../_temp/macos"
         buildWithCMake: true
-        buildWithCMakeArgs: --config Release  
+        buildWithCMakeArgs: --config Release  -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/../../_temp/macos/install"
         
     - name: 'Run CTest'
       run: ctest -C Release
