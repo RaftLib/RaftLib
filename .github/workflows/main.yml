@@ -54,7 +54,9 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@master
-      
+    - name: dir
+            run: find $RUNNER_WORKSPACE
+            shell: bash
     - name: 'Run CMake'
       uses: lukka/run-cmake@master
       with:
@@ -63,7 +65,7 @@ jobs:
         cmakeBuildType: Release  
         buildDirectory: "${{ github.workspace }}/../../_temp/macos"
         buildWithCMake: true
-        buildWithCMakeArgs: --config Release  -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/../../_temp/macos/install"
+        buildWithCMakeArgs: --config Release -- -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/../../_temp/macos/install"
         
     - name: 'Run CTest'
       run: ctest -C Release
