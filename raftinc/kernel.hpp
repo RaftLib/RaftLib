@@ -187,11 +187,22 @@ protected:
     core_id_t core_assign       = -1;
 
     raft::schedule_behavior     sched_behav = raft::any_port;
-   bool             dup_enabled       = false;
+    bool             dup_enabled       = false;
+    
+    /**
+     * serves as a unique ID for the kernel, assuming 
+     * all kernels are spun off from a single source, 
+     * which is a pretty good assumption generally, 
+     * # NOTES
+     * * we'll need to make sure this is synchronized
+     * once we go to more than one machine again. Otherwise
+     * if we use this as a key for the node to synchronize
+     * over or add a barrier on it then we'll be in a pickle. 
+     */
+    const            std::size_t kernel_id;
 private:
    /** TODO, replace dup with bit vector **/
    bool             dup_candidate     = false;
-   const            std::size_t kernel_id;
 
    bool             execution_done    = false;
 

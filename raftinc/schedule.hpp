@@ -36,63 +36,77 @@ class Schedule
 {
 public:
 
-   /** 
-    * Schedule - base constructor takes a map object
-    * so that all sub-classes can access some of the 
-    * map features through the schedule sub-class
-    * accessors.
-    * @param   map - Map&
-    */
-   Schedule( raft::map &map );
-   
-   /**
-    * destructor, takes care of cleanup
-    */
-   virtual ~Schedule() = default;
-   
-   /**
-    * start - called to start execution of all
-    * kernels.  Implementation specific so it
-    * is purely virtual.
-    */
-   virtual void start() = 0;
+    /** 
+     * Schedule - base constructor takes a map object
+     * so that all sub-classes can access some of the 
+     * map features through the schedule sub-class
+     * accessors.
+     * @param   map - Map&
+     */
+    Schedule( raft::map &map );
+    
+    /**
+     * destructor, takes care of cleanup
+     */
+    virtual ~Schedule() = default;
+    
+    /**
+     * start - called to start execution of all
+     * kernels.  Implementation specific so it
+     * is purely virtual.
+     */
+    virtual void start() = 0;
 
-  
-   /** 
-    * init - call to pre-process all kernels, this function
-    * is called by the map object befure calling start.
-    */
-   virtual void init();
-   
-   /**
-    * kernelRun - all the logic necessary to run a single
-    * kernel successfully.  Any additional signal handling
-    * should be handled by this function as its the only
-    * one that will be universally called by the scheduler.
-    * @param   kernel - raft::kernel *const object, non-null kernel
-    * @param   finished - volatile bool - function sets to 
-    * true when done.
-    * @return  true if run with no need for jmp_buf, false if 
-    * the scheduler needs to run again with the kernel_state
-    */
-   static bool kernelRun( raft::kernel * const kernel,
-                          volatile bool       &finished );
 
-   //TODO, get rid of jmp_buf, no longer needed 
-   /**
-    * scheduleKernel - adds the kernel "kernel" to the
-    * schedule, ensures that it is run.  Other than
-    * that there are no guarantees for its execution.
-    * The base version should do for most, however feel
-    * free to re-implement in derived class as long as
-    * the source_kernels has all of the source kernels, 
-    * dst_kernels has all of the destination kernels, and
-    * kernel_set has all of the kernels. Before
-    * you drop in a kernel, it better be ready to go..all
-    * allocations should be complete.
-    * @param kernel - raft::kernel*
-    */
-   virtual void scheduleKernel( raft::kernel * const kernel );
+    /** 
+     * init - call to pre-process all kernels, this function
+     * is called by the map object befure calling start.
+     * Default version does absolutely nothing, but is 
+     * a shell in the source so that not all derived schedulers
+     * must subsequently implement it. 
+     */
+    virtual void init();
+    
+    /**
+     * kernelRun - all the logic necessary to run a single
+     * kernel successfully.  Any additional signal handling
+     * should be handled by this function as its the only
+     * one that will be universally called by the scheduler.
+     * @param   kernel - raft::kernel *const object, non-null kernel
+     * @param   finished - volatile bool - function sets to 
+     * true when done.
+     * @return  true if run with no need for jmp_buf, false if 
+     * the scheduler needs to run again with the kernel_state
+     */
+    static bool kernelRun( raft::kernel * const kernel,
+                           volatile bool       &finished );
+
+    /**
+     * scheduleKernel - adds the kernel "kernel" to the
+     * schedule, ensures that it is run.  Other than
+     * that there are no guarantees for its execution.
+     * The base version should do for most, however feel
+     * free to re-implement in derived class as long as
+     * the source_kernels has all of the source kernels, 
+     * dst_kernels has all of the destination kernels, and
+     * kernel_set has all of the kernels. Before
+     * you drop in a kernel, it better be ready to go..all
+     * allocations should be complete.
+     * @param kernel - raft::kernel*
+     */
+    virtual void scheduleKernel( raft::kernel * const kernel );
+
+
+    /**
+     * reset_streams - reset all streams within the defined
+     * graph so that they're in a state where they can be 
+     * re-used, basically undoing the logic that is used
+     * for shutting down the dataflow graph when no data
+     * is coming. 
+     * @return void. 
+     */
+    virtual void reset_streams();
+
 protected:
    virtual void handleSchedule( raft::kernel * const kernel ) = 0; 
    /**

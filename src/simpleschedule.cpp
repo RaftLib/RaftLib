@@ -30,9 +30,6 @@
 #include "rafttypes.hpp"
 #include "affinity.hpp"
 
-#ifdef USE_PARTITION
-#include "partition_scotch.hpp"
-#endif
 #include "defs.hpp"
 
 #ifdef STATIC_CORE_ASSIGN
@@ -59,10 +56,10 @@ simple_schedule::~simple_schedule()
 
     for( auto *th_info : thread_map )
     {
-        if( t_info->finished )
+        if( th_info->finished )
         {
-            t_info->th.join();
-            t_info->term = true;
+            th_info->th.join();
+            th_info->term = true;
         }
     }
 
@@ -73,14 +70,8 @@ simple_schedule::~simple_schedule()
     }
 }
 
-
-/**
- * this thread is primarily to migrate and place
- * threads...in the "basic" version it really 
- * doesn't do too much. 
- */
-void
-simple_schedule::start()
+void 
+simple_schedule::init()
 {
    /** 
     * NOTE: this section is the same as the code in the "handleSchedule"
@@ -94,7 +85,16 @@ simple_schedule::start()
       thread_map.emplace_back( th_info );
    }
    kernel_set.release();
-   
+}
+
+/**
+ * this thread is primarily to migrate and place
+ * threads...in the "basic" version it really 
+ * doesn't do too much. 
+ */
+void
+simple_schedule::start()
+{
    while( keep_going )
    {
       while( ! thread_map_mutex.try_lock() )

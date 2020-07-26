@@ -89,63 +89,69 @@ public:
              , 
              class allocator           = dynalloc,
              class parallelism_monitor = basic_parallel > 
-      void exe()
-   {
-      {
-         auto &container( all_kernels.acquire() );
-         for( auto * const submap : sub_maps )
-         {
-            auto &subcontainer( submap->all_kernels.acquire() );  
-            container.insert( subcontainer.begin(),
-                              subcontainer.end()   );
-            submap->all_kernels.release();
-         }
-         all_kernels.release();
-      }
-      /** check types, ensure all are linked **/
-      checkEdges();
-      partition pt;
-      pt.partition( all_kernels );
-      
-      /** adds in split/join kernels **/
-      //enableDuplication( source_kernels, all_kernels );
-      alloc_object = new allocator( (*this), exit_alloc );
-      /** launch allocator in a thread **/
-      allocator_thread = new std::thread( [&](){
-         alloc_object->run();
-      });
-      
-      try
-      {
-        alloc_object->waitTillReady();
-      }
-      catch( std::exception &ex )
-      {
-        std::cerr << "Exception caught with (" << ex.what() << ")\n"; 
-      }
-      
-      sched_object = new scheduler( (*this) );
-      sched_object->init();
-      
-      /** launch scheduler in thread **/
-      schedule_thread = new std::thread( [&](){
-         sched_object->start();
-      });
+    void exe()
+    {
+             
+        if( ! (this)->is_initialized )
+        {
+            auto &container( all_kernels.acquire() );
+            for( auto * const submap : sub_maps )
+            {
+               auto &subcontainer( submap->all_kernels.acquire() );  
+               container.insert( subcontainer.begin(),
+                                 subcontainer.end()   );
+               submap->all_kernels.release();
+            }
+            all_kernels.release();
+            /** check types, ensure all are linked **/
+            checkEdges();
+            partition pt;
+            pt.partition( all_kernels );
+            /** adds in split/join kernels **/
+            //enableDuplication( source_kernels, all_kernels );
+            alloc_object = new allocator( (*this), exit_alloc );
+            /** launch allocator in a thread **/
+            allocator_thread = new std::thread( [&](){
+               alloc_object->run();
+            });
+            
+            try
+            {
+              alloc_object->waitTillReady();
+            }
+            catch( std::exception &ex )
+            {
+              std::cerr << "Exception caught with (" << ex.what() << ")\n"; 
+            }
+            
+            sched_object = new scheduler( (*this) );
+            sched_object->init();
+            
+            /** launch scheduler in thread **/
+            schedule_thread = new std::thread( [&](){
+               sched_object->start();
+            });
 
 
-      /** launch parallelism monitor **/
-      pm = new parallelism_monitor(  (*this)               /** ref to this    **/, 
-                                     (*alloc_object)       /** allocator      **/,
-                                     (*sched_object)       /** scheduler      **/,
-                                     exit_para   /** exit parameter **/);
+            /** launch parallelism monitor **/
+            pm = new parallelism_monitor(  (*this)               /** ref to this    **/, 
+                                           (*alloc_object)       /** allocator      **/,
+                                           (*sched_object)       /** scheduler      **/,
+                                           exit_para   /** exit parameter **/);
 
-      pm_thread = new std::thread( [&](){
-         pm->start();
-      });
+            pm_thread = new std::thread( [&](){
+               pm->start();
+            });
+            (this)->is_initialized = true;
+        }
+        else
+        {
+            //reinitialize kernels
+        }
+        
+        //treat as barrier
 
-
-      /** all fifo's deallocated when alloc goes out of scope **/
-      return; 
+        return; 
    }
 
    /** 
@@ -190,6 +196,8 @@ protected:
     friend class ::Schedule;
     friend class ::Allocate;
       
+
+    bool            is_initialized      = false;
 
     bool            exit_alloc          = false;
     bool            exit_para           = false;

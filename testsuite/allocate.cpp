@@ -37,12 +37,12 @@ public:
 };
 
 int
-main( )
+main( int argc, char **argv )
 {
     int count( 1000 );
     if( argc == 2 )
     {
-       count = atoi( argv[ 1 ] );
+       count = std::atoi( argv[ 1 ] );
     }
     
     //int64
@@ -61,7 +61,7 @@ main( )
         m += s >> print;
         m.exe();
     }
-    
+        
     //bool
     {
         using type_t = bool;

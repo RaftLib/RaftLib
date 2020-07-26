@@ -32,46 +32,49 @@ namespace raft{
 class simple_schedule : public Schedule
 {
 public:
-   simple_schedule( raft::map &map );
+    simple_schedule( raft::map &map );
 
-   virtual ~simple_schedule() override;
+    virtual ~simple_schedule() override;
 
-   virtual void start() override;
+    virtual void init() override;
+    
+    virtual void start() override;
    
 protected:
-   void handleSchedule( raft::kernel * const kernel ); 
-                                
-   static void simple_run( void  *data );
 
-   struct thread_data
-   {
-      constexpr thread_data( raft::kernel * const k,
-                             bool *fin ) : k( k ),
-                                           finished( fin ){}
+    virtual void handleSchedule( raft::kernel * const kernel ) override;
+                                 
+    static void simple_run( void  *data );
 
-      raft::kernel *k         = nullptr;
-      bool         *finished  = nullptr;
-      core_id_t     loc       = -1;
-   };
-   
-   struct thread_info_t
-   {
-      thread_info_t( raft::kernel * const kernel ) : data( kernel, 
-                                                           &finished ),
-                                     th( simple_run,
-                                         reinterpret_cast< void* >( &data ) )
-      {
-      }
+    struct thread_data
+    {
+       constexpr thread_data( raft::kernel * const k,
+                              bool *fin ) : k( k ),
+                                            finished( fin ){}
 
-      bool           finished = false;
-      bool           term     = false;
-      thread_data    data;
-      std::thread    th;
-   };
+       raft::kernel *k         = nullptr;
+       bool         *finished  = nullptr;
+       core_id_t     loc       = -1;
+    };
+    
+    struct thread_info_t
+    {
+       thread_info_t( raft::kernel * const kernel ) : data( kernel, 
+                                                            &finished ),
+                                      th( simple_run,
+                                          reinterpret_cast< void* >( &data ) )
+       {
+       }
 
-   
-   std::mutex                    thread_map_mutex;
-   std::vector< thread_info_t* > thread_map;
-   bool keep_going  = true;
+       bool           finished = false;
+       bool           term     = false;
+       thread_data    data;
+       std::thread    th;
+    };
+
+    
+    std::mutex                    thread_map_mutex;
+    std::vector< thread_info_t* > thread_map;
+    bool keep_going  = true;
 };
 #endif /* END RAFTSIMPLESSCHEDULE_HPP */
