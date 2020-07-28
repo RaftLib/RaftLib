@@ -114,10 +114,12 @@ public:
    /**
     * operator[] - returns the current kernel with the 
     * specified port name enabled for linking.
-    * @param portname - const std::string&&
+    * @param portname - const raft::port_key_type&&
     * @return raft::kernel&&
     */
    raft::kernel& operator []( const std::string &&portname );
+   raft::kernel& operator []( const std::string &portname );
+
 
    core_id_t getCoreAssignment() noexcept
    {
