@@ -29,8 +29,25 @@ kernel::get_id()
    return( kernel_id );
 }
 
+
 raft::kernel&
 kernel::operator []( const std::string &&portname )
+{
+   if( enabled_port.size() < 2 )
+   {
+        enabled_port.push( portname );
+   }
+   else
+   {
+        throw AmbiguousPortAssignmentException(
+            "too many ports added with: " + portname
+        );
+   }
+   return( (*this) );
+}
+
+raft::kernel&
+kernel::operator []( const std::string &portname )
 {
    if( enabled_port.size() < 2 )
    {
