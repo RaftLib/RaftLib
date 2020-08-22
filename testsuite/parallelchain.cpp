@@ -58,7 +58,9 @@ main()
 
   raft::map m;
   m += g >> raft::order::out >> s >> raft::order::out >>  print;
-  
+  /**
+   * (multiple g) -> (join to multiple s) -> join (multiple) -> print
+   */
   m.exe();
 
   return( EXIT_SUCCESS );

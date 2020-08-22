@@ -49,6 +49,7 @@ pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
         exit( EXIT_FAILURE );
     }
     thread_data_pool.reserve( kernel_set.size() );
+    std::cout << "Number of shepherds: " << qthread_num_shepherds() << "\n";
 }
 
 

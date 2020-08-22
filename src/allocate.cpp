@@ -62,12 +62,12 @@ Allocate::initialize( PortInfo * const src,
    assert( fifo != nullptr );
    assert( dst  != nullptr );
    assert( src  != nullptr );
-   if( src->getFIFO() != nullptr )
+   if( src->is_spsc && src->getFIFO() != nullptr )
    {
       throw PortDoubleInitializeException(
          "Source port \"" + src->my_name + "\" already initialized!" );
    }
-   if( dst->getFIFO() !=  nullptr )
+   if( src->is_spsc && dst->getFIFO() !=  nullptr )
    {
       throw PortDoubleInitializeException(
          "Destination port \"" + dst->my_name +  "\" already initialized!" );

@@ -19,11 +19,9 @@
  */
 #ifndef RAFTSCHEDULE_HPP
 #define RAFTSCHEDULE_HPP  1
-#include <setjmp.h>
-#include "signalvars.hpp"
-#include "systemsignalhandler.hpp"
-#include "rafttypes.hpp"
 #include <set>
+#include "signalvars.hpp"
+#include "rafttypes.hpp"
 #include "kernelkeeper.tcc"
 #include "defs.hpp"
 
@@ -31,6 +29,8 @@ namespace raft {
    class kernel;
    class map;
 }
+/** don't need header, just type here **/
+class FIFO;
 
 class Schedule
 {
@@ -95,19 +95,6 @@ public:
    virtual void scheduleKernel( raft::kernel * const kernel );
 protected:
    virtual void handleSchedule( raft::kernel * const kernel ) = 0; 
-   /**
-    * checkSystemSignal - check the incomming streams for
-    * the param kernel for any system signals, if there 
-    * is one then consume the signal and perform the 
-    * appropriate action.
-    * @param kernel - raft::kernel
-    * @param data   - void*, use this if any further info
-    *  is needed in future implementations of handlers
-    * @return  raft::kstatus, proceed unless a stop signal is received
-    */
-   static raft::kstatus checkSystemSignal( raft::kernel * const kernel, 
-                                           void *data,
-                                           SystemSignalHandler &handlers );
 
    /**
     * quiteHandler - performs the actions needed when
@@ -172,10 +159,6 @@ protected:
    static void fifo_gc( ptr_map_t * const in,
                         ptr_set_t * const out,
                         ptr_set_t * const peekset );
-   /**
-    * signal handlers
-    */
-   SystemSignalHandler handlers;
    
    /** kernel set **/
    kernelkeeper &kernel_set;

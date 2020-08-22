@@ -41,9 +41,9 @@ main( int argc, char **argv )
   p_gen p( std::cout );
 
   m += g >> raft::order::out >> p;
-  //m.link< order::out >(
-  //   raft::kernel::make< gen >( count ),
-  //   raft::kernel::make< p_gen >( std::cout ) );
+  /**
+   * g -> (implicit) join -> p
+   */
   m.exe();
   return( EXIT_SUCCESS );
 }

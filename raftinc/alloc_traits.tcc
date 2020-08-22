@@ -33,9 +33,7 @@
 /**
  * see if the given class/type fits within a single cache line
  */
-template < class T > 
-struct fits_in_cache_line : 
-   std::integral_constant< bool, ( sizeof( T ) <= L1D_CACHE_LINE_SIZE ) >{};
+template < class T > struct fits_in_cache_line : std::integral_constant< bool, ( sizeof( T ) <= L1D_CACHE_LINE_SIZE ) >{};
 
 /**
  * NOW FOR ALLOC CHECKS
