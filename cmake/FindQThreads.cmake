@@ -39,7 +39,8 @@ if( QTHREAD_LIBRARY )
     set( CMAKE_QTHREAD_LIBS  "-lqthread" )
     set( CMAKE_QTHREAD_INCS "-I${QTHREAD_INCLUDE}" )
     #set compilation to actually compile qthread
-    add_definitions( "-DUSEQTHREADS=1" )
+    set( CMAKE_QTHREAD_FLAGS "-DUSEQTHREADS=1" )
+    add_definitions( ${CMAKE_QTHREAD_FLAGS} )
     message( STATUS "Using Qthread threading library" ) 
     message( STATUS "LIBRARY: ${QTHREAD_LIBRARY}" ) 
     message( STATUS "INCLUDE: ${QTHREAD_INCLUDE}" ) 
@@ -54,6 +55,7 @@ else( ${USEQTHREAD} )
     
     set( CMAKE_QTHREAD_LIBS "" )
     set( CMAKE_QTHREAD_INCS "" )
+    set( CMAKE_QTHREAD_FLAGS "" )
 
 endif( ${USEQTHREAD} )
 
