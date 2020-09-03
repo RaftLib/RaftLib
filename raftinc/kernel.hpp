@@ -161,8 +161,9 @@ protected:
 
     /**
      * NOTE: doesn't need to be atomic since only one thread
-     * will have responsibility to to create new compute 
-     * kernels.
+     * per process will have responsibility to to create new 
+     * compute kernels, for multi-process, this is used in 
+     * conjunction with process identifier.
      */
     static std::size_t kernel_count;
      

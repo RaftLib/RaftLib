@@ -267,6 +267,21 @@ operator <= ( raft::kernel_wrapper &&w, kpair &b )
     return( *ptr );
 }
 
+
+kpair& 
+operator >= ( raft::kernel &a, raft::kernel &b )
+{
+    auto *ptr( new kpair( a, b, false, true ) );
+    return( *ptr );
+}
+
+kpair& 
+operator >= ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b )
+{
+    auto *ptr( new kpair( a, b, false, true ) );
+    return( *ptr );
+}
+
 kpair&
 operator >= ( kpair &a, raft::kernel_wrapper &&w )
 {

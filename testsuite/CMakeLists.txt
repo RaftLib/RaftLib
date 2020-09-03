@@ -27,7 +27,8 @@ set( TESTAPPS allocate
      allocatePopInternalObject
      allocatePopExternal 
      parallelchain 
-     ksettest 
+     ksettest
+     multiPrint
      fixedMatchTest 
      splitchainRetStruct 
      staticContJoinRetStruct

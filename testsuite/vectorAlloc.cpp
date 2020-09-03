@@ -28,8 +28,8 @@ using namespace raft;
 using type_t = std::vector< std::uint32_t >;
 using lambda_kernel = raft::lambdak< type_t >;
  
-/** hacky pring function **/
-std::ostream& operator << ( std::ostream &s, type_t &t )
+/** hacky print function **/
+std::ostream& operator << ( std::ostream &s, const type_t &t )
 {
     s << "{ ";
     for( const auto &x : t )
