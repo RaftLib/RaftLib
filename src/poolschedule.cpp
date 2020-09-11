@@ -102,7 +102,7 @@ pool_schedule::start()
      */
     kernel_set.release();
 START:        
-    std::chrono::milliseconds dura( 3 );
+    std::chrono::milliseconds dura( 1 );
     std::this_thread::sleep_for( dura );
     tail_mutex.lock();
     for( auto * const td : tail )
