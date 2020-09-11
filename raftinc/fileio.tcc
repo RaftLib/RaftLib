@@ -43,7 +43,7 @@ enum readertype : std::int8_t { chunk, fasta };
 
 template < std::size_t size = 65536 > struct filechunk
 {
-   filechunk() = default;
+   constexpr filechunk() = default;
 
    filechunk( const filechunk< size > &other )
    {
@@ -61,11 +61,12 @@ template < std::size_t size = 65536 > struct filechunk
         length = other.length;
         return( *this );
    }
-
+#pragma pack( push, 1 )
    char           buffer[ size ];
    std::size_t    start_position    = 0;
    std::size_t    length            = 0;
    std::uint64_t  index             = 0;
+#pragma pack( pop )
 
    constexpr static std::size_t getChunkSize() noexcept
    {

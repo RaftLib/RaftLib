@@ -33,7 +33,7 @@ template < std::size_t size > struct filechunk;
 template < std::size_t size > class chunk_iterator : public std::iterator< std::forward_iterator_tag, char >
 {
 public:
-   chunk_iterator( filechunk< size > * const chunk ) : chunk( chunk )
+   constexpr chunk_iterator( filechunk< size > * const chunk ) : chunk( chunk )
    {
       /** nothing to do here **/
    }
@@ -116,7 +116,7 @@ public:
    
    inline std::size_t location() noexcept
    {
-      return( index );
+      return( index + chunk->start_position );
    }
 
 
