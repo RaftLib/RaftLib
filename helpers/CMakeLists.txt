@@ -25,8 +25,11 @@ if( NOT CACHE_INFO_EXE )
     message(SEND_ERROR "Unable to find cache info executable")
 endif()
 
+
+if( NOT L1D_LINE_SIZE ) # see if a user already set it 
 execute_process( COMMAND ${CACHE_INFO_EXE}
                  OUTPUT_VARIABLE L1D_LINE_SIZE)
+endif( NOT L1D_LINE_SIZE )                 
 
 # verify & export
 if( NOT L1D_LINE_SIZE )
