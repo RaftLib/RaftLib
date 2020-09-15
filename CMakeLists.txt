@@ -25,6 +25,12 @@ add_subdirectory(helpers)
 add_definitions( "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" ) 
 
 
+mark_as_advanced( RUN_BENCHMARKS )
+set( RUN_BENCHMARKS false CACHE BOOL "Set flags and variables to synchronize execution" )
+if( RUN_BENCHMARKS )
+    add_definitions( "-DBENCHMARK=1" )
+endif( RUN_BENCHMARKS )
+
 
 ##
 # need this for examples and testcases

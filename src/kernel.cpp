@@ -7,6 +7,10 @@ using namespace raft;
 
 std::size_t kernel::kernel_count( 0 );
 
+#ifdef BENCHMARK
+    std::atomic< std::size_t > kernel::initialized_count( 0 );
+#endif
+
 /** default **/
 kernel::kernel() : kernel_id( kernel::kernel_count )
 {

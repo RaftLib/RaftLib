@@ -40,6 +40,8 @@
 #endif
 #include "defs.hpp"
 
+
+
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
     const auto ret_val( qthread_initialize() );
@@ -144,6 +146,13 @@ aligned_t pool_schedule::pool_run( void *data )
 #endif   
    volatile bool done( false );
    std::uint8_t run_count( 0 );
+#ifdef BENCHMARK
+   raft::kernel::initialized_count++;
+   while( raft::kernel::initialized_count != raft::kernel::kernel_count )
+   {
+       raft::yield();
+   }
+#endif 
    while( ! done )
    {
       Schedule::kernelRun( thread_d->k, done );
