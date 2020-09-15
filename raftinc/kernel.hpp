@@ -25,6 +25,9 @@
 #include <cstdint>
 #include <queue>
 #include <string>
+#ifdef BENCHMARK
+#include <atomic>
+#endif
 #include "kernelexception.hpp"
 #include "port.hpp"
 #include "signalvars.hpp"
@@ -166,7 +169,11 @@ protected:
      * conjunction with process identifier.
      */
     static std::size_t kernel_count;
-     
+    
+#ifdef BENCHMARK
+    static std::atomic< std::size_t > initialized_count;
+#endif
+
     bool internal_alloc = false;
 
     

@@ -89,6 +89,7 @@ protected:
      */
     struct ALIGN( 64 ) thread_data
     {
+#pragma pack( push, 1 )       
        constexpr thread_data( raft::kernel * const k ) : k( k ){}
 
        inline void setCore( const core_id_t core ){ loc = core; };
@@ -96,6 +97,7 @@ protected:
        raft::kernel *k         = nullptr;
        bool          finished  = false;
        core_id_t     loc       = -1;
+#pragma pack( pop )       
     };
     std::mutex                  thread_data_mutex;
     std::vector< thread_data* > thread_data_pool;
