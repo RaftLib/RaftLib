@@ -165,6 +165,7 @@ protected:
     */
    virtual void local_allocate( void **ptr )
    {
+      assert( false );
       for(;;)
       {
          (this)->datamanager.enterBuffer( dm::allocate );

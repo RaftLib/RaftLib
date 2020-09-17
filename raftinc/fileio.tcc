@@ -31,12 +31,6 @@
 #include "chunkiterator.tcc"
 
 
-/**
- * FIXME: needs to have to copy function implemenented
- * so that each port has the option of receiving copies
- * of the transfered data.
- */
-
 namespace raft{
 
 enum readertype : std::int8_t { chunk, fasta };
@@ -45,7 +39,7 @@ template < std::size_t size = 65536 > struct filechunk
 {
    constexpr filechunk() = default;
 
-   filechunk( const filechunk< size > &other )
+   constexpr filechunk( const filechunk< size > &other )
    {
       std::memcpy( buffer, other.buffer, other.length + 1 /** cp null term **/ );
       start_position = other.start_position;
