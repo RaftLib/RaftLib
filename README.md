@@ -28,9 +28,9 @@ you'll need to add to your cmake invocation:
 ```
 
 To use the [QThreads User space HPC threading library](http://www.cs.sandia.gov/qthreads/) 
-you will need to add the following (NOTE: The qthread library currently uses its own partitioner
-and does not work with Scotch, it also has issues with OpenCV, will fix in next release 
-iteration):
+you will need to use the version with the RaftLib org and follow the RaftLib specific readme. 
+This QThreads version has patches for hwloc2.x applied and fixes for test cases. To compile
+RaftLib with QThreads linked, add the following (assumes the QThreads library is in your path):
 ```bash
 -DUSEQTHREAD=1
 ```
