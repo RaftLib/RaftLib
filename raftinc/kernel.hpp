@@ -112,7 +112,7 @@ public:
       return( nullptr );
    }
 
-   std::size_t get_id();
+   constexpr auto get_id(){ return( kernel_id ); }
    
    /**
     * operator[] - returns the current kernel with the 

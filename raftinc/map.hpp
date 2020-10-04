@@ -39,6 +39,7 @@
 #include "noparallel.hpp"
 /** includes all partitioners **/
 #include "partitioners.hpp"
+#include "makedot.hpp"
 
 namespace raft
 {
@@ -91,68 +92,74 @@ public:
              class parallelism_monitor = basic_parallel > 
       void exe()
    {
-      {
-         auto &container( all_kernels.acquire() );
-         for( auto * const submap : sub_maps )
-         {
-            auto &subcontainer( submap->all_kernels.acquire() );  
-            container.insert( subcontainer.begin(),
-                              subcontainer.end()   );
-            submap->all_kernels.release();
-         }
-         all_kernels.release();
-      }
-      /** check types, ensure all are linked **/
-      checkEdges();
-      partition pt;
-      pt.partition( all_kernels );
-      
-      /** adds in split/join kernels **/
-      //enableDuplication( source_kernels, all_kernels );
-      volatile bool exit_alloc( false );
-      allocator alloc( (*this), exit_alloc );
-      /** launch allocator in a thread **/
-      std::thread mem_thread( [&](){
-         alloc.run();
-      });
-      
-      try
-      {
-        alloc.waitTillReady();
-      }
-      catch( std::exception &ex )
-      {
-        std::cerr << "Exception caught with (" << ex.what() << ")\n"; 
-      }
-      scheduler sched( (*this) );
-      sched.init();
-      
-      /** launch scheduler in thread **/
-      std::thread sched_thread( [&](){
-         sched.start();
-      });
+        {
+            auto &container( all_kernels.acquire() );
+            for( auto * const submap : sub_maps )
+            {
+               auto &subcontainer( submap->all_kernels.acquire() );  
+               container.insert( subcontainer.begin(),
+                                 subcontainer.end()   );
+               submap->all_kernels.release();
+            }
+            all_kernels.release();
+        }
+        /** check types, ensure all are linked **/
+        checkEdges();
+        partition pt;
+        pt.partition( all_kernels );
+        auto *dot_graph_env = std::getenv( "GEN_DOT" );
+        if( dot_graph_env != nullptr )
+        {
+            std::ofstream of( dot_graph_env );
+            raft::make_dot::run( of, (*this) );
+            of.close();
+        }
+        /** adds in split/join kernels **/
+        //enableDuplication( source_kernels, all_kernels );
+        volatile bool exit_alloc( false );
+        allocator alloc( (*this), exit_alloc );
+        /** launch allocator in a thread **/
+        std::thread mem_thread( [&](){
+           alloc.run();
+        });
+        
+        try
+        {
+          alloc.waitTillReady();
+        }
+        catch( std::exception &ex )
+        {
+          std::cerr << "Exception caught with (" << ex.what() << ")\n"; 
+        }
+        scheduler sched( (*this) );
+        sched.init();
+        
+        /** launch scheduler in thread **/
+        std::thread sched_thread( [&](){
+           sched.start();
+        });
 
-      volatile bool exit_para( false );
-      /** launch parallelism monitor **/
-      parallelism_monitor pm( (*this)     /** ref to this    **/, 
-                              alloc       /** allocator      **/,
-                              sched       /** scheduler      **/,
-                              exit_para   /** exit parameter **/);
-      std::thread parallel_mon( [&](){
-         pm.start();
-      });
-      /** join scheduler first **/
-      sched_thread.join();
+        volatile bool exit_para( false );
+        /** launch parallelism monitor **/
+        parallelism_monitor pm( (*this)     /** ref to this    **/, 
+                                alloc       /** allocator      **/,
+                                sched       /** scheduler      **/,
+                                exit_para   /** exit parameter **/);
+        std::thread parallel_mon( [&](){
+           pm.start();
+        });
+        /** join scheduler first **/
+        sched_thread.join();
 
-      /** scheduler done, cleanup alloc **/
-      exit_alloc = true;
-      mem_thread.join();
-      /** no more need to duplicate kernels **/
-      exit_para = true;
-      parallel_mon.join();
+        /** scheduler done, cleanup alloc **/
+        exit_alloc = true;
+        mem_thread.join();
+        /** no more need to duplicate kernels **/
+        exit_para = true;
+        parallel_mon.join();
 
-      /** all fifo's deallocated when alloc goes out of scope **/
-      return; 
+        /** all fifo's deallocated when alloc goes out of scope **/
+        return; 
    }
 
    /** 
@@ -196,6 +203,7 @@ protected:
    friend class ::basic_parallel;
    friend class ::Schedule;
    friend class ::Allocate;
+   friend class make_dot;
 
 private:
     using split_stack_t = std::stack< std::size_t >;

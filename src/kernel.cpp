@@ -27,12 +27,6 @@ kernel::kernel( void * const ptr,
 }
 
 
-std::size_t
-kernel::get_id()
-{
-   return( kernel_id );
-}
-
 
 raft::kernel&
 kernel::operator []( const std::string &&portname )
