@@ -32,7 +32,7 @@ namespace raft
     /** recursive template base case for fields **/
     template <> struct field_helper<>
     {
-         static std::string get_csv() { return( std::move< std::string >( "" ) ); }
+         static std::string get_csv() { return( "" ); }
     };
     
     /** recursive template main case for fields **/

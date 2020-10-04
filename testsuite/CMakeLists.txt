@@ -16,7 +16,7 @@ set( TESTAPPS allocate
      fitInCacheLine
      isExtClass
      doesntFitInCacheLine
-     internalmath
+     #internalmath
      isInlineClass
      isExtArray
      isExtAlloc 
