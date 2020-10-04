@@ -143,6 +143,26 @@ kernel::getEnabledPort()
     enabled_port.pop();
     return( head );
 }
+   
+raft::kernel* 
+kernel::clone()
+{
+   throw CloneNotImplementedException( "Sub-class has failed to implement clone function, please use the CLONE() macro to add functionality" );
+   /** won't be reached **/
+   return( nullptr );
+}
+
+std::size_t 
+kernel::get_id() noexcept
+{
+    return( kernel_id ); 
+}
+   
+core_id_t 
+kernel::getCoreAssignment() noexcept
+{
+    return( core_assign );
+}
 
 //std::string
 //kernel::getName()

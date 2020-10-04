@@ -105,14 +105,11 @@ public:
     * @return  kernel*   - takes base type, however is same as 
     * allocated by copy constructor for T.
     */
-   virtual raft::kernel* clone()
-   {
-      throw CloneNotImplementedException( "Sub-class has failed to implement clone function, please use the CLONE() macro to add functionality" );
-      /** won't be reached **/
-      return( nullptr );
-   }
+   virtual raft::kernel* clone();
 
-   constexpr auto get_id(){ return( kernel_id ); }
+   std::size_t get_id() noexcept;
+   
+   core_id_t getCoreAssignment() noexcept;
    
    /**
     * operator[] - returns the current kernel with the 
@@ -124,10 +121,6 @@ public:
    raft::kernel& operator []( const std::string &portname );
 
 
-   core_id_t getCoreAssignment() noexcept
-   {
-       return( core_assign );
-   }
 
 protected:
     /**
