@@ -53,22 +53,6 @@ pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
         exit( EXIT_FAILURE );
     }
     thread_data_pool.reserve( kernel_set.size() );
-#ifdef BENCHMARK
-#ifdef __linux
-    constexpr static auto schedule( SCHED_RR );
-    const auto priority( sched_get_priority_max( schedule ) );
-    const struct sched_param sp = { .sched_priority = priority };
-    auto sch_ret_val( sched_setscheduler(0x0 /* this */,
-                                         schedule,
-                                         &sp ) );
-
-    if( sch_ret_val != 0 )
-    {
-        perror( "Failed to set scheduler" );
-        exit( EXIT_FAILURE );
-    }
-#endif    
-#endif        
 }
 
 
@@ -122,7 +106,7 @@ pool_schedule::start()
      */
     kernel_set.release();
 START:        
-    std::chrono::milliseconds dura( 1 );
+    std::chrono::milliseconds dura( 3 );
     std::this_thread::sleep_for( dura );
     tail_mutex.lock();
     for( auto * const td : tail )

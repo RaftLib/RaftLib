@@ -3,7 +3,7 @@
  * @author: Jonathan Beard
  * @version: Sun Oct  5 08:49:11 2014
  * 
- * Copyright 2014 Jonathan Beard
+ * Copyright 2020 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,8 @@ namespace raft
 /** declare this guy **/
 template < std::size_t size > struct filechunk;
 
-template < std::size_t size > class chunk_iterator : public std::iterator< std::forward_iterator_tag, char >
+template < std::size_t size > class chunk_iterator : 
+    public std::iterator< std::forward_iterator_tag, char >
 {
 public:
    constexpr chunk_iterator( filechunk< size > * const chunk ) : chunk( chunk )
