@@ -14,10 +14,10 @@ jobs:
     runs-on: windows-latest 
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@main
 
     - name: 'Run CMake with VS16'
-      uses: lukka/run-cmake@v2
+      uses: lukka/run-cmake@main
       with:
         cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
         cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
@@ -34,10 +34,10 @@ jobs:
   Linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@main
       
     - name: 'Run CMake'
-      uses: lukka/run-cmake@v2
+      uses: lukka/run-cmake@main
       with:
         cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
         cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
