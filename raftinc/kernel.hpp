@@ -169,21 +169,25 @@ protected:
 
     bool internal_alloc = false;
 
-    
-    void  retire() noexcept
-    {
-        (this)->execution_done = true;
-    }
+    /**
+     * retire - set to indicate that this kernel 
+     * is done executing. 
+     */
+    void  retire() noexcept;
 
-    bool isRetired() noexcept
-    {
-        return( (this)->execution_done );
-    }
+    /**
+     * isRetired - is this kernel done or is it still
+     * executing? 
+     * @return - bool if its still going. 
+     */
+    bool isRetired() noexcept;
     
-    void setCore( const core_id_t id ) noexcept
-    {
-        core_assign = id;
-    }
+    /**
+     * setCore - set the core that this kernel is to be 
+     * assigned to. 
+     * @param id - core_id_t, single core
+     */
+    void setCore( const core_id_t id ) noexcept;
 
 
     core_id_t core_assign       = -1;

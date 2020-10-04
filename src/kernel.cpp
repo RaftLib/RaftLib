@@ -163,6 +163,25 @@ kernel::getCoreAssignment() noexcept
 {
     return( core_assign );
 }
+   
+
+void  
+kernel::retire() noexcept
+{
+    (this)->execution_done = true;
+}
+
+bool 
+kernel::isRetired() noexcept
+{
+    return( (this)->execution_done );
+}
+
+void 
+kernel::setCore( const core_id_t id ) noexcept
+{
+    core_assign = id;
+}
 
 //std::string
 //kernel::getName()
