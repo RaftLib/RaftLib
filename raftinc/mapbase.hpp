@@ -46,6 +46,11 @@
 #include "kpair.hpp"
 #include "kernel_pair_t.hpp"
 
+namespace raft
+{
+    class make_dot;
+}
+
 class MapBase
 {
 public:
@@ -342,6 +347,7 @@ protected:
     */
    std::vector< MapBase* >   sub_maps;
    friend class raft::map;
+   friend class raft::make_dot;
 };
    
 

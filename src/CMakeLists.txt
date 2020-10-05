@@ -14,6 +14,7 @@ set(CPP_SRC_FILES
     kernel_wrapper.cpp
     kpair.cpp
     leastusedfirst.cpp
+    makedot.cpp
     mapbase.cpp
     map.cpp
     mapexception.cpp
