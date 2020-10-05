@@ -19,6 +19,7 @@
  */
 #ifndef RAFTMAP_HPP
 #define RAFTMAP_HPP  1
+#include <cstdlib>
 #include <typeinfo>
 #include <cassert>
 #include <thread>
@@ -39,6 +40,7 @@
 #include "noparallel.hpp"
 /** includes all partitioners **/
 #include "partitioners.hpp"
+#include "makedot.hpp"
 
 namespace raft
 {
@@ -106,6 +108,14 @@ public:
       checkEdges();
       partition pt;
       pt.partition( all_kernels );
+        
+      auto *dot_graph_env = std::getenv( "GEN_DOT" );
+      if( dot_graph_env != nullptr )
+      {
+          std::ofstream of( dot_graph_env );
+          raft::make_dot::run( of, (*this) );
+          of.close();
+      }
       
       /** adds in split/join kernels **/
       //enableDuplication( source_kernels, all_kernels );
@@ -196,7 +206,7 @@ protected:
    friend class ::basic_parallel;
    friend class ::Schedule;
    friend class ::Allocate;
-
+   friend class make_dot;
 private:
     using split_stack_t = std::stack< std::size_t >;
     using group_t = std::vector< raft::kernel* >;
