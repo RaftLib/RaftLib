@@ -22,6 +22,8 @@
 #include <sstream>
 #include <ios>
 #include <iostream>
+#include <cstdlib>
+#include <string>
 
 #include "makedot.hpp"
 #include "common.hpp"
@@ -32,7 +34,16 @@
 raft::make_dot::make_dot( raft::map &map ) : all_kernels( map.all_kernels ),
                                              source_kernels( map.source_kernels )
 {
-    //nothing else to d //nothing else to doo
+    auto *height_env( std::getenv( "GEN_DOT_HEIGHT" ) );
+    if( height_env != nullptr )
+    {
+        height = std::stoi( height_env );
+    }
+    auto *width_env( std::getenv( "GEN_DOT_WIDTH" ) );
+    if( width_env != nullptr )
+    {
+        width  = std::stoi( width_env );
+    }
 }
 
 
