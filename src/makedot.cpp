@@ -19,11 +19,15 @@
  */
 
 #include <ostream>
+#include <sstream>
+#include <ios>
+#include <iostream>
 
 #include "makedot.hpp"
 #include "common.hpp"
 #include "map.hpp"
 #include "graphtools.hpp"
+#include "ringbuffertypes.hpp"
 
 raft::make_dot::make_dot( raft::map &map ) : all_kernels( map.all_kernels ),
                                              source_kernels( map.source_kernels )
@@ -88,7 +92,21 @@ raft::make_dot::generate_edge_list( std::ostream &stream )
         (*stream_ptr) << "\t" << a.my_kernel->get_id() << " -> ";
         (*stream_ptr) << b.my_kernel->get_id();
         (*stream_ptr) << "[";
-        (*stream_ptr) << raft::make_dot::generate_field( "label", a.my_name + " to " + b.my_name );
+        std::stringstream ss;
+        ss << a.my_name << " to " << b.my_name  << " (";
+        ss << common::printClassNameFromStr( a.type.name() ) + ")";
+        ss << "\n";
+        ss << "OoO=" << std::boolalpha  << a.out_of_order << "\n";
+        ss << "custom allocator=" << std::boolalpha << a.use_my_allocator << "\n";
+        ss << "queue type=" << Type::type_prints[ a.mem ] << "\n";
+        if( a.existing_buffer != nullptr )
+        {
+            ss << "existing_buffer\n";
+            ss << "\tsize: " << a.nitems << "\n";
+            ss << "\tstart_offset: " << a.start_index << "\n";
+            ss << "\tfixed_buffer_size: " << a.fixed_buffer_size << "\n";
+        }
+        (*stream_ptr) << raft::make_dot::generate_field( "label", ss.str() );
         (*stream_ptr) << "];\n";
     };
 
