@@ -115,6 +115,16 @@ public:
           std::ofstream of( dot_graph_env );
           raft::make_dot::run( of, (*this) );
           of.close();
+          auto *dot_graph_exit = std::getenv( "GEN_DOT_EXIT" );
+          if( dot_graph_exit != nullptr )
+          {
+             const auto dot_exit_val( std::stoi( dot_graph_exit ) );
+             if( dot_exit_val == 1 )
+             {
+                exit( EXIT_SUCCESS );
+             }
+             //else continue
+          }
       }
       
       /** adds in split/join kernels **/
