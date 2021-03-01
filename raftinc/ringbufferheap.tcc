@@ -778,8 +778,8 @@ protected:
             {
                rd_stats  = 1;
             }
-            raft::yield();
          }
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const std::size_t read_index( Pointer::val( buff_ptr->read_pt ) );
