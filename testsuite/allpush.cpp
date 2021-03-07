@@ -43,8 +43,6 @@ public:
       B b;
       auto &port_a( input[ "input_a" ] );
       auto &port_b( input[ "input_b" ] );
-      assert( port_a.size() >= 0 );
-      assert( port_b.size() >= 0 );
       raft::signal  sig_a( raft::none  ), sig_b( raft::none );
       port_a.pop( a, &sig_a );
       port_b.pop( b, &sig_b );

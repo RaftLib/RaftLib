@@ -42,7 +42,7 @@ static inline void yield()
 #if (! defined _WIN64) && (! defined _WIN32)
 #ifdef USEQTHREADS
     qthread_yield();
-#else         
+#elif defined NICE
     sched_yield();
 #endif
 #endif /** end if not win **/

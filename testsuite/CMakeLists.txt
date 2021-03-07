@@ -30,6 +30,7 @@ set( TESTAPPS allocate
      ksettest
      multiPrint
      fixedMatchTest 
+     select_in_t
      splitchainRetStruct 
      staticContJoinRetStruct
      staticJoinRetStruct
