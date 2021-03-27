@@ -30,6 +30,7 @@
 #include <bitset>
 #include <memory>
 #include <string>
+#include <limits>
 
 
 
@@ -85,7 +86,8 @@ namespace raft
      * just like the string, we need a value for uninitialized port
      * types. 
      */
-    const static raft::port_key_type null_port_value = 0;
+    const static raft::port_key_type null_port_value = 
+        std::numeric_limits< raft::port_key_type >::max();
     /**
      * fixed length name representation containing both the hash value
      * and the string name of the hash (although it is truncated to the
