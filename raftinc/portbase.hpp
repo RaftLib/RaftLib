@@ -31,18 +31,6 @@ class PortBase
 public:
    PortBase()          = default;
    virtual ~PortBase() = default;
-   /**
-    * operator[] - enables lookup of ports by name,
-    * which in turn enables the user to name each
-    * port something that is telling of the underlying
-    * function.
-    * @param   port_name - name of the port you wish to get
-    * @return FIFO&
-    * @throws - should throw a PortNotFoundException if port_name
-    * doesn't exist.
-    */
-   virtual FIFO& operator[]( const raft::port_key_type &&port_name  ) = 0;
-   virtual FIFO& operator[]( const raft::port_key_type &port_name ) = 0;
 
    /**
     * hasPorts - should return false if this port object is

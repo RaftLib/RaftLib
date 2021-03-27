@@ -46,7 +46,15 @@ public:
         for( index_type index( 0 ); index < n_input_ports; index++ )
         {
            /** add a port for each index var, all named "input_#" **/
+#ifdef STRING_NAMES           
            input.addPort< T  >( std::to_string( index ) );
+#else
+           /**
+            * if not strings, the addPort function expects a port_key_name_t struct,
+            * so, we have to go and add it. 
+            */
+           input.addPort< T >( raft::port_key_name_t( index, std::to_string( index ) ) );
+#endif
         }
         ofs = &(std::cout);
     }
@@ -59,7 +67,15 @@ public:
         for( index_type index( 0 ); index < n_input_ports; index++ )
         {
            /** add a port for each index var, all named "input_#" **/
+#ifdef STRING_NAMES           
            input.addPort< T  >( std::to_string( index ) );
+#else
+           /**
+            * if not strings, the addPort function expects a port_key_name_t struct,
+            * so, we have to go and add it. 
+            */
+           input.addPort< T >( raft::port_key_name_t( index, std::to_string( index ) ) );
+#endif
         }
         ofs = &stream;
     }

@@ -76,11 +76,7 @@ namespace raft
      * like a string. 
      */
     using port_key_type = highway_hash::hash_t::val_type;
-    /**
-     * added this one given we need fixed length representations so that 
-     * we can more efficiently store them and look up the names at a later 
-     * date. 
-     */
+    
     template < std::size_t N > using name_struct_t = highway_hash::data_t< N >;
     /**
      * just like the string, we need a value for uninitialized port
@@ -98,6 +94,29 @@ namespace raft
     using parsemap_ptr = std::shared_ptr< raft::parsemap >;
 } /** end namespace raft **/
 
+#ifndef STRING_NAMES
+    /**
+     * use this to get a constexpr 64b unsigned hash
+     * of a string. Must compile with C++20 for this to
+     * work given it requires return type template type
+     * deduction for user-defined string literals. 
+     * e.g. "foobar"_port, hashes the string at compile
+     * time. Currently only g++ has this capability, maybe
+     * the latest head of clang, apple clang does not. 
+     * The return type is a struct with the string, 
+     * the length, and the hash value. e.g.
+     * auto data( "foobar"_port); then the field data.val
+     * contains your hash. 
+     */
+    template < raft::name_struct_t port_name >
+    static
+    constexpr
+    auto
+    operator""_port() 
+    {
+        return( port_name );
+    }
+#endif
 
 template < typename T > 
     using set_t = std::set< T >;

@@ -83,7 +83,7 @@ struct port_helper< T, PORT, PORTNAME, PORTNAMES... >
                                     PORTNAME &&portname,
                                     PORTNAMES&&... portnames )
     {
-        port.template add_port< T >( portname );
+        port.template add_port< T, PORTNAME >( portname );
         port_helper< T, 
                      PORT, 
                      PORTNAMES... >::add_port( port,
@@ -214,13 +214,53 @@ public:
     */
    const std::type_index& getPortType( const raft::port_key_type &&port_name );
 
+    //FIXME - add restrictions for T below so that it can only be a 
+    //string or a hash object. 
+    /**
+     * operator[] - input the port name and get a port
+     * if it exists.
+     */
+    template < class T > FIFO& operator[]( const T  &&port_name  )
+    {
+       //NOTE: We'll need to add a lock here if later
+       //we intend to remove ports dynamically as well
+       //for the moment however lets just assume we're
+       //only adding them
+#ifdef STRING_NAMES       
+       const auto ret_val( portmap.map.find( port_name ) );
+#else
+       const auto ret_val( portmap.map.find( port_name.val ) );
+#endif
+       if( ret_val == portmap.map.cend() )
+       {
+        //FIXME
+          throw PortNotFoundException( 
+             //"Port not found for name \"" /** + port_name **/ + "\"" );
+             "Port not found for name \"\"" );
+       }
+       return( *((*ret_val).second.getFIFO())  );
+    }
 
-   /**
-    * operator[] - input the port name and get a port
-    * if it exists.
-    */
-   virtual FIFO& operator[]( const raft::port_key_type  &&port_name  );
-   virtual FIFO& operator[]( const raft::port_key_type  &port_name ); 
+    template < class T > FIFO& operator[]( const T &port_name )
+    {
+       //NOTE: We'll need to add a lock here if later
+       //we intend to remove ports dynamically as well
+       //for the moment however lets just assume we're
+       //only adding them
+#ifdef STRING_NAMES
+       const auto ret_val( portmap.map.find( port_name ) );
+#else
+       const auto ret_val( portmap.map.find( port_name.val ) );
+#endif       
+       if( ret_val == portmap.map.cend() )
+       {
+        //FIXME
+          throw PortNotFoundException( 
+             //"Port not found for name \"" + /** port_name + **/ "\"" );
+             "Port not found for name \"\"" );
+       }
+       return( *((*ret_val).second.getFIFO())  );
+    }
 
    /**
     * hasPorts - returns true if any ports exists, false
@@ -291,7 +331,8 @@ public:
       if( ! ret_val.second )
       {
          //FIXME    
-         throw PortAlreadyExists( "FATAL ERROR: port \"" + port_name.str + "\" already exists!" );
+         //throw PortAlreadyExists( "FATAL ERROR: port \"" + port_name.str + "\" already exists!" );
+         throw PortAlreadyExists( "FATAL ERROR: port \"\" already exists!" );
       }
 #ifndef STRING_NAMES
          portmap.name_map.insert( std::make_pair( port_name.val, raft::port_key_name_t( port_name ) ) );

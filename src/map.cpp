@@ -184,67 +184,21 @@ raft::map::enableDuplication( kernelkeeper &source, kernelkeeper &all )
 void
 raft::map::joink( kpair * const next )
 {
-        /** might be able to do better by re-doing with templates **/
-        if( next->has_src_name && next->has_dst_name )
+        if( next->out_of_order )
         {
-            if( next->out_of_order )
-            {
-                (this)->link< raft::order::out >( next->src,
-                                                  next->src_name,
-                                                  next->dst,
-                                                  next->dst_name );
-            }
-            else
-            {
-                (this)->link( next->src,
-                              next->src_name,
-                              next->dst,
-                              next->dst_name );
-
-            }
+            (this)->link< raft::order::out >( next->src,
+                                              next->src_name,
+                                              next->dst,
+                                              next->dst_name,
+                                              next->buffer_size );
         }
-        else if( next->has_src_name && ! next->has_dst_name )
+        else
         {
-            if( next->out_of_order )
-            {
-                (this)->link< raft::order::out >( next->src,
-                                                  next->src_name,
-                                                  next->dst );
-            }
-            else
-            {
-                (this)->link( next->src,
-                              next->src_name,
-                              next->dst );
-            }
-        }
-        else if( ! next->has_src_name && next->has_dst_name )
-        {
-            if( next->out_of_order )
-            {
-                (this)->link< raft::order::out >( next->src,
-                                                  next->dst,
-                                                  next->dst_name );
-            }
-            else
-            {
-                (this)->link( next->src,
-                              next->dst,
-                              next->dst_name );
-            }
-        }
-        else /** single input, single output, hopefully **/
-        {
-            if( next->out_of_order )
-            {
-                (this)->link< raft::order::out >( next->src,
-                                                  next->dst );
-            }
-            else
-            {
-                (this)->link( next->src,
-                              next->dst );
-            }
+            (this)->link< raft::order::in  >( next->src,
+                                              next->src_name,
+                                              next->dst,
+                                              next->dst_name,
+                                              next->buffer_size );
         }
 }
 

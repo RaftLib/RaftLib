@@ -65,7 +65,6 @@ void
 MapBase::join( raft::kernel &a, const raft::port_key_type name_a, PortInfo &a_info, 
                raft::kernel &b, const raft::port_key_type name_b, PortInfo &b_info )
 {
-   //b's port info isn't allocated
    if( a_info.type != b_info.type )
    {
       /**

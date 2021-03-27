@@ -116,7 +116,8 @@ protected:
     raft::kernel *dst           = nullptr;
     bool          has_dst_name  = false;
     raft::port_key_type dst_name = raft::null_port_value;
-   
+    
+    std::size_t   buffer_size   = 0;
     
     bool          split_to      = false;
     core_id_t     src_out_count = 0;

@@ -134,7 +134,8 @@ public:
        else
        {
             throw AmbiguousPortAssignmentException(
-                "too many ports added with: " + portname.str
+            //    "too many ports added with: " + portname.str
+                "too many ports added with: "
             );
        }
        return( (*this) );
@@ -150,7 +151,8 @@ public:
        else
        {
             throw AmbiguousPortAssignmentException(
-                "too many ports added with: " + portname.str
+//                "too many ports added with: " + portname.str
+                "too many ports added with: "
             );
        }
        return( (*this) );

@@ -12,9 +12,9 @@ template< typename A, typename B, typename C > class Sum : public raft::kernel
 public:
    Sum() : raft::kernel()
    {
-      input.addPort< A >( "input_a" );
-      input.addPort< B >( "input_b" );
-      output.addPort< C  >( "sum" );
+      input.addPort< A >( "input_a"_port );
+      input.addPort< B >( "input_b"_port );
+      output.addPort< C  >( "sum"_port );
    }
    
    virtual raft::kstatus run()
@@ -22,11 +22,11 @@ public:
       A a;
       B b;
       raft::signal  sig_a( raft::none  ), sig_b( raft::none );
-      input[ "input_a" ].pop( a, &sig_a );
-      input[ "input_b" ].pop( b, &sig_b );
+      input[ "input_a"_port ].pop( a, &sig_a );
+      input[ "input_b"_port ].pop( b, &sig_b );
       assert( sig_a == sig_b );
       C c( a + b );
-      output[ "sum" ].push( c , sig_a );
+      output[ "sum"_port ].push( c , sig_a );
       if( sig_b == raft::eof )
       {
          return( raft::stop );
@@ -56,8 +56,8 @@ main( int argc, char **argv )
         p_out print;
 
         raft::map m;
-        m += a >> s[ "input_a" ];
-        m += b >> s[ "input_b" ];
+        m += a >> s[ "input_a"_port ];
+        m += b >> s[ "input_b"_port ];
         m += s >> print;
         m.exe();
     }
@@ -73,8 +73,8 @@ main( int argc, char **argv )
         p_out print;
 
         raft::map m;
-        m += a >> s[ "input_a" ];
-        m += b >> s[ "input_b" ];
+        m += a >> s[ "input_a"_port ];
+        m += b >> s[ "input_b"_port ];
         m += s >> print;
         m.exe();
     }
@@ -89,8 +89,8 @@ main( int argc, char **argv )
         p_out print;
 
         raft::map m;
-        m += a >> s[ "input_a" ];
-        m += b >> s[ "input_b" ];
+        m += a >> s[ "input_a"_port ];
+        m += b >> s[ "input_b"_port ];
         m += s >> print;
         m.exe();
     }

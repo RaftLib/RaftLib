@@ -35,22 +35,22 @@ public:
    generate( std::int64_t count = 1000 ) : raft::kernel(),
                                          count( count )
    {
-      output.addPort< T >( "number_stream" );
+      output.addPort< T >( "number_stream"_port );
    }
 
    virtual raft::kstatus run()
    {
       if( count-- > 1 )
       {
-         auto &ref( output[ "number_stream" ].template allocate< T >() );
+         auto &ref( output[ "number_stream"_port ].template allocate< T >() );
          ref = static_cast< T >( (this)->count );
-         output[ "number_stream"].send();
+         output[ "number_stream"_port ].send();
          return( raft::proceed );
       }
       /** else **/
-      auto &ref( output[ "number_stream" ].template allocate< T >() );
+      auto &ref( output[ "number_stream"_port].template allocate< T >() );
       ref = static_cast< T >( (this)->count );
-      output[ "number_stream" ].send( raft::eof );
+      output[ "number_stream"_port].send( raft::eof );
       return( raft::stop );
    }
 
@@ -67,7 +67,7 @@ public:
                                            gen( 15 ),
                                            distrib( 65, 90 )
    {
-      output.addPort< std::string >( "number_stream" );
+      output.addPort< std::string >( "number_stream"_port );
    }
 
    virtual raft::kstatus run()
@@ -81,15 +81,15 @@ public:
       if( count-- > 1 )
       {
          
-         auto &ref( output[ "number_stream" ].template allocate< std::string >() );
+         auto &ref( output[ "number_stream"_port ].template allocate< std::string >() );
          ref = static_cast< std::string >( str );
-         output[ "number_stream"].send();
+         output[ "number_stream"_port].send();
          return( raft::proceed );
       }
       /** else **/
-      auto &ref( output[ "number_stream" ].template allocate< std::string >() );
+      auto &ref( output[ "number_stream"_port ].template allocate< std::string >() );
       ref = static_cast< std::string >( str );
-      output[ "number_stream" ].send( raft::eof );
+      output[ "number_stream"_port ].send( raft::eof );
       return( raft::stop );
    }
 

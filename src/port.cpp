@@ -54,44 +54,12 @@ Port::getPortType( const raft::port_key_type &&port_name )
    if( ret_val == portmap.map.cend() )
    {
       //FIXME
-      throw PortNotFoundException( "Port not found for name \"" +/** port_name + **/ "\"" );
+      //throw PortNotFoundException( "Port not found for name \"" +/** port_name + **/ "\"" );
+      throw PortNotFoundException( "Port not found for name \"\"" );
    }
    return( (*ret_val).second.type );
 }
 
-FIFO&
-Port::operator[]( const raft::port_key_type &&port_name )
-{
-   //NOTE: We'll need to add a lock here if later
-   //we intend to remove ports dynamically as well
-   //for the moment however lets just assume we're
-   //only adding them
-   const auto ret_val( portmap.map.find( port_name ) );
-   if( ret_val == portmap.map.cend() )
-   {
-    //FIXME
-      throw PortNotFoundException( 
-         "Port not found for name \"" /** + port_name **/ + "\"" );
-   }
-   return( *((*ret_val).second.getFIFO())  );
-}
-
-FIFO&
-Port::operator[]( const raft::port_key_type &port_name )
-{
-   //NOTE: We'll need to add a lock here if later
-   //we intend to remove ports dynamically as well
-   //for the moment however lets just assume we're
-   //only adding them
-   const auto ret_val( portmap.map.find( port_name ) );
-   if( ret_val == portmap.map.cend() )
-   {
-    //FIXME
-      throw PortNotFoundException( 
-         "Port not found for name \"" + /** port_name + **/ "\"" );
-   }
-   return( *((*ret_val).second.getFIFO())  );
-}
 
 bool
 Port::hasPorts()
