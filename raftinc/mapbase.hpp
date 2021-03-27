@@ -132,7 +132,7 @@ public:
     */
    template < raft::order::spec t = raft::order::in > 
       kernel_pair_t link( raft::kernel *a, 
-                          const std::string  a_port, 
+                          const raft::port_key_type a_port, 
                           raft::kernel *b,
                           const std::size_t buffer = 0 )
    {
@@ -164,7 +164,7 @@ public:
     * matching the port b_port.
     * @param   a - raft::kernel*, with more a single output port
     * @param   b - raft::kernel*, with input port named b_port
-    * @param   b_port - const std::string, input port name.
+    * @param   b_port - const raft::port_key_type, input port name.
     * @throws  AmbiguousPortAssignmentException - exception thrown 
     *          if raft::kernel a has more than a single output port
     * @throws  PortNotFoundException - exception thrown if raft::kernel b
@@ -174,7 +174,7 @@ public:
    template < raft::order::spec t = raft::order::in >
       kernel_pair_t link( raft::kernel *a, 
                           raft::kernel *b, 
-                          const std::string b_port,
+                          const raft::port_key_type b_port,
                           const std::size_t buffer = 0 )
    {
       updateKernels( a, b );
@@ -204,18 +204,18 @@ public:
     * raft::kernel a is assumed to have an output port a_port and 
     * raft::kernel b is assumed to have an input port b_port.
     * @param   a - raft::kernel*, with more a single output port
-    * @param   a_port - const std::string, output port name
+    * @param   a_port - const raft::port_key_type, output port name
     * @param   b - raft::kernel*, with input port named b_port
-    * @param   b_port - const std::string, input port name.
+    * @param   b_port - const raft::port_key_type, input port name.
     * @throws  PortNotFoundException - exception thrown if either kernel
     *          is missing port a_port or b_port.
     * @return  kernel_pair_t - references to src, dst kernels.
     */
    template < raft::order::spec t = raft::order::in >
       kernel_pair_t link( raft::kernel *a, 
-                          const std::string a_port, 
+                          const raft::port_key_type a_port, 
                           raft::kernel *b, 
-                          const std::string b_port,
+                          const raft::port_key_type b_port,
                           const std::size_t buffer = 0 )
    {
       updateKernels( a, b );
@@ -248,8 +248,8 @@ protected:
     * @param b_info - PortInfo struct for kernel b
     * @throws PortTypeMismatchException
     */
-   static void join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
-                     raft::kernel &b, const std::string name_b, PortInfo &b_info );
+   static void join( raft::kernel &a, const raft::port_key_type name_a, PortInfo &a_info, 
+                     raft::kernel &b, const raft::port_key_type name_b, PortInfo &b_info );
    
    static void insert( raft::kernel *a,  PortInfo &a_out, 
                        raft::kernel *b,  PortInfo &b_in,

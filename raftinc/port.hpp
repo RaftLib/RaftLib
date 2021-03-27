@@ -196,7 +196,7 @@ public:
          (this)->initializeJoin<     T >( pi );
          portmap.map.insert( std::make_pair( name, pi ) );
 #ifndef STRING_NAMES
-         portmap.name_map.insert( std::make_pair( name, port_key_name_t( index, std::to_string( index ) ) ) );
+         portmap.name_map.insert( std::make_pair( name, raft::port_key_name_t( index, std::to_string( index ) ) ) );
 #endif         
       }
       return( true );
@@ -208,19 +208,19 @@ public:
     * for checking the streaming graph to make sure all the
     * ports that are "dynamically" created do in fact have
     * compatible types.
-    * @param port_name - const std::string
+    * @param port_name - const raft::port_key_type
     * @return  const type_index&
     * @throws PortNotFoundException
     */
-   const std::type_index& getPortType( const std::string &&port_name );
+   const std::type_index& getPortType( const raft::port_key_type &&port_name );
 
 
    /**
     * operator[] - input the port name and get a port
     * if it exists.
     */
-   virtual FIFO& operator[]( const std::string &&port_name  );
-   virtual FIFO& operator[]( const std::string &port_name ); 
+   virtual FIFO& operator[]( const raft::port_key_type  &&port_name  );
+   virtual FIFO& operator[]( const raft::port_key_type  &port_name ); 
 
    /**
     * hasPorts - returns true if any ports exists, false
@@ -277,17 +277,25 @@ public:
       (this)->initializeSplit< T >( pi );
       (this)->initializeJoin< T >( pi );
       const auto ret_val(
-                  portmap.map.insert( std::make_pair( port_name,
-                                                      pi ) ) );
+                  portmap.map.insert( std::make_pair( 
+#ifdef STRING_NAMES
+                  port_name
+#else
+                  port_name.val
+#endif
+                  ,
+                  
+
+                  pi ) ) );
 
       if( ! ret_val.second )
       {
          //FIXME    
          throw PortAlreadyExists( "FATAL ERROR: port \"" + port_name.str + "\" already exists!" );
       }
-      const auto ret_val2( 
-       portmap.name_map( std::make_pair( port_name.value,  ) ) 
-      ); 
+#ifndef STRING_NAMES
+         portmap.name_map.insert( std::make_pair( port_name.val, raft::port_key_name_t( port_name ) ) );
+#endif         
       return;
    }
 
@@ -371,10 +379,10 @@ protected:
    /**
     * getPortInfoFor - gets port information for the param port
     * throws an exception if the port doesn't exist.
-    * @param   port_name - const std::string
+    * @param   port_name - const raft::port_key_type
     * @return  PortInfo&
     */
-   PortInfo& getPortInfoFor( const std::string port_name );
+   PortInfo& getPortInfoFor( const raft::port_key_type port_name );
 
    /**
     * portmap - container struct with all ports.  The

@@ -63,10 +63,34 @@ namespace raft
     using port_key_type = std::string;
     const static raft::port_key_type null_port_value = "";
 #else
+    /**
+     * set max length of the string for the fixed length representation
+     * of the port name, will be used for debug only, doesn't really
+     * constrain the length used by programmers when typing port names. 
+     */
     const static std::uint32_t  port_name_max_length = 64;
-    using port_key_type = std::int64_t;
+    /**
+     * define the type of the port key, this is the value typed in by the
+     * programmer to name ports. From the programmer perspective it'll look
+     * like a string. 
+     */
+    using port_key_type = highway_hash::hash_t::val_type;
+    /**
+     * added this one given we need fixed length representations so that 
+     * we can more efficiently store them and look up the names at a later 
+     * date. 
+     */
     template < std::size_t N > using name_struct_t = highway_hash::data_t< N >;
+    /**
+     * just like the string, we need a value for uninitialized port
+     * types. 
+     */
     const static raft::port_key_type null_port_value = 0;
+    /**
+     * fixed length name representation containing both the hash value
+     * and the string name of the hash (although it is truncated to the
+     * max selected length above. 
+     */
     using port_key_name_t = highway_hash::data_fixed_t< raft::port_name_max_length >;
 #endif
     using parsemap_ptr = std::shared_ptr< raft::parsemap >;

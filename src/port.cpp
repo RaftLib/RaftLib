@@ -48,18 +48,19 @@ Port::Port( raft::kernel *k,
 
 
 const std::type_index&
-Port::getPortType( const std::string &&port_name )
+Port::getPortType( const raft::port_key_type &&port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
    {
-      throw PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
+      //FIXME
+      throw PortNotFoundException( "Port not found for name \"" +/** port_name + **/ "\"" );
    }
    return( (*ret_val).second.type );
 }
 
 FIFO&
-Port::operator[]( const std::string &&port_name )
+Port::operator[]( const raft::port_key_type &&port_name )
 {
    //NOTE: We'll need to add a lock here if later
    //we intend to remove ports dynamically as well
@@ -68,14 +69,15 @@ Port::operator[]( const std::string &&port_name )
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
    {
+    //FIXME
       throw PortNotFoundException( 
-         "Port not found for name \"" + port_name + "\"" );
+         "Port not found for name \"" /** + port_name **/ + "\"" );
    }
    return( *((*ret_val).second.getFIFO())  );
 }
 
 FIFO&
-Port::operator[]( const std::string &port_name )
+Port::operator[]( const raft::port_key_type &port_name )
 {
    //NOTE: We'll need to add a lock here if later
    //we intend to remove ports dynamically as well
@@ -84,8 +86,9 @@ Port::operator[]( const std::string &port_name )
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
    {
+    //FIXME
       throw PortNotFoundException( 
-         "Port not found for name \"" + port_name + "\"" );
+         "Port not found for name \"" + /** port_name + **/ "\"" );
    }
    return( *((*ret_val).second.getFIFO())  );
 }
@@ -115,13 +118,14 @@ Port::count()
 }
 
 PortInfo&
-Port::getPortInfoFor( const std::string port_name )
+Port::getPortInfoFor( const raft::port_key_type port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
    {
+    //FIXME
       std::stringstream ss;
-      ss << "Port not found for name \"" << port_name << "\"";
+      ss << "Port not found for name \"" << /**port_name << **/"\"";
       throw PortNotFoundException( ss.str() );
    }
    return( (*ret_val).second );

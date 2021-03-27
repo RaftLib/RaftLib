@@ -141,7 +141,7 @@ public:
     }
     
     template < class T > raft::kernel& 
-        operator []( const T &portname );
+        operator []( const T &portname )
     {
        if( enabled_port.size() < 2 )
        {
