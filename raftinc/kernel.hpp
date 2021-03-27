@@ -120,9 +120,42 @@ public:
     * @param portname - const raft::port_key_type&&
     * @return raft::kernel&&
     */
-   raft::kernel& operator []( const std::string &&portname );
-   raft::kernel& operator []( const std::string &portname );
-
+#ifdef STRING_NAMES    
+   raft::kernel& operator []( const raft::port_key_type &&portname );
+   raft::kernel& operator []( const raft::port_key_type &portname );
+#else
+    template < class T > raft::kernel& 
+        operator []( const T &&portname )
+    {
+       if( enabled_port.size() < 2 )
+       {
+            enabled_port.push( portname.val );
+       }
+       else
+       {
+            throw AmbiguousPortAssignmentException(
+                "too many ports added with: " + portname.str
+            );
+       }
+       return( (*this) );
+    }
+    
+    template < class T > raft::kernel& 
+        operator []( const T &portname );
+    {
+       if( enabled_port.size() < 2 )
+       {
+            enabled_port.push( portname.val );
+       }
+       else
+       {
+            throw AmbiguousPortAssignmentException(
+                "too many ports added with: " + portname.str
+            );
+       }
+       return( (*this) );
+    }
+#endif /** end if not string names **/ 
 
    core_id_t getCoreAssignment() noexcept
    {
@@ -148,7 +181,7 @@ protected:
     Port               output = { this };
   
     
-    std::string getEnabledPort();
+    raft::port_key_type getEnabledPort();
     
     /** in namespace raft **/
     friend class map;
@@ -205,7 +238,7 @@ private:
    bool             execution_done    = false;
 
    /** for operator syntax **/
-   std::queue< std::string > enabled_port;
+   std::queue< raft::port_key_type > enabled_port;
 };
 
 

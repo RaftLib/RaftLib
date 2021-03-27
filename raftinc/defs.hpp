@@ -31,15 +31,47 @@
 #include <memory>
 #include <string>
 
+
+
+
+#ifndef STRING_NAMES
+#define STRING_NAMES 1
+#endif
+
+#undef STRING_NAMES
+
+#ifndef STRING_NAMES
+#include "hh.hpp"
+#endif
+
 namespace raft
 {
     /** predeclare raft::kernel for kernel_list_t below **/
     class kernel;
     /** also parsemap_ptr smart ptr obj used in map and streamparse **/
     class parsemap;
+/** use this to turn on string names vs. off **/
+/**
+ * Notes: For port_key_type, there's the original string version
+ * which turns out to be rather cumbersome for very small kernels,
+ * and then there's the version that does hashing of strings then 
+ * uses the 64b hash of that string. There is a tiny change of port
+ * name collision with the 64b version, however, it's incredibly 
+ * unlikely that this would occur. 
+ */
+#ifdef STRING_NAMES
     using port_key_type = std::string;
+    const static raft::port_key_type null_port_value = "";
+#else
+    const static std::uint32_t  port_name_max_length = 64;
+    using port_key_type = std::int64_t;
+    template < std::size_t N > using name_struct_t = highway_hash::data_t< N >;
+    const static raft::port_key_type null_port_value = 0;
+    using port_key_name_t = highway_hash::data_fixed_t< raft::port_name_max_length >;
+#endif
     using parsemap_ptr = std::shared_ptr< raft::parsemap >;
 } /** end namespace raft **/
+
 
 template < typename T > 
     using set_t = std::set< T >;

@@ -10,3 +10,6 @@
 [submodule "git-dep/demangle"]
 	path = git-dep/demangle
 	url = https://github.com/RaftLib/demangle.git
+[submodule "git-dep/highwayhash"]
+	path = git-dep/highwayhash
+	url = https://gist.github.com/632017faa1d9d1936eb5948ac9186657.git

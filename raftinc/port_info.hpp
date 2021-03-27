@@ -99,10 +99,10 @@ struct PortInfo
    join_factory_t    join_func       = nullptr;
 
    raft::kernel     *my_kernel       = nullptr;
-   std::string       my_name         = "";
+   raft::port_key_type       my_name         = raft::null_port_value;
    
    raft::kernel     *other_kernel    = nullptr;
-   std::string       other_name      = "";
+   raft::port_key_type       other_name      = raft::null_port_value;
    
    /** runtime settings **/
    bool              use_my_allocator= false;

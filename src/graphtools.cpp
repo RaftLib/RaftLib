@@ -111,7 +111,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
       }
       //we have lock, continue
       /** 2) get map **/
-      std::map< std::string, PortInfo > &map_of_ports( k->output.portmap.map );
+      auto &map_of_ports( k->output.portmap.map );
       for( auto &port : map_of_ports )
       {
          PortInfo &source( port.second );
@@ -164,7 +164,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
          std::this_thread::yield();
       }
       /** 2) get map **/
-      std::map< std::string, PortInfo > &map_of_ports( source->output.portmap.map );
+      auto &map_of_ports( source->output.portmap.map );
       /** 3) visit kernel **/
       func( source, data );
       /** 4) add children to queue **/

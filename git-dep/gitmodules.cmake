@@ -24,6 +24,7 @@ set( GIT_MODULES
         shm 
         cmdargs 
         demangle 
-        affinity ) 
+        affinity
+        highwayhash ) 
 endif()
 

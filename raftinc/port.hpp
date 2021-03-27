@@ -64,7 +64,7 @@ struct port_helper{};
 template < class T, class PORT >
 struct port_helper< T, PORT >
 {
-    static void add_port( PORT &port ) 
+    constexpr static void add_port( PORT &port ) 
     {
         UNUSED( port );
         return;
@@ -79,13 +79,16 @@ template < class T,
            class... PORTNAMES >
 struct port_helper< T, PORT, PORTNAME, PORTNAMES... >
 {
-    static void add_port( PORT &port,
-                          PORTNAME &&portname,
-                          PORTNAMES&&... portnames )
+    constexpr static void add_port( PORT &port,
+                                    PORTNAME &&portname,
+                                    PORTNAMES&&... portnames )
     {
         port.template add_port< T >( portname );
-        port_helper< T, PORT, PORTNAMES... >::add_port( port,
-                                                        std::forward< PORTNAMES >( portnames )... );
+        port_helper< T, 
+                     PORT, 
+                     PORTNAMES... >::add_port( port,
+                                               std::forward< 
+                                                PORTNAMES >( portnames )... );
         return;
     }
 };
@@ -94,7 +97,7 @@ struct port_helper< T, PORT, PORTNAME, PORTNAMES... >
 template< class T,
           class PORT,
           class... PORTNAMES >
-static void
+constexpr static void
 kick_port_helper( PORT &port, PORTNAMES&&... ports )
 {
     port_helper< T, PORT, PORTNAMES... >::add_port( port,
@@ -138,7 +141,7 @@ public:
     * given.  Function returns true if added, false if not.
     * Main reason for returning false would be that the
     * port already exists.
-    * @param   port_name - const std::string
+    * @param   port_name - const raft::port_key_type
     * @return  bool
     */
    template < class T,
@@ -175,7 +178,17 @@ public:
                       inc + ( index == (n_ports - 1) ? adder : 0 ),
                       start_index );
          pi.my_kernel = kernel;
-         const std::string name( std::to_string( index ) );
+         /**
+          * To change to "any" efficient name type for 
+          * RaftLib, we need to make a generic function to 
+          * still enable this to happen. Let's see if 
+          * we can simply #define out for now
+          */
+#ifdef STRING_NAMES          
+         const auto name( std::to_string( index ) );
+#else
+         const auto name( index );
+#endif
          pi.my_name   = name;
          /** gotta initialize the maps to copy stuff to/from **/
          (this)->initializeConstMap< T >( pi );
@@ -240,8 +253,13 @@ public:
     * @param   port_name - const std::string
     * @return  bool
     */
-   template < class T >
-   void add_port( const std::string &port_name )
+   /** 
+    * FIXME - needs to have something to check the type of
+    * PORTKEY vs. just assuming, maybe add concepts or
+    * enable if.
+    */
+   template < class T, class PORTKEY >
+   void add_port( const PORTKEY &port_name )
    {
       /**
        * we'll have to make a port info object first and pass it by copy
@@ -251,7 +269,7 @@ public:
        */
       PortInfo pi( typeid( T ) );
       pi.my_kernel = kernel;
-      pi.my_name   = port_name;
+      pi.my_name   = port_name.val;
       (this)->initializeConstMap<T>( pi );
       (this)->initializeSplit< T >( pi );
       (this)->initializeJoin< T >( pi );
@@ -261,8 +279,12 @@ public:
 
       if( ! ret_val.second )
       {
-         throw PortAlreadyExists( "FATAL ERROR: port \"" + port_name + "\" already exists!" );
+         //FIXME    
+         throw PortAlreadyExists( "FATAL ERROR: port \"" + port_name.str + "\" already exists!" );
       }
+      const auto ret_val2( 
+       portmap.name_map( std::make_pair( port_name.value,  ) ) 
+      ); 
       return;
    }
 
