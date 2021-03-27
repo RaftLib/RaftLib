@@ -195,6 +195,9 @@ public:
          (this)->initializeSplit<    T >( pi );
          (this)->initializeJoin<     T >( pi );
          portmap.map.insert( std::make_pair( name, pi ) );
+#ifndef STRING_NAMES
+         portmap.name_map.insert( std::make_pair( name, port_key_name_t( index, std::to_string( index ) ) ) );
+#endif         
       }
       return( true );
    }

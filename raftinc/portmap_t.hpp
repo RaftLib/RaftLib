@@ -39,6 +39,7 @@ struct portmap_t
     * which is all the data describing the port itself. 
     */
    std::map< raft::port_key_type, PortInfo > map;
+#ifndef STRING_NAMES
    /**
     * for each port, keep a map of the "name" to string
     * name representation. Otherwise once we have integer
@@ -46,7 +47,7 @@ struct portmap_t
     */
    std::unordered_map< raft::port_key_type, 
                        raft::port_key_name_t > name_map;
-
+#endif
    /**
     * mutex used to add/subtract from port. Not used in 
     * most circumstances, only once the application gets
