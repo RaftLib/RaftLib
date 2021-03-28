@@ -19,7 +19,7 @@
  */
 #ifndef RAFTPORT_HPP
 #define RAFTPORT_HPP  1
-
+#include <algorithm>
 #include <map>
 #include <vector>
 #include <string>

@@ -38,20 +38,32 @@ class start : public raft::kernel
 public:
     start() : raft::kernel()
     {
+#ifdef STRING_NAMES        
         output.addPort< obj_t >( "y" );
+#else
+        output.addPort< obj_t >( "y"_port );
+#endif
     }
 
     virtual ~start() = default;
 
     virtual raft::kstatus run()
     {
+#ifdef STRING_NAMES    
         auto &mem( output[ "y" ].allocate< obj_t >() );
+#else
+        auto &mem( output[ "y"_port ].allocate< obj_t >() );
+#endif
         A.emplace_back( reinterpret_cast< std::uintptr_t >( &mem ) ); 
         for( auto i( 0 ); i < mem.length; i++ )
         {
             mem.pad[ i ] = static_cast< int >( counter );
         }
+#ifdef STRING_NAMES        
         output[ "y" ].send();
+#else
+        output[ "y"_port ].send();
+#endif
         counter++;
         if( counter == 200 )
         {
@@ -70,17 +82,30 @@ class middle : public raft::kernel
 public:
     middle() : raft::kernel()
     {
+#ifdef STRING_NAMES
         input.addPort< obj_t >( "x" );
         output.addPort< obj_t >( "y" );
+#else
+        input.addPort< obj_t >( "x"_port );
+        output.addPort< obj_t >( "y"_port );
+#endif
     }
 
     virtual raft::kstatus run()
     {
+#ifdef STRING_NAMES    
         auto &val( input[ "x" ].peek< obj_t >() );
         B.emplace_back( reinterpret_cast< std::uintptr_t >( &val ) ); 
         output[ "y" ].push( val );
         input[ "x" ].unpeek();
         input[ "x" ].recycle( 1 );
+#else
+        auto &val( input[ "x"_port ].peek< obj_t >() );
+        B.emplace_back( reinterpret_cast< std::uintptr_t >( &val ) ); 
+        output[ "y"_port ].push( val );
+        input[ "x"_port ].unpeek();
+        input[ "x"_port ].recycle( 1 );
+#endif
         return( raft::proceed );
     }
 };
@@ -91,7 +116,11 @@ class last : public raft::kernel
 public:
     last() : raft::kernel()
     {
+#ifdef STRING_NAMES        
         input.addPort< obj_t >( "x" );
+#else
+        input.addPort< obj_t >( "x"_port );
+#endif
     }
 
     virtual ~last() = default;
@@ -99,7 +128,11 @@ public:
     virtual raft::kstatus run()
     {
         obj_t mem;
+#ifdef STRING_NAMES        
         input[ "x" ].pop( mem );
+#else
+        input[ "x"_port ].pop( mem );
+#endif
         C.emplace_back( reinterpret_cast< std::uintptr_t >( &mem ) ); 
         /** Jan 2016 - otherwise end up with a signed/unsigned compare w/auto **/
         using index_type = std::remove_const_t<decltype(mem.length)>;

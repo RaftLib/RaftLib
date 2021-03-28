@@ -5,50 +5,57 @@ list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )
 ##
 include( CheckSTD )
 
+if( STRING_NAMES )
 set( TESTAPPS allocate 
-    #portTypeException dynallocate stdlibsupport split 
-    # join lambdatest allocate_s foreach peekrange  
-    # partitionTest parallel peek 
-    # bracketsTest uniform chain 
-    # splitchain staticLongSplitChain 
-    # staticSplitJoin staticSplitChainJoin 
-    # staticJoin staticContJoin 
-    # fitInCacheLine
-    # isExtClass
-    # doesntFitInCacheLine
-    # isInlineClass
-    # isExtArray
-    # isExtAlloc 
-    # isInlineNonClass 
-    # allocateSendPush 
-    # allocateSendRandomPush 
-    # allocatePopPush 
-    # allocatePopInternal 
-    # allocatePopInternalObject
-    # allocatePopExternal 
-    # parallelchain 
-    # ksettest
-    # multiPrint
-    # fixedMatchTest 
-    # select_in_t
-    # splitchainRetStruct 
-    # staticContJoinRetStruct
-    # staticJoinRetStruct
-    # staticLongSplitChainRetStruct
-    # staticSplitChainJoinRetStruct
-    # staticSplitJoinRetStruct 
-    # chainMultiplePorts
-    # fixedAllocate
-    # noPortException
-    # twiceAdd
-    # disconnectedGraph 
-    # allocate_s_string
-    # allpush
-    # nonTrivialAllocatorPop
-    # nonTrivialAllocatorPopExternal
-    # vectorAlloc
-    # stringAlloc
+    portTypeException dynallocate stdlibsupport split 
+     join lambdatest allocate_s foreach peekrange  
+     partitionTest parallel peek 
+     bracketsTest uniform chain 
+     splitchain staticLongSplitChain 
+     staticSplitJoin staticSplitChainJoin 
+     staticJoin staticContJoin 
+     fitInCacheLine
+     isExtClass
+     doesntFitInCacheLine
+     isInlineClass
+     isExtArray
+     isExtAlloc 
+     isInlineNonClass 
+     allocateSendPush 
+     allocateSendRandomPush 
+     allocatePopPush 
+     allocatePopInternal 
+     allocatePopInternalObject
+    allocatePopExternal 
+     parallelchain 
+     ksettest
+     multiPrint
+     fixedMatchTest 
+     select_in_t
+     splitchainRetStruct 
+     staticContJoinRetStruct
+     staticJoinRetStruct
+     staticLongSplitChainRetStruct
+     staticSplitChainJoinRetStruct
+     staticSplitJoinRetStruct 
+     chainMultiplePorts
+     #fixedAllocate
+     noPortException
+     twiceAdd
+     disconnectedGraph 
+     allocate_s_string
+     allpush
+     nonTrivialAllocatorPop
+     nonTrivialAllocatorPopExternal
+     vectorAlloc
+     stringAlloc
      )
+else()
+set( TESTAPPS 
+        allocate
+        allocatePopExternal 
+   )
+endif()
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 

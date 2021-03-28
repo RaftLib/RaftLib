@@ -34,13 +34,14 @@ struct portmap_t
    portmap_t() = default;
    virtual ~portmap_t() = default;
 
+
+#ifdef STRING_NAMES    
+   std::map< raft::port_key_type, PortInfo > map;
+#else
    /**
     * integer lookup for port name to port info object,
     * which is all the data describing the port itself. 
     */
-#ifdef STRING_NAMES    
-   std::map< raft::port_key_type, PortInfo > map;
-#else
    std::unordered_map< raft::port_key_type, PortInfo > map;
    /**
     * for each port, keep a map of the "name" to string
