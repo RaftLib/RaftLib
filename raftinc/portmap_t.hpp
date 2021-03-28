@@ -38,8 +38,10 @@ struct portmap_t
     * integer lookup for port name to port info object,
     * which is all the data describing the port itself. 
     */
+#ifdef STRING_NAMES    
    std::map< raft::port_key_type, PortInfo > map;
-#ifndef STRING_NAMES
+#else
+   std::unordered_map< raft::port_key_type, PortInfo > map;
    /**
     * for each port, keep a map of the "name" to string
     * name representation. Otherwise once we have integer

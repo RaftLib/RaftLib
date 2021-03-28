@@ -24,6 +24,12 @@ add_subdirectory(helpers)
 ##
 add_definitions( "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" ) 
 
+mark_as_advanced( STRING_NAMES )
+set( STRING_NAMES true CACHE BOOL "Default is to use legacy string-named ports." )
+if( STRING_NAMES )
+    add_definitions( "-DSTRING_NAMES=1" )
+endif( STRING_NAMES )
+
 
 mark_as_advanced( BENCHMARK_MODE )
 set( BENCHMARK_MODE false CACHE BOOL "Set flags and variables to synchronize execution" )

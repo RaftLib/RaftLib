@@ -214,8 +214,12 @@ public:
     */
    const std::type_index& getPortType( const raft::port_key_type &&port_name );
 
-    //FIXME - add restrictions for T below so that it can only be a 
-    //string or a hash object. 
+    
+#ifdef STRING_NAMES
+    virtual FIFO& operator[]( const raft::port_key_type  &&port_name  );
+    virtual FIFO& operator[]( const raft::port_key_type  &port_name );
+
+#else
     /**
      * operator[] - input the port name and get a port
      * if it exists.
@@ -226,11 +230,7 @@ public:
        //we intend to remove ports dynamically as well
        //for the moment however lets just assume we're
        //only adding them
-#ifdef STRING_NAMES       
-       const auto ret_val( portmap.map.find( port_name ) );
-#else
        const auto ret_val( portmap.map.find( port_name.val ) );
-#endif
        if( ret_val == portmap.map.cend() )
        {
         //FIXME
@@ -247,11 +247,7 @@ public:
        //we intend to remove ports dynamically as well
        //for the moment however lets just assume we're
        //only adding them
-#ifdef STRING_NAMES
-       const auto ret_val( portmap.map.find( port_name ) );
-#else
        const auto ret_val( portmap.map.find( port_name.val ) );
-#endif       
        if( ret_val == portmap.map.cend() )
        {
         //FIXME
@@ -261,6 +257,8 @@ public:
        }
        return( *((*ret_val).second.getFIFO())  );
     }
+
+#endif //end hacks for backwards STRING_NAME compatibility
 
    /**
     * hasPorts - returns true if any ports exists, false

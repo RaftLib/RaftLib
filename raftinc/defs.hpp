@@ -35,11 +35,6 @@
 
 
 
-#ifndef STRING_NAMES
-#define STRING_NAMES 1
-#endif
-
-#undef STRING_NAMES
 
 #ifndef STRING_NAMES
 #include "hh.hpp"

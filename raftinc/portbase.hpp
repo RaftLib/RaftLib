@@ -54,5 +54,6 @@ public:
     */
    virtual PortIterator end()   = 0;
 
+
 };
 #endif /* END RAFTPORTBASE_HPP */

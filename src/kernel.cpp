@@ -161,6 +161,38 @@ kernel::getEnabledPort()
     return( head );
 }
 
+#ifdef STRING_NAMES
+raft::kernel& kernel::operator []( const raft::port_key_type &&portname )
+{
+    if( enabled_port.size() < 2 )
+    {
+         enabled_port.push( portname );
+    }
+    else
+    {
+         throw AmbiguousPortAssignmentException(
+         //    "too many ports added with: " + portname.str
+             "too many ports added with: "
+         );
+    }
+    return( (*this) );
+}
+raft::kernel& kernel::operator []( const raft::port_key_type &portname )
+{
+    if( enabled_port.size() < 2 )
+    {
+         enabled_port.push( portname );
+    }
+    else
+    {
+         throw AmbiguousPortAssignmentException(
+               //"too many ports added with: " + portname.str
+             "too many ports added with: "
+         );
+    }
+    return( (*this) );
+}
+#endif
 //std::string
 //kernel::getName()
 //{
