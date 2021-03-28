@@ -80,9 +80,9 @@ public:
      */
     template < raft::order::spec t = raft::order::in >
        kernel_pair_t link( raft::kernel *a, 
-                           const raft::port_key_type a_port, 
+                           raft::port_key_type a_port, 
                            raft::kernel *b, 
-                           const raft::port_key_type b_port,
+                           raft::port_key_type b_port,
                            const std::size_t buffer = 0 )
     {
         updateKernels( a, b );
@@ -94,6 +94,7 @@ public:
         {
             try{ 
                port_info_a =  &(a->output.getPortInfo());
+               a_port = port_info_a->my_name;
             }
             catch( AmbiguousPortAssignmentException &ex )
             {
@@ -115,6 +116,7 @@ public:
         {
             try{
                 port_info_b = &(b->input.getPortInfo());
+                b_port = port_info_b->my_name;
             }
             catch( AmbiguousPortAssignmentException &ex )
             {

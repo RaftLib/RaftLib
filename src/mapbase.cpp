@@ -80,16 +80,19 @@ MapBase::join( raft::kernel &a, const raft::port_key_type name_a, PortInfo &a_in
    }
    if( a_info.other_kernel != nullptr )
    {
-      throw PortDoubleInitializeException( "port double initialized with: " + std::to_string( name_b ) );
+    //FIXME
+      throw PortDoubleInitializeException( "port double initialized with: " ); //+ std::to_string( name_b ) );
    }
    if( b_info.other_kernel != nullptr )
    {
-      throw PortDoubleInitializeException( "port double initialized with: " + std::to_string( name_a ) );
+      //FIXME
+      throw PortDoubleInitializeException( "port double initialized with: " ); //+ std::to_string( name_a ) );
    }
    a_info.other_kernel = &b;
    a_info.other_name   = name_b;
    b_info.other_kernel = &a;
    b_info.other_name   = name_a;
+    std::cout << name_a << " - " << name_b << "\n";
 }
    
 void 

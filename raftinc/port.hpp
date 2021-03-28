@@ -312,7 +312,15 @@ public:
        */
       PortInfo pi( typeid( T ) );
       pi.my_kernel = kernel;
-      pi.my_name   = port_name.val;
+      
+      pi.my_name   = 
+#ifdef STRING_NAMES
+                  port_name
+#else
+                  port_name.val
+#endif
+      ;
+      
       (this)->initializeConstMap<T>( pi );
       (this)->initializeSplit< T >( pi );
       (this)->initializeJoin< T >( pi );

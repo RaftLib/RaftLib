@@ -124,7 +124,11 @@ basic_parallel::start()
 
             auto &new_other_outport(
                old_port_in.other_kernel->output.getPortInfoFor(
+#if STRING_NAMES
+                   std::to_string( portid )
+#else
                    portid 
+#endif                   
                )
             );
             auto &new_port_in( ptr->input.getPortInfo() );
@@ -146,7 +150,12 @@ basic_parallel::start()
                old_port_out.other_kernel->addPort() );
             auto &new_other_inport(
                old_port_out.other_kernel->input.getPortInfoFor(
-                  portid ) );
+#if STRING_NAMES
+                  std::to_string( portid )
+#else
+                  portid 
+#endif
+                  ) );
 
             auto &newoutport( ptr->output.getPortInfo() );
             /**

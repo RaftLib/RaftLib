@@ -107,7 +107,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
       /** 1) get lock **/
       while( ! k->output.portmap.mutex_map.try_lock() )
       {
-         std::this_thread::yield();
+        raft::yield();
       }
       //we have lock, continue
       /** 2) get map **/
@@ -161,7 +161,7 @@ GraphTools::__BFS( std::queue< raft::kernel* > &queue,
       /** 1) get lock **/
       while( ! source->output.portmap.mutex_map.try_lock() )
       {
-         std::this_thread::yield();
+        raft::yield();
       }
       /** 2) get map **/
       auto &map_of_ports( source->output.portmap.map );
