@@ -53,9 +53,8 @@ Port::getPortType( const raft::port_key_type &&port_name )
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
    {
-      //FIXME
-      //throw PortNotFoundException( "Port not found for name \"" +/** port_name + **/ "\"" );
-      throw PortNotFoundException( "Port not found for name \"\"" );
+      const auto actual_port_name = getPortName( port_name );
+      throw PortNotFoundException( "Port not found for name \"" + actual_port_name + "\"" );
    }
    return( (*ret_val).second.type );
 }
@@ -84,6 +83,23 @@ Port::count()
 {
    return( (std::size_t) portmap.map.size() );
 }
+    
+std::string 
+Port::getPortName( const raft::port_key_type n )
+{
+#ifdef STRING_NAMES
+    return( n );
+#else
+    const auto ret_val( portmap.name_map.find( n ) );
+    if( ret_val == portmap.name_map.cend() )
+    {
+       std::stringstream ss;
+       ss << "Port not found for name \"" << n << "\"";
+       throw PortNotFoundException( ss.str() );
+    }
+    return( (*ret_val).second );
+#endif   
+}
 
 PortInfo&
 Port::getPortInfoFor( const raft::port_key_type port_name )
@@ -91,9 +107,8 @@ Port::getPortInfoFor( const raft::port_key_type port_name )
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
    {
-    //FIXME
       std::stringstream ss;
-      ss << "Port not found for name \"" << /**port_name << **/"\"";
+      ss << "Port not found for name \"" << getPortName( port_name ) << "\"";
       throw PortNotFoundException( ss.str() );
    }
    return( (*ret_val).second );
@@ -131,10 +146,8 @@ FIFO& Port::operator[]( const raft::port_key_type  &&port_name  )
     const auto ret_val( portmap.map.find( port_name ) );
     if( ret_val == portmap.map.cend() )
     {
-     //FIXME
        throw PortNotFoundException( 
-          //"Port not found for name \"" /** + port_name **/ + "\"" );
-          "Port not found for name \"\"" );
+          "Port not found for name \"" + getPortName( port_name ) + "\"" );
     }
     return( *((*ret_val).second.getFIFO())  );
 }
@@ -148,10 +161,8 @@ FIFO& Port::operator[]( const raft::port_key_type  &port_name )
     const auto ret_val( portmap.map.find( port_name ) );
     if( ret_val == portmap.map.cend() )
     {
-     //FIXME
        throw PortNotFoundException( 
-          //"Port not found for name \"" + /** port_name + **/ "\"" );
-          "Port not found for name \"\"" );
+          "Port not found for name \"" + getPortName( port_name ) + "\"" );
     }
     return( *((*ret_val).second.getFIFO())  );
 }

@@ -233,10 +233,8 @@ public:
        const auto ret_val( portmap.map.find( port_name.val ) );
        if( ret_val == portmap.map.cend() )
        {
-        //FIXME
           throw PortNotFoundException( 
-             //"Port not found for name \"" /** + port_name **/ + "\"" );
-             "Port not found for name \"\"" );
+             "Port not found for name \""  + getPortName( port_name ) + "\"" );
        }
        return( *((*ret_val).second.getFIFO())  );
     }
@@ -250,10 +248,8 @@ public:
        const auto ret_val( portmap.map.find( port_name.val ) );
        if( ret_val == portmap.map.cend() )
        {
-        //FIXME
           throw PortNotFoundException( 
-             //"Port not found for name \"" + /** port_name + **/ "\"" );
-             "Port not found for name \"\"" );
+             "Port not found for name \"" + getPortName( port_name ) + "\"" );
        }
        return( *((*ret_val).second.getFIFO())  );
     }
@@ -336,9 +332,7 @@ public:
 
       if( ! ret_val.second )
       {
-         //FIXME    
-         //throw PortAlreadyExists( "FATAL ERROR: port \"" + port_name.str + "\" already exists!" );
-         throw PortAlreadyExists( "FATAL ERROR: port \"\" already exists!" );
+         throw PortAlreadyExists( "FATAL ERROR: port \"" + getPortName( port_name ) + "\" already exists!" );
       }
 #ifndef STRING_NAMES
          portmap.name_map.insert( std::make_pair( port_name.val, raft::port_key_name_t( port_name ) ) );
@@ -346,6 +340,18 @@ public:
       return;
    }
 
+    
+    /**
+     * getPortName - returns the string representation of the port
+     * name given. Use this function whenever you want a constant 
+     * representation of a port name given depending on the verion
+     * of RaftLib you compile you could be using 64b integers or 
+     * strings or some other representation, this makes all those
+     * human readable. 
+     * @param raft::port_key_type - internal representation of port
+     * @return std::string - human readable version of a port. 
+     */
+    std::string getPortName( const raft::port_key_type n );
 
 protected:
    /**

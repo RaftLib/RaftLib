@@ -64,19 +64,17 @@ Allocate::initialize( PortInfo * const src,
    assert( src  != nullptr );
    if( src->getFIFO() != nullptr )
    {
-      //FIXME
-      //throw PortDoubleInitializeException(
-      //   "Source port \"" + /**src->my_name + **/"\" already initialized!" );
       throw PortDoubleInitializeException(
-         "Source port \"\" already initialized!" );
+         "Source port \"" + 
+            src->my_kernel->output.getPortName( src->my_name ) + 
+                "\" already initialized!" );
    }
    if( dst->getFIFO() !=  nullptr )
    {
-      //FIXME
-      //throw PortDoubleInitializeException(
-      //   "Destination port \"" + /** dst->my_name + **/ "\" already initialized!" );
       throw PortDoubleInitializeException(
-         "Destination port \"\" already initialized!" );
+         "Destination port \"" + 
+            dst->my_kernel->input.getPortName( dst->my_name ) + 
+                " already initialized!" );
    }
    src->setFIFO( fifo );
    dst->setFIFO( fifo );

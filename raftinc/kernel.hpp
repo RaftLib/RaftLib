@@ -159,10 +159,17 @@ public:
     }
 #endif /** end if not string names **/ 
 
-   core_id_t getCoreAssignment() noexcept
-   {
-       return( core_assign );
-   }
+    core_id_t getCoreAssignment() noexcept
+    {
+        return( core_assign );
+    }
+    
+    /**
+     * PORTS - input and output, use these to interact with the
+     * outside world.
+     */
+    Port               input  = { this };
+    Port               output = { this };
 
 protected:
     /**
@@ -175,12 +182,6 @@ protected:
     virtual void lock();
     virtual void unlock();
 
-    /**
-     * PORTS - input and output, use these to interact with the
-     * outside world.
-     */
-    Port               input  = { this };
-    Port               output = { this };
   
     
     raft::port_key_type getEnabledPort();

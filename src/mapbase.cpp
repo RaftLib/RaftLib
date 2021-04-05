@@ -67,16 +67,16 @@ MapBase::join( raft::kernel &a, const raft::port_key_type name_a, PortInfo &a_in
 {
    if( a_info.type != b_info.type )
    {
-      /**
-       * FIXME
-       */
-      //std::stringstream ss;
-      //ss << "When attempting to join ports (" << common::printClassName( a ) <<  
-      //   "[" << name_a << "] -> " << common::printClassName( b ) << "[" << 
-      //   name_b << "] have conflicting types.  " << 
-      //      common::printClassNameFromStr( a_info.type.name() ) <<  
-      //   " and " << common::printClassNameFromStr( b_info.type.name() ) << "\n"; 
-      throw PortTypeMismatchException( "port types are mismatched" );
+      std::stringstream ss;
+      ss << "Error found when attempting to join kernel \"" << 
+        common::printClassName( a ) <<  "\" with port " << 
+         "[" << a.output.getPortName( name_a ) << "] to " << " kernel \"" << 
+            common::printClassName( b ) << "\" with port [" << 
+         b.input.getPortName( name_b ) << "], their types must match. " << 
+         " currently their types are (" << 
+            common::printClassNameFromStr( a_info.type.name() ) <<  
+         " -and- " << common::printClassNameFromStr( b_info.type.name() ) << ")."; 
+      throw PortTypeMismatchException( ss.str() );
    }
    if( a_info.other_kernel != nullptr )
    {
@@ -92,7 +92,6 @@ MapBase::join( raft::kernel &a, const raft::port_key_type name_a, PortInfo &a_in
    a_info.other_name   = name_b;
    b_info.other_kernel = &a;
    b_info.other_name   = name_a;
-    std::cout << name_a << " - " << name_b << "\n";
 }
    
 void 

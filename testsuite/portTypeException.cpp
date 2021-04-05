@@ -71,6 +71,7 @@ main( int argc, char **argv )
    catch( PortTypeMismatchException &ex )
    {
         UNUSED( ex );
+        std::cout << ex.what() << "\n";
         //yippy, we threw the right exception
         return( EXIT_SUCCESS );
    }
