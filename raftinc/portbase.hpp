@@ -24,24 +24,13 @@
 #define RAFTPORTBASE_HPP  1
 
 #include "portiterator.hpp"
+#include "defs.hpp"
 
 class PortBase
 {
 public:
    PortBase()          = default;
    virtual ~PortBase() = default;
-   /**
-    * operator[] - enables lookup of ports by name,
-    * which in turn enables the user to name each
-    * port something that is telling of the underlying
-    * function.
-    * @param   port_name - name of the port you wish to get
-    * @return FIFO&
-    * @throws - should throw a PortNotFoundException if port_name
-    * doesn't exist.
-    */
-   virtual FIFO& operator[]( const std::string &&port_name  ) = 0;
-   virtual FIFO& operator[]( const std::string &port_name ) = 0;
 
    /**
     * hasPorts - should return false if this port object is
@@ -64,6 +53,7 @@ public:
     * @return PortIterator - points to one past the last port.
     */
    virtual PortIterator end()   = 0;
+
 
 };
 #endif /* END RAFTPORTBASE_HPP */

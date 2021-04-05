@@ -112,11 +112,12 @@ protected:
     kpair        *head          = nullptr;
     raft::kernel *src           = nullptr;
     bool          has_src_name  = false;
-    std::string   src_name      = "";
+    raft::port_key_type src_name = raft::null_port_value;
     raft::kernel *dst           = nullptr;
     bool          has_dst_name  = false;
-    std::string   dst_name      = "";
-   
+    raft::port_key_type dst_name = raft::null_port_value;
+    
+    std::size_t   buffer_size   = 0;
     
     bool          split_to      = false;
     core_id_t     src_out_count = 0;

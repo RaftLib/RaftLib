@@ -14,10 +14,14 @@ User Group / Mailing List: [slack channel](https://join.slack.com/t/raftlib/shar
 ### Pre-requisites
 
 #### OS X & Linux
-Compiler: c++14 capable -> Clang, GNU GCC 5.0+, or Intel icc
+* Compiler: c++17 capable -> Clang, GNU GCC 5.0+, or Intel icc
+* Latest build runs under Linux with above compilers on both x86 and AArch64, with both pthreads and QThreads. 
+* OS X M1 runs, compiles, but has some test case hiccups on templates, but doesn't seem to 
+impact functionality. 
+* Note for OS X users without a /user/local, specify an install prefix when using CMake. 
 
 #### Windows
-* Latest merge from pull request to main should enable compilation on VS on Win10.
+* Builds and runs under Win10
 
 ### Install
 Make a build directory (for the instructions below, we'll 

@@ -43,7 +43,7 @@ PortIterator::operator++()
    return( (*this) );
 }
 
-const std::string&
+const raft::port_key_type&
 PortIterator::name() const
 {
     return( map_iterator->first );

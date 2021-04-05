@@ -62,27 +62,31 @@ MapBase::~MapBase()
 
 
 void
-MapBase::join( raft::kernel &a, const std::string name_a, PortInfo &a_info, 
-               raft::kernel &b, const std::string name_b, PortInfo &b_info )
+MapBase::join( raft::kernel &a, const raft::port_key_type name_a, PortInfo &a_info, 
+               raft::kernel &b, const raft::port_key_type name_b, PortInfo &b_info )
 {
-   //b's port info isn't allocated
    if( a_info.type != b_info.type )
    {
       std::stringstream ss;
-      ss << "When attempting to join ports (" << common::printClassName( a ) <<  
-         "[" << name_a << "] -> " << common::printClassName( b ) << "[" << 
-         name_b << "] have conflicting types.  " << 
+      ss << "Error found when attempting to join kernel \"" << 
+        common::printClassName( a ) <<  "\" with port " << 
+         "[" << a.output.getPortName( name_a ) << "] to " << " kernel \"" << 
+            common::printClassName( b ) << "\" with port [" << 
+         b.input.getPortName( name_b ) << "], their types must match. " << 
+         " currently their types are (" << 
             common::printClassNameFromStr( a_info.type.name() ) <<  
-         " and " << common::printClassNameFromStr( b_info.type.name() ) << "\n"; 
+         " -and- " << common::printClassNameFromStr( b_info.type.name() ) << ")."; 
       throw PortTypeMismatchException( ss.str() );
    }
    if( a_info.other_kernel != nullptr )
    {
-      throw PortDoubleInitializeException( "port double initialized with: " + name_b );
+    //FIXME
+      throw PortDoubleInitializeException( "port double initialized with: " ); //+ std::to_string( name_b ) );
    }
    if( b_info.other_kernel != nullptr )
    {
-      throw PortDoubleInitializeException( "port double initialized with: " + name_a );
+      //FIXME
+      throw PortDoubleInitializeException( "port double initialized with: " ); //+ std::to_string( name_a ) );
    }
    a_info.other_kernel = &b;
    a_info.other_name   = name_b;
@@ -95,8 +99,13 @@ MapBase::insert( raft::kernel *a,  PortInfo &a_out,
                  raft::kernel *b,  PortInfo &b_in,
                  raft::kernel *i)
 {
+#ifdef STRING_NAMES
    PortInfo &i_in( i->input.getPortInfoFor( "0" ) ),
             &i_out( i->output.getPortInfoFor( "0" ) );
+#else
+   PortInfo &i_in( i->input.getPortInfoFor( raft::port_key_type( 0 ) ) ),
+            &i_out( i->output.getPortInfoFor( raft::port_key_type( 0 ) ) );
+#endif
    join( *a, a_out.my_name, a_out,
          *i, i_in.my_name, i_in );
    join( *i, i_out.my_name, i_out,

@@ -28,8 +28,11 @@ template < class T, class method = roundrobin > class split : public raft::paral
 public:
    split( const std::size_t num_ports = 1 ) : parallel_k()
    {
+#ifndef STRING_NAMES      
+      input.addPort< T >( "0"_port );
+#else
       input.addPort< T >( "0" );
-
+#endif
       using index_type = std::remove_const_t<decltype(num_ports)>;
       for( index_type it( 0 ); it < num_ports; it++ )
       {
@@ -41,7 +44,11 @@ public:
 
    virtual raft::kstatus run()
    {
+#ifndef STRING_NAMES   
+      auto &output_port( input[ "0"_port ] );
+#else
       auto &output_port( input[ "0" ] );
+#endif
       const auto avail( output_port.size() );
       auto range( output_port.template peek_range< T >( avail ) );
       /** split funtion selects a fifo using the appropriate split method **/

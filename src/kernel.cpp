@@ -33,9 +33,15 @@ kernel::get_id()
    return( kernel_id );
 }
 
-
+/** 
+ * this will get entirely deprecated
+ * at some future point, but, not yet
+ * there are quite a few codes using just
+ * bare strings. 
+ */
+#ifdef STRING_NAME
 raft::kernel&
-kernel::operator []( const std::string &&portname )
+kernel::operator []( const raft::port_key_type &&portname )
 {
    if( enabled_port.size() < 2 )
    {
@@ -51,7 +57,7 @@ kernel::operator []( const std::string &&portname )
 }
 
 raft::kernel&
-kernel::operator []( const std::string &portname )
+kernel::operator []( const raft::port_key_type &portname )
 {
    if( enabled_port.size() < 2 )
    {
@@ -65,6 +71,7 @@ kernel::operator []( const std::string &portname )
    }
    return( (*this) );
 }
+#endif /** end STRING_NAME **/
 
 std::size_t
 kernel::addPort()
@@ -83,6 +90,10 @@ kernel::allConnected()
      */
     for( auto it( input.begin() ); it != input.end(); ++it )
     {
+        /** 
+         * this will work if this is a string or not, name, returns a 
+         * type based on what is in defs.hpp.
+         */
         const auto &port_name( it.name() );
         const auto &port_info( input.getPortInfoFor( port_name ) );
         /**
@@ -138,18 +149,50 @@ kernel::unlock()
    return;
 }
 
-std::string
+raft::port_key_type
 kernel::getEnabledPort()
 {
     if( enabled_port.size() == 0 )
     {
-        return( "" );
+        return( raft::null_port_value );
     }
-    const std::string head( enabled_port.front() );
+    const auto head( enabled_port.front() );
     enabled_port.pop();
     return( head );
 }
 
+#ifdef STRING_NAMES
+raft::kernel& kernel::operator []( const raft::port_key_type &&portname )
+{
+    if( enabled_port.size() < 2 )
+    {
+         enabled_port.push( portname );
+    }
+    else
+    {
+         throw AmbiguousPortAssignmentException(
+         //    "too many ports added with: " + portname.str
+             "too many ports added with: "
+         );
+    }
+    return( (*this) );
+}
+raft::kernel& kernel::operator []( const raft::port_key_type &portname )
+{
+    if( enabled_port.size() < 2 )
+    {
+         enabled_port.push( portname );
+    }
+    else
+    {
+         throw AmbiguousPortAssignmentException(
+               //"too many ports added with: " + portname.str
+             "too many ports added with: "
+         );
+    }
+    return( (*this) );
+}
+#endif
 //std::string
 //kernel::getName()
 //{
