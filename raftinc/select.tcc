@@ -40,7 +40,7 @@ namespace raft
  * (depending on the direction of the call returning this
  * pair), the second is a pointer to a FIFO object.
  */
-using select_t = std::pair< std::size_t, FIFO* >;
+using select_t = std::pair< std::size_t, std::reference_wrapper< FIFO > >;
 
 /**
  * TODO, finish this version, more fun and a bit more efficent
@@ -135,10 +135,16 @@ raft::select_t in( PORT_CONTAINER  &&port_container,
              * reference wrapper, it's not really a 
              * raw pointer being returned. 
              */
-            return( std::make_pair( _s, &fifo ) );
+            return( std::make_pair( _s, std::ref( fifo ) ) );
         }
     }
-    return( std::make_pair( 0, nullptr ) );
+    /**
+     * return any fifo, doesn't really matter given the 
+     * semantics of the function say that you must check
+     * the first index before accessing the FIFO itself.
+     */
+    auto &dummy_fifo = port_container[ port_array[ 0 ] ];
+    return( std::make_pair( 0, std::ref( dummy_fifo ) ) );
 }
 
 };

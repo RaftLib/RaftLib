@@ -43,7 +43,7 @@ public:
         if( ret_val.first > 0 )
         {
             type_t x;
-            ret_val.second->pop( x );
+            ret_val.second.get().pop( x );
             output[ "y_1" ].push( x );
         }
         return( raft::proceed );
