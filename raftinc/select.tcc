@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <random>
 #include <array>
+#include <string>
 
 namespace raft
 {
@@ -77,43 +78,70 @@ template < class PORT, class... PORTS > struct select_helper< PORT, PORTS... >
  * to something that's non const 
  */
 template < class... F > 
-static auto convert_arr( F&&... t )
+constexpr static auto convert_arr( F&&... t )
+#ifdef STRING_NAMES
+    -> std::array< std::string, sizeof...(F) >
+#else
     -> std::array< 
-        std::reference_wrapper< FIFO >, 
+        std::reference_wrapper< F >, 
         sizeof...(F)
         >
+#endif        
 {
     return { std::forward< F >( t )... };
 }
+
+struct select{
 
 /**
  * select_in - returns a random port that has data from the ports
  * given as parameters, will return a std::pair that has both the
  * count of items available on the input port and then the second
- * element is the port itself as a FIFO&. Uses mt19937 to pick a 
- * uniform random port. We'll add better policies in future versions. 
- * @param ports - parameter pack of ports
+ * element is the port itself as a FIFO&. Uses knuth_b to pick a 
+ * random port in an attempt to provide some level of "fairness". 
+ * We'll add better policies in future versions. 
+ * @param port_container - the port that you're expecting data from
+ * @param ports - parameter pack of ports as strings
  * @return raft::select_t object, std::pair< count of items, FIFO&>
  */
-template < class... PORTS > raft::select_t select_in( PORTS&&... ports )
+template < class PORT_CONTAINER, 
+           class... PORT_NAMES > 
+static 
+raft::select_t in( PORT_CONTAINER  &&port_container, 
+                          PORT_NAMES&&... ports )
 {
     auto port_array 
-        = convert_arr( std::forward< PORTS >( ports )... );
-    std::random_device rd;
-    std::mt19937 g( rd() );
+        = convert_arr( std::forward< PORT_NAMES >( ports )... );
+    /**
+     * only need to initialize/create these once.
+     */
+    static std::random_device rd;
+    static std::knuth_b g( rd() );
+    /**
+     * shuffle
+     */
     std::shuffle( port_array.begin(), 
                   port_array.end(), 
                   g );
+
     for( auto &p : port_array )
     {
-        const auto _s = p.get().size();
+        auto &fifo      = port_container[ p ];
+        const auto _s   = fifo.size();
         if( _s > 0 )
         {
-            return( std::make_pair( _s, &(p.get()) ) );
+            /** 
+             * keep in mind the return is actually a 
+             * reference wrapper, it's not really a 
+             * raw pointer being returned. 
+             */
+            return( std::make_pair( _s, &fifo ) );
         }
     }
     return( std::make_pair( 0, nullptr ) );
 }
+
+};
 
 } /** end namespace raft **/
 #endif /* END SELECT_TCC */

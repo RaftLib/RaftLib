@@ -30,10 +30,7 @@ class dummy : public raft::kernel
 public:
     dummy() : raft::kernel()
     {
-        input.addPort< type_t >( "x_1" );
-        input.addPort< type_t >( "x_2" );
-        input.addPort< type_t >( "x_3" );
-
+        input.addPort< type_t >( "x_1", "x_2", "x_3" );
         output.addPort< type_t >( "y_1" );
     }
 
@@ -42,8 +39,7 @@ public:
      */
     virtual raft::kstatus run() override 
     {
-        auto ret_val = 
-            raft::select_in( input[ "x_1" ], input[ "x_2" ], input[ "x_3" ] );
+        auto ret_val = raft::select::in( input, "x_1", "x_2", "x_3" );
         if( ret_val.first > 0 )
         {
             type_t x;
