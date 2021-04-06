@@ -41,7 +41,7 @@ main()
      * just set affinity as a group, let the runtime figure
      * out which core to assign this affinity group to.
      */
-    raft::manip< raft::parallel::affinity >::bind( l ); 
+    raft::manip< raft::parallel::affinity >::bind( l, m ); 
     
     /**
      * set affinity, but provide a modifier in the arguments 
