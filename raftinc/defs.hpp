@@ -176,29 +176,7 @@ using manip_vec_t = std::uint64_t;
  */
 
 /** raft::parallel **/
-namespace parallel
-{
-
-enum type : manip_vec_t { 
-    system = 0  /** do whatever the runtime wants, I don't care  **/,
-    thread      /** specify a thread for each kernel **/, 
-    pool        /** thread pool, one kernel thread per core, many kernels in each **/, 
-    process     /** open a new process from this point **/,
-    PARALLEL_N };    
-} /** end namespace parallel **/ 
-
-/** raft::vm **/
-namespace vm
-{
-
-enum type : manip_vec_t { 
-    flat = parallel::PARALLEL_N       /** not yet implemented, likely using segment  **/, 
-    standard                          /** threads share VM space, processes have sep **/, 
-    partition                         /** partition graph at this point into a 
-                                        * new VM space, platform dependent **/,
-    VM_N
-}; 
-} /** end namespace vm **/
+#include "kernelmanip.tcc"
 
 namespace order
 {
