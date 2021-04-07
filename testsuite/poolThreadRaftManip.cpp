@@ -50,8 +50,8 @@ main()
      * we also provide a means to set to a named node as an 
      * expansion point to distributed systems. 
      */
-    raft::manip< raft::parallel::affinity >::bind( 
-        raft::parallel::force_core( 0 ) /** core **/, 
+    raft::manip< raft::parallel::affinity,
+                 raft::parallel::force_core( 0 ) >::bind( 
         l, m                            /** two kernels in group **/ ); 
 
     raft::map M;

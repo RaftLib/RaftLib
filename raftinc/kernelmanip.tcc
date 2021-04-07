@@ -20,8 +20,15 @@
 #ifndef KERNELMANIP_TCC
 #define KERNELMANIP_TCC  1
 
+#include "manipbase.hpp"
+
+namespace raft
+{
+
 namespace parallel
 {
+
+
 
 enum type : manip_vec_t { 
     system = 0  /** do whatever the runtime wants, I don't care  **/,
@@ -43,4 +50,6 @@ enum type : manip_vec_t {
     VM_N
 }; 
 } /** end namespace vm **/
+
+} /** end namespace raft **/
 #endif /* END KERNELMANIP_TCC */
