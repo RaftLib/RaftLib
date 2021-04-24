@@ -36,7 +36,7 @@
 
 
 
-#ifndef STRING_NAMES
+#if (not defined STRING_NAMES) || (STRING_NAMES == 0)
 #include "hh.hpp"
 #endif
 
