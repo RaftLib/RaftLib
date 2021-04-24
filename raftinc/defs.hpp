@@ -3,7 +3,7 @@
  * @author: Jonathan Beard
  * @version: Sun Feb  7 05:46:48 2016
  * 
- * Copyright 2016 Jonathan Beard
+ * Copyright 2021 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@
 
 
 
-#ifndef STRING_NAMES
+#if (! defined STRING_NAMES) || (STRING_NAMES == 0)
 #include "hh.hpp"
 #endif
 
