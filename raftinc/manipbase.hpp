@@ -19,7 +19,7 @@
  */
 #ifndef MANIPBASE_HPP
 #define MANIPBASE_HPP  1
-#include "kernel.hpp"
+#include <raft>
 #include "port_info.hpp"
 
 namespace raft
