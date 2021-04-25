@@ -24,10 +24,15 @@ add_subdirectory(helpers)
 ##
 add_definitions( "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" ) 
 
+set( OPTIONAL_MODULES "")
+
 mark_as_advanced( STRING_NAMES )
 set( STRING_NAMES true CACHE BOOL "Default is to use legacy string-named ports." )
 if( STRING_NAMES )
-    add_definitions( "-DSTRING_NAMES=1" )
+    set( STRNAMES  "-DSTRING_NAMES=1" )
+    add_definitions( ${STRNAMES} )
+else()
+    list( APPEND OPTIONAL_MODULES highwayhash )
 endif( STRING_NAMES )
 
 
@@ -82,7 +87,8 @@ set( MAINHEADERS
      raftio 
      raftmath 
      raftrandom
-     raftstat )
+     raftstat
+     raftutility )
 foreach( HFILE ${MAINHEADERS} )
  install( FILES ${CMAKE_CURRENT_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 endforeach( HFILE ${MAINHEADERS} )
