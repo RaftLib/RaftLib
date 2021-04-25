@@ -87,7 +87,8 @@ set( MAINHEADERS
      raftio 
      raftmath 
      raftrandom
-     raftstat )
+     raftstat
+     raftutility )
 foreach( HFILE ${MAINHEADERS} )
  install( FILES ${CMAKE_CURRENT_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 endforeach( HFILE ${MAINHEADERS} )
