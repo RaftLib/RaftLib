@@ -181,12 +181,11 @@ using manip_vec_t = std::uint64_t;
 namespace order
 {
 enum spec : std::uint8_t { 
-    in = vm::VM_N, 
+    in = 0, 
     out, 
     ORDER_N 
 };
 } /** end namespace order **/
-
 
 /**
  * these are to enable the sub-kernel behavior where 

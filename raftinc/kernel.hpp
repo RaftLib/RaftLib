@@ -170,6 +170,19 @@ public:
      */
     Port               input  = { this };
     Port               output = { this };
+    
+
+    constexpr void setCore( const core_id_t id )
+    {
+        core_assign = id;
+        return;
+    }
+    
+    constexpr void setAffinityGroup( const core_id_t ag )
+    {
+        affinity_group = ag;
+        return;
+    }
 
 protected:
     /**
@@ -223,13 +236,16 @@ protected:
         return( (this)->execution_done );
     }
     
-    void setCore( const core_id_t id ) noexcept
-    {
-        core_assign = id;
-    }
 
 
-    core_id_t core_assign       = -1;
+
+    /**
+     * these are both set to -1 by defualt, which
+     * means unset. 
+     */
+    core_id_t   core_assign       = -1;
+    core_id_t   affinity_group    = -1;
+
 
     raft::schedule_behavior     sched_behav = raft::any_port;
 private:

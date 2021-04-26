@@ -37,11 +37,13 @@ main()
     middle  m;
     last    l;
     
+    using group_one = raft::parallel::affinity_group<1>;
+
     /**
      * just set affinity as a group, let the runtime figure
      * out which core to assign this affinity group to.
      */
-    raft::manip< raft::parallel::affinity >::bind( l, m ); 
+    raft::manip< raft::parallel::affinity< group_one > >::bind( l, m ); 
     
     /**
      * set affinity, but provide a modifier in the arguments 
@@ -50,9 +52,9 @@ main()
      * we also provide a means to set to a named node as an 
      * expansion point to distributed systems. 
      */
-    raft::manip< raft::parallel::affinity,
-                 raft::parallel::force_core( 0 ) >::bind( 
-        l, m                            /** two kernels in group **/ ); 
+    //raft::manip< raft::parallel::affinity,
+    //             raft::parallel::force_core( 0 ) >::bind( 
+    //    l, m                            /** two kernels in group **/ ); 
 
     raft::map M;
     M += s >> m >> l;
