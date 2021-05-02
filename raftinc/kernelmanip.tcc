@@ -19,8 +19,9 @@
  */
 #ifndef KERNELMANIP_TCC
 #define KERNELMANIP_TCC  1
+#include "kernel.hpp"
+#include "defs.hpp"
 
-#include <raft>
 
 namespace raft
 {
@@ -31,53 +32,15 @@ using _size_t = std::size_t;
 
 template < _size_t N > struct affinity_group
 {
-    constexpr static _size_t value = N;
-};
-
-/** FIXME, need to restrict class T on this template **/
-
-template < class T > class affinity 
-{
-public:
-    /**
-     * the first time this is invoked, it'll return an integer
-     */
-    static constexpr void invoke( raft::kernel &k )
+    constexpr static core_id_t value = N;
+    
+    constexpr static void invoke( raft::kernel &&k )
     {
-        k.setAffinityGroup( T::value );
-        return;
+        k.setAffinityGroup(  value );
     }
-private:
-    affinity()  = delete;
-    ~affinity() = delete;
 };
 
 } /** end namespace vm **/
 
 } /** end namespace raft **/
 #endif /* END KERNELMANIP_TCC */
-
-//old stuff
-# if 0
-enum type : manip_vec_t { 
-    system = 0  /** do whatever the runtime wants, I don't care  **/,
-    thread      /** specify a thread for each kernel **/, 
-    pool        /** thread pool, one kernel thread per core, many kernels in each **/, 
-    process     /** open a new process from this point **/,
-    PARALLEL_N };    
-} /** end namespace parallel **/ 
-
-
-/** raft::vm **/
-namespace vm
-{
-
-enum type : manip_vec_t { 
-    flat = parallel::PARALLEL_N       /** not yet implemented, likely using segment  **/, 
-    standard                          /** threads share VM space, processes have sep **/, 
-    partition                         /** partition graph at this point into a 
-                                        * new VM space, platform dependent **/,
-    VM_N
-};
-#endif
-

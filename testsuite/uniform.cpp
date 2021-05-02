@@ -25,38 +25,38 @@
  #include <raftio>
 
 
- int
- main()
- {
-   using namespace raft;
-   using type_t = std::uint32_t;
-   const static auto send_size( 10 );
-   using gen = random_variate< std::default_random_engine,
-                               std::uniform_int_distribution,
-                               type_t >;
-   std::vector< type_t > output;
-   auto we( raft::write_each< type_t >( std::back_inserter( output ) ) );
-   const static auto min( 1 );
-   const static auto max( 100 );
-   gen g( send_size, min, max );
-   raft::map m;
-   m += g >> we;
-   m.exe();
+int
+main()
+{
+  using namespace raft;
+  using type_t = std::uint32_t;
+  const static auto send_size( 10 );
+  using gen = random_variate< std::default_random_engine,
+                              std::uniform_int_distribution,
+                              type_t >;
+  std::vector< type_t > output;
+  auto we( raft::write_each< type_t >( std::back_inserter( output ) ) );
+  const static auto min( 1 );
+  const static auto max( 100 );
+  gen g( send_size, min, max );
+  raft::map m;
+  m += g >> we;
+  m.exe();
 
-   if( output.size() == send_size )
-   {
-       std::cerr << "test succeeded\n";
-   }
-   for( const auto val : output )
-   {
-       if( val < min )
-       {
-           std::cerr << "test failed\n";
-       }
-       if( val > max )
-       {
-           std::cerr << "test failed\n";
-       }
-   }
-   return( EXIT_SUCCESS );
- }
+  if( output.size() == send_size )
+  {
+      std::cerr << "test succeeded\n";
+  }
+  for( const auto val : output )
+  {
+      if( val < min )
+      {
+          std::cerr << "test failed\n";
+      }
+      if( val > max )
+      {
+          std::cerr << "test failed\n";
+      }
+  }
+  return( EXIT_SUCCESS );
+}

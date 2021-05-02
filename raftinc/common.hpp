@@ -54,6 +54,25 @@ template < class K > static
 }
 
 
+/**
+ * convert_arr - used to convert the forwared parameter pack 
+ * to something that's non const 
+ */
+template < class... F > 
+constexpr static auto convert_arr( F&&... t )
+#ifdef STRING_NAMES
+    -> std::array< std::string, sizeof...(F) >
+#else
+    -> std::array< 
+        std::reference_wrapper< F >, 
+        sizeof...(F)
+        >
+#endif        
+{
+    return { std::forward< F >( t )... };
+}
+
+
 };
 
 #endif /* END RAFTCOMMON_HPP */

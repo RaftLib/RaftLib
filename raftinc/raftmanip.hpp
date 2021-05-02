@@ -21,14 +21,45 @@
 #define MANIPBASE_HPP  1
 #include "kernel.hpp"
 #include "port_info.hpp"
+#include <cstddef>
+#include <functional>
+#include <array>
+
 
 namespace raft
 {
 
-template < class...  MODIFIERS > class manip
+//base case
+template < class KERNELS, class... MODS  > struct manip_helper{};
+
+//end recursion
+template < class KERNELS > struct manip_helper< KERNELS >
+{
+    constexpr static void bind_helper( KERNELS&& kernel_list )
+    {
+        return;
+    }
+};
+
+//main worker
+template < class KERNELS, class MOD, class... MODS > struct 
+    manip_helper< KERNELS, MOD, MODS... >
+{
+    using manip_t = manip_helper< KERNELS, MODS... >;
+    constexpr static void bind_helper( KERNELS&& kernel_list )
+    {
+    
+        for( auto &p : kernel_list )
+        {
+            MOD::invoke( std::forward< raft::kernel >( p.get() ) );
+        }
+        manip_t::bind_helper( std::forward< KERNELS >( kernel_list ) );
+    }
+};
+
+template < class... MODS > class manip
 {
 public:
-
 
     /**
      * bind - right now this returns void, needs to return
@@ -40,51 +71,18 @@ public:
      * @param - variable count of raft::kernel derived objects. 
      * @return - void for now, see notes at top.
      */
-    constexpr template < class... KERNELS > static void bind( KERNELS&&... kernels )
+    template < class... KERNELS > constexpr static void bind( KERNELS&&... kernels )
     {
-       
-        return;
+        //unkernel_list
+        const auto psize = sizeof...(kernels);
+        using kernel_ref_t   = std::reference_wrapper< raft::kernel >;
+        using param_kernel_t = std::array< kernel_ref_t, psize >;
+        param_kernel_t param_kernels  = { kernels... };
+        
+        //apply to each
+        raft::manip_helper< param_kernel_t, MODS... >::bind_helper( 
+                                   std::forward< param_kernel_t >( param_kernels) );
     }
-
-
-private:
-#if 0
-    template < manip_vec_t value, class... KERNELS > struct bind_helper{};
-    
-    /** 
-     * struct that doesn't do anything, just catch the end
-     * condition for the recursion 
-     */
-    template < manip_vec_t value > struct bind_helper< value >
-    {
-        constexpr static void bind()
-        {
-            return;
-        }
-    };
-    
-    
-    /** END HELPERS TO BIND **/
-    template < manip_vec_t value, class KERNEL, class... KERNELS > 
-        struct bind_helper< value, KERNEL, KERNELS... >
-    {
-        static void bind( KERNEL &&kernel, KERNELS&&... kernels )
-        {
-            /** recursively call for each kernel **/
-            manip_local::apply_help( value, kernel );
-            bind_helper< value, KERNELS... >::bind( 
-                std::forward< KERNELS >( kernels )... );
-            return;
-        }
-    };
-#endif    
-    /**
-     * we don't need these given we don't want anybody 
-     * to actually instantiate one of these. 
-     */
-    manip() = delete;
-    ~manip() = delete;
-
 };
 
 } /** end namespace raft **/ 
