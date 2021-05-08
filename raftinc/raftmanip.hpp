@@ -21,6 +21,7 @@
 #define MANIPBASE_HPP  1
 #include "kernel.hpp"
 #include "port_info.hpp"
+#include "defs.hpp"
 #include <cstddef>
 #include <functional>
 #include <array>
@@ -37,6 +38,7 @@ template < class KERNELS > struct manip_helper< KERNELS >
 {
     constexpr static void bind_helper( KERNELS&& kernel_list )
     {
+        UNUSED( kernel_list );
         return;
     }
 };

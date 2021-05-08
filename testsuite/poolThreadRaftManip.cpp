@@ -39,11 +39,13 @@ main()
     
     using group_one = raft::parallel::affinity_group<1>;
 
+    using cpu_one   = raft::parallel::device< raft::parallel::cpu, 1 >;
+
     /**
      * just set affinity as a group, let the runtime figure
      * out which core to assign this affinity group to.
      */
-    raft::manip< group_one >::bind( l, m ); 
+    raft::manip< group_one, cpu_one >::bind( l, m ); 
     
     /**
      * set affinity, but provide a modifier in the arguments 

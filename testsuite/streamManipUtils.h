@@ -18,8 +18,6 @@ public:
 
     virtual ~start() = default;
     
-    IMPL_CLONE();
-
     virtual raft::kstatus run()
     {
         auto &mem( output[ "y" ].allocate< obj_t >() );
@@ -49,7 +47,6 @@ public:
         input.addPort< obj_t >( "x" );
         output.addPort< obj_t >( "y" );
     }
-    IMPL_CLONE();
     virtual raft::kstatus run()
     {
         auto &val( input[ "x" ].peek< obj_t >() );
@@ -70,7 +67,7 @@ public:
     }
     
     virtual ~last() = default;
-    IMPL_CLONE();
+    
     virtual raft::kstatus run()
     {
         obj_t mem;
@@ -78,7 +75,7 @@ public:
         /** Jan 2016 - otherwise end up with a signed/unsigned compare w/auto **/
         using index_type = std::remove_const_t< decltype( mem.length ) >;
         for( index_type i( 0 ); i < mem.length; i++ )
-        {
+        {   
             //will fail if we've messed something up
             if( static_cast< std::size_t >( mem.pad[ i ] ) != counter )
             {

@@ -25,7 +25,7 @@
 #ifndef _RAFTMANIP_HPP_
 #define _RAFTMANIP_HPP_  1
 
-#include ./raftinc/raftmanip.hpp
-#include ./raftinc/kernelmanip.tcc
+#include "./raftinc/raftmanip.hpp"
+#include "./raftinc/kernelmanip.tcc"
 
 #endif /* END _RAFTMANIP_HPP_ */

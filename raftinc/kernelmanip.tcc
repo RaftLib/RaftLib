@@ -19,9 +19,8 @@
  */
 #ifndef KERNELMANIP_TCC
 #define KERNELMANIP_TCC  1
-#include "kernel.hpp"
 #include "defs.hpp"
-
+#include "kernel.hpp"
 
 namespace raft
 {
@@ -38,6 +37,22 @@ template < _size_t N > struct affinity_group
     {
         k.setAffinityGroup(  value );
     }
+};
+
+//FIXME, right now just for CPUs
+enum device_t { cpu };
+
+template < device_t D, _size_t N > struct device
+{
+    constexpr static core_id_t value = N;
+    
+    constexpr static void invoke( raft::kernel &&k )
+    {
+        k.setCore( N );
+    }
+    //FIXME, need to add constexpr code for GPU kernel and 
+    //devices on the kernel side, so, invoke would select
+    //statically, but leave open dynamic migration. 
 };
 
 } /** end namespace vm **/
