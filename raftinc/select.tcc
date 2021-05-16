@@ -28,6 +28,7 @@
 #include <random>
 #include <array>
 #include <string>
+#include "common.hpp"
 
 namespace raft
 {
@@ -73,23 +74,6 @@ template < class PORT, class... PORTS > struct select_helper< PORT, PORTS... >
 };
 #endif
 
-/**
- * convert_arr - used to convert the forwared parameter pack 
- * to something that's non const 
- */
-template < class... F > 
-constexpr static auto convert_arr( F&&... t )
-#ifdef STRING_NAMES
-    -> std::array< std::string, sizeof...(F) >
-#else
-    -> std::array< 
-        std::reference_wrapper< F >, 
-        sizeof...(F)
-        >
-#endif        
-{
-    return { std::forward< F >( t )... };
-}
 
 struct select{
 
@@ -111,7 +95,7 @@ raft::select_t in( PORT_CONTAINER  &&port_container,
                           PORT_NAMES&&... ports )
 {
     auto port_array 
-        = convert_arr( std::forward< PORT_NAMES >( ports )... );
+        = common::convert_arr( std::forward< PORT_NAMES >( ports )... );
     /**
      * only need to initialize/create these once.
      */

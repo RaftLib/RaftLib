@@ -31,6 +31,7 @@ set( TESTAPPS allocate
      ksettest
      multiPrint
      fixedMatchTest 
+     poolThreadRaftManip
      select_in_t
      splitchainRetStruct 
      staticContJoinRetStruct
