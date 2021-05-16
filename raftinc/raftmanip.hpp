@@ -73,7 +73,7 @@ public:
      * @param - variable count of raft::kernel derived objects. 
      * @return - void for now, see notes at top.
      */
-    template < class... KERNELS > constexpr static void bind( KERNELS&&... kernels )
+    template < class... KERNELS > constexpr static auto bind( KERNELS&&... kernels )
     {
         //unkernel_list
         const auto psize = sizeof...(kernels);
@@ -84,6 +84,7 @@ public:
         //apply to each
         raft::manip_helper< param_kernel_t, MODS... >::bind_helper( 
                                    std::forward< param_kernel_t >( param_kernels) );
+        return( param_kernels );                               
     }
 };
 

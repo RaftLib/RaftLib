@@ -31,15 +31,21 @@ using _size_t = std::size_t;
 
 template < _size_t N > struct affinity_group
 {
+    
     constexpr static core_id_t value = N;
     
     constexpr static void invoke( raft::kernel &&k )
     {
         k.setAffinityGroup(  value );
     }
+
 };
 
-//FIXME, right now just for CPUs
+/**
+ * right now, just for CPUs. Would be great if 
+ * we could have an interface for each, but, there's
+ * not a good way to do static function interfaces. 
+ */
 enum device_t { cpu };
 
 template < device_t D, _size_t N > struct device
