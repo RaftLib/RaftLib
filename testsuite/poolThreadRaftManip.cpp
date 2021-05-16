@@ -41,14 +41,20 @@ main()
     using group_two = raft::parallel::affinity_group<2>;
 
     using cpu_one   = raft::parallel::device< raft::parallel::cpu, 1 >;
-    using cpu_two   = raft::parallel::device< raft::parallel::cpu, 2 >;
+    //just realized CI service is using single core, so, this will fault. 
+    //using cpu_two   = raft::parallel::device< raft::parallel::cpu, 2 >;
 
     /**
      * just set affinity as a group, let the runtime figure
      * out which core to assign this affinity group to.
      */
-    raft::manip< group_one, cpu_one >::bind( l, m ); 
-    raft::manip< group_two, cpu_two >::bind( s ); 
+    auto group_one_container = raft::manip< group_one, cpu_one >::bind( l, m ); 
+    //just for kicks, let's print this out
+    for( auto &x : group_one_container )
+    {
+        std::cout << x.get().get_id() << " - " << x.get().getCoreAssignment() << "\n"; 
+    }
+    raft::manip< group_two, cpu_one >::bind( s ); 
     
     /**
      * set affinity, but provide a modifier in the arguments 
