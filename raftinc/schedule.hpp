@@ -110,34 +110,8 @@ public:
 
 protected:
    virtual void handleSchedule( raft::kernel * const kernel ) = 0; 
-   /**
-    * checkSystemSignal - check the incomming streams for
-    * the param kernel for any system signals, if there 
-    * is one then consume the signal and perform the 
-    * appropriate action.
-    * @param kernel - raft::kernel
-    * @param data   - void*, use this if any further info
-    *  is needed in future implementations of handlers
-    * @return  raft::kstatus, proceed unless a stop signal is received
-    */
-   static raft::kstatus checkSystemSignal( raft::kernel * const kernel, 
-                                           void *data,
-                                           SystemSignalHandler &handlers );
 
-   /**
-    * quiteHandler - performs the actions needed when
-    * a port sends a quite signal (normal termination),
-    * this is most likely due to the end of data.
-    * @param fifo - FIFO& that sent the signal
-    * @param kernel - raft::kernel*
-    * @param signal - raft::signal
-    * @param data   - void*, vain attempt to future proof
-    */
-   static raft::kstatus quitHandler( FIFO              &fifo,
-                                     raft::kernel      *kernel,
-                                     const raft::signal signal,
-                                     void              *data );
-   
+   void signal_complete();
    
    static void invalidateOutputPorts( raft::kernel *kernel );
 
@@ -189,15 +163,13 @@ protected:
    static void fifo_gc( ptr_map_t * const in,
                         ptr_set_t * const out,
                         ptr_set_t * const peekset );
-   /**
-    * signal handlers
-    */
-   SystemSignalHandler handlers;
-   
+  
+
    /** kernel set **/
    kernelkeeper &kernel_set;
    kernelkeeper &source_kernels;      
    kernelkeeper &dst_kernels;
    kernelkeeper &internally_created_kernels;
+   bool         complete    = false;
 };
 #endif /* END RAFTSCHEDULE_HPP */

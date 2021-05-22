@@ -33,9 +33,6 @@ stdalloc::stdalloc( raft::map &map,
 {
 }
 
-stdalloc::~stdalloc()
-{
-}
 
 void
 stdalloc::run()

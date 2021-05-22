@@ -91,7 +91,7 @@ public:
              simple_schedule
 #endif             
              , 
-             class allocator           = dynalloc,
+             class allocator           = stdalloc,
              class parallelism_monitor = basic_parallel > 
     void exe()
     {
@@ -107,10 +107,11 @@ public:
                submap->all_kernels.release();
             }
             all_kernels.release();
+            
             /** check types, ensure all are linked **/
             checkEdges();
-            partition pt;
-            pt.partition( all_kernels );
+            //partition pt;
+            //pt.partition( all_kernels );
             /** adds in split/join kernels **/
       
 
@@ -174,18 +175,10 @@ public:
             sched_object->reset_streams();
         }
         
-        //treat as barrier
-      
-      //double check to make sure we have all threads killed off. 
-
-      /** no more need to duplicate kernels **/
-      //exit_para = true;
-      //parallel_mon.join();
-        
         /**
          * now we just have to wait on the terminal kernels. 
          */
-        while( sched_object->terminus_complete() )
+        while( ! sched_object->terminus_complete() )
         {
             
             std::chrono::microseconds dura( 3000 );

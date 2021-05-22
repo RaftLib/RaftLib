@@ -123,6 +123,7 @@ simple_schedule::start()
       std::chrono::milliseconds dura( 3 );
       std::this_thread::sleep_for( dura );
    }
+   signal_complete();
    return;
 }
 
@@ -181,4 +182,5 @@ simple_schedule::simple_run( void * data )
       //takes care of peekset clearing too
       Schedule::fifo_gc( &in, &out, &peekset );
    }
+
 }

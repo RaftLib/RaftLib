@@ -70,8 +70,9 @@ public:
      * RingBuffer - default constructor, initializes basic
      * data structures.
      */
-    RingBuffer(void* const ptr, const std::size_t length,
-        const std::size_t start_position)
+    RingBuffer( void* const ptr, 
+                const std::size_t length,
+                const std::size_t start_position )
         : RingBufferBase<T, type>()
     {
         assert(length != 0);

@@ -47,7 +47,7 @@ public:
    /**
     * destructor, doesn't really do much at he moment.
     */
-   virtual ~stdalloc();
+   virtual ~stdalloc() = default;
    /**
     * run - call within a thread, internally we could have a loop before exiting 
     * but this version simply allocates and exits.  

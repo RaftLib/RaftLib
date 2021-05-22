@@ -65,15 +65,18 @@ raft::map::~map()
     if( schedule_thread != nullptr )
     { 
         schedule_thread->join();
+        delete( schedule_thread );
     }
-      
+    delete( sched_object );
     /** no more need to duplicate kernels **/
     exit_para = true;
     
     if( pm_thread != nullptr )
     {
         pm_thread->join();
+        delete( pm_thread );
     }
+    delete( pm );
 }
 
 void
