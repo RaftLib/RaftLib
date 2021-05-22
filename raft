@@ -48,6 +48,9 @@
 /** c++stdlib like utilities **/
 #include "./raftinc/foreach.tcc"
 
+/** helper functions **/
+#include "./raftinc/select.tcc"
+
 /** fifo includes **/
 #include "./raftinc/blocked.hpp"
 #include "./raftinc/fifo.hpp"

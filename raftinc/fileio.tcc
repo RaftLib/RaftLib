@@ -3,7 +3,7 @@
  * @author: Jonathan Beard
  * @version: Mon Sep 29 14:24:00 2014
  *
- * Copyright 2014 Jonathan Beard
+ * Copyright 2020 Jonathan Beard
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,76 +28,19 @@
 #include <cmath>
 #include <raft>
 #include <type_traits>
+#include "filechunk.tcc"
 #include "chunkiterator.tcc"
 
-
-/**
- * FIXME: needs to have to copy function implemenented
- * so that each port has the option of receiving copies
- * of the transfered data.
- */
 
 namespace raft{
 
 enum readertype : std::int8_t { chunk, fasta };
 
-template < std::size_t size = 65536 > struct filechunk
-{
-   filechunk() = default;
-
-   filechunk( const filechunk< size > &other )
-   {
-      std::memcpy( buffer, other.buffer, other.length + 1 /** cp null term **/ );
-      start_position = other.start_position;
-      length = other.length;
-   }
-   
-   constexpr filechunk< size >& operator = ( const filechunk< size > &other )
-   {
-        //TODO - this will work for now, but there's better things
-        //that we can do. 
-        std::memcpy( buffer, other.buffer, other.length + 1 /** cp null term **/ );
-        start_position = other.start_position;
-        length = other.length;
-        return( *this );
-   }
-
-   char           buffer[ size ];
-   std::size_t    start_position    = 0;
-   std::size_t    length            = 0;
-   std::uint64_t  index             = 0;
-
-   constexpr static std::size_t getChunkSize() noexcept
-   {
-      return( size );
-   }
-
-   friend std::ostream& operator <<( std::ostream &output, filechunk< size > &c )
-   {
-      output << c.buffer;
-      return( output );
-   }
-
-   chunk_iterator< size > begin() noexcept
-   {
-      return( chunk_iterator< size >( this ) );
-   }
-
-   chunk_iterator< size > end() noexcept
-   {
-      return( chunk_iterator< size >( this, length ) );
-   }
-
-   inline char operator []( const std::size_t n )
-   {
-      assert( n >= 0  && n < size );
-      return( buffer[ n ] );
-   }
-};
 
 
-template < class chunktype = filechunk< 65536 >,
-           bool copy = false > class filereader : public raft::kernel
+template < class chunktype  = filechunk< 65536 >,
+           bool copy        = false > 
+                class filereader : public raft::kernel
 {
 public:
    filereader( const std::string inputfile,

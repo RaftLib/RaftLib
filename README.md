@@ -1,4 +1,7 @@
-[RaftLib](http://raftlib.io) is a C++ Library for enabling stream/data-flow parallel computation. Using simple right shift operators (just like the C++ streams that you would use for string manipulation), you can link parallel compute kernels together. With RaftLib, we do away with explicit use of pthreads, std::thread, OpenMP, or any other parallel "threading" library. These are often mis-used, creating non-deterministic behavior. RaftLib's model allows lock-free FIFO-like access to the communications channels connecting each compute kernel. The full system has many auto-parallelization, optimization, and convenience features that enable relatively simple authoring of performant applications. This project is currently in the alpha stage. The beta release will bring back multi-node support, along with (planned) container support for the remote machines. Feel free to give it a shot, if you have any issues, also feel free to send the authors an e-mail.
+[RaftLib](http://raftlib.io) is a C++ Library for enabling stream/data-flow parallel computation. Using simple right shift operators (just like the C++ streams that you would use for string manipulation), you can link parallel compute kernels together. With RaftLib, we do away with explicit use of pthreads, std::thread, OpenMP, or any other parallel "threading" library. These are often mis-used, creating non-deterministic behavior. RaftLib's model allows lock-free FIFO-like access to the communications channels connecting each compute kernel. The full system has many auto-parallelization, optimization, and convenience features that enable relatively simple authoring of performant applications. Feel free to give it a shot, if you have any issues, please create an issue request. Minor issues, 
+the Slack group is the best way to resolve. We take pull requests!! For benchmarking, feel free to send the 
+authors an email. We've started a benchmark collection, however, it's far from complete. We'd love to add your 
+code!! 
 
 User Group / Mailing List: [slack channel](https://join.slack.com/t/raftlib/shared_invite/zt-3sk6ms6f-eEBd23dz98JnoRiXLaRmNw)
 
@@ -11,10 +14,14 @@ User Group / Mailing List: [slack channel](https://join.slack.com/t/raftlib/shar
 ### Pre-requisites
 
 #### OS X & Linux
-Compiler: c++14 capable -> Clang, GNU GCC 5.0+, or Intel icc
+* Compiler: c++17 capable -> Clang, GNU GCC 5.0+, or Intel icc
+* Latest build runs under Linux with above compilers on both x86 and AArch64, with both pthreads and QThreads. 
+* OS X M1 runs, compiles, but has some test case hiccups on templates, but doesn't seem to 
+impact functionality. 
+* Note for OS X users without a /user/local, specify an install prefix when using CMake. 
 
 #### Windows
-* Latest merge from pull request to main should enable compilation on VS on Win10.
+* Builds and runs under Win10
 
 ### Install
 Make a build directory (for the instructions below, we'll 
@@ -25,9 +32,9 @@ you'll need to add to your cmake invocation:
 ```
 
 To use the [QThreads User space HPC threading library](http://www.cs.sandia.gov/qthreads/) 
-you will need to add the following (NOTE: The qthread library currently uses its own partitioner
-and does not work with Scotch, it also has issues with OpenCV, will fix in next release 
-iteration):
+you will need to use the version with the RaftLib org and follow the RaftLib specific readme. 
+This QThreads version has patches for hwloc2.x applied and fixes for test cases. To compile
+RaftLib with QThreads linked, add the following (assumes the QThreads library is in your path):
 ```bash
 -DUSEQTHREAD=1
 ```

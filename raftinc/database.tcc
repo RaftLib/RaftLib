@@ -78,10 +78,6 @@ template < class T > struct DataBase
     ThreadAccess            thread_access[ 2 ];
     Pointer                 write_pt;
     
-    /** 
-     * FIXME - decide if 32 is the best choice or have
-     * a macro that defines it per compile.
-     */
     T                       *store          = nullptr;
     Signal                  *signal         = nullptr;
     bool                    external_alloc  = false;

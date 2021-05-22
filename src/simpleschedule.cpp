@@ -80,9 +80,7 @@ simple_schedule::init()
    auto &container( kernel_set.acquire() );
    for( auto * const k : container )
    {  
-      auto * const th_info( new thread_info_t( k ) );
-      th_info->data.loc = k->getCoreAssignment();
-      thread_map.emplace_back( th_info );
+      handleSchedule( k );
    }
    kernel_set.release();
 }
@@ -135,6 +133,8 @@ simple_schedule::handleSchedule( raft::kernel * const kernel )
        * TODO: lets add the affinity dynamically here
        */
       auto * const th_info( new thread_info_t( kernel ) );
+      th_info->data.loc = kernel->getCoreAssignment();
+
       /** 
        * thread function takes a reference back to the scheduler
        * accessible done boolean flag, essentially when the 

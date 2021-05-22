@@ -19,7 +19,7 @@
  */
 #ifndef RAFTPORT_HPP
 #define RAFTPORT_HPP  1
-
+#include <algorithm>
 #include <map>
 #include <vector>
 #include <string>
@@ -64,7 +64,7 @@ struct port_helper{};
 template < class T, class PORT >
 struct port_helper< T, PORT >
 {
-    static void add_port( PORT &port ) 
+    constexpr static void add_port( PORT &port ) 
     {
         UNUSED( port );
         return;
@@ -79,13 +79,16 @@ template < class T,
            class... PORTNAMES >
 struct port_helper< T, PORT, PORTNAME, PORTNAMES... >
 {
-    static void add_port( PORT &port,
-                          PORTNAME &&portname,
-                          PORTNAMES&&... portnames )
+    constexpr static void add_port( PORT &port,
+                                    PORTNAME &&portname,
+                                    PORTNAMES&&... portnames )
     {
-        port.template add_port< T >( portname );
-        port_helper< T, PORT, PORTNAMES... >::add_port( port,
-                                                        std::forward< PORTNAMES >( portnames )... );
+        port.template add_port< T, PORTNAME >( portname );
+        port_helper< T, 
+                     PORT, 
+                     PORTNAMES... >::add_port( port,
+                                               std::forward< 
+                                                PORTNAMES >( portnames )... );
         return;
     }
 };
@@ -94,7 +97,7 @@ struct port_helper< T, PORT, PORTNAME, PORTNAMES... >
 template< class T,
           class PORT,
           class... PORTNAMES >
-static void
+constexpr static void
 kick_port_helper( PORT &port, PORTNAMES&&... ports )
 {
     port_helper< T, PORT, PORTNAMES... >::add_port( port,
@@ -138,7 +141,7 @@ public:
     * given.  Function returns true if added, false if not.
     * Main reason for returning false would be that the
     * port already exists.
-    * @param   port_name - const std::string
+    * @param   port_name - const raft::port_key_type
     * @return  bool
     */
    template < class T,
@@ -175,13 +178,26 @@ public:
                       inc + ( index == (n_ports - 1) ? adder : 0 ),
                       start_index );
          pi.my_kernel = kernel;
-         const std::string name( std::to_string( index ) );
+         /**
+          * To change to "any" efficient name type for 
+          * RaftLib, we need to make a generic function to 
+          * still enable this to happen. Let's see if 
+          * we can simply #define out for now
+          */
+#ifdef STRING_NAMES          
+         const auto name( std::to_string( index ) );
+#else
+         const auto name( index );
+#endif
          pi.my_name   = name;
          /** gotta initialize the maps to copy stuff to/from **/
          (this)->initializeConstMap< T >( pi );
          (this)->initializeSplit<    T >( pi );
          (this)->initializeJoin<     T >( pi );
          portmap.map.insert( std::make_pair( name, pi ) );
+#ifndef STRING_NAMES
+         portmap.name_map.insert( std::make_pair( name, raft::port_key_name_t( index, std::to_string( index ) ) ) );
+#endif         
       }
       return( true );
    }
@@ -192,19 +208,53 @@ public:
     * for checking the streaming graph to make sure all the
     * ports that are "dynamically" created do in fact have
     * compatible types.
-    * @param port_name - const std::string
+    * @param port_name - const raft::port_key_type
     * @return  const type_index&
     * @throws PortNotFoundException
     */
-   const std::type_index& getPortType( const std::string &&port_name );
+   const std::type_index& getPortType( const raft::port_key_type &&port_name );
 
+    
+#ifdef STRING_NAMES
+    virtual FIFO& operator[]( const raft::port_key_type  &&port_name  );
+    virtual FIFO& operator[]( const raft::port_key_type  &port_name );
 
-   /**
-    * operator[] - input the port name and get a port
-    * if it exists.
-    */
-   virtual FIFO& operator[]( const std::string &&port_name  );
-   virtual FIFO& operator[]( const std::string &port_name ); 
+#else
+    /**
+     * operator[] - input the port name and get a port
+     * if it exists.
+     */
+    template < class T > FIFO& operator[]( const T  &&port_name  )
+    {
+       //NOTE: We'll need to add a lock here if later
+       //we intend to remove ports dynamically as well
+       //for the moment however lets just assume we're
+       //only adding them
+       const auto ret_val( portmap.map.find( port_name.val ) );
+       if( ret_val == portmap.map.cend() )
+       {
+          throw PortNotFoundException( 
+             "Port not found for name \""  + getPortName( port_name ) + "\"" );
+       }
+       return( *((*ret_val).second.getFIFO())  );
+    }
+
+    template < class T > FIFO& operator[]( const T &port_name )
+    {
+       //NOTE: We'll need to add a lock here if later
+       //we intend to remove ports dynamically as well
+       //for the moment however lets just assume we're
+       //only adding them
+       const auto ret_val( portmap.map.find( port_name.val ) );
+       if( ret_val == portmap.map.cend() )
+       {
+          throw PortNotFoundException( 
+             "Port not found for name \"" + getPortName( port_name ) + "\"" );
+       }
+       return( *((*ret_val).second.getFIFO())  );
+    }
+
+#endif //end hacks for backwards STRING_NAME compatibility
 
    /**
     * hasPorts - returns true if any ports exists, false
@@ -240,8 +290,13 @@ public:
     * @param   port_name - const std::string
     * @return  bool
     */
-   template < class T >
-   void add_port( const std::string &port_name )
+   /** 
+    * FIXME - needs to have something to check the type of
+    * PORTKEY vs. just assuming, maybe add concepts or
+    * enable if.
+    */
+   template < class T, class PORTKEY >
+   void add_port( const PORTKEY &port_name )
    {
       /**
        * we'll have to make a port info object first and pass it by copy
@@ -251,21 +306,52 @@ public:
        */
       PortInfo pi( typeid( T ) );
       pi.my_kernel = kernel;
-      pi.my_name   = port_name;
+      
+      pi.my_name   = 
+#ifdef STRING_NAMES
+                  port_name
+#else
+                  port_name.val
+#endif
+      ;
+      
       (this)->initializeConstMap<T>( pi );
       (this)->initializeSplit< T >( pi );
       (this)->initializeJoin< T >( pi );
       const auto ret_val(
-                  portmap.map.insert( std::make_pair( port_name,
-                                                      pi ) ) );
+                  portmap.map.insert( std::make_pair( 
+#ifdef STRING_NAMES
+                  port_name
+#else
+                  port_name.val
+#endif
+                  ,
+                  
+
+                  pi ) ) );
 
       if( ! ret_val.second )
       {
-         throw PortAlreadyExists( "FATAL ERROR: port \"" + port_name + "\" already exists!" );
+         throw PortAlreadyExists( "FATAL ERROR: port \"" + getPortName( port_name ) + "\" already exists!" );
       }
+#ifndef STRING_NAMES
+         portmap.name_map.insert( std::make_pair( port_name.val, raft::port_key_name_t( port_name ) ) );
+#endif         
       return;
    }
 
+    
+    /**
+     * getPortName - returns the string representation of the port
+     * name given. Use this function whenever you want a constant 
+     * representation of a port name given depending on the verion
+     * of RaftLib you compile you could be using 64b integers or 
+     * strings or some other representation, this makes all those
+     * human readable. 
+     * @param raft::port_key_type - internal representation of port
+     * @return std::string - human readable version of a port. 
+     */
+    std::string getPortName( const raft::port_key_type n );
 
 protected:
    /**
@@ -346,10 +432,10 @@ protected:
    /**
     * getPortInfoFor - gets port information for the param port
     * throws an exception if the port doesn't exist.
-    * @param   port_name - const std::string
+    * @param   port_name - const raft::port_key_type
     * @return  PortInfo&
     */
-   PortInfo& getPortInfoFor( const std::string port_name );
+   PortInfo& getPortInfoFor( const raft::port_key_type port_name );
 
    /**
     * portmap - container struct with all ports.  The

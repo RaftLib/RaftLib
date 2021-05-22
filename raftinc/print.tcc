@@ -25,7 +25,6 @@
 #include <iostream>
 #include <raft>
 #include <cstdlib>
-#include <mutex>
 
 namespace raft{
 
@@ -33,114 +32,150 @@ class printbase
 {
 protected:
    std::ostream *ofs = nullptr;
-   static std::mutex   print_lock;
 };
 
-std::mutex printbase::print_lock;
 
 template< typename T > class printabstract : public raft::kernel, 
                                              public raft::printbase
 {
 public:
-   printabstract( ) : raft::kernel(),
-                      raft::printbase()
-   {
-      input.addPort< T >( "in" );
-      ofs = &(std::cout);
-   }
-   
-   printabstract( std::ostream &stream ) : raft::kernel(),
-                                           raft::printbase()
-   {
-      input.addPort< T >( "in" );
-      ofs = &stream;
-   }
+    printabstract( const std::size_t n_input_ports = 1 ) : raft::kernel(),
+                                                           raft::printbase()
+    {
+        using index_type = std::remove_const_t< decltype( n_input_ports ) >;
+        for( index_type index( 0 ); index < n_input_ports; index++ )
+        {
+           /** add a port for each index var, all named "input_#" **/
+#ifdef STRING_NAMES           
+           input.addPort< T  >( std::to_string( index ) );
+#else
+           /**
+            * if not strings, the addPort function expects a port_key_name_t struct,
+            * so, we have to go and add it. 
+            */
+           input.addPort< T >( raft::port_key_name_t( index, std::to_string( index ) ) );
+#endif
+        }
+        ofs = &(std::cout);
+    }
+    
+    printabstract( std::ostream &stream, 
+                   const std::size_t n_input_ports = 1 )  : raft::kernel(),
+                                                            raft::printbase()
+    {
+        using index_type = std::remove_const_t< decltype( n_input_ports ) >;
+        for( index_type index( 0 ); index < n_input_ports; index++ )
+        {
+           /** add a port for each index var, all named "input_#" **/
+#ifdef STRING_NAMES           
+           input.addPort< T  >( std::to_string( index ) );
+#else
+           /**
+            * if not strings, the addPort function expects a port_key_name_t struct,
+            * so, we have to go and add it. 
+            */
+           input.addPort< T >( raft::port_key_name_t( index, std::to_string( index ) ) );
+#endif
+        }
+        ofs = &stream;
+    }
+
+protected:
+    const std::size_t input_port_count    = 1;
 };
 
 template< typename T, char delim = '\0' > class print : public printabstract< T >
 {
 public:
-   print( ) : printabstract< T >()
-   {
-   }
-   
-   print( std::ostream &stream ) : printabstract< T >( stream )
-   {
-   }
-   
-   print( const print &other ) : print( *other.ofs )
-   {
-   }
+    print( const std::size_t n_input_ports = 1 ) : printabstract< T >( n_input_ports )
+    {
+    }
+    
+    print( std::ostream &stream, 
+           const std::size_t n_input_ports = 1 ) : printabstract< T >( stream, 
+                                                                       n_input_ports )
+    {
+    }
+    
+    print( const print &other ) : print( *other.ofs, other.input_port_count )
+    {
+    }
 
-   //FIXME - might need to synchronize streams for users
-   //design point
 
-   /** enable cloning **/
-   CLONE();
+    /** enable cloning **/
+    CLONE();
 
-   /** 
-    * run - implemented to take a single 
-    * input port, pop the itam and print it.
-    * the output isn't yet synchronized so if
-    * multiple things are printing to std::cout
-    * then there might be issues, otherwise
-    * this works well for debugging and basic 
-    * output.
-    * @return raft::kstatus
-    */
-   virtual raft::kstatus run()
-   {
-      std::lock_guard< std::mutex > lg( print< T, delim >::print_lock );
-      auto &input_port( (this)->input[ "in" ] );
-      auto &data( input_port.template peek< T >() );
-      *((this)->ofs) << data << delim;
-      input_port.unpeek();
-      input_port.recycle( 1 );
-      return( raft::proceed );
-   }
+    /** 
+     * run - implemented to take a single 
+     * input port, pop the itam and print it.
+     * the output isn't yet synchronized so if
+     * multiple things are printing to std::cout
+     * then there might be issues, otherwise
+     * this works well for debugging and basic 
+     * output.
+     * @return raft::kstatus
+     */
+    virtual raft::kstatus run()
+    {
+        for( auto &port : (this)->input )
+        {
+            if( port.size() > 0 )
+            {
+                const auto &data( port.template peek< T >() );
+                *((this)->ofs) << data << delim;
+                port.unpeek();
+                port.recycle( 1 );
+            }
+        }
+        return( raft::proceed );
+    }
 };
 
 
 template< typename T > class print< T, '\0' > : public printabstract< T >
 {
 public:
-   print( ) : printabstract< T >()
-   {
-   }
-   
-   print( std::ostream &stream ) : printabstract< T >( stream )
-   {
-   }
-   
-   //FIXME - might need to synchronize streams for users
-   //design point
-   print( const print &other ) : print( *other.ofs )
-   {
-   }
+    print( const std::size_t n_input_ports = 1 ) : printabstract< T >( n_input_ports )
+    {
+    }
+    
+    print( std::ostream &stream, 
+           const std::size_t n_input_ports = 1 ) : printabstract< T >( stream, 
+                                                                       n_input_ports )
+    {
+    }
+    
+    print( const print &other ) : print( *other.ofs, other.input_port_count )
+    {
+    }
 
-   CLONE();
+    CLONE();
                                  
 
-   /** 
-    * run - implemented to take a single 
-    * input port, pop the itam and print it.
-    * the output isn't yet synchronized so if
-    * multiple things are printing to std::cout
-    * then there might be issues, otherwise
-    * this works well for debugging and basic 
-    * output.
-    * @return raft::kstatus
-    */
-   virtual raft::kstatus run()
-   {
-      std::lock_guard< std::mutex > lg( print< T, '\0' >::print_lock );
-      auto &input_port( (this)->input[ "in" ] );
-      auto &data( input_port.template peek< T >() );
-      *((this)->ofs) << data;
-      input_port.unpeek();
-      input_port.recycle( 1 );
-      return( raft::proceed );
-   }
+    /** 
+     * run - implemented to take a single 
+     * input port, pop the itam and print it.
+     * the output isn't yet synchronized so if
+     * multiple things are printing to std::cout
+     * then there might be issues, otherwise
+     * this works well for debugging and basic 
+     * output.
+     * @return raft::kstatus
+     */
+    virtual raft::kstatus run()
+    {
+        for( auto &port : (this)->input )
+        {
+            if( port.size() > 0 )
+            {
+                const auto &data( port.template peek< T >() );
+                *((this)->ofs) << data;
+                port.unpeek();
+                port.recycle( 1 );
+            }
+        }
+        return( raft::proceed );
+    }
 };
 
 } /* end namespace raft */

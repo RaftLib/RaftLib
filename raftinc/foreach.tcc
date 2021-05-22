@@ -35,7 +35,8 @@ public:
       /** no input ports since we're using the existing allocation **/
    }
    
-   virtual raft::kstatus run(){ 
+   virtual raft::kstatus run() override
+   { 
       return( raft::stop ); 
    }
 

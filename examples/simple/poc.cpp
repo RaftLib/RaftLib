@@ -109,7 +109,6 @@ int main()
 
     raft::map m;
     
-    // m += a >> b; // Core dump
     m += a >> b >> c;
 
     m.exe();

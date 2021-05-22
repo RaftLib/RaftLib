@@ -29,8 +29,11 @@ template < class T, class method = roundrobin  > class join : public raft::paral
 public:
    join( const std::size_t num_ports = 1 ) : parallel_k()
    {
+#ifndef STRING_NAMES      
+      output.addPort< T >( "0"_port );
+#else
       output.addPort< T >( "0" );
-
+#endif
       using index_type = std::remove_const_t<decltype(num_ports)>;
       for( index_type it( 0 ); it < num_ports; it++ )
       {
@@ -48,7 +51,11 @@ public:
        * able to dynamically re-allocate or move the memory backing
        * the stream, so call deallocate below if unused
        */
+#ifndef STRING_NAMES       
+      auto &output_port( output[ "0"_port ] );
+#else
       auto &output_port( output[ "0" ] );
+#endif
       T &mem( output_port.template allocate< T >() );
       raft::signal temp_signal;
       if( split_func.get( mem, temp_signal, input ) )

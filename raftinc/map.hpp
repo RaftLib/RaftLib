@@ -19,6 +19,7 @@
  */
 #ifndef RAFTMAP_HPP
 #define RAFTMAP_HPP  1
+#include <cstdlib>
 #include <typeinfo>
 #include <cassert>
 #include <thread>
@@ -39,6 +40,7 @@
 #include "noparallel.hpp"
 /** includes all partitioners **/
 #include "partitioners.hpp"
+#include "makedot.hpp"
 
 namespace raft
 {
@@ -108,6 +110,27 @@ public:
             partition pt;
             pt.partition( all_kernels );
             /** adds in split/join kernels **/
+      
+
+            auto *dot_graph_env = std::getenv( "GEN_DOT" );
+            if( dot_graph_env != nullptr )
+            {
+                std::ofstream of( dot_graph_env );
+                raft::make_dot::run( of, (*this) );
+                of.close();
+                auto *dot_graph_exit = std::getenv( "GEN_DOT_EXIT" );
+                if( dot_graph_exit != nullptr )
+                {
+                   const auto dot_exit_val( std::stoi( dot_graph_exit ) );
+                   if( dot_exit_val == 1 )
+                   {
+                      exit( EXIT_SUCCESS );
+                   }
+                   //else continue
+                }
+            }
+            
+
             //enableDuplication( source_kernels, all_kernels );
             alloc_object = new allocator( (*this), exit_alloc );
             /** launch allocator in a thread **/
@@ -150,6 +173,12 @@ public:
         }
         
         //treat as barrier
+      
+      //double check to make sure we have all threads killed off. 
+
+      /** no more need to duplicate kernels **/
+      //exit_para = true;
+      //parallel_mon.join();
 
         return; 
    }
@@ -195,6 +224,7 @@ protected:
     friend class ::basic_parallel;
     friend class ::Schedule;
     friend class ::Allocate;
+    friend class make_dot;
       
 
     bool            is_initialized      = false;

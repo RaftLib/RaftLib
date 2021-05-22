@@ -29,6 +29,78 @@ namespace raft
 namespace test
 {
 
+#ifndef STRING_NAMES
+template < typename T > class generate : public raft::kernel
+{
+public:
+   generate( std::int64_t count = 1000 ) : raft::kernel(),
+                                         count( count )
+   {
+      output.addPort< T >( "number_stream"_port );
+   }
+
+   virtual raft::kstatus run()
+   {
+      if( count-- > 1 )
+      {
+         auto &ref( output[ "number_stream"_port ].template allocate< T >() );
+         ref = static_cast< T >( (this)->count );
+         output[ "number_stream"_port ].send();
+         return( raft::proceed );
+      }
+      /** else **/
+      auto &ref( output[ "number_stream"_port].template allocate< T >() );
+      ref = static_cast< T >( (this)->count );
+      output[ "number_stream"_port].send( raft::eof );
+      return( raft::stop );
+   }
+
+private:
+   std::int64_t count;
+};
+
+
+template <> class generate< std::string > : public raft::kernel
+{
+public:
+   generate( std::int64_t count = 1000 ) : raft::kernel(),
+                                           count( count ),
+                                           gen( 15 ),
+                                           distrib( 65, 90 )
+   {
+      output.addPort< std::string >( "number_stream"_port );
+   }
+
+   virtual raft::kstatus run()
+   {
+      char str[ 8 ];
+      str[7]='\0';
+      for( auto i( 0 ); i < 7; i++ )
+      {
+         str[ i ] = (char) distrib( gen );
+      }
+      if( count-- > 1 )
+      {
+         
+         auto &ref( output[ "number_stream"_port ].template allocate< std::string >() );
+         ref = static_cast< std::string >( str );
+         output[ "number_stream"_port].send();
+         return( raft::proceed );
+      }
+      /** else **/
+      auto &ref( output[ "number_stream"_port ].template allocate< std::string >() );
+      ref = static_cast< std::string >( str );
+      output[ "number_stream"_port ].send( raft::eof );
+      return( raft::stop );
+   }
+
+private:
+   std::int64_t count;
+   std::mt19937 gen;
+   std::uniform_int_distribution<> distrib;
+};
+
+#else
 template < typename T > class generate : public raft::kernel
 {
 public:
@@ -44,13 +116,13 @@ public:
       {
          auto &ref( output[ "number_stream" ].template allocate< T >() );
          ref = static_cast< T >( (this)->count );
-         output[ "number_stream"].send();
+         output[ "number_stream" ].send();
          return( raft::proceed );
       }
       /** else **/
-      auto &ref( output[ "number_stream" ].template allocate< T >() );
+      auto &ref( output[ "number_stream"].template allocate< T >() );
       ref = static_cast< T >( (this)->count );
-      output[ "number_stream" ].send( raft::eof );
+      output[ "number_stream"].send( raft::eof );
       return( raft::stop );
    }
 
@@ -98,6 +170,8 @@ private:
    std::mt19937 gen;
    std::uniform_int_distribution<> distrib;
 };
+
+#endif
 
 } //end namespace test
 

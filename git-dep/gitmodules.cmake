@@ -24,6 +24,8 @@ set( GIT_MODULES
         shm 
         cmdargs 
         demangle 
-        affinity ) 
+        affinity
+        ${OPTIONAL_MODULES}
+         ) 
 endif()
 

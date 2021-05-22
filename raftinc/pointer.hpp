@@ -89,9 +89,9 @@ public:
    static std::size_t wrapIndicator( Pointer &ptr ) ;
    
 private:
-    volatile std::uint64_t           a  = 0;
+     std::uint64_t           a  = 0;
 #ifdef JVEC_MACHINE    
-    volatile std::uint64_t           b  = 0;
+     std::uint64_t           b  = 0;
 #endif    
     /**
      * size of wrap pointer might become an issue
@@ -102,9 +102,9 @@ private:
      * TODO, get these set correctly if we do eventually
      * wrap an unsigned 64 int.
      */
-    volatile wrap_t    wrap_a  = 0;
+     wrap_t    wrap_a  = 0;
 #ifdef JVEC_MACHINE    
-    volatile wrap_t    wrap_b  = 0;
+     wrap_t    wrap_b  = 0;
 #endif    
     const    std::size_t      max_cap;
 };

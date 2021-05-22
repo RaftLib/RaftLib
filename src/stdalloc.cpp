@@ -44,30 +44,8 @@ stdalloc::run()
                           PortInfo &b,
                           void *data )
    {
-      (void) data;
-
-      assert( a.type == b.type );
-      /** assume everyone needs a heap for the moment to get working **/
-      auto &func_map( a.const_map[ Type::Heap ] );
-      FIFO *fifo( nullptr );
-      auto test_func( (*func_map)[ false ] );
-      /** check and see if a has a defined allocation **/
-      if( a.existing_buffer != nullptr )
-      {
-         fifo = test_func( a.nitems,
-                           a.start_index,
-                           a.existing_buffer );
-      }
-      else
-      {
-         /** check for pre-existing alloc size for test purposes **/
-         fifo = test_func( a.fixed_buffer_size != 0 ?
-                              a.fixed_buffer_size : 4    /** size **/,
-                           ALLOC_ALIGN_WIDTH             /** align **/,
-                           nullptr                       /** data struct **/);
-      }
-      assert( fifo != nullptr );
-      (this)->initialize( &a, &b, fifo );
+      /** same alloc for all, inherit from base alloc **/
+     (this)->allocate( a, b, data );
    };
    auto &container( (this)->source_kernels.acquire() );
    GraphTools::BFS( container, alloc_func );

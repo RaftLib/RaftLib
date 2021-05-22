@@ -3,7 +3,7 @@
  * @author: Jonathan Beard
  * @version: Sun Feb  7 05:46:48 2016
  * 
- * Copyright 2016 Jonathan Beard
+ * Copyright 2021 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,15 @@
 #include <bitset>
 #include <memory>
 #include <string>
+#include <limits>
+
+
+
+
+
+#if (! defined STRING_NAMES) || (STRING_NAMES == 0)
+#include "hh.hpp"
+#endif
 
 namespace raft
 {
@@ -37,9 +46,72 @@ namespace raft
     class kernel;
     /** also parsemap_ptr smart ptr obj used in map and streamparse **/
     class parsemap;
+/** use this to turn on string names vs. off **/
+/**
+ * Notes: For port_key_type, there's the original string version
+ * which turns out to be rather cumbersome for very small kernels,
+ * and then there's the version that does hashing of strings then 
+ * uses the 64b hash of that string. There is a tiny change of port
+ * name collision with the 64b version, however, it's incredibly 
+ * unlikely that this would occur. 
+ */
+#ifdef STRING_NAMES
     using port_key_type = std::string;
+    const static raft::port_key_type null_port_value = "";
+#else
+    /**
+     * set max length of the string for the fixed length representation
+     * of the port name, will be used for debug only, doesn't really
+     * constrain the length used by programmers when typing port names. 
+     */
+    const static std::uint32_t  port_name_max_length = 64;
+    /**
+     * define the type of the port key, this is the value typed in by the
+     * programmer to name ports. From the programmer perspective it'll look
+     * like a string. 
+     */
+    using port_key_type = highway_hash::hash_t::val_type;
+    
+    template < std::size_t N > using name_struct_t = highway_hash::data_t< N >;
+    /**
+     * just like the string, we need a value for uninitialized port
+     * types. 
+     */
+    const static raft::port_key_type null_port_value = 
+        std::numeric_limits< raft::port_key_type >::max();
+    /**
+     * fixed length name representation containing both the hash value
+     * and the string name of the hash (although it is truncated to the
+     * max selected length above. 
+     */
+    using port_key_name_t = highway_hash::data_fixed_t< raft::port_name_max_length >;
+#endif
     using parsemap_ptr = std::shared_ptr< raft::parsemap >;
 } /** end namespace raft **/
+
+#ifndef STRING_NAMES
+    /**
+     * use this to get a constexpr 64b unsigned hash
+     * of a string. Must compile with C++20 for this to
+     * work given it requires return type template type
+     * deduction for user-defined string literals. 
+     * e.g. "foobar"_port, hashes the string at compile
+     * time. Currently only g++ has this capability, maybe
+     * the latest head of clang, apple clang does not. 
+     * The return type is a struct with the string, 
+     * the length, and the hash value. e.g.
+     * auto data( "foobar"_port); then the field data.val
+     * contains your hash. 
+     */
+    template < raft::name_struct_t port_name >
+    static
+    constexpr
+    auto
+    operator""_port() 
+    {
+        return( port_name );
+    }
+#endif
 
 template < typename T > 
     using set_t = std::set< T >;
@@ -84,59 +156,15 @@ namespace raft
 namespace raft
 {
 
-/** 
- * type for stream manipulation, currently
- * this means that there are 64 available
- * modifiers. we can always make this a 
- * longer array at a later point if we 
- * for some reason need more.
- */
-using manip_vec_t = std::uint64_t;
-
-/**
- * NOTE: in addition to registering the int type here
- * for parsing, if a developer wants to add another
- * state, there must a corresponding static function
- * defined in the mapbase file so that the 
- * parse function pointers can be called for the 
- * appropriate int below and perform the correct
- * setting actions for each kernel
- */
-
-/** raft::parallel **/
-namespace parallel
-{
-
-enum type : manip_vec_t { 
-    system = 0  /** do whatever the runtime wants, I don't care  **/,
-    thread      /** specify a thread for each kernel **/, 
-    pool        /** thread pool, one kernel thread per core, many kernels in each **/, 
-    process     /** open a new process from this point **/,
-    PARALLEL_N };    
-} /** end namespace parallel **/ 
-
-/** raft::vm **/
-namespace vm
-{
-
-enum type : manip_vec_t { 
-    flat = parallel::PARALLEL_N       /** not yet implemented, likely using segment  **/, 
-    standard                          /** threads share VM space, processes have sep **/, 
-    partition                         /** partition graph at this point into a 
-                                        * new VM space, platform dependent **/,
-    VM_N
-}; 
-} /** end namespace vm **/
 
 namespace order
 {
 enum spec : std::uint8_t { 
-    in = vm::VM_N, 
+    in = 0, 
     out, 
     ORDER_N 
 };
 } /** end namespace order **/
-
 
 /**
  * these are to enable the sub-kernel behavior where 

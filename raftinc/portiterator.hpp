@@ -40,7 +40,7 @@ public:
    bool operator!=(const PortIterator& rhs) const;
    FIFO& operator*() const;
    
-   const std::string& name() const;
+   const raft::port_key_type& name() const;
 
 private:
    using map_iterator_type = std::decay_t<decltype(begin(portmap_t::map))>;

@@ -4,6 +4,7 @@
 #include "map.hpp"
 #include "schedule.hpp"
 #include "defs.hpp"
+#include "sysschedutil.hpp"
 
 
 Schedule::Schedule( raft::map &map ) :  kernel_set( map.all_kernels ),
@@ -212,6 +213,7 @@ bool
 Schedule::kernelRun( raft::kernel * const kernel,
                      volatile bool       &finished )
 {
+
    if( kernelHasInputData( kernel ) )
    {
       const auto sig_status( kernel->run() );

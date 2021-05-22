@@ -25,6 +25,9 @@
 #include <cstdint>
 #include <queue>
 #include <string>
+#ifdef BENCHMARK
+#include <atomic>
+#endif
 #include "kernelexception.hpp"
 #include "port.hpp"
 #include "signalvars.hpp"
@@ -114,15 +117,72 @@ public:
    /**
     * operator[] - returns the current kernel with the 
     * specified port name enabled for linking.
-    * @param portname - const std::string&&
+    * @param portname - const raft::port_key_type&&
     * @return raft::kernel&&
     */
-   raft::kernel& operator []( const std::string &&portname );
+#ifdef STRING_NAMES    
+   raft::kernel& operator []( const raft::port_key_type &&portname );
+   raft::kernel& operator []( const raft::port_key_type &portname );
+#else
+    template < class T > raft::kernel& 
+        operator []( const T &&portname )
+    {
+       if( enabled_port.size() < 2 )
+       {
+            enabled_port.push( portname.val );
+       }
+       else
+       {
+            throw AmbiguousPortAssignmentException(
+            //    "too many ports added with: " + portname.str
+                "too many ports added with: "
+            );
+       }
+       return( (*this) );
+    }
+    
+    template < class T > raft::kernel& 
+        operator []( const T &portname )
+    {
+       if( enabled_port.size() < 2 )
+       {
+            enabled_port.push( portname.val );
+       }
+       else
+       {
+            throw AmbiguousPortAssignmentException(
+//                "too many ports added with: " + portname.str
+                "too many ports added with: "
+            );
+       }
+       return( (*this) );
+    }
+#endif /** end if not string names **/ 
 
-   core_id_t getCoreAssignment() noexcept
-   {
-       return( core_assign );
-   }
+    core_id_t getCoreAssignment() noexcept
+    {
+        return( core_assign );
+    }
+    
+    /**
+     * PORTS - input and output, use these to interact with the
+     * outside world.
+     */
+    Port               input  = { this };
+    Port               output = { this };
+    
+
+    constexpr void setCore( const core_id_t id )
+    {
+        core_assign = id;
+        return;
+    }
+    
+    constexpr void setAffinityGroup( const core_id_t ag )
+    {
+        affinity_group = ag;
+        return;
+    }
 
 protected:
     /**
@@ -135,15 +195,9 @@ protected:
     virtual void lock();
     virtual void unlock();
 
-    /**
-     * PORTS - input and output, use these to interact with the
-     * outside world.
-     */
-    Port               input  = { this };
-    Port               output = { this };
   
     
-    std::string getEnabledPort();
+    raft::port_key_type getEnabledPort();
     
     /** in namespace raft **/
     friend class map;
@@ -160,11 +214,16 @@ protected:
 
     /**
      * NOTE: doesn't need to be atomic since only one thread
-     * will have responsibility to to create new compute 
-     * kernels.
+     * per process will have responsibility to to create new 
+     * compute kernels, for multi-process, this is used in 
+     * conjunction with process identifier.
      */
     static std::size_t kernel_count;
-     
+    
+#ifdef BENCHMARK
+    static std::atomic< std::size_t > initialized_count;
+#endif
+
     bool internal_alloc = false;
 
     
@@ -178,13 +237,16 @@ protected:
         return( (this)->execution_done );
     }
     
-    void setCore( const core_id_t id ) noexcept
-    {
-        core_assign = id;
-    }
 
 
-    core_id_t core_assign       = -1;
+
+    /**
+     * these are both set to -1 by defualt, which
+     * means unset. 
+     */
+    core_id_t   core_assign       = -1;
+    core_id_t   affinity_group    = -1;
+
 
     raft::schedule_behavior     sched_behav = raft::any_port;
     bool             dup_enabled       = false;
@@ -207,7 +269,7 @@ private:
    bool             execution_done    = false;
 
    /** for operator syntax **/
-   std::queue< std::string > enabled_port;
+   std::queue< raft::port_key_type > enabled_port;
 };
 
 

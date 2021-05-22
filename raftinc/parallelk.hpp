@@ -50,7 +50,16 @@ protected:
       std::size_t addPortTo( Port &port )
    {
       const auto portid( port_name_index++ );
+
+#ifdef STRING_NAMES         
       port.addPort< T >( std::to_string( portid ) );
+#else
+      /**
+       * if not strings, the addPort function expects a port_key_name_t struct,
+       * so, we have to go and add it. 
+       */
+      port.addPort< T >( raft::port_key_name_t( portid, std::to_string( portid ) ) );
+#endif
       return( portid );
    }
    

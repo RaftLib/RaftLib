@@ -1,9 +1,10 @@
 /**
  * portmap_t.hpp - 
  * @author: Jonathan Beard
- * @version: Sun Oct  5 09:04:38 2014
+ * @version: Sat March  20 09:04:38 2021
  * 
  * Copyright 2014 Jonathan Beard
+ * Copyright 2021 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +22,40 @@
 #define RAFTPORTMAP_T_HPP  1
 
 #include <map>
+#include <unordered_map>
+
 #include <string>
 #include <mutex>
 #include "port_info.hpp"
+#include "defs.hpp"
 
 struct portmap_t
 {
    portmap_t() = default;
    virtual ~portmap_t() = default;
 
-   std::map< std::string, PortInfo > map;
+
+#ifdef STRING_NAMES    
+   std::map< raft::port_key_type, PortInfo > map;
+#else
+   /**
+    * integer lookup for port name to port info object,
+    * which is all the data describing the port itself. 
+    */
+   std::unordered_map< raft::port_key_type, PortInfo > map;
+   /**
+    * for each port, keep a map of the "name" to string
+    * name representation. Otherwise once we have integer
+    * keys enabled you won't easily be able to debug...
+    */
+   std::unordered_map< raft::port_key_type, 
+                       raft::port_key_name_t > name_map;
+#endif
+   /**
+    * mutex used to add/subtract from port. Not used in 
+    * most circumstances, only once the application gets
+    * executing do we really need this. 
+    */
    std::mutex                        mutex_map;
 };
 

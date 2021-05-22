@@ -90,14 +90,14 @@ kpair::kpair( raft::kernel &a, raft::kernel &b )
 {
     src = &a;
     src_name = a.getEnabledPort();
-    if( src_name.length() > 0 )
+    if( src_name != raft::null_port_value )
     {
         /** set false by default **/
         has_src_name = true;
     }
     dst = &b;
     dst_name = b.getEnabledPort();
-    if( dst_name.length() > 0 )
+    if( dst_name != raft::null_port_value )
     {
         /** set false by default **/
         has_dst_name = true;
@@ -285,6 +285,21 @@ kpair&
 operator <= ( raft::kernel_wrapper &&w, kpair &b )
 {
     auto *ptr( new kpair( w, b, true, false ) );
+    return( *ptr );
+}
+
+
+kpair& 
+operator >= ( raft::kernel &a, raft::kernel &b )
+{
+    auto *ptr( new kpair( a, b, false, true ) );
+    return( *ptr );
+}
+
+kpair& 
+operator >= ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b )
+{
+    auto *ptr( new kpair( a, b, false, true ) );
     return( *ptr );
 }
 

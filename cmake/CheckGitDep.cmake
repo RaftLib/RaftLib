@@ -27,6 +27,14 @@ foreach( GMOD ${GIT_MODULES} )
     add_subdirectory( ${DEPDIR}/${GMOD} )
     if( EXISTS ${DEPDIR}/${GMOD}/include )
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${DEPDIR}/${GMOD}/include" )
+    else()
+        ##
+        # this might cause some spurious includes, however, the alternative
+        # would be to parse the folder to search for header files, we might
+        # have to do this...but, let's see if this gets us the majority
+        # of cases we need. 
+        ##
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${DEPDIR}/${GMOD}" )
     endif()
     ##
     # A bit of a silly hack to pull in flags from sub-modules
@@ -52,5 +60,13 @@ foreach( GMOD ${GIT_MODULES} )
  ##
  if( EXISTS ${DEPDIR}/${GMOD}/include )
     include_directories( ${DEPDIR}/${GMOD}/include )
- endif( EXISTS ${DEPDIR}/${GMOD}/include )
+ else()
+    ##
+    # this might cause some spurious includes, however, the alternative
+    # would be to parse the folder to search for header files, we might
+    # have to do this...but, let's see if this gets us the majority
+    # of cases we need. 
+    ##
+    include_directories( ${DEPDIR}/${GMOD} )
+ endif()
 endforeach( GMOD ${GIT_MODULES} )

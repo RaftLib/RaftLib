@@ -48,47 +48,17 @@ Port::Port( raft::kernel *k,
 
 
 const std::type_index&
-Port::getPortType( const std::string &&port_name )
+Port::getPortType( const raft::port_key_type &&port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
    {
-      throw PortNotFoundException( "Port not found for name \"" + port_name + "\"" );
+      const auto actual_port_name = getPortName( port_name );
+      throw PortNotFoundException( "Port not found for name \"" + actual_port_name + "\"" );
    }
    return( (*ret_val).second.type );
 }
 
-FIFO&
-Port::operator[]( const std::string &&port_name )
-{
-   //NOTE: We'll need to add a lock here if later
-   //we intend to remove ports dynamically as well
-   //for the moment however lets just assume we're
-   //only adding them
-   const auto ret_val( portmap.map.find( port_name ) );
-   if( ret_val == portmap.map.cend() )
-   {
-      throw PortNotFoundException( 
-         "Port not found for name \"" + port_name + "\"" );
-   }
-   return( *((*ret_val).second.getFIFO())  );
-}
-
-FIFO&
-Port::operator[]( const std::string &port_name )
-{
-   //NOTE: We'll need to add a lock here if later
-   //we intend to remove ports dynamically as well
-   //for the moment however lets just assume we're
-   //only adding them
-   const auto ret_val( portmap.map.find( port_name ) );
-   if( ret_val == portmap.map.cend() )
-   {
-      throw PortNotFoundException( 
-         "Port not found for name \"" + port_name + "\"" );
-   }
-   return( *((*ret_val).second.getFIFO())  );
-}
 
 bool
 Port::hasPorts()
@@ -113,15 +83,32 @@ Port::count()
 {
    return( (std::size_t) portmap.map.size() );
 }
+    
+std::string 
+Port::getPortName( const raft::port_key_type n )
+{
+#ifdef STRING_NAMES
+    return( n );
+#else
+    const auto ret_val( portmap.name_map.find( n ) );
+    if( ret_val == portmap.name_map.cend() )
+    {
+       std::stringstream ss;
+       ss << "Port not found for name \"" << n << "\"";
+       throw PortNotFoundException( ss.str() );
+    }
+    return( (*ret_val).second );
+#endif   
+}
 
 PortInfo&
-Port::getPortInfoFor( const std::string port_name )
+Port::getPortInfoFor( const raft::port_key_type port_name )
 {
    const auto ret_val( portmap.map.find( port_name ) );
    if( ret_val == portmap.map.cend() )
    {
       std::stringstream ss;
-      ss << "Port not found for name \"" << port_name << "\"";
+      ss << "Port not found for name \"" << getPortName( port_name ) << "\"";
       throw PortNotFoundException( ss.str() );
    }
    return( (*ret_val).second );
@@ -148,3 +135,35 @@ Port::getPortInfo()
    auto pair( portmap.map.begin() );
    return( (*pair).second );
 }
+
+#ifdef STRING_NAMES
+FIFO& Port::operator[]( const raft::port_key_type  &&port_name  )
+{
+    //NOTE: We'll need to add a lock here if later
+    //we intend to remove ports dynamically as well
+    //for the moment however lets just assume we're
+    //only adding them
+    const auto ret_val( portmap.map.find( port_name ) );
+    if( ret_val == portmap.map.cend() )
+    {
+       throw PortNotFoundException( 
+          "Port not found for name \"" + getPortName( port_name ) + "\"" );
+    }
+    return( *((*ret_val).second.getFIFO())  );
+}
+
+FIFO& Port::operator[]( const raft::port_key_type  &port_name )
+{
+    //NOTE: We'll need to add a lock here if later
+    //we intend to remove ports dynamically as well
+    //for the moment however lets just assume we're
+    //only adding them
+    const auto ret_val( portmap.map.find( port_name ) );
+    if( ret_val == portmap.map.cend() )
+    {
+       throw PortNotFoundException( 
+          "Port not found for name \"" + getPortName( port_name ) + "\"" );
+    }
+    return( *((*ret_val).second.getFIFO())  );
+}
+#endif
