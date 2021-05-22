@@ -171,7 +171,7 @@ basic_parallel::start()
             old_port_out.other_kernel->unlock();
          }
          /** schedule new kernel **/
-         sched.scheduleKernel( ptr );
+         sched.schedule_kernel( ptr );
       }
 
 

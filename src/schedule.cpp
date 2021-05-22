@@ -55,6 +55,19 @@ Schedule::invalidateOutputPorts( raft::kernel *kernel )
    return;
 }
 
+
+void
+Schedule::revalidateOutputPorts( raft::kernel *kernel )
+{
+
+   auto &output_ports( kernel->output );
+   for( auto &port : output_ports )
+   {
+      port.revalidate();
+   }
+   return;
+}
+
 raft::kstatus
 Schedule::checkSystemSignal( raft::kernel * const kernel,
                              void *data,
@@ -100,7 +113,7 @@ Schedule::checkSystemSignal( raft::kernel * const kernel,
  * objects which are thread safe to add to and remove from.
  */
 void
-Schedule::scheduleKernel( raft::kernel * const kernel )
+Schedule::schedule_kernel( raft::kernel * const kernel )
 {
    /**
     * NOTE: The kernel param should be ready to rock,
@@ -127,6 +140,59 @@ Schedule::scheduleKernel( raft::kernel * const kernel )
    }
    handleSchedule( kernel );
    return;
+}
+ 
+
+bool 
+Schedule::terminus_complete()
+{
+    /**
+     * we might need to re-evaluate this if there
+     * are no termini in the graph (e.g., there are
+     * cycles, right now though, we can have interior
+     * cycles only so this is likely fine, but...
+     * we'll have to come  up with a better way in the
+     * future. 
+     */
+    auto &kernels( dst_kernels.acquire() );
+    
+    for( raft::kernel * const k : kernels )
+    {
+        /**
+         * we do this check a few times, but, it's easier and likely
+         * more robust to duplicate check vs. attempting to guess what
+         * the underlying implementation will do.
+         * FIXME - once we have a distributed impl working again, we'll
+         * need to add a downstream wait/backport pathway to ensure that
+         * the whole application waits correctly. 
+         */
+        if(  ! kernelHasNoInputPorts( k ) && kernelHasInputData( k ) )
+        {
+            return( false );
+        }
+    }
+    dst_kernels.release();
+    return( true );
+}
+    
+/**
+ * reset_streams - reset all streams within the defined
+ * graph so that they're in a state where they can be 
+ * re-used, basically undoing the logic that is used
+ * for shutting down the dataflow graph when no data
+ * is coming. 
+ * @return void. 
+ */
+void 
+Schedule::reset_streams()
+{
+    auto &kernels( kernel_set.acquire() );
+    for( raft::kernel * const k : kernels )
+    {
+        revalidateOutputPorts( k ); 
+    }
+    kernel_set.release();
+    return;
 }
 
 

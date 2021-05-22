@@ -24,6 +24,8 @@
 #include <cassert>
 #include <thread>
 #include <sstream>
+#include <unistd.h>
+
 
 #include "kernelkeeper.tcc"
 #include "portexception.hpp"
@@ -169,7 +171,7 @@ public:
         }
         else
         {
-            //reinitialize kernels
+            sched_object->reset_streams();
         }
         
         //treat as barrier
@@ -179,7 +181,16 @@ public:
       /** no more need to duplicate kernels **/
       //exit_para = true;
       //parallel_mon.join();
-
+        
+        /**
+         * now we just have to wait on the terminal kernels. 
+         */
+        while( sched_object->terminus_complete() )
+        {
+            
+            std::chrono::microseconds dura( 3000 );
+            std::this_thread::sleep_for( dura );
+        }
         return; 
    }
 

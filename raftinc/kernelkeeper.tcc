@@ -80,9 +80,7 @@ public:
          //it's polite to yield
 #ifdef USEQTHREADS
          qthread_yield();
-#else
-         std::this_thread::yield();
-#endif         
+#endif      
       }
       //we have a lock, get id
 #if 0      

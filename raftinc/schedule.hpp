@@ -94,8 +94,9 @@ public:
      * allocations should be complete.
      * @param kernel - raft::kernel*
      */
-    virtual void scheduleKernel( raft::kernel * const kernel );
+    virtual void schedule_kernel( raft::kernel * const kernel );
 
+    bool terminus_complete();
 
     /**
      * reset_streams - reset all streams within the defined
@@ -139,6 +140,8 @@ protected:
    
    
    static void invalidateOutputPorts( raft::kernel *kernel );
+
+   static void revalidateOutputPorts( raft::kernel *kernel );
 
    /** 
     * kernelHasInputData - check each input port for available
