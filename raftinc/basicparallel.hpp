@@ -51,10 +51,10 @@ struct stats
 class basic_parallel
 {
 public:
-   basic_parallel( raft::map    &map, 
-                   Allocate     &alloc,
-                   Schedule     &sched,
-                   bool         &exit_para );
+   basic_parallel( raft::map        &map, 
+                   Allocate         &alloc,
+                   Schedule         &sched,
+                   volatile bool    &exit_para );
 
    virtual ~basic_parallel() = default;
    virtual void start();
@@ -66,7 +66,7 @@ protected:
    kernelkeeper   &all_kernels;
    Allocate       &alloc;
    Schedule       &sched;
-   bool           &exit_para;
+   volatile bool  &exit_para;
 };
 
 #endif /* END BASICPARALLEL_HPP */

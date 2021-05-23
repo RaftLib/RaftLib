@@ -91,7 +91,7 @@ public:
              simple_schedule
 #endif             
              , 
-             class allocator           = stdalloc,
+             class allocator           = dynalloc,
              class parallelism_monitor = basic_parallel > 
     void exe()
     {
@@ -110,6 +110,8 @@ public:
             
             /** check types, ensure all are linked **/
             checkEdges();
+            //FIXME - add back in partitioning once 
+            //we get the boost graph library there
             //partition pt;
             //pt.partition( all_kernels );
             /** adds in split/join kernels **/
@@ -233,8 +235,8 @@ protected:
 
     bool            is_initialized      = false;
 
-    bool            exit_alloc          = false;
-    bool            exit_para           = false;
+    volatile bool   exit_alloc          = false;
+    volatile bool   exit_para           = false;
     //FIXME - consider redoing alloc as an extension of std::thread
     Allocate        *alloc_object       = nullptr;
     std::thread     *allocator_thread   = nullptr;

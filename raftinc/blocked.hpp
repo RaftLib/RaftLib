@@ -43,14 +43,21 @@ struct ALIGN( L1D_CACHE_LINE_SIZE ) Blocked
 
     Blocked( const Blocked &other );
 
-    constexpr Blocked& operator = ( const Blocked &other ) noexcept
+    inline Blocked& operator = ( const Blocked &other ) noexcept
     {
         /** again, simple integer, let's ignore the case of other == this **/
         (this)->all = other.all;
         return( *this );
     }
 
-    Blocked& operator += ( const Blocked &rhs ) noexcept;
+    inline Blocked& operator += ( const Blocked &rhs ) noexcept
+    {
+        if( ! rhs.bec.blocked )
+        {
+            (this)->bec.count += rhs.bec.count;
+        }
+        return( (*this) );
+    }
     
     struct blocked_and_counter
     {

@@ -43,8 +43,33 @@ raft::map::map() : MapBase()
 
 raft::map::~map() 
 {      
-    /** scheduler done, cleanup alloc **/
+    /**
+     * order here matters, FIXME, we need
+     * to fix the fragility of this, the 
+     * pm_thread has hooks that depend on
+     * the sched and alloc threads being there
+     * plus that they're shutdown before we 
+     * destruct them. 
+     */
     exit_alloc = true;
+    exit_para = true;
+
+    if( pm_thread != nullptr )
+    {
+        pm_thread->join();
+        delete( pm_thread );
+    }
+    delete( pm );
+    
+
+    /** join scheduler first **/
+    if( schedule_thread != nullptr )
+    { 
+        schedule_thread->join();
+        delete( schedule_thread );
+    }
+    delete( sched_object );
+    
     /**
      * could be a case where allocator_thread is null
      * after an exception, check nullptr first...alternative
@@ -54,6 +79,7 @@ raft::map::~map()
      */
     if( allocator_thread != nullptr )
     {
+        /** scheduler done, cleanup alloc **/
         allocator_thread->join();
         delete( allocator_thread );
     }
@@ -61,22 +87,8 @@ raft::map::~map()
     delete( alloc_object );
 
 
-    /** join scheduler first **/
-    if( schedule_thread != nullptr )
-    { 
-        schedule_thread->join();
-        delete( schedule_thread );
-    }
-    delete( sched_object );
     /** no more need to duplicate kernels **/
-    exit_para = true;
     
-    if( pm_thread != nullptr )
-    {
-        pm_thread->join();
-        delete( pm_thread );
-    }
-    delete( pm );
 }
 
 void
