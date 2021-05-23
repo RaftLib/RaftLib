@@ -174,6 +174,7 @@ public:
         }
         else
         {
+            //FIXME - need to call scheduler again likely
             sched_object->reset_streams();
         }
         

@@ -14,6 +14,10 @@ Schedule::Schedule( raft::map &map ) :  kernel_set( map.all_kernels ),
 {
 }
 
+Schedule::~Schedule()
+{
+}
+
 
 void
 Schedule::init()

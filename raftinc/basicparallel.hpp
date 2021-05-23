@@ -56,7 +56,7 @@ public:
                    Schedule         &sched,
                    volatile bool    &exit_para );
 
-   virtual ~basic_parallel() = default;
+   virtual ~basic_parallel();
    virtual void start();
 
    

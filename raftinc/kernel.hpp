@@ -25,9 +25,7 @@
 #include <cstdint>
 #include <queue>
 #include <string>
-#ifdef BENCHMARK
 #include <atomic>
-#endif
 #include "kernelexception.hpp"
 #include "port.hpp"
 #include "signalvars.hpp"
@@ -74,7 +72,7 @@ public:
    kernel( void * const ptr,
            const std::size_t nbytes );
 
-   virtual ~kernel() = default;
+   virtual ~kernel();
 
 
    /**
@@ -265,8 +263,8 @@ protected:
 private:
    /** TODO, replace dup with bit vector **/
    bool             dup_candidate     = false;
-
    bool             execution_done    = false;
+
 
    /** for operator syntax **/
    std::queue< raft::port_key_type > enabled_port;

@@ -39,6 +39,9 @@ basic_parallel::basic_parallel( raft::map       &map,
    /** nothing to do here, move along **/
 }
 
+basic_parallel::~basic_parallel()
+{
+}
 
 void
 basic_parallel::start()

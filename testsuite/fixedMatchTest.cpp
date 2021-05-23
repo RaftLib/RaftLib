@@ -15,7 +15,6 @@ main()
 
 
     const std::string term( "Alice" );
-    raft::map m;
     fr   read( "./alice.txt" /** ex file **/, 
                (fr::offset_type) term.length(),
                1 );
@@ -23,6 +22,7 @@ main()
     search find( term );
     auto we( raft::write_each< raft::match_t >( 
             std::back_inserter( matches ) ) );  
+    raft::map m;
     m += read >> find >> we;
     /** m.exe() is an implicit barrier for completion of execution **/
     m.exe();

@@ -66,9 +66,10 @@ main()
       arr[ i ] = i;
    }
    
-   raft::map m;
-   raft::for_each< int > fe( arr, COUNT, 1 );
    print< int > pr;
+   raft::for_each< int > fe( arr, COUNT, 1 );
+   
+   raft::map m;
    m += fe >> pr;
    m.exe();
    return( EXIT_SUCCESS );

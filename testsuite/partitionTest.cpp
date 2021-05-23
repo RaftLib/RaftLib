@@ -15,7 +15,6 @@ main( int argc, char **argv )
        count = atoi( argv[ 1 ] );
     }
                                                                
-    raft::test::generate< std::uint32_t > rndgen( count );
     raft::print< std::uint32_t, '\n' > p;
 
     using sub = raft::lambdak< std::uint32_t >;
@@ -28,9 +27,11 @@ main( int argc, char **argv )
           return( raft::proceed );
        } );
 
+    raft::test::generate< std::uint32_t > rndgen( count );
+    sub s( 1, 1, l_sub );
+    
     raft::map m;
     /** make one sub kernel, this one will live on the stack **/
-    sub s( 1, 1, l_sub );
     kernel_pair_t::kernel_iterator_type BEGIN, END;
     auto kernels( m += rndgen >> s );
     for( int i( 0 ); i < 

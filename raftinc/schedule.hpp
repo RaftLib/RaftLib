@@ -48,7 +48,7 @@ public:
     /**
      * destructor, takes care of cleanup
      */
-    virtual ~Schedule() = default;
+    virtual ~Schedule();
     
     /**
      * start - called to start execution of all
@@ -95,8 +95,17 @@ public:
      * @param kernel - raft::kernel*
      */
     virtual void schedule_kernel( raft::kernel * const kernel );
-
+    
+    /**
+     * terminus_complete - allows the map function to wait
+     * till all kernels have signaled to the scheduler that 
+     * execution is complete. We'll modify this at some point
+     * so that programmers can have a specific barrier, but
+     * for now this will get us started. 
+     * @return - true when all complete, does not block. 
+     */
     bool terminus_complete();
+
 
     /**
      * reset_streams - reset all streams within the defined
@@ -107,6 +116,7 @@ public:
      * @return void. 
      */
     virtual void reset_streams();
+
 
 protected:
    virtual void handleSchedule( raft::kernel * const kernel ) = 0; 
@@ -170,6 +180,7 @@ protected:
    kernelkeeper &source_kernels;      
    kernelkeeper &dst_kernels;
    kernelkeeper &internally_created_kernels;
+   
    bool         complete    = false;
 };
 #endif /* END RAFTSCHEDULE_HPP */

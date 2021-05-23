@@ -42,7 +42,7 @@ raft::map::map() : MapBase()
 }
 
 raft::map::~map() 
-{      
+{
     /**
      * order here matters, FIXME, we need
      * to fix the fragility of this, the 
@@ -51,9 +51,8 @@ raft::map::~map()
      * plus that they're shutdown before we 
      * destruct them. 
      */
-    exit_alloc = true;
     exit_para = true;
-
+    exit_alloc = true;
     if( pm_thread != nullptr )
     {
         pm_thread->join();
@@ -68,7 +67,6 @@ raft::map::~map()
         schedule_thread->join();
         delete( schedule_thread );
     }
-    delete( sched_object );
     
     /**
      * could be a case where allocator_thread is null
@@ -85,10 +83,7 @@ raft::map::~map()
     }
     //can delete a nullptr
     delete( alloc_object );
-
-
-    /** no more need to duplicate kernels **/
-    
+    delete( sched_object );
 }
 
 void
