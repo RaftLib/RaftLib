@@ -24,7 +24,6 @@
 #include <cassert>
 #include <thread>
 #include <sstream>
-#include <unistd.h>
 
 
 #include "kernelkeeper.tcc"
