@@ -107,6 +107,7 @@ execute_process( COMMAND  pkg-config --variable pc_path pkg-config
                  COMMAND  tr ':' '\n' 
                  COMMAND  head -n 1
                  OUTPUT_VARIABLE LOCAL_PKG_CONFIG_PATHWAY )
+string(REGEX REPLACE "\n$" "" LOCAL_PKG_CONFIG_PATHWAY "${LOCAL_PKG_CONFIG_PATHWAY}")
 set( PKG_CONFIG_PATH ${LOCAL_PKG_CONFIG_PATHWAY} )
 endif()
 
@@ -124,6 +125,6 @@ endif()
 
 
 configure_file( "raftlib.pc.in" "raftlib.pc" @ONLY )
-install( FILES ${CMAKE_CURRENT_BINARY_DIR}/raftlib.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/pkgconfig/ )
+install( FILES ${CMAKE_CURRENT_BINARY_DIR}/raftlib.pc DESTINATION ${PKG_CONFIG_PATH} )
 
 endif( NOT WIN32 )                     
