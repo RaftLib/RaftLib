@@ -36,7 +36,8 @@
 #ifdef BENCHMARK
 #include <sched.h>
 #endif
-#include "affinity.hpp"
+#include <affinity>
+
 #ifdef USE_PARTITION
 #include "partition_scotch.hpp"
 #endif

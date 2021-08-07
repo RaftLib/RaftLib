@@ -23,12 +23,12 @@
 #include <map>
 #include <cmath>
 #include <chrono>
+#include <affinity>
 
 #include "kernel.hpp"
 #include "map.hpp"
 #include "simpleschedule.hpp"
 #include "rafttypes.hpp"
-#include "affinity.hpp"
 
 #ifdef USE_PARTITION
 #include "partition_scotch.hpp"
