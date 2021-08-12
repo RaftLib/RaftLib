@@ -1,9 +1,6 @@
 [submodule "git-dep/cmdargs"]
 	path = git-dep/cmdargs
 	url = https://github.com/jonathan-beard/cmdargs.git
-[submodule "git-dep/shm"]
-	path = git-dep/shm
-	url = https://github.com/RaftLib/shm.git
 [submodule "git-dep/affinity"]
 	path = git-dep/affinity
 	url = https://github.com/RaftLib/affinity.git
@@ -13,3 +10,6 @@
 [submodule "git-dep/highwayhash"]
 	path = git-dep/highwayhash
 	url = https://gist.github.com/632017faa1d9d1936eb5948ac9186657.git
+[submodule "git-dep/ipc"]
+	path = git-dep/ipc
+	url = https://github.com/RaftLib/ipc.git

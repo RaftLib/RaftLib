@@ -21,10 +21,10 @@ set( GIT_MODULES
 else()
 ##
 set( GIT_MODULES 
-        shm 
         cmdargs 
         demangle 
         affinity
+        ipc
         ${OPTIONAL_MODULES}
          ) 
 endif()

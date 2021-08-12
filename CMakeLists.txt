@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 project(RaftLib)
 set( version 0.9a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
