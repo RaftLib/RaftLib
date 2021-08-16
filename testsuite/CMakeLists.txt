@@ -29,6 +29,7 @@ set( TESTAPPS allocate
     allocatePopExternal 
      parallelchain 
      ksettest
+     ksetContContJoin
      multiPrint
      fixedMatchTest 
      poolThreadRaftManip
