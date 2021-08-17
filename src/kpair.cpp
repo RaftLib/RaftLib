@@ -239,6 +239,29 @@ operator >> ( ROoOkpair &a, raft::kernel_wrapper &&w )
     return( *ptr );
 }
 
+kpair&  operator >> ( raft::basekset &src, raft::basekset &dst )
+{
+    /**
+     * if basekset src/dst are {a,b,c}, {d,e,f}, then 
+     * this function links a->d, b->e, c->f. to do so,
+     * let's build a zip style operator that'll check
+     * to see if src and dst are the same length statically
+     * then take an operator. 
+     */
+    assert( false );
+    UNUSED( src );
+    UNUSED( dst );
+    return( *new kpair() );
+}
+
+kpair&  operator >> ( raft::basekset &&src, raft::basekset &&dst )
+{
+    assert( false );
+    UNUSED( src );
+    UNUSED( dst );
+    return( *new kpair() );
+}
+
 kpair&
 operator <= ( raft::kernel &a, raft::kernel &b )
 {

@@ -49,6 +49,8 @@ using ROoOkpair = PairBase< kpair,        0 >;
 class kpair
 {
 public:
+    kpair() = default;
+
     kpair( raft::kernel &a, 
            raft::kernel &b,
            const bool split,
@@ -145,6 +147,17 @@ ROoOkpair& operator >> ( kpair &a, const raft::order::spec &&order );
 kpair&     operator >> ( ROoOkpair &a, raft::kernel &b );
 kpair&     operator >> ( ROoOkpair &a, raft::kernel_wrapper &&w );
 
+
+/**
+ * if basekset src/dst are {a,b,c}, {d,e,f}, then 
+ * this function links a->d, b->e, c->f. to do so,
+ * let's build a zip style operator that'll check
+ * to see if src and dst are the same length statically
+ * then take an operator. 
+ * testcases covered -> ksetContContJoin.cpp
+ */
+kpair&  operator >> ( raft::basekset &src,  raft::basekset &dst  );
+kpair&  operator >> ( raft::basekset &&src, raft::basekset &&dst );
 
 kpair& operator <= ( raft::kernel &a, raft::kernel  &b );
 kpair& operator <= ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b );

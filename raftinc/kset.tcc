@@ -54,9 +54,9 @@ struct basekset{
     
     using const_iterator = container_type::const_iterator;
 
-    //virtual iterator         begin()      = 0;
+    virtual iterator         begin()      = 0;
     virtual const_iterator   cbegin()     = 0;
-    //virtual iterator         end()        = 0;
+    virtual iterator         end()        = 0;
     virtual const_iterator   cend()       = 0;
 };
 
@@ -79,7 +79,11 @@ template < class... K > class ksetr
 private:
     static_assert( sizeof...( K ) > 0, "size for kset must be > 0" );
     using common_t = typename std::common_type< K... >::type;
-#ifndef TEST_WO_RAFT
+#ifdef TEST_WO_RAFT
+    /** don't want to type this over and over **/
+    using vector_t = std::vector< std::reference_wrapper< common_t > >;
+    vector_t  k;
+#else    
     /**
      * interestingly this class is far more generic, but for RaftLib
      * we need the common_t to be either raft::kernel, or a dervied
@@ -88,10 +92,8 @@ private:
     static_assert( std::is_base_of< raft::kernel,
                                     common_t >::value,
                    "The common type of ksetr must be a derived class of raft::kernel" );
+    container_type k;
 #endif
-    /** don't want to type this over and over **/
-    using vector_t = std::vector< std::reference_wrapper< common_t > >;
-    vector_t  k;
 
 public:
 
@@ -167,7 +169,13 @@ using iterator       = typename basekset::iterator;
     /**
      * get the number of kernels held.
      */
-    constexpr typename vector_t::size_type size() const { return( sizeof...( K ) ); }
+    constexpr 
+#ifdef TEST_WO_RAFT
+    typename vector_t::size_type 
+#else
+    typename container_type::size_type
+#endif
+    size() const { return( sizeof...( K ) ); }
 
     /**
      * get the common, base class shared between
