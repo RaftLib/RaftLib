@@ -19,6 +19,7 @@ set(CPP_SRC_FILES
     map.cpp
     mapexception.cpp
     noparallel.cpp
+    parsemap.cpp
     parallelk.cpp
     partition_basic.cpp
     partition_dummy.cpp

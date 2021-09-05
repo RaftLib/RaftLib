@@ -28,3 +28,29 @@ raft::submap::~submap()
 {
    /** nothing really to do **/
 }
+    
+void 
+raft::submap::addInputKernel( raft::kernel * const k )
+{
+    assert( k != nullptr );
+    assert( k->input.hasPorts() );
+    auto &input_container( k->input );
+    for( auto it( input_container.begin() ); it != input_container.end(); ++it )
+    {
+        input.insert( std::make_pair( it.name(), k ) );
+    }
+    return;
+}
+
+void 
+raft::submap::addOutputKernel( raft::kernel * const k )
+{
+    assert( k != nullptr );
+    assert( k->output.hasPorts() );
+    auto &output_container( k->output );
+    for( auto it( output_container.begin() ); it != output_container.end(); ++it )
+    {
+        output.insert( std::make_pair( it.name(), k ) );
+    }
+    return;
+}
