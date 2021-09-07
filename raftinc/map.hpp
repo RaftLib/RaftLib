@@ -3,7 +3,7 @@
  * @author: Jonathan Beard
  * @version: Fri Sep 12 10:28:33 2014
  * 
- * Copyright 2017 Jonathan Beard
+ * Copyright 2014 Jonathan Beard
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef RAFTMAP_HPP
-#define RAFTMAP_HPP  1
-#include <cstdlib>
+#ifndef _MAP_HPP_
+#define _MAP_HPP_  1
 #include <typeinfo>
 #include <cassert>
 #include <thread>
@@ -40,10 +39,14 @@
 #include "noparallel.hpp"
 /** includes all partitioners **/
 #include "partitioners.hpp"
-#include "makedot.hpp"
+#include "streamparse.hpp"
 
 namespace raft
 {
+/**
+ * predeclaration, include in src
+ */
+class parsemap;
 
 class map : public MapBase
 {
@@ -91,7 +94,7 @@ public:
              , 
              class allocator           = dynalloc,
              class parallelism_monitor = basic_parallel > 
-      void exe()
+   void exe()
    {
       {
          auto &container( all_kernels.acquire() );
@@ -108,24 +111,6 @@ public:
       checkEdges();
       partition pt;
       pt.partition( all_kernels );
-        
-      auto *dot_graph_env = std::getenv( "GEN_DOT" );
-      if( dot_graph_env != nullptr )
-      {
-          std::ofstream of( dot_graph_env );
-          raft::make_dot::run( of, (*this) );
-          of.close();
-          auto *dot_graph_exit = std::getenv( "GEN_DOT_EXIT" );
-          if( dot_graph_exit != nullptr )
-          {
-             const auto dot_exit_val( std::stoi( dot_graph_exit ) );
-             if( dot_exit_val == 1 )
-             {
-                exit( EXIT_SUCCESS );
-             }
-             //else continue
-          }
-      }
       
       /** adds in split/join kernels **/
       //enableDuplication( source_kernels, all_kernels );
@@ -135,15 +120,9 @@ public:
       std::thread mem_thread( [&](){
          alloc.run();
       });
-      
-      try
-      {
-        alloc.waitTillReady();
-      }
-      catch( std::exception &ex )
-      {
-        std::cerr << "Exception caught with (" << ex.what() << ")\n"; 
-      }
+     
+      alloc.waitTillReady();
+
       scheduler sched( (*this) );
       sched.init();
       
@@ -179,7 +158,7 @@ public:
     * invoked to add kernel links to the map, returns an iterator to
     * a list of the last kernels added to the map via the += 
     */
-   kernel_pair_t operator +=( kpair &p );
+   kernel_pair_t operator +=( raft::parsemap_ptr pm );
 
    
 
@@ -192,9 +171,9 @@ protected:
     void joink( kpair * const next );
 
    /**
-    * checkEdges - runs a breadth first search through the graph
+    * checkEdges - runs a linear search through the vertices
     * to look for disconnected edges.
-    * @throws PortException - thrown if an unconnected edge is found.
+    * @throws PortUnconnectedException
     */
    void checkEdges();
 
@@ -216,54 +195,8 @@ protected:
    friend class ::basic_parallel;
    friend class ::Schedule;
    friend class ::Allocate;
-   friend class make_dot;
-private:
-    using split_stack_t = std::stack< std::size_t >;
-    using group_t = std::vector< raft::kernel* >;
-    using up_group_t = std::unique_ptr< group_t >;
-    using kernels_t = std::vector< up_group_t >;
-
-    /**
-     * inline_cont - takes care of >> syntax, even
-     * multiple ones.
-     * @param groups - list of groups, each group containing
-     * multiple (or a single kernel)
-     * @param   temp_groups - temporary storage space
-     * for above
-     * @param   next - kpair*, pair to be joined/split
-     */
-    void inline_cont ( kernels_t     &groups,
-                       kernels_t     &temp_groups,
-                       kpair * const next );
-
-    /**
-     * inline_split - takes care of the <= syntax 
-     * so that you can embed multiple splits in a 
-     * row, and still have the joins appear later
-     * in the proper sequence.
-     * @param split_stack - split_stack_t&, stack
-     * for # of out edges in each split
-     * @param groups - list of groups, each group containing
-     * multiple (or a single kernel)
-     * @param   temp_groups - temporary storage space
-     * for above
-     * @param   next - kpair*, pair to be joined/split
-     */
-    void inline_split( split_stack_t &split_stack,
-                       kernels_t     &groups,
-                       kernels_t     &temp_groups,
-                       kpair * const next );
-
-    void inline_join( split_stack_t &split_stack,
-                      kernels_t &groups,
-                      kernels_t &temp_groups,
-                      kpair * const next );
-
-    void inline_dup_join( kernels_t &groups,
-                          kernels_t &temp_groups,
-                          kpair * const next );
 
 }; /** end map decl **/
 
 } /** end namespace raft **/
-#endif /* END RAFTMAP_HPP */
+#endif /* END _MAP_HPP_ */

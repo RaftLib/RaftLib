@@ -20,11 +20,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef RAFTKERNEL_PAIR_T_HPP
-#define RAFTKERNEL_PAIR_T_HPP  1
+#ifndef _KERNEL_PAIR_T_HPP_
+#define _KERNEL_PAIR_T_HPP_  1
 #include <functional>
 #include <vector>
 #include <utility>
+#include <algorithm>
+#include <iterator>
 
 /** pre-declare some stuff **/
 namespace raft
@@ -108,6 +110,29 @@ public:
     kernel_pair_t( raft::kernel &src,
                    raft::kernel &dst );
 
+    template < class ITA, class ITB,
+               class ITC, class ITD >
+    kernel_pair_t(  ITA &&src_beg, const ITB &&src_end,
+                    ITC &&dst_beg, const ITD &&dst_end )
+    {
+        const auto distA( std::distance( src_beg, src_end ) );
+        const auto distB( std::distance( dst_beg, dst_end ) );
+        source.reserve( distA );
+        /** 
+         * gotta go from a pointer to reference here, so 
+         * none of the standard stuff will really fit
+         */
+        for(;src_beg != src_end;++src_beg)
+        {
+            source.emplace_back( *(*src_beg) );
+        }
+        destination.reserve( distB );
+        for(;dst_beg != dst_end;++dst_beg)
+        {
+            destination.emplace_back( *(*dst_beg) );
+        }
+    }
+
     /**
      * getSrc - return a std::pair object with iterators
      * to the source and destination of the list of 
@@ -181,4 +206,4 @@ private:
 };
 
 
-#endif /* END RAFTKERNEL_PAIR_T_HPP */
+#endif /* END _KERNEL_PAIR_T_HPP_ */

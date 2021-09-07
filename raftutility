@@ -1,3 +1,4 @@
+// vim: set filetype=cpp:
 /**
  * raftutility - collection of headers for various raft utility number functions
  *

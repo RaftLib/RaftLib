@@ -1,3 +1,4 @@
+// vim: set filetype=cpp:
 /**
  * raft header file - includes all files within $(prefix)/include/raft dir 
  * @author: Jonathan Beard
@@ -33,6 +34,7 @@
 #include "./raftinc/stdalloc.hpp"
 #include "./raftinc/rafttypes.hpp"
 #include "./raftinc/kernel_all.hpp"
+#include "./raftinc/streamparse.hpp"
 
 /** parallel headers **/
 #include "./raftinc/parallelk.hpp"

@@ -1,3 +1,4 @@
+// vim: set filetype=cpp:
 /**
  * raftmanip - header file to put links to the stream modifiers
  * other than the basic raft ordering stuffs. Here we have things

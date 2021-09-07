@@ -12,7 +12,6 @@ set(CPP_SRC_FILES
     kernelexception.cpp
     kernel_pair_t.cpp
     kernel_wrapper.cpp
-    kpair.cpp
     leastusedfirst.cpp
     makedot.cpp
     mapbase.cpp
@@ -37,6 +36,7 @@ set(CPP_SRC_FILES
     signal.cpp
     signaldata.cpp
     simpleschedule.cpp
+    streamparse.cpp
     stdalloc.cpp
     submap.cpp
     systemsignalhandler.cpp
