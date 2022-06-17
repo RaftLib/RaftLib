@@ -23,7 +23,6 @@ set(CPP_SRC_FILES
     partition_dummy.cpp
     partition_scotch.cpp
     pointer.cpp
-    poolschedule.cpp
     port.cpp
     port_info.cpp
     portexception.cpp
@@ -47,7 +46,7 @@ target_include_directories(raft
     ${PROJECT_SOURCE_DIR}/raftinc 
     ${PROJECT_SOURCE_DIR}
     ${CMAKE_SCOTCH_INCS}
-    ${CMAKE_QTHREAD_INCS}
+    ${QTHREAD_INCLUDE}
 )
 
 target_link_libraries( 

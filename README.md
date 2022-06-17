@@ -33,16 +33,16 @@ you'll need to add to your cmake invocation:
 
 To use the [QThreads User space HPC threading library](http://www.cs.sandia.gov/qthreads/) 
 you will need to use the version with the RaftLib org and follow the RaftLib specific readme. 
-This QThreads version has patches for hwloc2.x applied and fixes for test cases. To compile
-RaftLib with QThreads linked, add the following (assumes the QThreads library is in your path):
-```bash
--DUSEQTHREAD=1
-```
+This QThread version has patches for hwloc2.x applied and fixes for test cases.
+To assist cmake to find the QThread library install, you can set the environment variable
+`QTHREAD_PATH=<qthread install path>`, or
+`QTHREAD_LIB=<qthread library path> QTHREAD_INC=<qthread header path>`.
+If QThread is found and compiled, the corresponding compiler flags and include path, linking
+path would be set in the pkg-config file for RaftLib.
 
-Building the examples, benchmarks and tests can be disabled using:
+Building the examples, and tests can be disabled using:
 ```bash
 -DBUILD_EXAMPLES=false
--DBUILD_BENCHMARKS=false
 -DBUILD_TESTS=false
 ```
 

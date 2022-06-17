@@ -1,15 +1,15 @@
 /**
  * poolschedule.hpp - scheduler starts up the maximum number
  * of threads supported in hardware for the currently executing
- * node, then awaits kernels to be mapped to it by the mapper. 
+ * node, then awaits kernels to be mapped to it by the mapper.
  * Once mapped, the scheduler continues to execute each kernel
  * in a round-robin fashion until execution is complete.
  *
  * @author: Jonathan Beard
  * @version: Thu Sep 11 15:49:57 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -29,7 +29,7 @@
 #include <thread>
 #include <mutex>
 #include <cstdint>
-#ifdef USEQTHREADS
+#if QTHREAD_FOUND
 #include <qthread/qthread.hpp>
 #else
 /** dummy **/
@@ -38,9 +38,10 @@ using aligned_t = std::uint64_t;
 #include "schedule.hpp"
 #include "internaldefs.hpp"
 
-namespace raft{
-   class kernel;
-   class map;
+namespace raft
+{
+    class kernel;
+    class map;
 }
 
 
@@ -48,27 +49,93 @@ class pool_schedule : public Schedule
 {
 public:
     /**
-     * pool_schedule - constructor, takes a map object, 
+     * pool_schedule - constructor, takes a map object,
      * calling this will launch threads.  scheduler itself
      * is also run as a thread.
      * @param   map - raft::map&
      */
-    pool_schedule( raft::map &map );
+    pool_schedule( raft::map &map ) : Schedule( map )
+    {
+#if QTHREAD_FOUND
+        const auto ret_val( qthread_initialize() );
+        if( ret_val != 0 )
+        {
+            std::cerr << "failure to initialize qthreads runtime, exiting\n";
+            exit( EXIT_FAILURE );
+        }
+        thread_data_pool.reserve( kernel_set.size() );
+#endif
+    }
 
     /**
      * destructor, deletes threads and cleans up container
      * objects.
      */
-    virtual ~pool_schedule();
+    virtual ~pool_schedule()
+    {
+#if QTHREAD_FOUND
+        /** kill off the qthread structures **/
+        qthread_finalize();
+#endif
+    }
 
     /**
      * start - call to start executing map, at this point
-     * the mapper sould have checked the topology and 
+     * the mapper sould have checked the topology and
      * everything should be set up for running.
      */
-    virtual void start(); 
-   
+    virtual void start()
+    {
+        auto &container( kernel_set.acquire() );
+        for( auto * const k : container )
+        {
+            (this)->handleSchedule( k );
+        }
+        /**
+         * NOTE: can't quite get the sync object behavior to work
+         * quite well enough for this application. Should theoretically
+         * work according to the documentation here:
+         * http://www.cs.sandia.gov/qthreads/man/qthread_spawn.html
+         * however it seems that the wait segfaults. Adding on the
+         * TODO list I'll implement a better mwait monitor vs. spinning
+         * which is relatively bad.
+         */
+        kernel_set.release();
+    START:
+        std::chrono::milliseconds dura( 3 );
+        std::this_thread::sleep_for( dura );
+        tail_mutex.lock();
+        for( auto * const td : tail )
+        {
+            if( ! td->finished )
+            {
+                tail_mutex.unlock();
+                goto START;
+            }
+        }
+        tail_mutex.unlock();
+        return;
+    }
+
 protected:
+    /**
+     * modified version of what is in the simple_schedule
+     * since we don't really need some of the info. this
+     * is passed to each kernel within teh pool_run func
+     */
+    struct ALIGN( 64 ) thread_data
+    {
+#pragma pack( push, 1 )
+        constexpr thread_data( raft::kernel * const k ) : k( k ){}
+
+        inline void setCore( const core_id_t core ){ loc = core; };
+        /** this is deleted elsewhere, do not delete here, bad things happen **/
+        raft::kernel *k = nullptr;
+        bool finished = false;
+        core_id_t loc = -1;
+#pragma pack( pop )
+    };
+
     /** BEGIN FUNCTIONS **/
     /**
      * handleSchedule - handle actions needed to schedule the
@@ -76,32 +143,91 @@ protected:
      * easier.
      * @param    kernel - kernel to schedule
      */
-    virtual void handleSchedule( raft::kernel * const kernel );
+    virtual void handleSchedule( raft::kernel * const kernel )
+    {
+#if QTHREAD_FOUND
+        auto *td( new thread_data( kernel ) );
+        thread_data_mutex.lock();
+        thread_data_pool.emplace_back( td );
+        thread_data_mutex.unlock();
+        if( ! kernel->output.hasPorts() ) /** has no outputs **/
+        {
+            std::lock_guard< std::mutex > tail_lock( tail_mutex );
+            /** destination kernel **/
+            tail.emplace_back( td );
+        }
+        qthread_spawn( pool_schedule::pool_run,
+                       (void*) td,
+                       0,
+                       0,
+                       0,
+                       nullptr,
+                       NO_SHEPHERD,
+                       0 );
+        /** done **/
+        return;
+#endif
+    }
+
     /**
      * pool_run - pass this to the qthreads to run them.
      */
-    static aligned_t pool_run( void *data );
-   
-    /** 
-     * modified version of what is in the simple_schedule 
-     * since we don't really need some of the info. this
-     * is passed to each kernel within teh pool_run func
-     */
-    struct ALIGN( 64 ) thread_data
+    static aligned_t pool_run( void *data )
     {
-#pragma pack( push, 1 )       
-       constexpr thread_data( raft::kernel * const k ) : k( k ){}
+#if QTHREAD_FOUND
+       assert( data != nullptr );
+       auto * const thread_d( reinterpret_cast< thread_data* >( data ) );
+       ptr_map_t in;
+       ptr_set_t out;
+       ptr_set_t peekset;
 
-       inline void setCore( const core_id_t core ){ loc = core; };
-       /** this is deleted elsewhere, do not delete here, bad things happen **/
-       raft::kernel *k         = nullptr;
-       bool          finished  = false;
-       core_id_t     loc       = -1;
-#pragma pack( pop )       
-    };
-    std::mutex                  thread_data_mutex;
+       Schedule::setPtrSets( thread_d->k,
+                             &in,
+                             &out,
+                             &peekset );
+#if 0 //figure out pinning later
+       if( thread_d->loc != -1 )
+       {
+          /** call does nothing if not available **/
+          raft::affinity::set( thread_d->loc );
+       }
+       else
+       {
+#ifdef USE_PARTITION
+           assert( false );
+#endif
+       }
+#endif
+       volatile bool done( false );
+       std::uint8_t run_count( 0 );
+#ifdef BENCHMARK
+       raft::kernel::initialized_count++;
+       while( raft::kernel::initialized_count != raft::kernel::kernel_count )
+       {
+           qthread_yield();
+       }
+#endif
+       while( ! done )
+       {
+           Schedule::kernelRun( thread_d->k, done );
+           //FIXME: add back in SystemClock user space timer
+           //set up one cache line per thread
+           if( run_count++ == 20 || done )
+           {
+               run_count = 0;
+               //takes care of peekset clearing too
+               Schedule::fifo_gc( &in, &out, &peekset );
+               qthread_yield();
+           }
+       }
+       thread_d->finished = true;
+       return( 1 );
+#endif // QTHREAD_FOUND
+    }
+
+    std::mutex thread_data_mutex;
     std::vector< thread_data* > thread_data_pool;
-    std::mutex                  tail_mutex;
+    std::mutex tail_mutex;
     std::vector< thread_data* > tail;
 };
 #endif /* END RAFTPOOLSSCHEDULE_HPP */
