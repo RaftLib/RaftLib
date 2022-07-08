@@ -1,10 +1,10 @@
 /**
- * roundrobin.hpp - 
+ * roundrobin.hpp -
  * @author: Jonathan Beard
  * @version: Tue Oct 28 13:05:38 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -24,13 +24,37 @@
 #include "port.hpp"
 #include "splitmethod.hpp"
 
-class roundrobin : public splitmethod 
+class roundrobin : public splitmethod
 {
 public:
-   roundrobin();
-   virtual ~roundrobin();
+    roundrobin() : splitmethod()
+    {
+    }
+    virtual ~roundrobin()
+    {
+    }
 
 protected:
-   virtual FIFO*  select_fifo( Port &port_list, const functype type );
+    virtual FIFO* select_fifo( Port &port_list, const functype type )
+    {
+        for( ;; )
+        {
+            for( auto &port : port_list )
+            {
+                /**
+                 * TODO, big assumption here is that
+                 * eventually a port will have space
+                 */
+                if( type == sendtype && port.space_avail() > 0 )
+                {
+                    return( &( port ) );
+                }
+                if( type == gettype && port.size() > 0 )
+                {
+                    return( &( port ) );
+                }
+            }
+        }
+    }
 };
 #endif /* END RAFTROUNDROBIN_HPP */

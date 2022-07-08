@@ -1,10 +1,10 @@
 /**
- * kernelexception.hpp - 
+ * kernelexception.hpp -
  * @author: Jonathan Beard
  * @version: Wed Sep  3 14:52:27 2014
- * 
+ *
  * Copyright 2016 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -27,17 +27,17 @@
 class KernelException : public RaftException
 {
 public:
-    KernelException(  const std::string message ); 
+    KernelException( const std::string message ) : RaftException( message ){};
 
 };
 
 
-template < int N > class KernelExceptionBase : public KernelException 
+template < int N > class KernelExceptionBase : public KernelException
 {
 public:
-    KernelExceptionBase(  const std::string message ) : 
+    KernelExceptionBase( const std::string message ) :
         KernelException( message ){};
-    
+
 };
 
 

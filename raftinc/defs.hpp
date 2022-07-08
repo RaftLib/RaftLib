@@ -32,6 +32,21 @@
 #include <string>
 #include <limits>
 
+#ifndef INJECT_DEMANGLE_NAMESPACE
+#define INJECT_DEMANGLE_NAMESPACE 1
+#endif
+
+#ifndef DEMANGLE_NAMESPACE
+#define DEMANGLE_NAMESPACE raft
+#endif
+
+#ifndef INJECT_AFFINITY_NAMESPACE
+#define INJECT_AFFINITY_NAMESPACE 1
+#endif
+
+#ifndef AFFINITY_NAMESPACE
+#define AFFINITY_NAMESPACE raft
+#endif
 
 
 

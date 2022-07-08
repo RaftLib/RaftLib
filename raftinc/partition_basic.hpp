@@ -1,14 +1,14 @@
 /**
  * partition_basic.hpp - the most simple of partitioning algorithms.
  * invoked in two cases, if there are fewer or equal to kernels
- * than cores...or if we simply have no other partitioning scheme 
- * (library) available. 
+ * than cores...or if we simply have no other partitioning scheme
+ * (library) available.
  *
  * @author: Jonathan Beard
  * @version: Fri Mar 20 08:53:12 2015
- * 
+ *
  * Copyright 2015 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -27,6 +27,7 @@
 #include <cstddef>
 #include "interface_partition.hpp"
 #include "schedule.hpp"
+#include <thread>
 #include <utility>
 #include "kernel.hpp"
 
@@ -36,14 +37,27 @@ public:
     partition_basic() = default;
     virtual ~partition_basic() = default;
 
-   /**
-    * simple - partiion the kernels in kernelkeeper
-    * using a simple partitioning scheme evenly as
-    * possible amongst the given run_containers 
-    * in run_container.
-    * @param    c - kernelkeeper&
-    */
-   virtual void partition( kernelkeeper &c );
+    /**
+     * simple - partiion the kernels in kernelkeeper
+     * using a simple partitioning scheme evenly as
+     * possible amongst the given run_containers
+     * in run_container.
+     * @param    c - kernelkeeper&
+     */
+    virtual void partition( kernelkeeper &c )
+    {
+        const auto num_cores( std::thread::hardware_concurrency() );
+        core_id_t i( 0 );
+        auto &container( c.acquire() );
+        for( auto *kernel : container )
+        {
+            (this)->setCore( *kernel, i );
+            //FIXME, too simple should be based on locality if hwloc avail
+            i = ( i + 1 ) % num_cores;
+        }
+        c.release();
+        return;
+    }
 };
 
 #endif /* END RAFTPARTITION_BASIC_TCC */

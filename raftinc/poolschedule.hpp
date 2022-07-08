@@ -41,7 +41,6 @@ using aligned_t = std::uint64_t;
 namespace raft
 {
     class kernel;
-    class map;
 }
 
 
@@ -54,7 +53,7 @@ public:
      * is also run as a thread.
      * @param   map - raft::map&
      */
-    pool_schedule( raft::map &map ) : Schedule( map )
+    pool_schedule( MapBase &map ) : Schedule( map )
     {
 #if QTHREAD_FOUND
         const auto ret_val( qthread_initialize() );
@@ -201,8 +200,9 @@ protected:
        volatile bool done( false );
        std::uint8_t run_count( 0 );
 #ifdef BENCHMARK
-       raft::kernel::initialized_count++;
-       while( raft::kernel::initialized_count != raft::kernel::kernel_count )
+       raft::kernel::initialized_count();
+       while( raft::kernel::initialized_count( 0 ) !=
+              raft::kernel::kernel_count )
        {
            qthread_yield();
        }

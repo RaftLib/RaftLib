@@ -2,14 +2,14 @@
  * submap.hpp - Defines an interface to create sub-mappings
  * which are basically maps that are allowed to have unconnected
  * inputs and/or outputs that will be connected within a main
- * mapping. The only real rule to these "sub-maps" is that the 
+ * mapping. The only real rule to these "sub-maps" is that the
  * names of the output ports must be unique.
  *
  * @author: Jonathan Beard
  * @version: Sun Nov 30 06:12:23 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -36,15 +36,15 @@ namespace raft
 class submap : public MapBase
 {
 public:
-    submap();
-    virtual ~submap();
+    submap() : MapBase(){};
 
-   
+    virtual ~submap() {};
+
 
 protected:
    friend class map;
    /** essentially source kernels **/
-   std::map< std::string, 
+   std::map< std::string,
              raft::kernel* > input;
    /** essentially dest   kernels **/
    std::map< std::string,

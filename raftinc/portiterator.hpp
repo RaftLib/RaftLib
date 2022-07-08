@@ -1,10 +1,10 @@
 /**
- * portiterator.hpp - 
+ * portiterator.hpp -
  * @author: Jonathan Beard
  * @version: Sun Oct  5 08:49:11 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -30,22 +30,46 @@ class FIFO;
 class PortIterator : public std::iterator< std::forward_iterator_tag, FIFO >
 {
 public:
-   explicit PortIterator( portmap_t * port_map );
-   
-   PortIterator( portmap_t * port_map, std::size_t index );
+    explicit PortIterator( portmap_t * port_map ) :
+        map_iterator( port_map->map.begin() )
+    {
+    }
 
-   PortIterator& operator++() ;
-   
-   bool operator==(const PortIterator& rhs) const; 
-   bool operator!=(const PortIterator& rhs) const;
-   FIFO& operator*() const;
-   
-   const raft::port_key_type& name() const;
+    PortIterator( portmap_t * port_map, std::size_t index ) :
+        map_iterator( index == port_map->map.size() ?
+                               port_map->map.end() :
+                               std::next( port_map->map.begin(), index ) )
+    {
+    }
+
+    PortIterator& operator++()
+    {
+        ++map_iterator;
+        return( ( *this ) );
+    }
+
+    bool operator==( const PortIterator& rhs ) const
+    {
+        return( map_iterator == rhs.map_iterator );
+    }
+    bool operator!=( const PortIterator& rhs ) const
+    {
+        return( map_iterator != rhs.map_iterator );
+    }
+    FIFO& operator*() const
+    {
+        return( *map_iterator->second.getFIFO() );
+    }
+
+    const raft::port_key_type& name() const
+    {
+        return( map_iterator->first );
+    }
 
 private:
-   using map_iterator_type = std::decay_t<decltype(begin(portmap_t::map))>;
+    using map_iterator_type = std::decay_t<decltype(begin(portmap_t::map))>;
 
-   map_iterator_type map_iterator;
+    map_iterator_type map_iterator;
 };
 
 #endif /* END RAFTPORTITERATOR_HPP */

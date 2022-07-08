@@ -39,6 +39,7 @@
 #include "portiterator.hpp"
 #include "portexception.hpp"
 #include "defs.hpp"
+#include "demangle.hpp"
 
 /** needed for friending below **/
 class MapBase;
@@ -86,7 +87,9 @@ public:
      * the port_info struct
      * @param   k  - raft::kernel*
      */
-    Port( raft::kernel * const k );
+    Port( raft::kernel * const k ) : PortBase(), kernel( k )
+    {
+    }
 
     /**
      * Port - constructor used to construct a port with
@@ -98,7 +101,13 @@ public:
      */
     Port( raft::kernel * const k,
           void * const ptr,
-          const std::size_t nbytes );
+          const std::size_t nbytes ) :
+        PortBase(),
+        kernel( k ),
+        alloc_ptr( ptr ),
+        alloc_ptr_length( nbytes )
+    {
+    }
 
     /**
      * ~Port - destructor, deletes the FIFO that was given
@@ -116,9 +125,9 @@ public:
      */
     template < class T,
                class... PORTNAMES >
-    void addPort(  PORTNAMES&&... ports )
+    void addPort( PORTNAMES&&... ports )
     {
-        add_port_helper< T, Port, PORTNAMES... >( (*this),
+        add_port_helper< T, Port, PORTNAMES... >( ( *this ),
                 std::forward< PORTNAMES >( ports )... );
     }
 
@@ -169,8 +178,8 @@ public:
                                                            std::to_string(
                                                                index ) ) ) );
 #endif
-       }
-       return( true );
+        }
+        return( true );
     }
 
     /**
@@ -183,18 +192,55 @@ public:
      * @return  const type_index&
      * @throws PortNotFoundException
      */
-    const std::type_index& getPortType( const raft::port_key_type &&port_name );
+    const std::type_index& getPortType( const raft::port_key_type &&port_name )
+    {
+        const auto ret_val( portmap.map.find( port_name ) );
+        if( ret_val == portmap.map.cend() )
+        {
+            const auto actual_port_name = getPortName( port_name );
+            throw PortNotFoundException( "Port not found for name \"" +
+                                         actual_port_name + "\"" );
+        }
+        return( (*ret_val).second.type );
+    }
 
 
 #ifdef STRING_NAMES
-    virtual FIFO& operator[]( const raft::port_key_type  &&port_name  );
-    virtual FIFO& operator[]( const raft::port_key_type  &port_name );
+    virtual FIFO& operator[]( const raft::port_key_type &&port_name )
+    {
+        //NOTE: We'll need to add a lock here if later
+        //we intend to remove ports dynamically as well
+        //for the moment however lets just assume we're
+        //only adding them
+        const auto ret_val( portmap.map.find( port_name ) );
+        if( ret_val == portmap.map.cend() )
+        {
+            throw PortNotFoundException( "Port not found for name \"" +
+                                         getPortName( port_name ) + "\"" );
+        }
+        return( *( (*ret_val).second.getFIFO() ) );
+    }
+    virtual FIFO& operator[]( const raft::port_key_type &port_name )
+    {
+        //NOTE: We'll need to add a lock here if later
+        //we intend to remove ports dynamically as well
+        //for the moment however lets just assume we're
+        //only adding them
+        const auto ret_val( portmap.map.find( port_name ) );
+        if( ret_val == portmap.map.cend() )
+        {
+            throw PortNotFoundException( "Port not found for name \"" +
+                                         getPortName( port_name ) + "\"" );
+        }
+        return( *( (*ret_val).second.getFIFO() )  );
+    }
 #else
     /**
      * operator[] - input the port name and get a port
      * if it exists.
      */
-    template < class T > FIFO& operator[]( const T  &&port_name  )
+    template < class T >
+    FIFO& operator[]( const T &&port_name )
     {
         //NOTE: We'll need to add a lock here if later
         //we intend to remove ports dynamically as well
@@ -203,13 +249,14 @@ public:
         const auto ret_val( portmap.map.find( port_name.val ) );
         if( ret_val == portmap.map.cend() )
         {
-            throw PortNotFoundException(
-               "Port not found for name \"" + getPortName( port_name ) + "\"" );
+            throw PortNotFoundException( "Port not found for name \"" +
+                                         getPortName( port_name ) + "\"" );
         }
         return( *( ( *ret_val ).second.getFIFO() ) );
     }
 
-    template < class T > FIFO& operator[]( const T &port_name )
+    template < class T >
+    FIFO& operator[]( const T &port_name )
     {
        //NOTE: We'll need to add a lock here if later
        //we intend to remove ports dynamically as well
@@ -231,25 +278,37 @@ public:
      * otherwise.
      * @return   bool
      */
-    virtual bool hasPorts();
+    virtual bool hasPorts()
+    {
+        return( portmap.map.size() > 0 ? true : false );
+    }
 
     /**
      * begin - get the beginning port.
      * @return PortIterator
      */
-    virtual PortIterator begin();
+    virtual PortIterator begin()
+    {
+        return( PortIterator( &portmap ) );
+    }
 
     /**
      * end - get the end port
      * @return PortIterator
      */
-    virtual PortIterator end();
+    virtual PortIterator end()
+    {
+        return( PortIterator( &portmap, portmap.map.size() ) );
+    }
 
     /**
      * count - get the total number of fifos within this port container
      * @return std::size_t
      */
-    std::size_t count();
+    std::size_t count()
+    {
+        return( (std::size_t) portmap.map.size() );
+    }
 
     //TODO, get this guy into the private area
     /**
@@ -323,7 +382,21 @@ public:
      * @param raft::port_key_type - internal representation of port
      * @return std::string - human readable version of a port.
      */
-    std::string getPortName( const raft::port_key_type n );
+    std::string getPortName( const raft::port_key_type n )
+    {
+#ifdef STRING_NAMES
+        return( n );
+#else
+        const auto ret_val( portmap.name_map.find( n ) );
+        if( ret_val == portmap.name_map.cend() )
+        {
+            std::stringstream ss;
+            ss << "Port not found for name \"" << n << "\"";
+            throw PortNotFoundException( ss.str() );
+        }
+        return( (*ret_val).second );
+#endif
+    }
 
 protected:
     /**
@@ -394,7 +467,31 @@ protected:
      * this function throws an exception.
      * @return  std::pair< std::string, PortInfo& >
      */
-    PortInfo& getPortInfo();
+    PortInfo& getPortInfo()
+    {
+        const auto number_of_ports( portmap.map.size() );
+        if( number_of_ports > 1 )
+        {
+            /**
+             * NOTE: This is cought and re-thrown within the
+             * runtime within mapbase.hpp so that we can push
+             * out the name of the kernel and a bit more info
+             */
+            throw AmbiguousPortAssignmentException( "One port expected, "
+                                                    "more than one found!" );
+        }
+        else if( number_of_ports == 0 )
+        {
+            //const auto name( raft::demangle(
+            //            typeid( *this->kernel ).name() ) );
+            //throw PortNotFoundException( "At least one port must be defined,"
+            //                             " none were for kernel class \"" +
+            //                             name + "\"" );
+            throw PortNotFoundException( "At least one port must be defined" );
+        }
+        auto pair( portmap.map.begin() );
+        return( (*pair).second );
+    }
 
     /**
      * getPortInfoFor - gets port information for the param port
@@ -402,7 +499,19 @@ protected:
      * @param   port_name - const raft::port_key_type
      * @return  PortInfo&
      */
-    PortInfo& getPortInfoFor( const raft::port_key_type port_name );
+    PortInfo& getPortInfoFor( const raft::port_key_type port_name )
+    {
+        const auto ret_val( portmap.map.find( port_name ) );
+        if( ret_val == portmap.map.cend() )
+        {
+            std::stringstream ss;
+            ss << "Port not found for name \"" <<
+                  getPortName( port_name ) <<
+                  "\"";
+            throw PortNotFoundException( ss.str() );
+        }
+        return( (*ret_val).second );
+    }
 
     /**
      * portmap - container struct with all ports.  The

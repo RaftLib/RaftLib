@@ -4,16 +4,16 @@
  * to construct a streaming topology.  There are two
  * sub-classes.  One is the final "map" topology, the other
  * is the kernel map topology.  The "kernel map" variant
- * has no exe functions nor map checking functions.  It is 
+ * has no exe functions nor map checking functions.  It is
  * assumed that the "kernel map" derivative is contained
- * within a kernel which might have several sub "kernels" 
- * within it.  
+ * within a kernel which might have several sub "kernels"
+ * within it.
  *
  * @author: Jonathan Beard
- * @version: 25 May 2020 
- * 
+ * @version: 25 May 2020
+ *
  * Copyright 2020 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -36,39 +36,62 @@
 #include "defs.hpp"
 #include "kernelkeeper.tcc"
 #include "portexception.hpp"
-#include "schedule.hpp"
-#include "simpleschedule.hpp"
 #include "kernel.hpp"
 #include "port_info.hpp"
-#include "allocate.hpp"
-#include "dynalloc.hpp"
-#include "stdalloc.hpp"
 #include "kpair.hpp"
 #include "kernel_pair_t.hpp"
+#include "common.hpp"
+#include "demangle.hpp"
 
 namespace raft
 {
     class make_dot;
 }
 
+class basic_parallel;
+class Allocate;
+class Schedule;
+
 class MapBase
 {
 public:
-   /** 
-    * MapBase - constructor, really doesn't do too much at the monent
-    * and doesn't really need to.
-    */
-   MapBase();
-   /** 
-    * default destructor 
-    */
-   virtual ~MapBase();
-   
+    /**
+     * MapBase - constructor, really doesn't do too much at the monent
+     * and doesn't really need to.
+     */
+    MapBase()
+    {
+    }
 
-   
+    /**
+     * default destructor
+     */
+    virtual ~MapBase()
+    {
+        auto &the_container( internally_created_kernels.acquire() );
+        for( auto *kernel : the_container )
+        {
+            /**
+             * NOTE: if we re-add the dynamic add code that doesn't
+             * lock the list on remove, and sets this list entry to
+             * nullptr after calling detructor, then we might need to
+             * re-add the nullptr check, or make this a custom
+             * asynch structure vs. the stdlib container it is now.
+             */
+            delete( kernel );
+        }
+        /**
+         * as long as this derives from something that meets the "sequence container" def
+         * we should be good to use clear.
+         */
+        the_container.clear();
+        internally_created_kernels.release();
+    }
+
+
     /**
      * link - same as above save for the following differences:
-     * raft::kernel a is assumed to have an output port a_port and 
+     * raft::kernel a is assumed to have an output port a_port and
      * raft::kernel b is assumed to have an input port b_port.
      * @param   a - raft::kernel*, with more a single output port
      * @param   a_port - const raft::port_key_type, output port name
@@ -79,11 +102,11 @@ public:
      * @return  kernel_pair_t - references to src, dst kernels.
      */
     template < raft::order::spec t = raft::order::in >
-       kernel_pair_t link( raft::kernel *a, 
-                           raft::port_key_type a_port, 
-                           raft::kernel *b, 
-                           raft::port_key_type b_port,
-                           const std::size_t buffer = 0 )
+    kernel_pair_t link( raft::kernel *a,
+                        raft::port_key_type a_port,
+                        raft::kernel *b,
+                        raft::port_key_type b_port,
+                        const std::size_t buffer = 0 )
     {
         updateKernels( a, b );
         /**
@@ -92,20 +115,20 @@ public:
         PortInfo *port_info_a( nullptr );
         if( a_port == raft::null_port_value )
         {
-            try{ 
-               port_info_a =  &(a->output.getPortInfo());
-               a_port = port_info_a->my_name;
+            try{
+                port_info_a = &( a->output.getPortInfo() );
+                a_port = port_info_a->my_name;
             }
             catch( AmbiguousPortAssignmentException &ex )
             {
-               portNotFound( true,
-                             ex,
-                             a );
+                portNotFound( true,
+                              ex,
+                              a );
             }
         }
         else
         {
-            port_info_a =  &a->output.getPortInfoFor( a_port );
+            port_info_a = &a->output.getPortInfoFor( a_port );
         }
         port_info_a->fixed_buffer_size = buffer;
         /**
@@ -120,97 +143,150 @@ public:
             }
             catch( AmbiguousPortAssignmentException &ex )
             {
-                portNotFound( false, 
+                portNotFound( false,
                               ex,
                               b );
             }
-
         }
         else
         {
             port_info_b = &b->input.getPortInfoFor( b_port );
         }
         port_info_b->fixed_buffer_size = buffer;
-        
+
         assert( port_info_a != nullptr );
         assert( port_info_b != nullptr );
 
-        join( *a, a_port, *port_info_a, 
+        join( *a, a_port, *port_info_a,
               *b, b_port, *port_info_b );
-        
-        set_order< t >( *port_info_a, *port_info_b ); 
+
+        set_order< t >( *port_info_a, *port_info_b );
         return( kernel_pair_t( a, b ) );
     }
 
 
 
 protected:
-   /**
-    * join - helper method joins the two ports given the correct 
-    * information.  Essentially the correct information for the 
-    * PortInfo object is set.  Type is also checked using the 
-    * typeid information.  If the types aren't the same then an
-    * exception is thrown.
-    * @param a - raft::kernel&
-    * @param name_a - name for the port on kernel a
-    * @param a_info - PortInfo struct for kernel a
-    * @param b - raft::kernel&
-    * @param name_b - name for port on kernel b
-    * @param b_info - PortInfo struct for kernel b
-    * @throws PortTypeMismatchException
-    */
-   static void join( raft::kernel &a, const raft::port_key_type name_a, PortInfo &a_info, 
-                     raft::kernel &b, const raft::port_key_type name_b, PortInfo &b_info );
-   
-   static void insert( raft::kernel *a,  PortInfo &a_out, 
-                       raft::kernel *b,  PortInfo &b_in,
-                       raft::kernel *i );
+    /**
+     * join - helper method joins the two ports given the correct
+     * information.  Essentially the correct information for the
+     * PortInfo object is set.  Type is also checked using the
+     * typeid information.  If the types aren't the same then an
+     * exception is thrown.
+     * @param a - raft::kernel&
+     * @param name_a - name for the port on kernel a
+     * @param a_info - PortInfo struct for kernel a
+     * @param b - raft::kernel&
+     * @param name_b - name for port on kernel b
+     * @param b_info - PortInfo struct for kernel b
+     * @throws PortTypeMismatchException
+     */
+    static void join( raft::kernel &a,
+                      const raft::port_key_type name_a,
+                      PortInfo &a_info,
+                      raft::kernel &b,
+                      const raft::port_key_type name_b,
+                      PortInfo &b_info )
+    {
+        if( a_info.type != b_info.type )
+        {
+            std::stringstream ss;
+            ss << "Error found when attempting to join kernel \"" <<
+                common::printClassName( a ) <<  "\" with port [" <<
+                a.output.getPortName( name_a ) << "] to kernel \"" <<
+                common::printClassName( b ) << "\" with port [" <<
+                b.input.getPortName( name_b ) <<
+                "], their types must match. currently their types are (" <<
+                common::printClassNameFromStr( a_info.type.name() ) <<
+                " -and- " <<
+                common::printClassNameFromStr( b_info.type.name() ) << ").";
+            throw PortTypeMismatchException( ss.str() );
+        }
+        if( a_info.other_kernel != nullptr )
+        {
+            //FIXME
+            throw PortDoubleInitializeException(
+                    "port double initialized with: " );
+            //+ std::to_string( name_b ) );
+        }
+        if( b_info.other_kernel != nullptr )
+        {
+            //FIXME
+            throw PortDoubleInitializeException(
+                    "port double initialized with: " );
+            //+ std::to_string( name_a ) );
+        }
+        a_info.other_kernel = &b;
+        a_info.other_name = name_b;
+        b_info.other_kernel = &a;
+        b_info.other_name = name_a;
+    }
 
-   /** 
-    * set_order - keep redundant code, well, less redundant. 
-    * This version handles the in-order settings.
-    * @param    port_info_a, PortInfo&
-    * @param    port_info_b, PortInfo&
-    */
-   template < raft::order::spec t,
-              typename std::enable_if< t == raft::order::in >::type* = nullptr > 
-   static
-   void set_order( PortInfo &port_info_a, 
-                   PortInfo &port_info_b ) noexcept
-   {
-        port_info_a.out_of_order = false; 
+    static void insert( raft::kernel *a, PortInfo &a_out,
+                        raft::kernel *b, PortInfo &b_in,
+                        raft::kernel *i )
+    {
+#ifdef STRING_NAMES
+        PortInfo &i_in( i->input.getPortInfoFor( "0" ) ),
+                 &i_out( i->output.getPortInfoFor( "0" ) );
+#else
+        PortInfo &i_in( i->input.getPortInfoFor( raft::port_key_type( 0 ) ) ),
+                 &i_out( i->output.getPortInfoFor( raft::port_key_type(
+                                 0 ) ) );
+#endif
+        join( *a, a_out.my_name, a_out,
+              *i, i_in.my_name, i_in );
+        join( *i, i_out.my_name, i_out,
+              *b, b_in.my_name, b_in );
+    }
+
+    /**
+     * set_order - keep redundant code, well, less redundant.
+     * This version handles the in-order settings.
+     * @param    port_info_a, PortInfo&
+     * @param    port_info_b, PortInfo&
+     */
+    template < raft::order::spec t,
+               typename std::enable_if< t == raft::order::in >::type* =
+                   nullptr >
+    static
+    void set_order( PortInfo &port_info_a,
+                    PortInfo &port_info_b ) noexcept
+    {
+        port_info_a.out_of_order = false;
         port_info_b.out_of_order = false;
-        return;           
-   }
-   
-   /** 
-    * set_order - keep redundant code, well, less redundant. 
-    * This version handles the out-of-order settings.
-    * @param    port_info_a, PortInfo&
-    * @param    port_info_b, PortInfo&
-    */
-   template < raft::order::spec t,
-              typename std::enable_if< t == raft::order::out >::type* = nullptr > 
-   static 
-   void set_order( PortInfo &port_info_a, 
-                   PortInfo &port_info_b ) noexcept
-   {
-        port_info_a.out_of_order = true; 
-        port_info_b.out_of_order = true; 
         return;
-   }
+    }
 
-    template < class A, 
+    /**
+     * set_order - keep redundant code, well, less redundant.
+     * This version handles the out-of-order settings.
+     * @param    port_info_a, PortInfo&
+     * @param    port_info_b, PortInfo&
+     */
+    template < raft::order::spec t,
+               typename std::enable_if< t == raft::order::out >::type* =
+                   nullptr >
+    static
+    void set_order( PortInfo &port_info_a,
+                    PortInfo &port_info_b ) noexcept
+    {
+        port_info_a.out_of_order = true;
+        port_info_b.out_of_order = true;
+        return;
+    }
+
+    template < class A,
                class B >
     void updateKernels( A &a, B &b )
     {
         if( ! a->input.hasPorts() )
         {
-           source_kernels += a;
+            source_kernels += a;
         }
         if( ! b->output.hasPorts() )
         {
-           dst_kernels += b;
+            dst_kernels += b;
         }
         all_kernels += a;
         all_kernels += b;
@@ -229,37 +305,58 @@ protected:
         }
     }
 
-   static void portNotFound( const bool src, 
-                             const AmbiguousPortAssignmentException &ex, 
-                             raft::kernel * const k );
+    static void portNotFound( const bool src,
+                              const AmbiguousPortAssignmentException &ex,
+                              raft::kernel * const k )
+    {
+        std::stringstream ss;
+        const auto name( raft::demangle( typeid( *k ).name() ) );
+        if( src )
+        {
+            ss << ex.what() << "\n";
+            ss << "Output port from source kernel (" << name << ") " <<
+                   "has more than a single port.";
 
-   /** need to keep source kernels **/
-   kernelkeeper              source_kernels;
-   /** dst kernels **/
-   kernelkeeper              dst_kernels;
-   /** and keep a list of all kernels **/
-   kernelkeeper              all_kernels;
-   
+        }
+        else
+        {
+            ss << ex.what() << "\n";
+            ss << "Input port from destination kernel (" << name << ") " <<
+                   "has more than a single port.";
+        }
+        throw AmbiguousPortAssignmentException( ss.str() );
+    }
 
-   /**
-    * bug fix for issue #77, keeping list of 
-    * internally created compute kernels, this
-    * after a second thought and looking at the 
-    * dev branch, this will need to be thread safe
-    * so moving to a kernelkeeper object. - jcb 20Nov2018
-    */
-    kernelkeeper            internally_created_kernels;
-   
-   /** 
-    * FIXME: come up with better solution for enabling online
-    * duplication of submaps as a unit.
-    *
-    * DOES: flatten these kernels into main map once we run 
-    */
-   std::vector< MapBase* >   sub_maps;
-   friend class raft::map;
-   friend class raft::make_dot;
+    /** need to keep source kernels **/
+    kernelkeeper source_kernels;
+    /** dst kernels **/
+    kernelkeeper dst_kernels;
+    /** and keep a list of all kernels **/
+    kernelkeeper all_kernels;
+
+
+    /**
+     * bug fix for issue #77, keeping list of
+     * internally created compute kernels, this
+     * after a second thought and looking at the
+     * dev branch, this will need to be thread safe
+     * so moving to a kernelkeeper object. - jcb 20Nov2018
+     */
+    kernelkeeper internally_created_kernels;
+
+    /**
+     * FIXME: come up with better solution for enabling online
+     * duplication of submaps as a unit.
+     *
+     * DOES: flatten these kernels into main map once we run
+     */
+    std::vector< MapBase* > sub_maps;
+    friend class raft::map;
+    friend class raft::make_dot;
+    friend class basic_parallel;
+    friend class Allocate;
+    friend class Schedule;
 };
-   
+
 
 #endif /* END RAFTMAPBASE_HPP */

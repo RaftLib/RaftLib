@@ -23,12 +23,14 @@
 #include <string>
 #include "kset.tcc"
 #include "defs.hpp"
+#include "kernel.hpp"
+#include "kernel_wrapper.hpp"
 
 namespace raft
 {
     class kernel;
-    class kernel_wrapper;
-    class map;
+    //class kernel_wrapper;
+    //class map;
 }
 
 class kpair;
@@ -52,79 +54,132 @@ public:
     kpair( raft::kernel &a, 
            raft::kernel &b,
            const bool split,
-           const bool join );
+           const bool join ) : kpair( a, b )
+    {
+        split_to = split;
+        join_from = join;
+    }
     
     kpair( raft::kernel &a, 
            raft::kernel_wrapper &b,
            const bool split,
-           const bool join );
+           const bool join ) : kpair( a, *( *b ), split, join ) {}
     
     kpair( raft::kernel_wrapper &a, 
            raft::kernel &b,
            const bool split,
-           const bool join );
+           const bool join ) : kpair( *( *a ), b, split, join ) {}
     
     kpair( raft::kernel_wrapper &a, 
            raft::kernel_wrapper &b,
            const bool split,
-           const bool join );
+           const bool join ) : kpair( *( *a ), *( *b ), split, join ) {}
 
     kpair( kpair &a,
-           raft::kernel  &b,
+           raft::kernel &b,
            const bool split,
-           const bool join );
+           const bool join ) : kpair( *( a.dst ), b )
+    {
+        head = a.head;
+        a.next = this;
+        split_to = split;
+        join_from = join;
+    }
     
     kpair( kpair &a,
-           raft::kernel_wrapper  &b,
+           raft::kernel_wrapper &b,
            const bool split,
-           const bool join );
+           const bool join ) : kpair( a, *( *b ), split, join ) {}
 
     kpair( raft::kernel &a,
-           kpair        &n,
-           const bool   split,
-           const bool   join );
+           kpair &n,
+           const bool split,
+           const bool join ) : kpair( a, *( n.src ) )
+    {
+        head = this;
+        next = &n;
+        split_to = split;
+        join_from = join;
+    }
     
     kpair( raft::kernel_wrapper &a,
-           kpair        &n,
-           const bool   split,
-           const bool   join );
+           kpair &n,
+           const bool split,
+           const bool join ) : kpair( *( *a ), n, split, join ) {}
 
     kpair( kpair &a,
            kpair &b,
            const bool split,
-           const bool join );
+           const bool join ) : kpair( *( a.dst ), *( b.src ) )
+    {
+        head = a.head;
+        a.next = this;
+        b.head = a.head;
+        next = &b;
+        split_to = split;
+        join_from = join;
+    }
 
-    kpair( raft::kernel &a, raft::kernel &b );
+    kpair( raft::kernel &a, raft::kernel &b )
+    {
+        src = &a;
+        src_name = a.getEnabledPort();
+        if( src_name != raft::null_port_value )
+        {
+            /** set false by default **/
+            has_src_name = true;
+        }
+        dst = &b;
+        dst_name = b.getEnabledPort();
+        if( dst_name != raft::null_port_value )
+        {
+            /** set false by default **/
+            has_dst_name = true;
+        }
+        src_out_count = a.output.count();
+        dst_in_count = b.input.count();
+        head = this;
+    }
     
     kpair( raft::kernel &a, 
-           raft::kernel_wrapper &b );
+           raft::kernel_wrapper &b ) : kpair( a, *( *b ) )
+    {
+    }
     
     kpair( raft::kernel_wrapper &a, 
-           raft::kernel  &b );
+           raft::kernel &b ) : kpair( *( *a ), b )
+    {
+    }
 
     kpair( raft::kernel_wrapper &a, 
-           raft::kernel_wrapper &b );
+           raft::kernel_wrapper &b ) : kpair( *( *a ), *( *b ) )
+    {
+    }
     
-    void setOoO() noexcept;
+    void setOoO() noexcept
+    {
+        (this)->out_of_order = true;
+        return;
+    }
 
 protected:
-    kpair        *next          = nullptr;
-    kpair        *head          = nullptr;
-    raft::kernel *src           = nullptr;
-    bool          has_src_name  = false;
+    kpair *next = nullptr;
+    kpair *head = nullptr;
+    raft::kernel *src = nullptr;
+    raft::kernel *dst = nullptr;
+    bool has_src_name = false;
+    bool has_dst_name = false;
     raft::port_key_type src_name = raft::null_port_value;
-    raft::kernel *dst           = nullptr;
-    bool          has_dst_name  = false;
     raft::port_key_type dst_name = raft::null_port_value;
     
-    std::size_t   buffer_size   = 0;
+    std::size_t buffer_size = 0;
     
-    bool          split_to      = false;
-    core_id_t     src_out_count = 0;
-    bool          join_from     = false;
-    core_id_t     dst_in_count  = 0;
+    bool split_to = false;
+    bool join_from = false;
+    core_id_t src_out_count = 0;
+    core_id_t dst_in_count = 0;
 
-    bool          out_of_order  = false;
+    bool out_of_order = false;
     friend class raft::map;
 };
 

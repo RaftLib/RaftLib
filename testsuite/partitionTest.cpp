@@ -42,7 +42,7 @@ main( int argc, char **argv )
     ; i++ )
     {
         std::tie( BEGIN, END ) = kernels.getDst();
-        kernels = ( m += (*BEGIN).get() >> raft::kernel::make< sub >( 1, 1, l_sub ) ); 
+        kernels = ( m += (*BEGIN).get() >> raft::kernel_wrapper::make< sub >( 1, 1, l_sub ) );
     }
     std::tie( BEGIN, END ) = kernels.getDst();
     m += (*BEGIN).get() >> p;

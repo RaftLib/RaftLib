@@ -1,10 +1,10 @@
 /**
- * common.hpp - static helper functions of various types 
+ * common.hpp - static helper functions of various types
  * @author: Jonathan Beard
  * @version: Sun May 10 19:10:06 2015
- * 
+ *
  * Copyright 2015 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -25,6 +25,9 @@
 #include <functional>
 #include <typeinfo>
 
+#include "defs.hpp"
+#include "demangle.hpp"
+
 class common
 {
 public:
@@ -35,39 +38,45 @@ public:
  * of the class from either the typeinfo or typeid( xx ).name()
  * call.
  */
-static std::string __printClassName( const std::string &&obj_name );
+static std::string __printClassName( const std::string &&obj_name )
+{
+    return( raft::demangle( obj_name.c_str() ) );
+}
 
-static std::string printClassNameFromStr( const std::string &&str );
+static std::string printClassNameFromStr( const std::string &&str )
+{
+    return( common::__printClassName( std::move( str ) ) );
+}
 
 /**
- * pringClassName - takes in a class reference and 
+ * pringClassName - takes in a class reference and
  * prints the class name using cxx-demangle.  I basically
- * got tired of typing all the error checking code over 
- * and over so here's a simplified interface for it.  
+ * got tired of typing all the error checking code over
+ * and over so here's a simplified interface for it.
  * @param k - Class reference for which you want the class.
  * @returns std::string
  */
 template < class K > static
-   std::string printClassName( K &k )
+std::string printClassName( K &k )
 {
-   return( common::__printClassName( typeid( k ).name() ) );
+    return( common::__printClassName( typeid( k ).name() ) );
 }
 
 
 /**
- * convert_arr - used to convert the forwared parameter pack 
- * to something that's non const 
+ * convert_arr - used to convert the forwared parameter pack
+ * to something that's non const
  */
-template < class... F > 
+template < class... F >
 constexpr static auto convert_arr( F&&... t )
 #ifdef STRING_NAMES
     -> std::array< std::string, sizeof...(F) >
 #else
-    -> std::array< 
-        std::reference_wrapper< F >, 
+    -> std::array<
+        std::reference_wrapper< F >,
         sizeof...(F)
         >
-#endif        
+#endif
 {
     return { std::forward< F >( t )... };
 }
