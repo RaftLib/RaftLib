@@ -21,7 +21,7 @@
 #define RAFTSYSSCHEDUTIL_HPP  1
 
 #if (! defined _WIN64) && (! defined _WIN32)
-#ifdef USEQTHREADS
+#ifdef QTHREAD_FOUND
 #include <qthread/qthread.hpp>
 #else
 #include <sched.h>
@@ -40,11 +40,7 @@ static inline void yield()
 {
 
 #if (! defined _WIN64) && (! defined _WIN32)
-#ifdef USEQTHREADS
-    qthread_yield();
-#elif defined NICE
-    sched_yield();
-#endif
+    @RAFT_YIELD@();
 #endif /** end if not win **/
     return;
 }

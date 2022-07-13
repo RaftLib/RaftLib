@@ -11,6 +11,7 @@ target_include_directories(raft
     ${PROJECT_SOURCE_DIR}
     ${CMAKE_SCOTCH_INCS}
     ${QTHREAD_INCLUDE}
+    ${PROJECT_BINARY_DIR}/raftinc
 )
 
 target_link_libraries(
