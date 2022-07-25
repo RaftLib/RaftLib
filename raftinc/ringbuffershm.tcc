@@ -304,6 +304,9 @@ protected:
           (this)->producer_data.write_stats->bec.count++;
        }
       buff_ptr->signal[ write_index ]         = signal;
+#if defined(__aarch64__)
+      asm volatile( "dmb ishst" : : : "memory" ); /** memory write barrier **/
+#endif
        Pointer::inc( buff_ptr->write_pt );
       (this)->datamanager.exitBuffer( dm::push );
    }
@@ -734,6 +737,9 @@ protected:
           (this)->producer_data.write_stats->bec.count++;
        }
       buff_ptr->signal[ write_index ]         = signal;
+#if defined(__aarch64__)
+      asm volatile( "dmb ishst" : : : "memory" ); /** memory write barrier **/
+#endif
        Pointer::inc( buff_ptr->write_pt );
 #if 0
       if( signal == raft::quit )

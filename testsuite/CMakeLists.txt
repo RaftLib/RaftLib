@@ -50,6 +50,7 @@ set( TESTAPPS allocate
      nonTrivialAllocatorPopExternal
      vectorAlloc
      stringAlloc
+     reduction
      )
 else()
 set( TESTAPPS 
