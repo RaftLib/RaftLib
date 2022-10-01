@@ -213,7 +213,6 @@ bool
 Schedule::kernelRun( raft::kernel * const kernel,
                      volatile bool       &finished )
 {
-
    if( kernelHasInputData( kernel ) )
    {
       const auto sig_status( kernel->run() );
@@ -222,6 +221,11 @@ Schedule::kernelRun( raft::kernel * const kernel,
          invalidateOutputPorts( kernel );
          finished = true;
       }
+   }
+   else
+   {
+     // a kernel is scheduled, but kernel->run() is not executed.
+     return false;
    }
    /**
     * must recheck data items again after port valid check, there could

@@ -168,8 +168,14 @@ simple_schedule::simple_run( void * data )
    }
    while( ! *(thread_d->finished) )
    {
-      Schedule::kernelRun( thread_d->k, *(thread_d->finished) );
+      bool validScheduling = Schedule::kernelRun( thread_d->k, *(thread_d->finished) );
       //takes care of peekset clearing too
       Schedule::fifo_gc( &in, &out, &peekset );
+
+      if(validScheduling == false)
+      {
+        std::chrono::milliseconds dura( 5 );
+        std::this_thread::sleep_for( dura );
+      }
    }
 }
