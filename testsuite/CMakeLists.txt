@@ -50,6 +50,7 @@ if( STRING_NAMES )
          nonTrivialAllocatorPopExternal
          vectorAlloc
          stringAlloc
+         reduction
          )
 else()
     set( TESTAPPS
