@@ -35,6 +35,7 @@
 #include "rafttypes.hpp"
 #include "common.hpp"
 #include "defs.hpp"
+#include "kpair.hpp"
 
 /** pre-declare for friends **/
 class MapBase;
@@ -42,7 +43,6 @@ class Schedule;
 class kernel_container;
 class Map;
 class basic_parallel;
-class kpair;
 class interface_partition;
 class pool_schedule;
 class GraphTools;
@@ -52,7 +52,6 @@ class GraphTools;
 namespace raft
 {
     class kernel;
-    class kernel_wrapper;
 }
 #define CLONE() \
 virtual raft::kernel* clone()\
@@ -129,69 +128,100 @@ public:
      * @return raft::kernel&&
      */
 #ifdef STRING_NAMES
-    raft::kernel& operator []( const raft::port_key_type &&portname )
+    KernelPortMeta operator []( const raft::port_key_type &&portname )
     {
-        if( enabled_port.size() < 2 )
-        {
-             enabled_port.push( portname );
-        }
-        else
-        {
-             throw AmbiguousPortAssignmentException(
-                 "too many ports added with: " + portname
-             );
-        }
-        return( (*this) );
+        return( KernelPortMeta(this, portname,
+                    output.count(), input.count()) );
     }
-    raft::kernel& operator []( const raft::port_key_type &portname )
+    KernelPortMeta operator []( const raft::port_key_type &portname )
     {
-        if( enabled_port.size() < 2 )
-        {
-             enabled_port.push( portname );
-        }
-        else
-        {
-             throw AmbiguousPortAssignmentException(
-                 "too many ports added with: " + portname
-             );
-        }
-        return( (*this) );
+        return( KernelPortMeta(this, portname,
+                    output.count(), input.count()) );
     }
 #else
-    template < class T > raft::kernel&
+    template < class T > KernelPortMeta
     operator []( const T &&portname )
     {
-       if( enabled_port.size() < 2 )
-       {
-            enabled_port.push( portname.val );
-       }
-       else
-       {
-            throw AmbiguousPortAssignmentException(
-                //"too many ports added with: " + portname.str
-                "too many ports added with: "
-            );
-       }
-       return( (*this) );
+        return( KernelPortMeta(this, portname,
+                     output.count(), input.count()) );
     }
 
-    template < class T > raft::kernel&
+    template < class T > KernelPortMeta
     operator []( const T &portname )
     {
-       if( enabled_port.size() < 2 )
-       {
-            enabled_port.push( portname.val );
-       }
-       else
-       {
-            throw AmbiguousPortAssignmentException(
-                //"too many ports added with: " + portname.str
-                "too many ports added with: "
-            );
-       }
-       return( (*this) );
+        return( KernelPortMeta(this, portname,
+                     output.count(), input.count()) );
     }
 #endif /** end if not string names **/
+
+    kpair&
+    operator >> ( kernel *rhs )
+    {
+        auto *ptr( new kpair( this, rhs ) );
+        return( *ptr );
+    }
+
+    kpair&
+    operator >> ( kernel &rhs )
+    {
+        auto *ptr( new kpair( this, &rhs ) );
+        return( *ptr );
+    }
+
+    kpair&
+    operator >> ( const KernelPortMeta &rhs )
+    {
+        KernelPortMeta *meta_ptr = new KernelPortMeta(rhs);
+        auto *ptr( new kpair( this, meta_ptr ) );
+        return( *ptr );
+    }
+
+    kpair&
+    operator >> ( KernelPortMeta *rhs )
+    {
+        auto *ptr( new kpair( this, rhs ) );
+        return( *ptr );
+    }
+
+    kpair&
+    operator <= ( kernel &rhs )
+    {
+        auto *ptr( new kpair( this, &rhs, true, false ) );
+        return( *ptr );
+    }
+
+    kpair&
+    operator <= ( kpair &rhs )
+    {
+        auto *ptr( new kpair( this, rhs, true, false ) );
+        return( *ptr );
+    }
+
+    kpair&
+    operator >= ( raft::kernel *rhs )
+    {
+        auto *ptr( new kpair( this, rhs, false, true ) );
+        return( *ptr );
+    }
+
+    kpair&
+    operator >= ( kpair &rhs )
+    {
+        auto *ptr( new kpair( this, rhs, false, true ) );
+        return(*ptr);
+    }
+
+    /**
+     * >>, we're using the raft::order::spec as a linquistic tool
+     * at this point. It's only used for disambiguating functions.
+     */
+    LOoOkpair&
+    operator >> ( const raft::order::spec &&order )
+    {
+        UNUSED( order );
+        auto *ptr( new LOoOkpair( *this ) );
+        return( *ptr );
+    }
 
     core_id_t getCoreAssignment() noexcept
     {
@@ -215,6 +245,12 @@ public:
     constexpr void setAffinityGroup( const core_id_t ag )
     {
         affinity_group = ag;
+        return;
+    }
+
+    constexpr void setInternalAlloc()
+    {
+        internal_alloc = true;
         return;
     }
 
@@ -296,13 +332,7 @@ protected:
 
     raft::port_key_type getEnabledPort()
     {
-        if( enabled_port.size() == 0 )
-        {
-            return( raft::null_port_value );
-        }
-        const auto head( enabled_port.front() );
-        enabled_port.pop();
-        return( head );
+        return( raft::null_port_value );
     }
 
     /** in namespace raft **/
@@ -368,12 +398,17 @@ private:
     const std::size_t kernel_id;
 
     bool execution_done = false;
-
-    /** for operator syntax **/
-    std::queue< raft::port_key_type > enabled_port;
-
-    friend class kernel_wrapper;
 };
+
+
+template < class T /** kernel type **/,
+           class ... Args >
+T* kernel_maker( Args&&... params )
+{
+    auto *k( new T( std::forward< Args >( params )... ) );
+    k->setInternalAlloc();
+    return k;
+}
 
 
 } /** end namespace raft */

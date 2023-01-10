@@ -6,14 +6,10 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
 include(Colors)
 
-set( RAFT_YIELD "sched_yield" )
 option( USEQTHREAD "Use QThread threading library" false )
 find_package( QThreads )
 if( QTHREAD_FOUND )
     add_definitions("-DQTHREAD_FOUND=1")
-    if( USEQTHREAD )
-        set( RAFT_YIELD "qthread_yield" )
-    endif()
 endif()
 
 ##
@@ -60,7 +56,6 @@ find_package( Threads )
 include( CheckGitDep )
 
 
-add_subdirectory( src )
 add_subdirectory( raftinc )
 
 mark_as_advanced( BUILD_EXAMPLES )

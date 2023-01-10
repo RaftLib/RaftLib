@@ -78,7 +78,7 @@ main()
     
 
     raft::map m;
-    m += g >= print;
+    m += g >= &print;
     
     m.exe();
 

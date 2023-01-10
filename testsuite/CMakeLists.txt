@@ -66,12 +66,18 @@ endif( BUILDRANDOM )
 foreach( APP ${TESTAPPS} )
     add_executable( ${APP} "${APP}.cpp" )
     target_link_libraries( ${APP}
-                           raft
                            demangle
                            affinity
                            ${CMAKE_THREAD_LIBS_INIT}
                            ${CMAKE_QTHREAD_LIBS}
                            )
+    target_include_directories( ${APP}
+                                PUBLIC
+                                ${PROJECT_SOURCE_DIR}/raftinc
+                                ${PROJECT_SOURCE_DIR}
+                                ${PROJECT_BINARY_DIR}/raftinc
+                                ${QTHREAD_INCLUDE}
+                              )
     add_test( NAME "${APP}_test" COMMAND ${APP} )
 endforeach( APP ${TESTAPPS} )
 

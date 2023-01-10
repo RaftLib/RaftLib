@@ -35,11 +35,12 @@ find_path( QTHREAD_INCLUDE
            /usr/local/include/qthread
            /usr/include/qthread )
 
-              
+
 if( QTHREAD_LIBRARY AND QTHREAD_INCLUDE )
     get_filename_component( QTHREAD_LIBRARY ${QTHREAD_LIBRARY} DIRECTORY )
     link_directories( ${QTHREAD_LIBRARY} )
     set( QTHREAD_FOUND TRUE )
+    set( CMAKE_QTHREAD_FLAGS  "-DQTHREAD_FOUND" )
     set( CMAKE_QTHREAD_LIBS  "-lqthread" )
     set( CMAKE_QTHREAD_INCS "-I${QTHREAD_INCLUDE}" )
     set( CMAKE_QTHREAD_LDFLAGS "-L${QTHREAD_LIBRARY}" )

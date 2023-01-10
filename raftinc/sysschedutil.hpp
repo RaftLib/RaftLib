@@ -23,9 +23,11 @@
 #if (! defined _WIN64) && (! defined _WIN32)
 #ifdef QTHREAD_FOUND
 #include <qthread/qthread.hpp>
-#else
-#include <sched.h>
 #endif
+#ifdef UT_FOUND
+#include <ut>
+#endif
+#include <sched.h>
 #endif /** end if not win **/
 
 namespace raft
@@ -40,7 +42,13 @@ static inline void yield()
 {
 
 #if (! defined _WIN64) && (! defined _WIN32)
-    @RAFT_YIELD@();
+#ifdef USE_UT
+    rt::yield();
+#elif defined(USE_QTHREAD)
+    qthread_yield();
+#else
+    sched_yield();
+#endif
 #endif /** end if not win **/
     return;
 }
