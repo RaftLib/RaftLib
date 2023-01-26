@@ -43,7 +43,7 @@ static inline void yield()
 
 #if (! defined _WIN64) && (! defined _WIN32)
 #ifdef USE_UT
-    rt::yield();
+    rt::Yield();
 #elif defined(USE_QTHREAD)
     qthread_yield();
 #else

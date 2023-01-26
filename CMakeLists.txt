@@ -6,10 +6,13 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
 include(Colors)
 
-option( USEQTHREAD "Use QThread threading library" false )
 find_package( QThreads )
+find_package( UT )
 if( QTHREAD_FOUND )
     add_definitions("-DQTHREAD_FOUND=1")
+endif()
+if( UTFOUND )
+    add_definitions("-DUT_FOUND=1")
 endif()
 
 ##

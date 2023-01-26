@@ -40,6 +40,14 @@ To assist cmake to find the QThread library install, you can set the environment
 If QThread is found and compiled, the corresponding compiler flags and include path, linking
 path would be set in the pkg-config file for RaftLib.
 
+Similarly, to use the [libut threading library](https://github.com/UT-LCA/libut)
+you can set the environment variable
+`UT_PATH=<libut install path>`, or
+`UT_LIB=<libut library path> UT_INC=<libut header path>`
+to assist cmake to find the libut library install.
+If libut is found, the corresponding compiler flags and include path, linking path would
+be set in the pkg-config file for RaftLib.
+
 Building the examples, and tests can be disabled using:
 ```bash
 -DBUILD_EXAMPLES=false

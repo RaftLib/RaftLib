@@ -91,7 +91,7 @@ public:
 #endif
               , /** comma for above **/
               class scheduler =
-#ifdef USEQTHREAD
+#ifdef USE_QTHREAD
               pool_schedule
 #else
               simple_schedule

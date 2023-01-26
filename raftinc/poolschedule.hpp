@@ -46,46 +46,26 @@ namespace raft
 
 class pool_schedule : public Schedule
 {
-public:
-    /**
-     * pool_schedule - constructor, takes a map object,
-     * calling this will launch threads.  scheduler itself
-     * is also run as a thread.
-     * @param   map - raft::map&
-     */
-    pool_schedule( MapBase &map ) : Schedule( map )
+    static void main_wrapper( void* arg )
     {
-#if QTHREAD_FOUND
-        const auto ret_val( qthread_initialize() );
-        if( ret_val != 0 )
+        pool_schedule *this_ptr = (pool_schedule*) arg;
+        this_ptr->main_handler();
+    }
+
+    void main_handler() {
+        auto &container( this->kernel_set.acquire() );
+#if USE_UT
+        int tail_count = 0;
+        for( auto * const k : container )
         {
-            std::cerr << "failure to initialize qthreads runtime, exiting\n";
-            exit( EXIT_FAILURE );
+            if( ! k->output.hasPorts() ) /** has no outputs **/
+            {
+                tail_count++;
+            }
         }
-        thread_data_pool.reserve( kernel_set.size() );
+        waitgroup_init(&wg);
+        waitgroup_add(&wg, tail_count);
 #endif
-    }
-
-    /**
-     * destructor, deletes threads and cleans up container
-     * objects.
-     */
-    virtual ~pool_schedule()
-    {
-#if QTHREAD_FOUND
-        /** kill off the qthread structures **/
-        qthread_finalize();
-#endif
-    }
-
-    /**
-     * start - call to start executing map, at this point
-     * the mapper sould have checked the topology and
-     * everything should be set up for running.
-     */
-    virtual void start()
-    {
-        auto &container( kernel_set.acquire() );
         for( auto * const k : container )
         {
             (this)->handleSchedule( k );
@@ -99,20 +79,82 @@ public:
          * TODO list I'll implement a better mwait monitor vs. spinning
          * which is relatively bad.
          */
-        kernel_set.release();
-    START:
-        std::chrono::milliseconds dura( 3 );
-        std::this_thread::sleep_for( dura );
-        tail_mutex.lock();
-        for( auto * const td : tail )
+        this->kernel_set.release();
+#if USE_UT
+        waitgroup_wait(&wg);
+#else
+        do
         {
-            if( ! td->finished )
+            std::chrono::milliseconds dura( 3 );
+            std::this_thread::sleep_for( dura );
+            bool all_finished = true;
+            this->tail_mutex.lock();
+            for( auto * const td : this->tail )
             {
-                tail_mutex.unlock();
-                goto START;
+                if( ! td->finished )
+                {
+                    all_finished = false;
+                    break;
+                }
             }
+            this->tail_mutex.unlock();
+            if( all_finished ) {
+                break;
+            }
+        } while( true );
+#endif // USE_UT
+    }
+public:
+    /**
+     * pool_schedule - constructor, takes a map object,
+     * calling this will launch threads.  scheduler itself
+     * is also run as a thread.
+     * @param   map - raft::map&
+     */
+    pool_schedule( MapBase &map ) : Schedule( map )
+    {
+#if USE_QTHREAD
+        const auto ret_val( qthread_initialize() );
+        if( ret_val != 0 )
+        {
+            std::cerr << "failure to initialize qthreads runtime, exiting\n";
+            exit( EXIT_FAILURE );
         }
-        tail_mutex.unlock();
+#endif
+        thread_data_pool.reserve( kernel_set.size() );
+    }
+
+    /**
+     * destructor, deletes threads and cleans up container
+     * objects.
+     */
+    virtual ~pool_schedule()
+    {
+#if USE_QTHREAD
+        /** kill off the qthread structures **/
+        qthread_finalize();
+#endif
+    }
+
+    /**
+     * start - call to start executing map, at this point
+     * the mapper sould have checked the topology and
+     * everything should be set up for running.
+     */
+    virtual void start()
+    {
+#ifdef USE_UT
+        const auto ret_val( runtime_initialize( NULL ) );
+        // with cfg_path set to NULL, libut would getenv("LIBUT_CFG")
+        if ( ret_val != 0 )
+        {
+            std::cerr << "failure to initialize libut runtime, exiting\n";
+            exit( EXIT_FAILURE );
+        }
+        runtime_start( main_wrapper, this );
+#elif defined(USE_QTHREAD)
+        main_handler();
+#endif
         return;
     }
 
@@ -130,7 +172,11 @@ protected:
         inline void setCore( const core_id_t core ){ loc = core; };
         /** this is deleted elsewhere, do not delete here, bad things happen **/
         raft::kernel *k = nullptr;
+#if USE_UT
+        waitgroup_t *wg = nullptr;
+#else
         bool finished = false;
+#endif
         core_id_t loc = -1;
 #pragma pack( pop )
     };
@@ -144,17 +190,21 @@ protected:
      */
     virtual void handleSchedule( raft::kernel * const kernel )
     {
-#if QTHREAD_FOUND
         auto *td( new thread_data( kernel ) );
         thread_data_mutex.lock();
         thread_data_pool.emplace_back( td );
         thread_data_mutex.unlock();
         if( ! kernel->output.hasPorts() ) /** has no outputs **/
         {
+#if USE_UT
+            td->wg = &wg;
+#else
             std::lock_guard< std::mutex > tail_lock( tail_mutex );
             /** destination kernel **/
             tail.emplace_back( td );
+#endif
         }
+#if USE_QTHREAD
         qthread_spawn( pool_schedule::pool_run,
                        (void*) td,
                        0,
@@ -163,9 +213,11 @@ protected:
                        nullptr,
                        NO_SHEPHERD,
                        0 );
+#elif USE_UT
+        rt::Spawn( [td](){ pool_schedule::pool_run(td); } );
+#endif
         /** done **/
         return;
-#endif
     }
 
     /**
@@ -173,7 +225,6 @@ protected:
      */
     static aligned_t pool_run( void *data )
     {
-#if QTHREAD_FOUND
        assert( data != nullptr );
        auto * const thread_d( reinterpret_cast< thread_data* >( data ) );
        ptr_map_t in;
@@ -204,7 +255,7 @@ protected:
        while( raft::kernel::initialized_count( 0 ) !=
               raft::kernel::kernel_count )
        {
-           qthread_yield();
+           raft::yield();
        }
 #endif
        while( ! done )
@@ -217,17 +268,26 @@ protected:
                run_count = 0;
                //takes care of peekset clearing too
                Schedule::fifo_gc( &in, &out, &peekset );
-               qthread_yield();
+               raft::yield();
            }
        }
+#if USE_UT
+       if (thread_d->wg) { // only tail kernel has wg pointer assigned
+           waitgroup_done(thread_d->wg);
+       }
+#else
        thread_d->finished = true;
+#endif
        return( 1 );
-#endif // QTHREAD_FOUND
     }
 
     std::mutex thread_data_mutex;
     std::vector< thread_data* > thread_data_pool;
+#if USE_UT
+    waitgroup_t wg;
+#else
     std::mutex tail_mutex;
     std::vector< thread_data* > tail;
+#endif
 };
 #endif /* END RAFTPOOLSSCHEDULE_HPP */
