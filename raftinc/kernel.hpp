@@ -194,7 +194,7 @@ public:
     operator <= ( kpair &rhs )
     {
         auto *ptr( new kpair( this, rhs, true, false ) );
-        return( *ptr );
+        return( rhs );
     }
 
     kpair&
@@ -208,7 +208,7 @@ public:
     operator >= ( kpair &rhs )
     {
         auto *ptr( new kpair( this, rhs, false, true ) );
-        return(*ptr);
+        return( rhs );
     }
 
     /**

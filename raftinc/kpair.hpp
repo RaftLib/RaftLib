@@ -92,6 +92,20 @@ operator >> ( PairBase < T, N > &a, raft::kernel *b )
     return nullptr;
 }
 
+template < class T, int N >
+kpair&
+operator >> ( PairBase < T, N > &a, raft::kernel &b )
+{
+    return nullptr;
+}
+
+template < class T, int N >
+kpair&
+operator >> ( PairBase < T, N > &a, KernelPortMeta b )
+{
+    return nullptr;
+}
+
 class kpair
 {
 public:
@@ -113,6 +127,7 @@ public:
     {
         head = this;
         next = &b;
+        b.head = this;
         split_to = split;
         join_from = join;
     }
@@ -183,11 +198,15 @@ public:
     {
         head = this;
         next = &b;
+        b.head = this;
         split_to = split;
         join_from = join;
     }
 
-    kpair( KernelPortMeta *a, KernelPortMeta *b )
+    kpair( KernelPortMeta *a,
+           KernelPortMeta *b,
+           const bool split = false,
+           const bool join = false )
     {
         src_meta = a;
         src = a->kernel;
@@ -220,6 +239,9 @@ public:
         src_out_count = a->out_ports_count;
         dst_in_count = b->in_ports_count;
         head = this;
+
+        split_to = split;
+        join_from = join;
     }
 
     kpair&
@@ -252,9 +274,9 @@ public:
     }
 
     kpair&
-    operator >= ( raft::kernel *rhs )
+    operator >= ( raft::kernel &rhs )
     {
-        auto *ptr( new kpair( *this, rhs, false, true ) );
+        auto *ptr( new kpair( *this, &rhs, false, true ) );
         return( *ptr );
     }
 
@@ -262,7 +284,51 @@ public:
     operator >= ( kpair &rhs )
     {
         auto *ptr( new kpair( *this, rhs, false, true ) );
-        return(*ptr);
+        return( rhs );
+    }
+
+    kpair&
+    operator >= ( const KernelPortMeta &rhs )
+    {
+        KernelPortMeta *meta_ptr = new KernelPortMeta(rhs);
+        auto *ptr( new kpair( *this, meta_ptr, false, true ) );
+        return( *ptr );
+    }
+
+    kpair&
+    operator >= ( KernelPortMeta *rhs )
+    {
+        auto *ptr( new kpair( *this, rhs, false, true ) );
+        return( *ptr );
+    }
+
+    kpair&
+    operator <= ( raft::kernel &rhs )
+    {
+        auto *ptr( new kpair( *this, &rhs, true, false ) );
+        return( *ptr );
+    }
+
+    kpair&
+    operator <= ( kpair &rhs )
+    {
+        auto *ptr( new kpair( *this, rhs, true, false ) );
+        return( rhs );
+    }
+
+    kpair&
+    operator <= ( const KernelPortMeta &rhs )
+    {
+        KernelPortMeta *meta_ptr = new KernelPortMeta(rhs);
+        auto *ptr( new kpair( *this, meta_ptr, true, false ) );
+        return( *ptr );
+    }
+
+    kpair&
+    operator <= ( KernelPortMeta *rhs )
+    {
+        auto *ptr( new kpair( *this, rhs, true, false ) );
+        return( *ptr );
     }
 
     /**
@@ -343,6 +409,96 @@ operator >> ( PairBase < KernelPortMeta, N > &a, raft::kernel *b )
     auto *ptr(
         new kpair( &a.value,
                    b,
+                   false,
+                   false )
+    );
+    //delete( &a );
+    //ptr->setOoO();
+    return( *ptr );
+}
+
+template < int N >
+kpair&
+operator >> ( PairBase < raft::kernel, N > &a, raft::kernel &b )
+{
+    auto *ptr(
+        new kpair( &a.value,
+                   &b,
+                   false,
+                   false )
+    );
+    delete( &a );
+    ptr->setOoO();
+    return( *ptr );
+}
+
+template < int N >
+kpair&
+operator >> ( PairBase < kpair, N > &a, raft::kernel &b )
+{
+    auto *ptr(
+        new kpair( a.value,
+                   &b,
+                   false,
+                   false )
+    );
+    delete( &a );
+    ptr->setOoO();
+    return( *ptr );
+}
+
+template < int N >
+kpair&
+operator >> ( PairBase < KernelPortMeta, N > &a, raft::kernel &b )
+{
+    auto *ptr(
+        new kpair( &a.value,
+                   &b,
+                   false,
+                   false )
+    );
+    //delete( &a );
+    //ptr->setOoO();
+    return( *ptr );
+}
+
+template < int N >
+kpair&
+operator >> ( PairBase < raft::kernel, N > &a, KernelPortMeta b )
+{
+    auto *ptr(
+        new kpair( &a.value,
+                   new KernelPortMeta( b ),
+                   false,
+                   false )
+    );
+    delete( &a );
+    ptr->setOoO();
+    return( *ptr );
+}
+
+template < int N >
+kpair&
+operator >> ( PairBase < kpair, N > &a, KernelPortMeta b )
+{
+    auto *ptr(
+        new kpair( a.value,
+                   new KernelPortMeta( b ),
+                   false,
+                   false )
+    );
+    delete( &a );
+    ptr->setOoO();
+    return( *ptr );
+}
+
+template < int N >
+kpair&
+operator >> ( PairBase < KernelPortMeta, N > &a, KernelPortMeta b )
+{
+    auto *ptr(
+        new kpair( &a.value,
+                   new KernelPortMeta( b ),
                    false,
                    false )
     );

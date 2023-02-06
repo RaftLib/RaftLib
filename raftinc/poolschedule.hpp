@@ -29,6 +29,9 @@
 #include <thread>
 #include <mutex>
 #include <cstdint>
+#if UT_FOUND
+#include <ut>
+#endif
 #if QTHREAD_FOUND
 #include <qthread/qthread.hpp>
 #else
