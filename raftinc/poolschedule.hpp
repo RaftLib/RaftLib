@@ -217,7 +217,7 @@ protected:
                        NO_SHEPHERD,
                        0 );
 #elif USE_UT
-        rt::Spawn( [td](){ pool_schedule::pool_run(td); } );
+        thread_t *th_ptr = rt::Spawn( [td](){ pool_schedule::pool_run(td); } );
 #endif
         /** done **/
         return;
@@ -254,9 +254,9 @@ protected:
        volatile bool done( false );
        std::uint8_t run_count( 0 );
 #ifdef BENCHMARK
-       raft::kernel::initialized_count();
+       const auto init_id( raft::kernel::initialized_count() );
        while( raft::kernel::initialized_count( 0 ) !=
-              raft::kernel::kernel_count )
+              raft::kernel::kernel_count( 0 ) )
        {
            raft::yield();
        }
@@ -275,8 +275,10 @@ protected:
            }
        }
 #if USE_UT
-       if (thread_d->wg) { // only tail kernel has wg pointer assigned
-           waitgroup_done(thread_d->wg);
+       if( thread_d->wg )
+       {
+           // only tail kernel has wg pointer assigned
+           waitgroup_done( thread_d->wg );
        }
 #else
        thread_d->finished = true;

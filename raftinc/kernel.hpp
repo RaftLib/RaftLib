@@ -361,7 +361,7 @@ protected:
     }
 
 #ifdef BENCHMARK
-    static std::atomic< std::size_t > initialized_count( int inc = 1 )
+    static std::size_t initialized_count( int inc = 1 )
     {
         static std::atomic< std::size_t > cnt( 0 );
         cnt += inc;
