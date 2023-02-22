@@ -58,16 +58,8 @@ class pool_schedule : public Schedule
     void main_handler() {
         auto &container( this->kernel_set.acquire() );
 #if USE_UT
-        int tail_count = 0;
-        for( auto * const k : container )
-        {
-            if( ! k->output.hasPorts() ) /** has no outputs **/
-            {
-                tail_count++;
-            }
-        }
         waitgroup_init(&wg);
-        waitgroup_add(&wg, tail_count);
+        waitgroup_add(&wg, dst_kernels.size());
 #endif
         for( auto * const k : container )
         {
@@ -165,7 +157,7 @@ protected:
     /**
      * modified version of what is in the simple_schedule
      * since we don't really need some of the info. this
-     * is passed to each kernel within teh pool_run func
+     * is passed to each kernel within the pool_run func
      */
     struct ALIGN( 64 ) thread_data
     {
