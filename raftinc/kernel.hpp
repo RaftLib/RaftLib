@@ -142,14 +142,14 @@ public:
     template < class T > KernelPortMeta
     operator []( const T &&portname )
     {
-        return( KernelPortMeta(this, portname,
+        return( KernelPortMeta(this, portname.val,
                      output.count(), input.count()) );
     }
 
     template < class T > KernelPortMeta
     operator []( const T &portname )
     {
-        return( KernelPortMeta(this, portname,
+        return( KernelPortMeta(this, portname.val,
                      output.count(), input.count()) );
     }
 #endif /** end if not string names **/

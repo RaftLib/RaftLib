@@ -51,7 +51,12 @@ public:
         for( index_type index( 0 ); index < n_output_ports; index++ )
         {
             /** add a port for each index var, all named "output_#" **/
+#if STRING_NAMES
             output.addPort< chunktype >( std::to_string( index ) );
+#else
+            output.addPort< chunktype >( raft::port_key_name_t(
+				    index, std::to_string( index ) ) );
+#endif
         }
 
         /** stat file **/

@@ -97,6 +97,9 @@ set( MAINHEADERS
 foreach( HFILE ${MAINHEADERS} )
  install( FILES ${CMAKE_CURRENT_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 endforeach( HFILE ${MAINHEADERS} )
+if( NOT STRING_NAMES )
+ install( FILES ${CMAKE_CURRENT_SOURCE_DIR}/git-dep/highwayhash/hh.hpp  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
+endif()
 
 ##
 # setup pkg-config files - for linux/unix/os x

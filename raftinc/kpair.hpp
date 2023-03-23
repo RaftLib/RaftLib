@@ -85,27 +85,6 @@ struct KernelPortMeta
     }
 };
 
-template < class T, int N >
-kpair&
-operator >> ( PairBase < T, N > &a, raft::kernel *b )
-{
-    return nullptr;
-}
-
-template < class T, int N >
-kpair&
-operator >> ( PairBase < T, N > &a, raft::kernel &b )
-{
-    return nullptr;
-}
-
-template < class T, int N >
-kpair&
-operator >> ( PairBase < T, N > &a, KernelPortMeta b )
-{
-    return nullptr;
-}
-
 class kpair
 {
 public:
@@ -371,6 +350,48 @@ protected:
     bool out_of_order = false;
     friend class raft::map;
 };
+
+template < class T, int N >
+kpair&
+operator >> ( PairBase < T, N > &a, raft::kernel *b )
+{
+    /* this is just to make the compiler happy, would not really instantiate */
+    auto *dummy_ptr(
+        new kpair( b,
+                   b,
+                   false,
+                   false )
+    );
+    return( *dummy_ptr );
+}
+
+template < class T, int N >
+kpair&
+operator >> ( PairBase < T, N > &a, raft::kernel &b )
+{
+    /* this is just to make the compiler happy, would not really instantiate */
+    auto *dummy_ptr(
+        new kpair( &b,
+                   &b,
+                   false,
+                   false )
+    );
+    return( *dummy_ptr );
+}
+
+template < class T, int N >
+kpair&
+operator >> ( PairBase < T, N > &a, KernelPortMeta b )
+{
+    /* this is just to make the compiler happy, would not really instantiate */
+    auto *dummy_ptr(
+        new kpair( &b,
+                   &b,
+                   false,
+                   false )
+    );
+    return( *dummy_ptr );
+}
 
 template < int N >
 kpair&

@@ -63,6 +63,7 @@ std::string printClassName( K &k )
 }
 
 
+#if STRING_NAMES
 /**
  * convert_arr - used to convert the forwared parameter pack
  * to something that's non const
@@ -80,6 +81,7 @@ constexpr static auto convert_arr( F&&... t )
 {
     return { std::forward< F >( t )... };
 }
+#endif /* END STRING_NAMES */
 
 
 };

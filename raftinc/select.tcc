@@ -30,6 +30,8 @@
 #include <string>
 #include "common.hpp"
 
+#if STRING_NAMES /* not support for select to work with hashed port name yet */
+
 namespace raft
 {
 
@@ -134,4 +136,6 @@ raft::select_t in( PORT_CONTAINER  &&port_container,
 };
 
 } /** end namespace raft **/
+
+#endif /* END STRING_NAMES */
 #endif /* END SELECT_TCC */

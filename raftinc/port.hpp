@@ -160,7 +160,7 @@ public:
              * still enable this to happen. Let's see if
              * we can simply #define out for now
              */
-#ifdef STRING_NAMES
+#if STRING_NAMES
             const auto name( std::to_string( index ) );
 #else
             const auto name( index );
@@ -171,7 +171,7 @@ public:
             (this)->initializeSplit< T >( pi );
             (this)->initializeJoin< T >( pi );
             portmap.map.insert( std::make_pair( name, pi ) );
-#ifndef STRING_NAMES
+#if not( STRING_NAMES )
             portmap.name_map.insert(
                     std::make_pair( name,
                                     raft::port_key_name_t( index,
@@ -205,7 +205,7 @@ public:
     }
 
 
-#ifdef STRING_NAMES
+#if STRING_NAMES
     virtual FIFO& operator[]( const raft::port_key_type &&port_name )
     {
         //NOTE: We'll need to add a lock here if later
@@ -250,7 +250,7 @@ public:
         if( ret_val == portmap.map.cend() )
         {
             throw PortNotFoundException( "Port not found for name \"" +
-                                         getPortName( port_name ) + "\"" );
+                                         getPortName( port_name.val ) + "\"" );
         }
         return( *( ( *ret_val ).second.getFIFO() ) );
     }
@@ -266,7 +266,7 @@ public:
        if( ret_val == portmap.map.cend() )
        {
            throw PortNotFoundException(
-              "Port not found for name \"" + getPortName( port_name ) + "\"" );
+              "Port not found for name \"" + getPortName( port_name.val ) + "\"" );
        }
        return( *( ( *ret_val ).second.getFIFO() ) );
     }
@@ -337,7 +337,7 @@ public:
         pi.my_kernel = kernel;
 
         pi.my_name =
-#ifdef STRING_NAMES
+#if STRING_NAMES
                     port_name
 #else
                     port_name.val
@@ -349,7 +349,7 @@ public:
         (this)->initializeJoin< T >( pi );
         const auto ret_val(
                     portmap.map.insert( std::make_pair(
-#ifdef STRING_NAMES
+#if STRING_NAMES
                     port_name
 #else
                     port_name.val
@@ -360,10 +360,14 @@ public:
         if( ! ret_val.second )
         {
             throw PortAlreadyExists( "FATAL ERROR: port \"" +
+#if STRING_NAMES
                                      getPortName( port_name ) +
+#else
+                                     getPortName( port_name.val ) +
+#endif
                                      "\" already exists!" );
         }
-#ifndef STRING_NAMES
+#if not( STRING_NAMES )
         portmap.name_map.insert(
                 std::make_pair( port_name.val,
                                 raft::port_key_name_t( port_name ) ) );
@@ -384,7 +388,7 @@ public:
      */
     std::string getPortName( const raft::port_key_type n )
     {
-#ifdef STRING_NAMES
+#if STRING_NAMES
         return( n );
 #else
         const auto ret_val( portmap.name_map.find( n ) );
@@ -394,7 +398,7 @@ public:
             ss << "Port not found for name \"" << n << "\"";
             throw PortNotFoundException( ss.str() );
         }
-        return( (*ret_val).second );
+        return( (*ret_val).second.str );
 #endif
     }
 

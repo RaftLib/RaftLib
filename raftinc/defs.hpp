@@ -104,7 +104,14 @@ namespace raft
     using parsemap_ptr = std::shared_ptr< raft::parsemap >;
 } /** end namespace raft **/
 
-#ifndef STRING_NAMES
+#if STRING_NAMES
+    static
+    raft::port_key_type
+    operator""_port( const char *input, std::size_t len )
+    {
+        return( std::string( input ) );
+    }
+#else
     /**
      * use this to get a constexpr 64b unsigned hash
      * of a string. Must compile with C++20 for this to
