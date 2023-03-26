@@ -6,6 +6,7 @@
 #include "alloc_traits.tcc"
 #include "defs.hpp"
 #include "foodef.tcc"
+#include "commontestdefs.hpp"
 
 
 /**
@@ -20,12 +21,12 @@
 int
 main()
 {
-    if( fits_in_cache_line< int[ 32 ] >::value != false )
+    if( fits_in_cache_line< bigger_than_cache_t  >::value != false )
     {
         return( EXIT_FAILURE );
     }
     /** true cases **/
-    if( ext_alloc< int[32] >::value != true )
+    if( ext_alloc< bigger_than_cache_t >::value != true )
     {
         return( EXIT_FAILURE );
     }

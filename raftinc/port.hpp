@@ -234,7 +234,7 @@ public:
        if( ret_val == portmap.map.cend() )
        {
           throw PortNotFoundException( 
-             "Port not found for name \""  + getPortName( port_name ) + "\"" );
+             "Port not found for name \""  + std::string( port_name.str ) + "\"" );
        }
        return( *((*ret_val).second.getFIFO())  );
     }
@@ -249,7 +249,7 @@ public:
        if( ret_val == portmap.map.cend() )
        {
           throw PortNotFoundException( 
-             "Port not found for name \"" + getPortName( port_name ) + "\"" );
+             "Port not found for name \""  + std::string( port_name.str ) + "\"" );
        }
        return( *((*ret_val).second.getFIFO())  );
     }
@@ -332,7 +332,7 @@ public:
 
       if( ! ret_val.second )
       {
-         throw PortAlreadyExists( "FATAL ERROR: port \"" + getPortName( port_name ) + "\" already exists!" );
+         throw PortAlreadyExists( "FATAL ERROR: port \"" + std::string( port_name.str ) + "\" already exists!" );
       }
 #ifndef STRING_NAMES
          portmap.name_map.insert( std::make_pair( port_name.val, raft::port_key_name_t( port_name ) ) );

@@ -60,16 +60,9 @@ template < class K > static
  */
 template < class... F > 
 constexpr static auto convert_arr( F&&... t )
-#ifdef STRING_NAMES
-    -> std::array< std::string, sizeof...(F) >
-#else
-    -> std::array< 
-        std::reference_wrapper< F >, 
-        sizeof...(F)
-        >
-#endif        
 {
-    return { std::forward< F >( t )... };
+    
+    return( std::to_array( std::forward< F >( t )... ) );
 }
 
 

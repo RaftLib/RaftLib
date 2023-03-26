@@ -97,7 +97,7 @@ Port::getPortName( const raft::port_key_type n )
        ss << "Port not found for name \"" << n << "\"";
        throw PortNotFoundException( ss.str() );
     }
-    return( (*ret_val).second );
+    return( std::string( (*ret_val).second.str ) );
 #endif   
 }
 
