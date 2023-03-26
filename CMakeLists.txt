@@ -37,8 +37,6 @@ set( STRING_NAMES true CACHE BOOL "Default is to use legacy string-named ports."
 if( STRING_NAMES )
     set( STRNAMES  "-DSTRING_NAMES=1" )
     add_definitions( ${STRNAMES} )
-else()
-    list( APPEND OPTIONAL_MODULES highwayhash )
 endif( STRING_NAMES )
 
 
@@ -97,9 +95,6 @@ set( MAINHEADERS
 foreach( HFILE ${MAINHEADERS} )
  install( FILES ${CMAKE_CURRENT_SOURCE_DIR}/${HFILE}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 endforeach( HFILE ${MAINHEADERS} )
-if( NOT STRING_NAMES )
- install( FILES ${CMAKE_CURRENT_SOURCE_DIR}/git-dep/highwayhash/hh.hpp  DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
-endif()
 
 ##
 # setup pkg-config files - for linux/unix/os x

@@ -91,6 +91,7 @@ public:
                            volatile bool &finished )
     {
 
+        bool valid_run = false;
         if( kernelHasInputData( kernel ) )
         {
             const auto sig_status( kernel->run() );
@@ -99,6 +100,7 @@ public:
                 invalidateOutputPorts( kernel );
                 finished = true;
             }
+            valid_run = true;
         }
         /**
          * must recheck data items again after port valid check, there could
@@ -109,7 +111,7 @@ public:
             invalidateOutputPorts( kernel );
             finished = true;
         }
-        return( true );
+        return valid_run;
     }
 
     //TODO, get rid of jmp_buf, no longer needed

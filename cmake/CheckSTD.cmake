@@ -15,7 +15,7 @@ endif()
 
 if( UNIX )
 ##
-# Check for CXX14 or greater
+# Check for CXX17 or greater
 ##
 if( STRING_NAMES )
 

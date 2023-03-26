@@ -5,7 +5,7 @@
 #include <cstddef>
 #include "alloc_traits.tcc"
 #include "defs.hpp"
-
+#include "commontestdefs.hpp"
 
 template < std::size_t N > class foo
 {
@@ -21,13 +21,14 @@ int
 main( int argc, char **argv )
 {
    UNUSED( argc );
-   if( fits_in_cache_line< int[ 32 ] >::value != false )
+
+   if( fits_in_cache_line< bigger_than_cache_t  >::value != false )
    {
        std::cerr << "test 1 (" << argv[ 0 ] << ") failed\n";
        exit( EXIT_FAILURE );
    }
    /** here's an array that should be externally allocated **/
-   if( ext_mem_alloc< int[ 32 ] >::value != true )
+   if( ext_mem_alloc< bigger_than_cache_t >::value != true )
    {
        std::cerr << "test 2 (" << argv[ 0 ] << ") failed\n";
        exit( EXIT_FAILURE );

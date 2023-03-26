@@ -63,25 +63,22 @@ std::string printClassName( K &k )
 }
 
 
-#if STRING_NAMES
 /**
  * convert_arr - used to convert the forwared parameter pack
  * to something that's non const
  */
 template < class... F >
 constexpr static auto convert_arr( F&&... t )
-#ifdef STRING_NAMES
+#if STRING_NAMES
     -> std::array< std::string, sizeof...(F) >
-#else
-    -> std::array<
-        std::reference_wrapper< F >,
-        sizeof...(F)
-        >
 #endif
 {
+#if STRING_NAMES
     return { std::forward< F >( t )... };
+#else
+    return( std::to_array( std::forward< F >( t )... ) );
+#endif
 }
-#endif /* END STRING_NAMES */
 
 
 };

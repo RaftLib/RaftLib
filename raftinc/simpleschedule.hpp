@@ -152,9 +152,16 @@ protected:
         }
         while( ! *(thread_d->finished) )
         {
-            Schedule::kernelRun( thread_d->k, *( thread_d->finished ) );
+            bool valid_run( Schedule::kernelRun(
+                        thread_d->k, *( thread_d->finished ) ) );
             //takes care of peekset clearing too
             Schedule::fifo_gc( &in, &out, &peekset );
+
+            if( false == valid_run )
+            {
+                std::chrono::milliseconds dura( 5 );
+                std::this_thread::sleep_for( dura );
+            }
         }
     }
 

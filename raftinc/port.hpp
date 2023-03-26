@@ -398,7 +398,7 @@ public:
             ss << "Port not found for name \"" << n << "\"";
             throw PortNotFoundException( ss.str() );
         }
-        return( (*ret_val).second.str );
+        return( std::string( (*ret_val).second.str ) );
 #endif
     }
 
