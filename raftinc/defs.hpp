@@ -32,6 +32,21 @@
 #include <string>
 #include <limits>
 
+#ifndef INJECT_DEMANGLE_NAMESPACE
+#define INJECT_DEMANGLE_NAMESPACE 1
+#endif
+
+#ifndef DEMANGLE_NAMESPACE
+#define DEMANGLE_NAMESPACE raft
+#endif
+
+#ifndef INJECT_AFFINITY_NAMESPACE
+#define INJECT_AFFINITY_NAMESPACE 1
+#endif
+
+#ifndef AFFINITY_NAMESPACE
+#define AFFINITY_NAMESPACE raft
+#endif
 
 
 
@@ -89,7 +104,14 @@ namespace raft
     using parsemap_ptr = std::shared_ptr< raft::parsemap >;
 } /** end namespace raft **/
 
-#ifndef STRING_NAMES
+#if STRING_NAMES
+    static
+    raft::port_key_type
+    operator""_port( const char *input, std::size_t len )
+    {
+        return( std::string( input ) );
+    }
+#else
     /**
      * use this to get a constexpr 64b unsigned hash
      * of a string. Must compile with C++20 for this to

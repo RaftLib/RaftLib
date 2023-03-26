@@ -30,6 +30,7 @@
 #include "./raftinc/port_info_types.hpp"
 #include "./raftinc/schedule.hpp"
 #include "./raftinc/simpleschedule.hpp"
+#include "./raftinc/dynalloc.hpp"
 #include "./raftinc/stdalloc.hpp"
 #include "./raftinc/rafttypes.hpp"
 #include "./raftinc/kernel_all.hpp"

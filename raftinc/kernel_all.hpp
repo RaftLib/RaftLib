@@ -27,7 +27,10 @@ namespace raft
 class kernel_all : public raft::kernel
 {
 public:
-    kernel_all();
+    kernel_all() : raft::kernel()
+    {
+        sched_behav = raft::all_port;
+    }
 
     virtual ~kernel_all() = default;
 

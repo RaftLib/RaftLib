@@ -1,10 +1,10 @@
 /**
- * mapexception.hpp - 
+ * mapexception.hpp -
  * @author: Jonathan Beard
  * @version: Wed Sep  3 14:52:27 2014
- * 
+ *
  * Copyright 2016 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -26,18 +26,17 @@
 
 
 
-class MapException : public RaftException 
+class MapException : public RaftException
 {
 public:
-    MapException(  const std::string message ); 
+    MapException( const std::string message ) : RaftException( message ){};
 };
 
 
-template < int N > class MapExceptionBase : public MapException 
+template < int N > class MapExceptionBase : public MapException
 {
 public:
-    MapExceptionBase(  const std::string message ) : 
-        MapException(  message ){};
+    MapExceptionBase( const std::string message ) : MapException( message ){};
 };
 
 

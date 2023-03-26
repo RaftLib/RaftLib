@@ -84,13 +84,18 @@ main( int argc, char **argv )
     using print = raft::print< std::size_t, '\n'>;
     
     const std::string term( "Alice" );
+    int repetitions = 1;
     raft::map m;
     if( argc < 2 )
     {
         std::cerr << "must have at least one argument to run the search example\n";
         exit( EXIT_FAILURE );
     }
-    fr   read( argv[ 1 ], (fr::offset_type) term.length(), 1 );
+    if( argc > 2 )
+    {
+        repetitions = atoi( argv[ 2 ] );
+    }
+    fr   read( argv[ 1 ], (fr::offset_type) term.length(), 1, repetitions );
     search find( term );
     print p;
     

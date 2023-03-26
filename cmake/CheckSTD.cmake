@@ -15,7 +15,7 @@ endif()
 
 if( UNIX )
 ##
-# Check for CXX14 or greater
+# Check for CXX17 or greater
 ##
 if( STRING_NAMES )
 
@@ -34,7 +34,7 @@ check_cxx_compiler_flag( "-std=gnu++2a" COMPILER_SUPPORTS_CXX20 )
 if( COMPILER_SUPPORTS_CXX20 )
  set( CMAKE_CXX_STANDARD 20 )
 else()
- message( FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++20 support. Please use a newer compiler" )
+ message( STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++20 support. Please use a newer compiler" )
 endif()
 
 endif()

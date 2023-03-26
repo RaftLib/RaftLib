@@ -57,7 +57,7 @@ main()
   sub s( 1, 1, l_sub );
 
   raft::map m;
-  m += g >> raft::order::out >> s >> raft::order::out >>  print;
+  m += g >> raft::order::out >> &s >> raft::order::out >>  &print;
   
   m.exe();
 

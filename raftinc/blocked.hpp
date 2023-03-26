@@ -27,21 +27,27 @@
 
 struct ALIGN( L1D_CACHE_LINE_SIZE ) Blocked
 {
-    /** 
-     * this is really the backign store for the number of 
+    /**
+     * this is really the backign store for the number of
      * times any queue in the system is blocked. Likely
-     * this is plenty of storage given the purpose and 
+     * this is plenty of storage given the purpose and
      * no deleterious impact if we just wrap....
      */
     using value_type = std::uint32_t;
     using whole_type = std::uint64_t;
-    
-    static_assert( sizeof( value_type ) * 2 == sizeof( whole_type ),
-                   "Error, the whole type must be double the size of the half type" );
-    
-    Blocked();
 
-    Blocked( const Blocked &other );
+    static_assert( sizeof( value_type ) * 2 == sizeof( whole_type ),
+                   "Error, the whole type must be double the size of "
+                   "the half type" );
+
+    Blocked()
+    {
+    }
+
+    Blocked( const Blocked &other ) : all( other.all )
+    {
+        /** nothing to do here either **/
+    }
 
     constexpr Blocked& operator = ( const Blocked &other ) noexcept
     {
@@ -50,23 +56,28 @@ struct ALIGN( L1D_CACHE_LINE_SIZE ) Blocked
         return( *this );
     }
 
-    Blocked& operator += ( const Blocked &rhs ) noexcept;
-    
+    Blocked& operator += ( const Blocked &rhs ) noexcept
+    {
+        if( ! rhs.bec.blocked )
+        {
+            (this)->bec.count += rhs.bec.count;
+        }
+        return( ( *this ) );
+    }
+
     struct blocked_and_counter
     {
-       value_type   blocked = 0;
-       value_type   count   = 0;
+        value_type blocked = 0;
+        value_type count = 0;
     };
-    
+
     union
     {
-        blocked_and_counter bec;
-        whole_type          all = 0;
+         blocked_and_counter bec;
+         whole_type all = 0;
     };
 
-    char pad[ L1D_CACHE_LINE_SIZE - sizeof( whole_type ) ]; 
-}
-
-;
+    char pad[ L1D_CACHE_LINE_SIZE - sizeof( whole_type ) ];
+};
 
 #endif /* END RAFTBLOCKED_HPP */

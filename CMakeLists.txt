@@ -6,8 +6,14 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
 include(Colors)
 
-option( USEQTHREAD "Use QThread threading library" false )
 find_package( QThreads )
+find_package( UT )
+if( QTHREAD_FOUND )
+    add_definitions("-DQTHREAD_FOUND=1")
+endif()
+if( UTFOUND )
+    add_definitions("-DUT_FOUND=1")
+endif()
 
 ##
 # c std
@@ -31,8 +37,6 @@ set( STRING_NAMES true CACHE BOOL "Default is to use legacy string-named ports."
 if( STRING_NAMES )
     set( STRNAMES  "-DSTRING_NAMES=1" )
     add_definitions( ${STRNAMES} )
-else()
-    list( APPEND OPTIONAL_MODULES highwayhash )
 endif( STRING_NAMES )
 
 
@@ -53,7 +57,6 @@ find_package( Threads )
 include( CheckGitDep )
 
 
-add_subdirectory( src )
 add_subdirectory( raftinc )
 
 mark_as_advanced( BUILD_EXAMPLES )

@@ -112,7 +112,7 @@ int main( int argc, char **argv )
        count count_k( cnts );
 
        raft::map m;
-       m += workset_k <= count_k >= reduce_k;
+       m += workset_k <= count_k >= &reduce_k;
 
        m.exe();
    }

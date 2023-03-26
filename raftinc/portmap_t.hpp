@@ -36,7 +36,7 @@ struct portmap_t
 
 
 #ifdef STRING_NAMES    
-   std::map< raft::port_key_type, PortInfo > map;
+   std::unordered_map< raft::port_key_type, PortInfo > map;
 #else
    /**
     * integer lookup for port name to port info object,

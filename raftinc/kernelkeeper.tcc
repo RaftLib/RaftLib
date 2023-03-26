@@ -1,11 +1,11 @@
 /**
- * kernelkeeper.tcc - contain the locking and unlocking of 
+ * kernelkeeper.tcc - contain the locking and unlocking of
  * containers related to raft compute kernels
  * @author: Jonathan Beard
  * @version: Sat Aug 15 09:45:01 2015
- * 
+ *
  * Copyright 2015 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -20,7 +20,7 @@
  */
 #ifndef RAFTKERNELKEEPER_TCC
 #define RAFTKERNELKEEPER_TCC  1
-#include <set>
+#include <unordered_set>
 #include <cstdio>
 #include <cstdlib>
 #include <thread>
@@ -29,89 +29,68 @@
 #include <cassert>
 #include <cstring>
 #include <mutex>
-#ifdef USEQTHREADS
-#include <qthread/qthread.hpp>
-#endif
 namespace raft
 {
-   class kernel;
+    class kernel;
 }
 
-template< class CONTAINER, class CONTAINERTYPE > class keeper
+template< class CONTAINER, class ELEMENTTYPE >
+class keeper
 {
 private:
-   std::mutex        mutex;
-#if 0   
-   std::thread::id   owner_id;
-#endif   
-   CONTAINER         container;
+    std::mutex        mutex;
+    CONTAINER         container;
 
-    
 public:
-   
-   using value_type = typename std::remove_reference< decltype( container ) >::type;
-   
-   keeper() = default;
 
+    using value_type =
+        typename std::remove_reference< decltype( container ) >::type;
 
-   virtual ~keeper() = default;
+    keeper() = default;
 
-   //FIXME: this will only work for sets, add specializations for others
-   //based on insert function
-   void  operator += ( CONTAINERTYPE * const ele )
-   {
-      auto &the_container( acquire() );
-      the_container.emplace( ele );
-      release();
-      return;
-   }
+    virtual ~keeper() = default;
 
-   void unsafeAdd( CONTAINERTYPE * const ele )
-   {
-      container.emplace( ele );
-      return;
-   }
+    //FIXME: this will only work for sets, add specializations for others
+    //based on insert function
+    void operator += ( ELEMENTTYPE * const ele )
+    {
+        auto &the_container( acquire() );
+        the_container.emplace( ele );
+        release();
+        return;
+    }
 
-   CONTAINER& acquire()
-   {
-      //spin until we can get a lock
-      while( ! mutex.try_lock() )
-      {
-         //it's polite to yield
-#ifdef USEQTHREADS
-         qthread_yield();
-#else
-         std::this_thread::yield();
-#endif         
-      }
-      //we have a lock, get id
-#if 0      
-      owner_id = std::this_thread::get_id();
-#endif      
-      return( container );
-   }
+    void unsafeAdd( ELEMENTTYPE * const ele )
+    {
+        container.emplace( ele );
+        return;
+    }
 
-   void release()
-   {
-#if 0
-#ifndef NDEBUG      
-      const auto caller_id( std::this_thread::get_id() );
-#endif      
-      assert( caller_id == owner_id );
-#endif      
-      mutex.unlock();
-      return;
-   }
-   
-   auto size() -> decltype( container.size() )
-   {
-      const auto size( container.size() );
-      return( size );
-   }
+    CONTAINER& acquire()
+    {
+        //spin until we can get a lock
+        while( ! mutex.try_lock() )
+        {
+           //it's polite to yield
+           std::this_thread::yield();
+        }
+        return( container );
+    }
 
+    void release()
+    {
+        mutex.unlock();
+        return;
+    }
+
+    auto size() -> decltype( container.size() )
+    {
+        const auto size( container.size() );
+        return( size );
+    }
 
 };
 
-using kernelkeeper   = keeper< std::set< raft::kernel* >, raft::kernel >;
+using kernelkeeper = keeper< std::unordered_set< raft::kernel* >, raft::kernel >;
 
 #endif /* END RAFTKERNELKEEPER_TCC */

@@ -1,10 +1,10 @@
 /**
- * pointer.hpp - 
+ * pointer.hpp -
  * @author: Jonathan Beard
  * @version: Sun Oct 30 04:58 2016
- * 
+ *
  * Copyright 2016 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -32,80 +32,162 @@ class ALIGN( L1D_CACHE_LINE_SIZE ) Pointer
     using wrap_t = std::size_t;
 
 public:
-   Pointer() : max_cap( 0 ){}
+    Pointer() : max_cap( 0 ){}
 
-   /**
-    * Pointer - used to synchronize read and write
-    * pointers for the ring buffer.  This class encapsulates
-    * wrapping.
-    */
-   Pointer( const std::size_t cap ) : max_cap( cap ){}
-   
-   Pointer( const std::size_t cap, 
-            const wrap_t wrap_set );
-   /**
-    * Pointer - used to snchronize read and write pointers for the
-    * ring buffer, this constructer is a copy constructor that
-    * copies an old Pointer object and sets a new max_capacity
-    * @param   other, const Pointer&, the other pointer to be cpied
-    * @param   new_cap, the new max cap
-    */
-   Pointer( Pointer &other, 
-            const std::size_t new_cap );
+    /**
+     * Pointer - used to synchronize read and write
+     * pointers for the ring buffer.  This class encapsulates
+     * wrapping.
+     */
+    Pointer( const std::size_t cap ) : max_cap( cap ){}
 
-   /**
-    * val - returns the current value of val.
-    * @return std::size_t, current 'true' value of the pointer
-    */
-   static std::size_t val( Pointer &ptr ) ;
+    Pointer( const std::size_t cap,
+             const wrap_t wrap_set ) : Pointer( cap )
+    {
+        wrap_a = wrap_set;
+#ifdef JVEC_MACHINE
+        wrap_b = wrap_set;
+#endif
+    }
+    /**
+     * Pointer - used to snchronize read and write pointers for the
+     * ring buffer, this constructer is a copy constructor that
+     * copies an old Pointer object and sets a new max_capacity
+     * @param   other, const Pointer&, the other pointer to be cpied
+     * @param   new_cap, the new max cap
+     */
+    Pointer( Pointer &other,
+             const std::size_t new_cap ) : Pointer( new_cap )
+    {
+        const auto val( Pointer::val( other ) );
+        a = val;
+#ifdef JVEC_MACHINE
+        b = val;
+#endif
+        return;
+    }
 
-   /**
-    * inc - increments the pointer, takes care of wrapping
-    * the pointers as well so you don't run off the page
-    * @return  std::size_t, current value of pointer after increment
-    */
-   static void inc( Pointer &ptr ) ;
-   
-   /**
-    * incBy - increments the current pointer poisition
-    * by 'in' increments.  To be used for range insertion
-    * and removal
-    * @param  ptr - Pointer * const
-    * @param  in - const std::size_t
-    * @return void
-    */
-   static void incBy( Pointer &ptr,
-                      const std::size_t in );
+    /**
+     * val - returns the current value of val.
+     * @return std::size_t, current 'true' value of the pointer
+     */
+    static std::size_t val( Pointer &ptr )
+    {
+#ifdef JVEC_MACHINE
+        struct
+        {
+            std::uint64_t a;
+            std::uint64_t b;
+        } copy;
+        do
+        {
+            copy.a = ptr.a;
+            copy.b = ptr.b;
+        } while( copy.a !=  copy.b );
+        return( copy.b );
+#else
+        return( ptr.a );
+#endif
+    }
 
-   
-   /**
-    * wrapIndiciator - returns the current wrap position, 
-    * the read should never be ahead of the write, and 
-    * at best they should be equal.  This is used when
-    * determining to return max_cap or zero for the current
-    * queue size.  
-    * @return  std::size_t
-    */
-   static std::size_t wrapIndicator( Pointer &ptr ) ;
-   
+    /**
+     * inc - increments the pointer, takes care of wrapping
+     * the pointers as well so you don't run off the page
+     * @return  std::size_t, current value of pointer after increment
+     */
+    static void inc( Pointer &ptr )
+    {
+#ifdef JVEC_MACHINE
+        ptr.a = ( ptr.a + 1 ) % ptr.max_cap;
+        ptr.b = ( ptr.b + 1 ) % ptr.max_cap;
+        if( ptr.b == 0 )
+        {
+            ptr.wrap_a++;
+            ptr.wrap_b++;
+        }
+#else
+        ptr.a = ( ptr.a + 1 ) % ptr.max_cap;
+        if( ptr.a == 0 )
+        {
+            ptr.wrap_a++;
+        }
+#endif
+    }
+
+    /**
+     * incBy - increments the current pointer poisition
+     * by 'in' increments.  To be used for range insertion
+     * and removal
+     * @param  ptr - Pointer * const
+     * @param  in - const std::size_t
+     * @return void
+     */
+    static void incBy( Pointer &ptr,
+                       const std::size_t in )
+    {
+#ifdef JVEC_MACHINE
+        ptr.a = ( ptr.a + in ) % ptr.max_cap;
+        ptr.b = ( ptr.b + in ) % ptr.max_cap;
+        if( ptr.b < in )
+        {
+            ptr.wrap_a++;
+            ptr.wrap_b++;
+        }
+#else
+        ptr.a = ( ptr.a + in ) % ptr.max_cap;
+        if( ptr.a < in )
+        {
+            ptr.wrap_a++;
+        }
+#endif
+    }
+
+
+    /**
+     * wrapIndiciator - returns the current wrap position,
+     * the read should never be ahead of the write, and
+     * at best they should be equal.  This is used when
+     * determining to return max_cap or zero for the current
+     * queue size.
+     * @return  std::size_t
+     */
+    static std::size_t wrapIndicator( Pointer &ptr )
+    {
+#ifdef JVEC_MACHINE
+        struct
+        {
+            std::uint64_t a;
+            std::uint64_t b;
+        } copy;
+        do
+        {
+            copy.a = ptr.wrap_a;
+            copy.b = ptr.wrap_b;
+        } while( copy.a != copy.b );
+        return( copy.b );
+#else
+        return( ptr.wrap_a );
+#endif
+    }
+
 private:
-     std::uint64_t           a  = 0;
-#ifdef JVEC_MACHINE    
-     std::uint64_t           b  = 0;
-#endif    
+    std::uint64_t a = 0;
+#ifdef JVEC_MACHINE
+    std::uint64_t b = 0;
+#endif
     /**
      * size of wrap pointer might become an issue
      * if GHz increase drastically or if this runs
      * for a really really long time....@ 10GHz and
-     * assuming 1 wrap per cycle that works out to 
+     * assuming 1 wrap per cycle that works out to
      * around 54 years, @ 2GHz we have ~250 years.
      * TODO, get these set correctly if we do eventually
      * wrap an unsigned 64 int.
      */
-     wrap_t    wrap_a  = 0;
-#ifdef JVEC_MACHINE    
-     wrap_t    wrap_b  = 0;
-#endif    
-    const    std::size_t      max_cap;
+     wrap_t wrap_a = 0;
+#ifdef JVEC_MACHINE
+     wrap_t wrap_b = 0;
+#endif
+     const std::size_t max_cap;
 };
 #endif /* END RAFTPOINTER_HPP */

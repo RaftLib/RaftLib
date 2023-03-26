@@ -21,11 +21,13 @@
 #define RAFTSYSSCHEDUTIL_HPP  1
 
 #if (! defined _WIN64) && (! defined _WIN32)
-#ifdef USEQTHREADS
+#ifdef QTHREAD_FOUND
 #include <qthread/qthread.hpp>
-#else
-#include <sched.h>
 #endif
+#ifdef UT_FOUND
+#include <ut>
+#endif
+#include <sched.h>
 #endif /** end if not win **/
 
 namespace raft
@@ -40,9 +42,11 @@ static inline void yield()
 {
 
 #if (! defined _WIN64) && (! defined _WIN32)
-#ifdef USEQTHREADS
+#ifdef USE_UT
+    rt::Yield();
+#elif defined(USE_QTHREAD)
     qthread_yield();
-#elif defined NICE
+#else
     sched_yield();
 #endif
 #endif /** end if not win **/

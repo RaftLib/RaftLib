@@ -36,109 +36,126 @@ namespace raft{
 
 enum readertype : std::int8_t { chunk, fasta };
 
-
-
-template < class chunktype  = filechunk< 65536 >,
-           bool copy        = false > 
-                class filereader : public raft::kernel
+template < class chunktype = filechunk< 65536 >,
+           bool copy = false >
+class filereader : public raft::kernel
 {
 public:
-   filereader( const std::string inputfile,
-               const long        chunk_offset = 0,
-               const std::size_t n_output_ports = 1
-               ) : chunk_offset( chunk_offset )
-   {
-      using index_type = std::remove_const_t<decltype(n_output_ports)>;
-      for( index_type index( 0 ); index < n_output_ports; index++ )
-      {
-         /** add a port for each index var, all named "output_#" **/
-         output.addPort< chunktype  >( std::to_string( index ) );
-      }
-
-      /** stat file **/
-      struct stat st;
-      std::memset( &st, 0, sizeof( struct stat ) );
-      if( stat( inputfile.c_str(), &st ) != 0 )
-      {
-         perror( "Failed to stat input file, exiting!" );
-         //TODO, figure out global shutdown procedure
-         exit( EXIT_FAILURE );
-      }
-
-      /** initialize file **/
-#if (  defined __WIN64 ) || (  defined __WIN32 ) || ( defined _WINDOWS )
-      if( fopen_s( &fp, inputfile.c_str(), "r" ) != 0 )
-      {
-         std::cerr << "failed to open input file: (" + inputfile + "), exiting\n";
-         exit( EXIT_FAILURE );
-      }
+    filereader( const std::string inputfile,
+                const long chunk_offset = 0,
+                const std::size_t n_output_ports = 1,
+                const std::int64_t repetitions = 1
+                ) : chunk_offset( chunk_offset )
+    {
+        using index_type = std::remove_const_t<decltype(n_output_ports)>;
+        for( index_type index( 0 ); index < n_output_ports; index++ )
+        {
+            /** add a port for each index var, all named "output_#" **/
+#if STRING_NAMES
+            output.addPort< chunktype >( std::to_string( index ) );
 #else
-      fp = std::fopen( inputfile.c_str() , "r" );
-      if( fp == nullptr )
-      {
-         perror( "Failed to open input file, exiting!" );
-         exit( EXIT_FAILURE );
-      }
-#endif      
+            output.addPort< chunktype >( raft::port_key_name_t(
+				    index, std::to_string( index ) ) );
+#endif
+        }
 
-      /** get length in bytes **/
-      length = st.st_size;
-      if(chunk_offset !=  0 )
-      {
-        iterations = std::ceil( (float) length / (float) ( (chunktype::getChunkSize() - 1) - (chunk_offset - 1) ) );
-      }
-      else
-      {
-        iterations = std::ceil( (float) length / (float)( chunktype::getChunkSize() - 1 ) );
-      }
-   }
+        /** stat file **/
+        struct stat st;
+        std::memset( &st, 0, sizeof( struct stat ) );
+        if( stat( inputfile.c_str(), &st ) != 0 )
+        {
+            perror( "Failed to stat input file, exiting!" );
+            //TODO, figure out global shutdown procedure
+            exit( EXIT_FAILURE );
+        }
 
-   virtual raft::kstatus run()
-   {
-      for( auto &port : output )
-      {
-         if( port.space_avail() )
-         {
-            auto &chunk( port.template allocate< chunktype  >() );
-            if( init )
+        /** initialize file **/
+#if (  defined __WIN64 ) || ( defined __WIN32 ) || ( defined _WINDOWS )
+        if( fopen_s( &fp, inputfile.c_str(), "r" ) != 0 )
+        {
+             std::cerr << "failed to open input file: (" + inputfile +
+                 "), exiting\n";
+             exit( EXIT_FAILURE );
+        }
+#else
+        fp = std::fopen( inputfile.c_str() , "r" );
+        if( fp == nullptr )
+        {
+             perror( "Failed to open input file, exiting!" );
+             exit( EXIT_FAILURE );
+        }
+#endif
+
+        /** get length in bytes **/
+        length = st.st_size;
+        if( chunk_offset != 0 )
+        {
+            iterations = std::ceil(
+                    (float) length /
+                    (float) ( ( chunktype::getChunkSize() - 1) -
+                              ( chunk_offset - 1) ) );
+        }
+        else
+        {
+            iterations = std::ceil(
+                    (float) length /
+                    (float) ( chunktype::getChunkSize() - 1 ) );
+        }
+        nchunks = iterations;
+        iterations *= repetitions;
+    }
+
+    virtual raft::kstatus run()
+    {
+        for( auto &port : output )
+        {
+            if( port.space_avail() )
             {
-               fseek( fp, - chunk_offset , SEEK_CUR );
+                auto &chunk( port.template allocate< chunktype >() );
+                if( init )
+                {
+                    fseek( fp, - chunk_offset , SEEK_CUR );
+                }
+                else
+                {
+                    init = true;
+                }
+                chunk.start_position = ftell( fp );
+                chunk.index = chunk_index;
+                chunk_index++;
+                const auto chunksize( chunktype::getChunkSize() );
+                const auto num_read(
+                   fread( chunk.buffer, sizeof( char ), chunksize - 1 , fp ) );
+                chunk.buffer[ num_read ] = '\0';
+                chunk.length = num_read;
+                port.send(
+                   ( iterations - output.count() /* num ports */ ) > 0 ?
+                     raft::none :
+                     raft::eof );
+                static_assert( std::is_signed< decltype( iterations ) >::value,
+                               "iterations must be a signed type" );
+                if( --iterations <= 0 )
+                {
+                    return( raft::stop );
+                }
+                if ( 0 == ( iterations % nchunks ) ) {
+                    fseek( fp, 0, SEEK_SET );
+                    init = false;
+                }
             }
-            else
-            {
-               init = true;
-            }
-            chunk.start_position = ftell( fp );
-            chunk.index = chunk_index;
-            chunk_index++;
-            const auto chunksize( chunktype::getChunkSize() );
-            const auto num_read(
-               fread( chunk.buffer, sizeof( char ), chunksize - 1 , fp ) );
-            chunk.buffer[ num_read ] = '\0';
-            chunk.length = num_read;
-            port.send(
-               ( iterations - output.count() /* num ports */ ) > 0 ?
-                  raft::none :
-                  raft::eof );
-            static_assert( std::is_signed< decltype( iterations ) >::value,
-                           "iterations must be a signed type" );
-            if( --iterations < 0 )
-            {
-               return( raft::stop );
-            }
-         }
-      }
-      return( raft::proceed );
-   }
-   using offset_type = long;
+        }
+        return( raft::proceed );
+    }
+    using offset_type = long;
 private:
-   /** opened in the constructor **/
-   FILE           *fp         = nullptr;
-   std::streamsize length     = 0;
-   std::int64_t    iterations = 0;
-   bool            init       = false;
-   std::uint64_t   chunk_index = 0;
-   offset_type     chunk_offset;
+    /** opened in the constructor **/
+    FILE *fp = nullptr;
+    std::streamsize length = 0;
+    std::int64_t iterations = 0;
+    bool init = false;
+    std::uint64_t chunk_index = 0;
+    offset_type chunk_offset;
+    std::int64_t nchunks = 0;
 };
 
 } /* end namespace raft */

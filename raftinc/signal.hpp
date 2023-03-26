@@ -1,10 +1,10 @@
 /**
- * signal.hpp - 
+ * signal.hpp -
  * @author: Jonathan Beard
  * @version: Wed Dec 31 15:14:56 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -23,25 +23,44 @@
 #include "signalvars.hpp"
 /**
  * TODO, add templated signal so that the user
- * can define tuple-like structures based on 
+ * can define tuple-like structures based on
  * their own needs.
  */
 namespace Buffer
 {
 struct Signal
 {
-   Signal();
-   Signal( const Signal &other );
+    Signal()
+    {
+    }
+    Signal( const Signal &other )
+    {
+        (this)->sig = other.sig;
+    }
 
-   Signal& operator = ( raft::signal signal );
-   Signal& operator = ( raft::signal &signal );
+    Signal& operator = ( raft::signal signal )
+    {
+        (this)->sig = signal;
+        return( (*this) );
+    }
+    Signal& operator = ( raft::signal &signal )
+    {
+        (this)->sig = signal;
+        return( (*this) );
+    }
 
-   operator raft::signal ();
+    operator raft::signal ()
+    {
+        return( (this)->sig );
+    }
 
-   std::size_t getindex() noexcept;
+    std::size_t getindex() noexcept
+    {
+        return( index );
+    }
 
-   raft::signal sig   = raft::none;
-   std::size_t  index = 0;
+    raft::signal sig = raft::none;
+    std::size_t index = 0;
 };
 } /** end namespace buffer **/
 #endif /* END RAFTSIGNAL_HPP */

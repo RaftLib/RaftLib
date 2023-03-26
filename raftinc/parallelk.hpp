@@ -1,10 +1,10 @@
 /**
- * parallelk.hpp - 
+ * parallelk.hpp -
  * @author: Jonathan Beard
  * @version: Mon Oct 20 13:18:21 2014
- * 
+ *
  * Copyright 2014 Jonathan Beard
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
@@ -32,44 +32,62 @@ namespace raft
 {
 class map;
 
-class parallel_k : public raft::kernel 
+class parallel_k : public raft::kernel
 {
 public:
-   parallel_k();
-   parallel_k( void * const ptr, 
-               const std::size_t nbytes );
+    parallel_k()
+    {
+    }
+    parallel_k( void * const ptr,
+                const std::size_t nbytes ) : kernel( ptr, nbytes )
+    {
+    }
 
-   virtual ~parallel_k();
+    virtual ~parallel_k()
+    {
+    }
 
 protected:
-   /** 
-    * addPort - adds a port, either to the input or 
-    * output depending on what the sub-class type is
-    */
-   template < class T >
-      std::size_t addPortTo( Port &port )
-   {
-      const auto portid( port_name_index++ );
+    /**
+     * addPort - adds a port, either to the input or
+     * output depending on what the sub-class type is
+     */
+    template < class T >
+    std::size_t addPortTo( Port &port )
+    {
+        const auto portid( port_name_index++ );
 
-#ifdef STRING_NAMES         
-      port.addPort< T >( std::to_string( portid ) );
+#ifdef STRING_NAMES
+        port.addPort< T >( std::to_string( portid ) );
 #else
-      /**
-       * if not strings, the addPort function expects a port_key_name_t struct,
-       * so, we have to go and add it. 
-       */
-      port.addPort< T >( raft::port_key_name_t( portid, std::to_string( portid ) ) );
+        /**
+         * if not strings, the addPort function expects a port_key_name_t
+         * struct, so, we have to go and add it.
+         */
+        port.addPort< T >( raft::port_key_name_t( portid, std::to_string(
+                        portid ) ) );
 #endif
-      return( portid );
-   }
-   
-   void lock_helper( Port &port );
+        return( portid );
+    }
 
-   void unlock_helper( Port &port );
+    void lock_helper( Port &port )
+    {
+        while( ! port.portmap.mutex_map.try_lock() )
+        {
+            std::this_thread::yield();
+        }
+        //lock acquired
+        return;
+    }
 
-   std::size_t  port_name_index = 0; 
-   friend class ::Schedule;
-   friend class map;
+    void unlock_helper( Port &port )
+    {
+        port.portmap.mutex_map.unlock();
+    }
+
+    std::size_t port_name_index = 0;
+    friend class ::Schedule;
+    friend class map;
 };
 
 }
