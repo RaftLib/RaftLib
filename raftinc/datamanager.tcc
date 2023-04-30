@@ -50,7 +50,8 @@ public:
       assert( buffer != nullptr );
       (this)->buffer = buffer;
       /** check to see if buffer is given is resizeable **/
-      resizeable     = (  buffer->external_alloc ? false : true ); 
+      resizeable     = ( buffer->external_alloc ?
+                         false : std::is_trivially_copyable< T >::value );
       /** 
        * need to set thread access structs, should be two of them, 
        * one for producer anad other for the consumer. These are 
@@ -141,6 +142,9 @@ public:
          }
          /** set resizing global flag **/
          resizing = true;
+#if defined(__aarch64__)
+         asm volatile( "dmb ish" : : : "memory" ); /** memory barrier **/
+#endif
          /** see if everybody is done with the current buffer **/
          if( allclear( thread_access, &checking_size ) )
          {

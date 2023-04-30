@@ -175,10 +175,7 @@ protected:
          (this)->datamanager.exitBuffer( dm::allocate );
          /** else, set stats,  spin **/
          auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
-         if( wr_stats == 0 )
-         {
-            wr_stats = 1;
-         }
+         wr_stats++;
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -217,10 +214,7 @@ protected:
          (this)->datamanager.exitBuffer( dm::allocate_range );
          /** else, set stats,  spin **/
          auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
-         if( wr_stats == 0 )
-         {
-            wr_stats = 1;
-         }
+         wr_stats++;
 #if __x86_64
        __asm__ volatile("\
          pause"
@@ -282,10 +276,7 @@ protected:
          (this)->datamanager.exitBuffer( dm::push );
          /** else, set stats,  spin **/
          auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
-         if( wr_stats == 0 )
-         {
-            wr_stats = 1;
-         }
+         wr_stats++;
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -347,10 +338,7 @@ protected:
             (this)->datamanager.exitBuffer( dm::pop );
             /** handle stats **/
             auto &rd_stats( (this)->consumer_data.read_stats->bec.blocked );
-            if( rd_stats == 0 )
-            {
-               rd_stats  = 1;
-            }
+            rd_stats++;
          }
          raft::yield();
       }
@@ -622,10 +610,7 @@ protected:
          (this)->datamanager.exitBuffer( dm::allocate );
          /** else, set stats,  spin **/
          auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
-         if( wr_stats == 0 )
-         {
-            wr_stats = 1;
-         }
+         wr_stats++;
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -654,10 +639,7 @@ protected:
          (this)->datamanager.exitBuffer( dm::allocate_range );
          /** else, set stats,  spin **/
          auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
-         if( wr_stats == 0 )
-         {
-            wr_stats = 1;
-         }
+         wr_stats++;
 #if __x86_64
        __asm__ volatile("\
          pause"
@@ -719,10 +701,7 @@ protected:
          (this)->datamanager.exitBuffer( dm::push );
          /** else, set stats,  spin **/
          auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
-         if( wr_stats == 0 )
-         {
-            wr_stats = 1;
-         }
+         wr_stats++;
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -780,10 +759,7 @@ protected:
             (this)->datamanager.exitBuffer( dm::pop );
             /** handle stats **/
             auto &rd_stats( (this)->consumer_data.read_stats->bec.blocked );
-            if( rd_stats == 0 )
-            {
-               rd_stats  = 1;
-            }
+            rd_stats++;
          }
          raft::yield();
       }
@@ -1077,10 +1053,7 @@ protected:
          (this)->datamanager.exitBuffer( dm::allocate );
          /** else, set stats,  spin **/
          auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
-         if( wr_stats == 0 )
-         {
-            wr_stats = 1;
-         }
+         wr_stats++;
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -1112,10 +1085,7 @@ protected:
          }
          /** else, set stats,  spin **/
          auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
-         if( wr_stats == 0 )
-         {
-            wr_stats = 1;
-         }
+         wr_stats++;
 #if __x86_64
        __asm__ volatile("\
          pause"
@@ -1175,10 +1145,7 @@ protected:
          }
          (this)->datamanager.exitBuffer( dm::push );
          auto &wr_stats( (this)->producer_data.write_stats->bec.blocked );
-         if( wr_stats == 0 )
-         {
-            wr_stats = 1;
-         }
+         wr_stats++;
 #if __x86_64
          __asm__ volatile("\
            pause"
@@ -1254,10 +1221,7 @@ protected:
             (this)->datamanager.exitBuffer( dm::pop );
             /** handle stats **/
             auto &rd_stats( (this)->consumer_data.read_stats->bec.blocked );
-            if( rd_stats == 0 )
-            {
-               rd_stats  = 1;
-            }
+            rd_stats++;
             raft::yield();
          }
       }

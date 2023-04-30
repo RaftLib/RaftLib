@@ -263,6 +263,7 @@ public:
     operator >= ( kpair &rhs )
     {
         auto *ptr( new kpair( *this, rhs, false, true ) );
+        UNUSED( ptr );
         return( rhs );
     }
 
@@ -292,6 +293,7 @@ public:
     operator <= ( kpair &rhs )
     {
         auto *ptr( new kpair( *this, rhs, true, false ) );
+        UNUSED( ptr );
         return( rhs );
     }
 

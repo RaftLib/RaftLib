@@ -210,6 +210,7 @@ protected:
                        0 );
 #elif USE_UT
         thread_t *th_ptr = rt::Spawn( [td](){ pool_schedule::pool_run(td); } );
+        UNUSED( th_ptr );
 #endif
         /** done **/
         return;
