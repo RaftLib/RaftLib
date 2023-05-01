@@ -125,6 +125,7 @@ public:
         {
             (this)->datamanager.resize(
                 new Buffer::Data<T, type>(size, align), exit_alloc);
+            (this)->init(); /* update the write_stats, read_stats pointers */
         }
         /** else, not resizeable..just return **/
         return;

@@ -188,13 +188,13 @@ TOP:
         auto &wr_stats( (this)->datamanager.get()->write_stats );
         const auto copy( wr_stats );
         wr_stats.all = 0;
-        if( copy.bec.blocked == 0 || copy.bec.count == 0 )
+        if( copy.bec.blocked == 0 )
         {
             return( 0.0 );
         }
         /** else **/
         return( (float) copy.bec.blocked / 
-                    (float) copy.bec.count );
+                (float) ( copy.bec.blocked + copy.bec.count ) );
     }
     
     /**
