@@ -76,6 +76,15 @@ public:
     {
         for( FIFO *f : allocated_fifo )
         {
+#if RAFT_DUMP_STATS
+            Blocked rstat, wstat;
+            f->get_zero_read_stats( rstat );
+            f->get_zero_write_stats( wstat );
+            std::cout << std::hex << (uint64_t)f << std::dec << " " <<
+                f->capacity() << " " <<
+                rstat.bec.blocked << " " << rstat.bec.count << " " <<
+                wstat.bec.blocked << " " << wstat.bec.count << std::endl;
+#endif
             delete( f );
         }
     }

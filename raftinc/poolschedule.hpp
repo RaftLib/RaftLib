@@ -94,6 +94,13 @@ class pool_schedule : public Schedule
             }
             this->tail_mutex.unlock();
             if( all_finished ) {
+#if RAFT_DUMP_STATS
+                for( auto * const td : this->thread_data_pool )
+                {
+                    std::cout << td->run_total_cnt << " runs " <<
+                        td->run_valid_cnt << " valid\n";
+                }
+#endif
                 break;
             }
         } while( true );
@@ -173,6 +180,10 @@ protected:
         bool finished = false;
 #endif
         core_id_t loc = -1;
+#if RAFT_DUMP_STATS
+        std::size_t run_total_cnt = 0;
+        std::size_t run_valid_cnt = 0;
+#endif
 #pragma pack( pop )
     };
 
@@ -256,7 +267,16 @@ protected:
 #endif
        while( ! done )
        {
-           Schedule::kernelRun( thread_d->k, done );
+           bool valid_run( Schedule::kernelRun( thread_d->k, done ) );
+#if RAFT_DUMP_STATS
+           thread_d->run_total_cnt++;
+           if( valid_run )
+           {
+               thread_d->run_valid_cnt++;
+           }
+#else
+           UNUSED( valid_run );
+#endif
            //FIXME: add back in SystemClock user space timer
            //set up one cache line per thread
            if( run_count++ == 20 || done )
