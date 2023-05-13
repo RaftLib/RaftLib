@@ -547,7 +547,6 @@ public:
      * @return bool - true if invalid
      */
     virtual bool is_invalid() = 0;
-protected:
     /**
      * setPtrMap -
      */
@@ -580,6 +579,7 @@ protected:
         UNUSED( peekset );
         return;
     }
+protected:
     /**
      * signal_peek - special function for the scheduler
      * to peek at a signal on the head of the queue.

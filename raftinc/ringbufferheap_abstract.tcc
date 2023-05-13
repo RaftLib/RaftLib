@@ -209,7 +209,6 @@ TOP:
     }
    
 
-protected:
    /**
     * setPtrMap
     */
@@ -241,6 +240,7 @@ protected:
        (this)->producer_data.out_peek = peekset;
    }
 
+protected:
    /**
     * signal_peek - return signal at head of 
     * queue and nothing else

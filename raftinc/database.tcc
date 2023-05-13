@@ -43,7 +43,7 @@ template < class T > struct DataBase
 {
     DataBase( const std::size_t max_cap ) : max_cap ( max_cap ),
                                             length_store( sizeof( T ) * max_cap ),
-                                            length_signal( sizeof( T ) * max_cap ),
+                                            length_signal( sizeof( Signal ) * max_cap ),
                                             dynamic_alloc_size( length_store +
                                                                 length_signal )
                                             {}
