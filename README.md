@@ -53,9 +53,7 @@ Clone using the --recurse-submodules to download the library including all submo
 ```git clone --recurse-submodules https://github.com/RaftLib/RaftLib.git```
 
 ## Build and Install
-Make a build directory (e.g.: "build"). 
-
-To build:
+Using a build directory called e.g.: "build": 
 
 ```bash
 mkdir build
@@ -70,15 +68,15 @@ PREFIX ?= /usr/local
 ```
 
 
-### CMAKE flags
-## OpenCV
+## CMAKE flags
+### OpenCV
 If you want to build the OpenCV example, then
 you'll need to add to your cmake invocation:
 ```bash
 -DBUILD_WOPENCV=true 
 ```
 
-## Examples
+### Examples
 Building the examples, benchmarks and tests can be disabled using:
 ```bash
 -DBUILD_EXAMPLES=false
@@ -97,7 +95,7 @@ RaftLib with QThreads linked, add the following (assumes the QThreads library is
 
 
 ## Using
-* When building applications with RaftLib, on Linux it is best to 
+When building applications with RaftLib, on Linux it is best to 
 use the **pkg-config** file, as an example, using the _poc.cpp_ example,
 ```bash
 g++ `pkg-config --cflags raftlib` poc.cpp -o poc `pkg-config --libs raftlib`
