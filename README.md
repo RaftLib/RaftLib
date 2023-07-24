@@ -77,10 +77,20 @@ you'll need to add to your cmake invocation:
 ```
 
 ### Examples
-Building the examples, benchmarks and tests can be disabled using:
+Building the examples can be enabled using:
 ```bash
--DBUILD_EXAMPLES=false
+-DBUILD_EXAMPLES=true
+```
+
+### Benchmarks
+Building the benchmarks can be enabled using:
+```bash
 -DBUILD_BENCHMARKS=false
+```
+
+### Tests
+Building tests can be disabled using:
+```bash
 -DBUILD_TESTS=false
 ```
 
@@ -93,6 +103,24 @@ RaftLib with QThreads linked, add the following (assumes the QThreads library is
 -DUSEQTHREAD=1
 ```
 
+### String names
+This is still an experimental feature. Default is to use legacy string-named ports.
+```bash
+-DSTRING_NAMES=1
+```
+
+### Pkg-config path
+Set the pkg-config path where to install the `raftlib.pc` configuration file. Leave empty for the application to figure it out.
+```bash
+-DPKG_CONFIG_PATHWAY="<path>"
+```
+
+### Generate position independent code
+Building the library with position independet code
+```bash
+-DBUILD_FPIC=1
+```
+
 
 ## Using
 When building applications with RaftLib, on Linux it is best to 
@@ -103,6 +131,13 @@ g++ `pkg-config --cflags raftlib` poc.cpp -o poc `pkg-config --libs raftlib`
 
 Feel free to substitute your favorite build tool. I use Ninja and make depending on which machine I'm on. To change out, use cmake to generate the appropriate build files with the -Gxxx flag.
 
+## Pkg-config
+The primary use of pkg-config is to provide the necessary details for compiling and linking a program to a library. This metadata is stored in pkg-config files. These files have the suffix .pc and reside in specific locations known to the pkg-config tool. RaftLib provides a configuration which which is installed together with the library. Once the configuration file is installed, the command `pkg-config --cflags raftlib` can be used to provide the compiling details.
+
+Following is an example of what is returned by above command:
+```bash
+-std=c++14 -DL1D_CACHE_LINE_SIZE=64 -DPLATFORM_HAS_NUMA=0 -I/usr/local/include
+```
 
 ## Citation
 If you use this framework for something that gets published, please cite it as:
