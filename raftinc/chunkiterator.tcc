@@ -24,6 +24,7 @@
 #include <thread>
 #include <mutex>
 #include <cstddef>
+#include <cassert>
 
 namespace raft
 {

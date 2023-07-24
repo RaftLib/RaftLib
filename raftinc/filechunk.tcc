@@ -21,6 +21,8 @@
 #define FILECHUNK_TCC  1
 
 #include "chunkiterator.tcc"
+#include <cstring>
+#include <cassert>
 
 namespace raft
 {
