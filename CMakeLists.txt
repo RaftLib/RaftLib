@@ -52,6 +52,15 @@ find_package( Threads )
 ##
 include( CheckGitDep )
 
+##
+# Build with -fPIC
+##
+mark_as_advanced( BUILD_FPIC )
+set( BUILD_FPIC true CACHE BOOL "Generate position-independent code (-fPIC)" )
+if( BUILD_FPIC )
+    set(BUILD_FPIC_FLAG "-fPIC")
+endif( BUILD_FPIC )
+
 
 add_subdirectory( src )
 add_subdirectory( raftinc )
