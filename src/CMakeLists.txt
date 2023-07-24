@@ -66,7 +66,7 @@ if ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang"
 
 target_compile_options( raft
                         PUBLIC
-                        "-W" "-Wall" "-Wextra" "-Wpedantic" )
+                        ${BUILD_FPIC_FLAG} "-W" "-Wall" "-Wextra" "-Wpedantic" )
 
 endif()
 
