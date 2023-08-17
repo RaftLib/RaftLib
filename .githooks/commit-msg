@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# example:
+# feat(apikey): added the ability to add api key to configuration
+pattern="^(build|ci|docs|feat|fix|perf|refactor|style|test|chore|revert)(\([^\)]+\))?:\s.+$"
+breaking_change_pattern="BREAKING CHANGE"
+breaking_change_full_pattern="BREAKING CHANGE:\s.+$"
+
+filename="$1"
+ss=$(grep -v "^#" "$filename")
+
+
+display_error()
+{
+    echo "ERROR: $1"
+    echo 
+    echo "The commit message doesn't adhere to the conventional commits format as per"
+    echo "described in https://www.conventionalcommits.org/en/v1.0.0/"
+    echo 
+    echo "The commit message should start with a type (e.g., feat, fix, chore, etc.),"
+    echo "followed by an optional scope enclosed in parentheses, and a description."
+    echo 
+    echo "Example: feat(apikey): added the ability to add api key to configuration"
+    echo 
+    echo -- Commit message: ------
+    echo "$ss"
+    echo -------------------------
+    echo
+    exit 1
+}
+
+first_line=$(grep -v "^#" "$filename" | head -n 1)
+
+# Ignore empty messages
+if [[ -z "$ss" ]]; then
+    exit 0
+fi
+
+# Is pattern ok?
+if ! [[ $first_line =~ $pattern ]]; then
+    display_error "The first line of the commit message should adhere to the conventional format."
+fi
+
+# Check if the pattern exists in any other line
+rest_of_lines=$(grep -v "^#" "$filename" | tail -n +2)
+if [[ $rest_of_lines =~ $pattern ]]; then
+    display_error "The pattern should only be present in the first line of the commit message."
+fi
+
+first_line_of_rest_of_lines=$(echo "$rest_of_lines" | head -n 1)
+
+if ! [[ -z "${first_line_of_rest_of_lines// }" ]]; then
+    display_error	 "The body and footer has to be separated from description by empty line"
+fi
+
+# Is breaking change?
+if [[ $rest_of_lines =~ $breaking_change_pattern ]]; then
+    if ! [[ $rest_of_lines =~ $breaking_change_full_pattern ]]; then
+        display_error "The breaking change format is not as expected"
+    fi
+    is_breaking_change=1
+fi
+
+# If breaking change confirm, because we do not trust onyone
+if [[ "$is_breaking_change" -eq 1 ]]; then
+    read -p "Warning: This commit includes a BREAKING CHANGE. Do you want to proceed? (y/n) " confirmation < /dev/tty
+    if [[ "$confirmation" != "y" && "$confirmation" != "Y" ]]; then
+        echo "Breaking change commit aborted."
+        echo
+        echo -- Commit message: ------
+        echo "$ss"
+        echo -------------------------
+        echo
+        exit 1
+    fi
+fi

@@ -136,3 +136,19 @@ configure_file( "raftlib.pc.in" "raftlib.pc" @ONLY )
 install( FILES ${CMAKE_CURRENT_BINARY_DIR}/raftlib.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/pkgconfig/ )
 
 endif( NOT WIN32 )                     
+
+# Note to contributors
+message("
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   Important Note for Contributors: This repository uses automated releases. 
+   Please follow the Conventional Commits specifications to write the correct 
+   commit messages, ensuring the appropriate release process is triggered. To 
+   enforce this on *nix environments, you can use our commit-msg hook:
+   
+      git config core.hooksPath \"<path_to_this_repo>/.githooks\"
+   
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+")

@@ -1,4 +1,4 @@
-# Raftlib ![CI](https://github.com/RaftLib/RaftLib/workflows/CI/badge.svg?event=push)
+# Raftlib [![Test](https://github.com/RaftLib/RaftLib/actions/workflows/test.yml/badge.svg)](https://github.com/RaftLib/RaftLib/actions/workflows/test.yml) [![Release](https://github.com/RaftLib/RaftLib/actions/workflows/release.yml/badge.svg)](https://github.com/RaftLib/RaftLib/actions/workflows/release.yml)
 
 
 ## Overview
@@ -139,7 +139,49 @@ Following is an example of what is returned by above command:
 -std=c++14 -DL1D_CACHE_LINE_SIZE=64 -DPLATFORM_HAS_NUMA=0 -I/usr/local/include
 ```
 
+## Contribution Guidelines
+
+We welcome contributions to our project! To maintain a clear and organized development history, please adhere to the Conventional Commits message format when making commits.
+
+### Conventional Commits
+
+Please follow the guidelines from the [Conventional Commits website](https://www.conventionalcommits.org/) when crafting your commit messages. This format helps us generate accurate changelogs and automate the release process based on the types of changes you make.
+
+## Automatic Releases
+
+We've streamlined our release process to be automated, thanks to the Conventional Commits message format. This ensures that our project maintains a clear versioning scheme and changelog, without the need for manual intervention.
+
+### How Automatic Releases Work
+
+When you follow the Conventional Commits message format for your commit messages, our automated release system interprets these messages and determines the appropriate version bump for the project.
+
+- Commits with **fix:** in the message trigger a **patch** version increase.
+- Commits with **feat:** in the message trigger a **minor** version increase.
+- Commits with a **BREAKING CHANGE:** in the message trigger a **major** version increase.
+
+Here's an example of how it works:
+- If you contribute a bug fix, such as `fix: resolve login issue`, it will trigger a patch version increase.
+- If you add a new feature, such as `feat: implement user profile customization`, it will trigger a minor version increase.
+- If your contribution includes a breaking change, such as `BREAKING CHANGE: update authentication method`, it will trigger a major version increase.
+
+### Benefits of Automated Releases
+
+Automated releases offer several benefits to our development workflow:
+- **Consistency:** Every release follows a standardized versioning scheme.
+- **Changelog Generation:** Changelogs are automatically generated based on commit messages.
+- **Efficiency:** Release management is streamlined, saving time and reducing errors.
+- **Transparency:** Contributors can see how their changes affect the versioning process.
+
+By adhering to the Conventional Commits format, you play a crucial role in ensuring that our project's releases are accurate, well-documented, and hassle-free.
+
+Thank you for your contributions and for helping us maintain a smooth and automated release process!
+
+### Warning
+
+We do not support exclamation marks (`!`) after `<type>` for triggering breaking changes.
+
 ## Citation
+
 If you use this framework for something that gets published, please cite it as:
 ```bibtex
 @article{blc16,
@@ -151,7 +193,6 @@ If you use this framework for something that gets published, please cite it as:
   journal = {International Journal of High Performance Computing Applications}
 }
 ```
-
 
 ## Other Info Sources
 * [OpenCV wrappers for RaftLib](https://github.com/RaftLib/RaftOCV)
