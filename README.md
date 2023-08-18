@@ -47,10 +47,37 @@ impact functionality.
 * Builds and runs under Win10
 
 
-## Clone
+## Cloning repository
 Clone using the --recurse-submodules to download the library including all submodules and other libraries
 
 ```git clone --recurse-submodules https://github.com/RaftLib/RaftLib.git```
+
+## Downloading Manually
+
+Building the library by cloning the repository is the preferred option. However, when this cannot be done, such as in offline networks, manual downloading of the package is necessary. In such cases, we must also ensure to manually download the corresponding dependencies.
+
+### Dependencies
+
+The following submodules are required for building RaftLib, and they need to be placed under their corresponding folders within the `git-dep` directory:
+
+- [**affinity**](https://github.com/RaftLib/affinity) - Provides CPU affinity setting capabilities.
+  - Commit: Specify the required commit here.
+
+- [**cmdargs**](https://github.com/RaftLib/cmdargs) - Offers command-line argument parsing functionality.
+  - Commit: Specify the required commit here.
+
+- [**demangle**](https://github.com/RaftLib/demangle) - Facilitates C++ symbol demangling.
+  - Commit: Specify the required commit here.
+
+- [**shm**](https://github.com/RaftLib/shm) - Supports shared memory communication.
+  - Commit: Specify the required commit here.
+
+Before building RaftLib, ensure that you download the corresponding commit of each submodule. You can use the following command within the main repository:
+```bash
+git submodule update --init --recursive
+```
+
+After setting up the dependencies, you can proceed with building and using RaftLib as described.
 
 ## Build and Install
 Using a build directory called e.g.: "build": 
@@ -116,7 +143,7 @@ Set the pkg-config path where to install the `raftlib.pc` configuration file. Le
 ```
 
 ### Generate position independent code
-Building the library with position independet code
+Sometimes the code needs to be integrated into a shared library, for that this flag allows building the library with position independet code (i.e.: with the compiling flag -fPIC supported by both gcc and clang)
 ```bash
 -DBUILD_FPIC=1
 ```
