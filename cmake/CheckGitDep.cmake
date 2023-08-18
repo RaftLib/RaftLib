@@ -26,7 +26,7 @@ foreach( GMOD ${GIT_MODULES} )
  if( EXISTS ${DEPDIR}/${GMOD}/CMakeLists.txt )
     add_subdirectory( ${DEPDIR}/${GMOD} )
     if( EXISTS ${DEPDIR}/${GMOD}/include )
-        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${DEPDIR}/${GMOD}/include" )
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I\"${DEPDIR}/${GMOD}/include\"")
     else()
         ##
         # this might cause some spurious includes, however, the alternative
