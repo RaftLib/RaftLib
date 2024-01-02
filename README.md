@@ -1,4 +1,4 @@
-# Raftlib ![CI](https://github.com/RaftLib/RaftLib/workflows/CI/badge.svg?event=push)
+# Raftlib [![Test](https://github.com/RaftLib/RaftLib/actions/workflows/test.yml/badge.svg)](https://github.com/RaftLib/RaftLib/actions/workflows/test.yml) [![Release](https://github.com/RaftLib/RaftLib/actions/workflows/release.yml/badge.svg)](https://github.com/RaftLib/RaftLib/actions/workflows/release.yml)
 
 
 ## Overview
@@ -47,10 +47,37 @@ impact functionality.
 * Builds and runs under Win10
 
 
-## Clone
+## Cloning repository
 Clone using the --recurse-submodules to download the library including all submodules and other libraries
 
 ```git clone --recurse-submodules https://github.com/RaftLib/RaftLib.git```
+
+## Downloading Manually
+
+Building the library by cloning the repository is the preferred option. However, when this cannot be done, such as in offline networks, manual downloading of the package is necessary. In such cases, we must also ensure to manually download the corresponding dependencies.
+
+### Dependencies
+
+The following submodules are required for building RaftLib, and they need to be placed under their corresponding folders within the `git-dep` directory:
+
+- [**affinity**](https://github.com/RaftLib/affinity) - Provides CPU affinity setting capabilities.
+  - Commit: Specify the required commit here.
+
+- [**cmdargs**](https://github.com/RaftLib/cmdargs) - Offers command-line argument parsing functionality.
+  - Commit: Specify the required commit here.
+
+- [**demangle**](https://github.com/RaftLib/demangle) - Facilitates C++ symbol demangling.
+  - Commit: Specify the required commit here.
+
+- [**shm**](https://github.com/RaftLib/shm) - Supports shared memory communication.
+  - Commit: Specify the required commit here.
+
+Before building RaftLib, ensure that you download the corresponding commit of each submodule. You can use the following command within the main repository:
+```bash
+git submodule update --init --recursive
+```
+
+After setting up the dependencies, you can proceed with building and using RaftLib as described.
 
 ## Build and Install
 Using a build directory called e.g.: "build": 
@@ -116,7 +143,7 @@ Set the pkg-config path where to install the `raftlib.pc` configuration file. Le
 ```
 
 ### Generate position independent code
-Building the library with position independet code
+Sometimes the code needs to be integrated into a shared library, for that this flag allows building the library with position independet code (i.e.: with the compiling flag -fPIC supported by both gcc and clang)
 ```bash
 -DBUILD_FPIC=1
 ```
@@ -139,7 +166,49 @@ Following is an example of what is returned by above command:
 -std=c++14 -DL1D_CACHE_LINE_SIZE=64 -DPLATFORM_HAS_NUMA=0 -I/usr/local/include
 ```
 
+## Contribution Guidelines
+
+We welcome contributions to our project! To maintain a clear and organized development history, please adhere to the Conventional Commits message format when making commits.
+
+### Conventional Commits
+
+Please follow the guidelines from the [Conventional Commits website](https://www.conventionalcommits.org/) when crafting your commit messages. This format helps us generate accurate changelogs and automate the release process based on the types of changes you make.
+
+## Automatic Releases
+
+We've streamlined our release process to be automated, thanks to the Conventional Commits message format. This ensures that our project maintains a clear versioning scheme and changelog, without the need for manual intervention.
+
+### How Automatic Releases Work
+
+When you follow the Conventional Commits message format for your commit messages, our automated release system interprets these messages and determines the appropriate version bump for the project.
+
+- Commits with **fix:** in the message trigger a **patch** version increase.
+- Commits with **feat:** in the message trigger a **minor** version increase.
+- Commits with a **BREAKING CHANGE:** in the message trigger a **major** version increase.
+
+Here's an example of how it works:
+- If you contribute a bug fix, such as `fix: resolve login issue`, it will trigger a patch version increase.
+- If you add a new feature, such as `feat: implement user profile customization`, it will trigger a minor version increase.
+- If your contribution includes a breaking change, such as `BREAKING CHANGE: update authentication method`, it will trigger a major version increase.
+
+### Benefits of Automated Releases
+
+Automated releases offer several benefits to our development workflow:
+- **Consistency:** Every release follows a standardized versioning scheme.
+- **Changelog Generation:** Changelogs are automatically generated based on commit messages.
+- **Efficiency:** Release management is streamlined, saving time and reducing errors.
+- **Transparency:** Contributors can see how their changes affect the versioning process.
+
+By adhering to the Conventional Commits format, you play a crucial role in ensuring that our project's releases are accurate, well-documented, and hassle-free.
+
+Thank you for your contributions and for helping us maintain a smooth and automated release process!
+
+### Warning
+
+We do not support exclamation marks (`!`) after `<type>` for triggering breaking changes.
+
 ## Citation
+
 If you use this framework for something that gets published, please cite it as:
 ```bibtex
 @article{blc16,
@@ -151,7 +220,6 @@ If you use this framework for something that gets published, please cite it as:
   journal = {International Journal of High Performance Computing Applications}
 }
 ```
-
 
 ## Other Info Sources
 * [OpenCV wrappers for RaftLib](https://github.com/RaftLib/RaftOCV)
