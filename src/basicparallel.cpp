@@ -26,10 +26,10 @@
 
 
 
-basic_parallel::basic_parallel( raft::map &map,
-                                Allocate &alloc,
-                                Schedule &sched,
-                                volatile bool &exit_para )
+basic_parallel::basic_parallel( raft::map       &map,
+                                Allocate        &alloc,
+                                Schedule        &sched,
+                                volatile bool   &exit_para )
    : source_kernels( map.source_kernels ),
      all_kernels(    map.all_kernels ),
      alloc( alloc ),
@@ -39,6 +39,9 @@ basic_parallel::basic_parallel( raft::map &map,
    /** nothing to do here, move along **/
 }
 
+basic_parallel::~basic_parallel()
+{
+}
 
 void
 basic_parallel::start()
@@ -55,6 +58,7 @@ basic_parallel::start()
        * outside of it.
        */
       std::vector< raft::kernel* > dup_list;
+
       GraphTools::BFS(  kernels,
                         (vertex_func) [&dup_list]( raft::kernel *kernel,
                                            void *data )
@@ -170,7 +174,7 @@ basic_parallel::start()
             old_port_out.other_kernel->unlock();
          }
          /** schedule new kernel **/
-         sched.scheduleKernel( ptr );
+         sched.schedule_kernel( ptr );
       }
 
 

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <raftio>
 #include "generate.tcc"
-
+#include <unistd.h>
 int
 main()
 {
@@ -20,6 +20,5 @@ main()
    m += g >> j;
    m += j >> p;
    m.exe();
-   
    return( EXIT_SUCCESS );
 }

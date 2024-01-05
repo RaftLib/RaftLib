@@ -117,6 +117,18 @@ TOP:
       ptr->is_valid = false;
       return;
    }
+
+   /** 
+    * revalidate - does exactly the opposite of invalidate,
+    * sets it so that this queue can be used again without
+    * haveing to reallocate everything. 
+    */
+   virtual void revalidate()
+   {
+      auto * const ptr( (this)->datamanager.get() );
+      ptr->is_valid = true;
+      return;
+   }
    
    /**
     * is_invalid - called by the consumer thread to check 

@@ -61,17 +61,24 @@ struct PortInfo
     * until the FIFO is fully emptied.
     * @return FIFO*
     */
-   FIFO* getFIFO();
+   inline FIFO* getFIFO()
+   {
+      return( fifo );
+   }
 
    /**
     * setFIFO - call this funciton to set a FIFO, updates both
     * pointers at the same time as opposed to doing it manually
     * @param   in - valid FIFO*, must not be nullptr
     */
-   void setFIFO( FIFO * const in );
+   inline void setFIFO( FIFO * const in )
+   {
+      fifo = in;
+   }
+
+
    
-   FIFO            *fifo_a  = nullptr;
-   FIFO            *fifo_b  = nullptr;
+   FIFO            *fifo  = nullptr;
    /** 
     * the type of the port.  regardless of if the buffer itself
     * is impplemented or not. 

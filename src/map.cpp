@@ -41,6 +41,51 @@ raft::map::map() : MapBase()
 
 }
 
+raft::map::~map() 
+{
+    /**
+     * order here matters, FIXME, we need
+     * to fix the fragility of this, the 
+     * pm_thread has hooks that depend on
+     * the sched and alloc threads being there
+     * plus that they're shutdown before we 
+     * destruct them. 
+     */
+    exit_para = true;
+    exit_alloc = true;
+    if( pm_thread != nullptr )
+    {
+        pm_thread->join();
+        delete( pm_thread );
+    }
+    delete( pm );
+    
+
+    /** join scheduler first **/
+    if( schedule_thread != nullptr )
+    { 
+        schedule_thread->join();
+        delete( schedule_thread );
+    }
+    
+    /**
+     * could be a case where allocator_thread is null
+     * after an exception, check nullptr first...alternative
+     * would be to make a global variable that is flipped
+     * on exception, but that'd be a bit overkill for most
+     * cases. 
+     */
+    if( allocator_thread != nullptr )
+    {
+        /** scheduler done, cleanup alloc **/
+        allocator_thread->join();
+        delete( allocator_thread );
+    }
+    //can delete a nullptr
+    delete( alloc_object );
+    delete( sched_object );
+}
+
 void
 raft::map::checkEdges()
 {

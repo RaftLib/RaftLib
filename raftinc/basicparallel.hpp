@@ -51,12 +51,12 @@ struct stats
 class basic_parallel
 {
 public:
-   basic_parallel( raft::map &map, 
-                   Allocate &alloc,
-                   Schedule &sched,
-                   volatile bool &exit_para );
+   basic_parallel( raft::map        &map, 
+                   Allocate         &alloc,
+                   Schedule         &sched,
+                   volatile bool    &exit_para );
 
-   virtual ~basic_parallel() = default;
+   virtual ~basic_parallel();
    virtual void start();
 
    

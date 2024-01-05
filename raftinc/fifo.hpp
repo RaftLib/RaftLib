@@ -525,6 +525,8 @@ public:
     * if more data is requested.
     */
    virtual void invalidate() = 0;
+
+   virtual void revalidate() = 0;
    
    /**
     * is_invalid - called by the consumer thread to check 

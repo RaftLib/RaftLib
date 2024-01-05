@@ -24,9 +24,8 @@ main()
    using gen = raft::test::generate< type_t >;
    using p   = raft::print< type_t, '\n' >;
    gen a( 1000000 );
-   p   print;
    raft::map m;
-   m += a >> print;
+   m += raft::kernel::make< gen >() >> raft::kernel::make< p >();
    m.exe();
 
    return( EXIT_SUCCESS );

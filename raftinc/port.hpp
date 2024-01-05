@@ -130,8 +130,7 @@ public:
          const std::size_t nbytes );
 
    /**
-    * ~Port - destructor, deletes the FIFO that was given
-    * when the object was initalized.
+    * ~Port - default for the moment. 
     */
    virtual ~Port() = default;
 

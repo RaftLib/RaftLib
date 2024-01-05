@@ -121,9 +121,20 @@ dynalloc::run()
       std::chrono::microseconds dura( 3000 );
       std::this_thread::sleep_for( dura );
 
-      auto &container( (this)->source_kernels.acquire() );
-      GraphTools::BFS( container, mon_func );
-      (this)->source_kernels.release();
+      /**
+       * likely still could be a bug here, if there's an 
+       * exception somewhere and this is called, tehre's 
+       * a chance the kernel structures are in a corrupted
+       * state and we're attempting to traverse them which
+       * could in fact be a bad thing. So....let's figure
+       * out a better way to do this. 
+       */
+      if( ! exit_alloc )
+      {
+        auto &container( (this)->source_kernels.acquire() );
+        GraphTools::BFS( container, mon_func );
+        (this)->source_kernels.release();
+      }
 
    }
    return;

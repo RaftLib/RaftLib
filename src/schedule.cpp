@@ -12,8 +12,10 @@ Schedule::Schedule( raft::map &map ) :  kernel_set( map.all_kernels ),
                                         dst_kernels( map.dst_kernels ),
                                         internally_created_kernels( map.internally_created_kernels )
 {
-   //TODO, see if we want to keep this
-   handlers.addHandler( raft::quit, Schedule::quitHandler );
+}
+
+Schedule::~Schedule()
+{
 }
 
 
@@ -24,24 +26,6 @@ Schedule::init()
 }
 
 
-raft::kstatus
-Schedule::quitHandler( FIFO              &fifo,
-                       raft::kernel      *kernel,
-                       const raft::signal signal,
-                       void              *data )
-{
-   /**
-    * NOTE: This should be the only action needed
-    * currently, however that may change in the future
-    * with more features and systems added.
-    */
-   UNUSED( kernel );
-   UNUSED( signal );
-   UNUSED( data   );
-
-   fifo.invalidate();
-   return( raft::stop );
-}
 
 void
 Schedule::invalidateOutputPorts( raft::kernel *kernel )
@@ -55,40 +39,19 @@ Schedule::invalidateOutputPorts( raft::kernel *kernel )
    return;
 }
 
-raft::kstatus
-Schedule::checkSystemSignal( raft::kernel * const kernel,
-                             void *data,
-                             SystemSignalHandler &handlers )
-{
-   auto &input_ports( kernel->input );
-   raft::kstatus ret_signal( raft::proceed );
-   for( auto &port : input_ports )
-   {
-      if( port.size() == 0 )
-      {
-         continue;
-      }
-      const auto curr_signal( port.signal_peek() );
-      if( R_UNLIKELY(
-         ( curr_signal > 0 && curr_signal < raft::MAX_SYSTEM_SIGNAL ) ) )
-      {
-         port.signal_pop();
-         /**
-          * TODO, right now there is special behavior for term signal only,
-          * what should we do with others?  Need to decide that.
-          */
 
-         if( handlers.callHandler( curr_signal,
-                               port,
-                               kernel,
-                               data ) == raft::stop )
-         {
-            ret_signal = raft::stop;
-         }
-      }
+void
+Schedule::revalidateOutputPorts( raft::kernel *kernel )
+{
+
+   auto &output_ports( kernel->output );
+   for( auto &port : output_ports )
+   {
+      port.revalidate();
    }
-   return( ret_signal );
+   return;
 }
+
 
 
 /**
@@ -100,7 +63,7 @@ Schedule::checkSystemSignal( raft::kernel * const kernel,
  * objects which are thread safe to add to and remove from.
  */
 void
-Schedule::scheduleKernel( raft::kernel * const kernel )
+Schedule::schedule_kernel( raft::kernel * const kernel )
 {
    /**
     * NOTE: The kernel param should be ready to rock,
@@ -127,6 +90,48 @@ Schedule::scheduleKernel( raft::kernel * const kernel )
    }
    handleSchedule( kernel );
    return;
+}
+ 
+
+bool 
+Schedule::terminus_complete()
+{
+    /**
+     * we might need to re-evaluate this if there
+     * are no termini in the graph (e.g., there are
+     * cycles, right now though, we can have interior
+     * cycles only so this is likely fine, but...
+     * we'll have to come  up with a better way in the
+     * future. 
+     */
+    return( complete );
+}
+    
+/**
+ * reset_streams - reset all streams within the defined
+ * graph so that they're in a state where they can be 
+ * re-used, basically undoing the logic that is used
+ * for shutting down the dataflow graph when no data
+ * is coming. 
+ * @return void. 
+ */
+void 
+Schedule::reset_streams()
+{
+    auto &kernels( kernel_set.acquire() );
+    for( raft::kernel * const k : kernels )
+    {
+        revalidateOutputPorts( k ); 
+    }
+    kernel_set.release();
+    complete = false;
+    return;
+}
+
+void
+Schedule::signal_complete()
+{
+    complete = true; 
 }
 
 

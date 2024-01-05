@@ -82,10 +82,10 @@ main( )
     std::int64_t the_value = 100;
 
     non_trivial_obj_t sto( &the_value );
-    
-    raft::map m;
     source  s( &sto );
     sink    t;
+    
+    raft::map m;
     m += s >> t;
     m.exe();
     if( global_bool == true )

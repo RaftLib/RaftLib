@@ -144,6 +144,27 @@ operator >> ( raft::kernel_wrapper &&a, raft::kernel_wrapper &&b )
     return( *ptr );
 }
 
+kpair& 
+operator >> ( raft::kernel_wrapper &&a, raft::kernel &b )
+{
+    auto *ptr( new kpair( a, b ) );
+    return( *ptr );
+}
+
+kpair& 
+operator >> ( raft::kernel_wrapper &a, raft::kernel_wrapper &&b )
+{
+    auto *ptr( new kpair( a, b ) );
+    return( *ptr );
+}
+
+kpair& 
+operator >> ( raft::kernel_wrapper &a, raft::kernel &b )
+{
+    auto *ptr( new kpair( a, b ) );
+    return( *ptr );
+}
+
 kpair&
 operator >> ( raft::kernel &a, raft::kernel_wrapper &&w )
 {

@@ -249,6 +249,8 @@ protected:
     * so moving to a kernelkeeper object. - jcb 20Nov2018
     */
     kernelkeeper            internally_created_kernels;
+    
+    kernelkeeper            externally_created_kernels;
    
    /** 
     * FIXME: come up with better solution for enabling online

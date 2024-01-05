@@ -29,6 +29,7 @@
 #ifndef RAFTKERNEL_WRAPPER_HPP
 #define RAFTKERNEL_WRAPPER_HPP  1
 #include <cstdint>
+#include <string>
 
 /** pre-declare kpair, header included in cpp file **/
 class kpair;
@@ -59,6 +60,8 @@ public:
      */
     virtual ~kernel_wrapper();
 
+
+    raft::kernel& operator []( const std::string &&portname );
     
 
 protected:

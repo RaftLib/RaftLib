@@ -30,9 +30,6 @@
 #include "simpleschedule.hpp"
 #include "rafttypes.hpp"
 
-#ifdef USE_PARTITION
-#include "partition_scotch.hpp"
-#endif
 #include "defs.hpp"
 
 #ifdef STATIC_CORE_ASSIGN
@@ -52,17 +49,29 @@ simple_schedule::simple_schedule( raft::map &map ) : Schedule( map )
 
 simple_schedule::~simple_schedule()
 {
-   std::lock_guard<std::mutex> guard( thread_map_mutex );
-   for( auto *th_info : thread_map )
-   {
-      delete( th_info );
-      th_info = nullptr;
-   }
+    std::lock_guard<std::mutex> guard( thread_map_mutex );
+    //need to shut down schedule thread
+    
+    keep_going = false;
+
+    for( auto *th_info : thread_map )
+    {
+        if( th_info->finished )
+        {
+            th_info->th.join();
+            th_info->term = true;
+        }
+    }
+
+    for( auto *th_info : thread_map )
+    {
+       delete( th_info );
+       th_info = nullptr;
+    }
 }
 
-
-void
-simple_schedule::start()
+void 
+simple_schedule::init()
 {
    /** 
     * NOTE: this section is the same as the code in the "handleSchedule"
@@ -74,37 +83,37 @@ simple_schedule::start()
       handleSchedule( k );
    }
    kernel_set.release();
-   
-   bool keep_going( true );
+}
+
+/**
+ * this thread is primarily to migrate and place
+ * threads...in the "basic" version it really 
+ * doesn't do too much. 
+ */
+void
+simple_schedule::start()
+{
    while( keep_going )
    {
       while( ! thread_map_mutex.try_lock() )
       {
          std::this_thread::yield();
       }     
-      //exit, we have a lock
+      //exit loop, we have a lock
       keep_going = false;
       for( auto  *t_info : thread_map )
       {
          if( ! t_info->term )
          {
             //loop over each thread and check if done
-            if( t_info->finished )
-            {
-               /**
-                * FIXME: the list could get huge for long running apps,
-                * need to delete these entries...especially since we have
-                * a lock on the list now 
-                */
-               t_info->th.join();
-               t_info->term = true;
-            }
-            else /* a kernel ! finished */
+            if( ! t_info->finished )
             {
                keep_going =  true;
+               goto end;
             }
          }
       }
+      end:
       //if we're here we have a lock and need to unlock
       thread_map_mutex.unlock();
       /**
@@ -114,6 +123,7 @@ simple_schedule::start()
       std::chrono::milliseconds dura( 3 );
       std::this_thread::sleep_for( dura );
    }
+   signal_complete();
    return;
 }
 
@@ -178,4 +188,5 @@ simple_schedule::simple_run( void * data )
         std::this_thread::sleep_for( dura );
       }
    }
+
 }

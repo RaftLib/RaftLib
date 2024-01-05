@@ -25,9 +25,7 @@
 #include <cstdint>
 #include <queue>
 #include <string>
-#ifdef BENCHMARK
 #include <atomic>
-#endif
 #include "kernelexception.hpp"
 #include "port.hpp"
 #include "signalvars.hpp"
@@ -74,7 +72,7 @@ public:
    kernel( void * const ptr,
            const std::size_t nbytes );
 
-   virtual ~kernel() = default;
+   virtual ~kernel();
 
 
    /**
@@ -210,6 +208,7 @@ protected:
     friend class ::kpair;
     friend class ::interface_partition;
     friend class ::pool_schedule;
+    friend class raft::kernel_wrapper;
 
     /**
      * NOTE: doesn't need to be atomic since only one thread
@@ -248,13 +247,24 @@ protected:
 
 
     raft::schedule_behavior     sched_behav = raft::any_port;
+    bool             dup_enabled       = false;
+    
+    /**
+     * serves as a unique ID for the kernel, assuming 
+     * all kernels are spun off from a single source, 
+     * which is a pretty good assumption generally, 
+     * # NOTES
+     * * we'll need to make sure this is synchronized
+     * once we go to more than one machine again. Otherwise
+     * if we use this as a key for the node to synchronize
+     * over or add a barrier on it then we'll be in a pickle. 
+     */
+    const            std::size_t kernel_id;
 private:
    /** TODO, replace dup with bit vector **/
-   bool             dup_enabled       = false;
    bool             dup_candidate     = false;
-   const            std::size_t kernel_id;
-
    bool             execution_done    = false;
+
 
    /** for operator syntax **/
    std::queue< raft::port_key_type > enabled_port;

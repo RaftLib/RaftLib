@@ -29,12 +29,3 @@ Blocked::Blocked( const Blocked &other ) : all( other.all )
     /** nothing to do here either **/
 }
 
-Blocked&
-Blocked::operator += ( const Blocked &rhs ) noexcept
-{
-    if( ! rhs.bec.blocked )
-    {
-        (this)->bec.count += rhs.bec.count;
-    }
-    return( (*this) );
-}

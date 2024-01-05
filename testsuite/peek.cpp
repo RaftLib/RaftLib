@@ -46,6 +46,7 @@ main( int argc, char **argv )
    gen a( count ), b( count );
    sum s;
    print p;
+   
    raft::map m;
    m += a >> s[ "input_a" ];
    m += b >> s[ "input_b" ];
